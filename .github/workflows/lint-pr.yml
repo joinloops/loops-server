@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - pint
 
 jobs:
   lint:
@@ -30,5 +31,5 @@ jobs:
       - name: Run Pint
         run: pint  --test
 
-#      - name: Commit linted files
-#        uses: stefanzweifel/git-auto-commit-action@v5
+      - name: Commit linted files
+        uses: stefanzweifel/git-auto-commit-action@v5
