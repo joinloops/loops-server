@@ -22,3 +22,9 @@ This project is funded through [NGI Zero Core](https://nlnet.nl/core), a fund es
 
 [<img src="https://nlnet.nl/logo/banner.png" alt="NLnet foundation logo" width="20%" />](https://nlnet.nl)
 [<img src="https://nlnet.nl/image/logos/NGI0_tag.svg" alt="NGI Zero Logo" width="20%" />](https://nlnet.nl/core)
+
+## Supporters
+
+Thanks to the Fastly Fast Forward program, Fastly CDN and Object storage is used by Loops to host and serve Loops video to a global audience of people for free.
+
+[<img src="https://github.com/user-attachments/assets/f1499b1f-c05f-480a-a5d5-dbebcb0e20fd" alt="Fastly Fast Forward logo" width="50%" />](https://www.fastly.com/fast-forward)
