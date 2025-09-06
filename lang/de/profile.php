@@ -1,0 +1,35 @@
+<?php
+
+return [
+    'editProfile' => 'Profil bearbeiten',
+    'blocked' => 'Blockiert',
+    'unblock' => 'Entblocken',
+    'block' => 'Blocken',
+    'likes' => 'Likes',
+    'youveReachedTheEndOfThisList' => 'Du hast das Ende der Liste erreicht.',
+    'noFollowersYet' => 'Noch keine Follower',
+    'notFollowingAnyone' => 'Folgt noch niemandem',
+    'whenPeopleFollowThisAccount' => 'Wenn Leute dem Account folgen, erscheinen sie hier.',
+    'whenThisAccountFollowsSomeone' => 'Wenn dieser Account jemandem folgt, erscheint das hier.',
+    'displayName' => 'Anzeigename',
+    'displayNameHelp' => 'Anzeigenamen können bis zu 30 Zeichen lang sein.',
+    'bio' => 'Bio',
+    'bioPlaceholder' => 'Schreibe eine optionalen Bio',
+    'bioHelp' => 'Optionale Bio (maximal 80 Zeichen)',
+    'applyingDotDotDot' => 'Speichere...',
+    'avatarFileTypeError' => 'Bitte nutze eines der akzeptierten Formate (PNG, JPEG, oder JPG).',
+    'avatarFileSizeError' => 'Das Bild muss kleiner als 5 MB sein.',
+    'avatarFailedToUploadError' => 'Konnte Avatar nicht aktualisieren. Bitte versuche es erneut.',
+    'deleteAvatar' => 'Avatar entfernen',
+    'deleteAvatarConfirmMessage' => 'Bist du sicher, dass der Avatar entfernt werden soll?',
+    'deleteAvatarFailedMessage' => 'Konnte den Avatar nicht löschen. Bitte versuche es erneut.',
+    'failedToUpdateProfileErrorMessage' => 'Konnte das Profil nicht aktualisieren. Bitte versuche es erneut.',
+    'tabFilterOptions' => [
+        'Latest' => 'Neuste',
+        'Popular' => 'Beliebteste',
+        'Oldest' => 'Älteste',
+    ],
+    'tabOptions' => [
+        'Videos' => 'Videos',
+    ],
+];
