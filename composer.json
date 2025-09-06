@@ -20,7 +20,8 @@
         "resend/resend-php": "^0.18.1",
         "stevebauman/purify": "^6.3",
         "symfony/http-client": "^7.3",
-        "symfony/mailgun-mailer": "^7.3"
+        "symfony/mailgun-mailer": "^7.3",
+        "symfony/polyfill-iconv": "^1.33"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
