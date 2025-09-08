@@ -6,7 +6,7 @@ return [
         'title' => 'Signaler une erreur',
     ],
     'success' => [
-        'message' => 'Votre signalement a bien été envoyé et sera examiné par notre équipe de modération.<br /><br />Merci d’aider à garder notre communauté sûre ❤️',
+        'message' => 'Votre signalement a bien été envoyé et sera examiné par notre équipe de modération.<br /><br />Merci d\'aider à garder notre communauté sûre ❤️',
         'title' => 'Signalement envoyé !',
     ],
     'types' => [
@@ -22,7 +22,7 @@ return [
         1019 => 'Comportement trompeur et spam',
         1020 => 'Produits et activités réglementés',
         1021 => 'Fraudes et arnaques',
-        1022 => 'Partage d’informations personnelles',
+        1022 => 'Partage d\'informations personnelles',
         1023 => 'Signaler un contenu illégal',
         1024 => 'Contrefaçons et propriété intellectuelle',
         1025 => 'Contenu de marque non divulgué',
