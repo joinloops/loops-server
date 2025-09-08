@@ -1,0 +1,21 @@
+<?php
+
+return ['applyingDotDotDot' => '적용 중...',
+    'avatarFailedToUploadError' => '아바타 업데이트에 실패했습니다. 다시 시도하세요.',
+    'avatarFileSizeError' => '이미지 파일 크기는 5MB 이하이어야 합니다.',
+    'avatarFileTypeError' => '유효한 이미지 파일(PNG, JPEG, 또는 JPG)을 선택하세요.',
+    'bio' => '자기소개',
+    'bioHelp' => '선택적 자기소개 (최대 80자)',
+    'bioPlaceholder' => '선택적으로 자기소개 추가',
+    'block' => '차단',
+    'blocked' => '차단됨',
+    'deleteAvatar' => '아바타 삭제',
+    'deleteAvatarConfirmMessage' => '아바타를 삭제하시겠습니까?',
+    'deleteAvatarFailedMessage' => '아바타 삭제에 실패했습니다. 다시 시도하세요.',
+    'displayName' => '표시 이름',
+    'displayNameHelp' => '표시 이름은 최대 30자까지 가능합니다.',
+    'editProfile' => '프로필 수정',
+    'failedToUpdateProfileErrorMessage' => '프로필 업데이트에 실패했습니다. 다시 시도하세요.',
+    'likes' => '좋아요',
+    'loadingProfileDotDotDot' => '프로필 불러오는 중...',
+];
