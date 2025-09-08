@@ -36,7 +36,7 @@ return [
     'replies' => 'réponses',
     'reply' => 'Répondre',
     'reportTextPlaceholder1018' => 'Décrivez la désinformation que vous signalez...',
-    'reportTextPlaceholder1021' => 'Décrivez l’activité frauduleuse...',
+    'reportTextPlaceholder1021' => 'Décrivez l\'activité frauduleuse...',
     'reportTextPlaceholder1023' => 'Décrivez le contenu illégal...',
     'reportTextPlaceholder1026' => 'Ajoutez des détails à votre signalement...',
     'reportTextPlaceholderDefault' => 'Ajoutez plus de détails...',
