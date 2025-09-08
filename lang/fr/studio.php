@@ -1,5 +1,3 @@
-<?php
-
 return [
     'actions' => 'Actions',
     'allowOthersTo' => 'Autoriser les autres à',
