@@ -1,7 +1,9 @@
+<?php
+
 return [
     'actions' => 'Actions',
     'allowOthersTo' => 'Autoriser les autres à',
-    'aspectRatios' => 'Format d'image',
+    'aspectRatios' => 'Format d\'image',
     'aspectRatiosMessage' => 'Recommandé : 16:9 pour le paysage, 9:16 pour le portrait.',
     'caption' => 'Légende',
     'commentMessage' => 'Autoriser les autres à publier des commentaires et des réponses sur cette publication',
@@ -23,7 +25,7 @@ return [
     'found' => 'trouvé',
     'hashtag' => 'Hashtag',
     'hashtags' => 'hashtags',
-    'likes' => 'J’aimes',
+    'likes' => 'J\'aimes',
     'maximumSize' => 'Taille maximale :',
     'mbVideoDuration' => ' Mo, durée de la vidéo :',
     'mention' => 'Mention',
@@ -31,7 +33,7 @@ return [
     'myPosts' => 'Mes publications',
     'no' => 'Non',
     'orDragAndDropItHere' => 'Ou glisser‑déposer le ici',
-    'otherMajorFormatsAreSupported' => '. D’autres formats majeurs sont pris en charge.',
+    'otherMajorFormatsAreSupported' => '. D\'autres formats majeurs sont pris en charge.',
     'posts' => 'Publications',
     'recommended' => 'Recommandé :',
     'replace' => 'Remplacer',
@@ -43,7 +45,7 @@ return [
     'sizeAndDuration' => 'Taille et durée',
     'stitch' => 'Stitch',
     'stitchMessage' => 'Autoriser les autres à assembler cette vidéo avec la leur',
-    'unsavedWarning' => 'Une vidéo que vous étiez en train d’éditer n’a pas été enregistrée. Continuer l’édition ?',
+    'unsavedWarning' => 'Une vidéo que vous étiez en train d\'éditer n\'a pas été enregistrée. Continuer l\'édition ?',
     'uploadFirstVideo' => 'Téléverser la première vidéo',
     'users' => 'utilisateurs',
     'videoResolutions' => 'Résolutions vidéo',
