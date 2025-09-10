@@ -16,6 +16,7 @@ return [
     'creator' => 'Creator',
     'delete' => 'Delete',
     'deleteVideo' => 'Delete Video',
+    'deleteVideoConfirmMessage' => 'Are you sure you want to delete this video?',
     'deletingDotDotDot' => 'Deleting...',
     'dotDotDotMore' => '...more',
     'downloadsEnabled' => 'Downloads Enabled',
