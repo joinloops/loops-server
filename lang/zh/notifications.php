@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'allCaughtUp' => '都读完了！',
-    'errorLoadingNotifications' => '加载通知时出错',
+    'allCaughtUp' => 'You\'re all caught up!',
+    'errorLoadingNotifications' => 'Error loading notifications',
     'messageTypes' => [
-        'videoLike' => '点赞了你的视频',
-        'newFollower' => '关注了你',
-        'videoComment' => '评论了你的视频',
-        'videoShare' => '分享了你的视频',
-        'default' => '与你的内容进行了互动',
+        'videoLike' => 'liked your video',
+        'newFollower' => 'started following you',
+        'videoComment' => 'commented on your video',
+        'videoShare' => 'shared your video',
+        'default' => 'interacted with your content',
     ],
-    'noNotifications' => '暂无通知',
+    'noNotifications' => 'No notifications',
 ];
