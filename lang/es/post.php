@@ -51,6 +51,6 @@ return [
     'thisActionCannotBeUndone' => 'Esta acción no se puede deshacer. Tu vídeo será eliminado permanentemente.',
     'view' => 'Vista',
     'writeAReplyDotDotDot' => 'Escribe una respuesta...',
-    'writeYourCaptionDotDotDot' => 'Write your caption...',
-    'yourReportingThis' => 'You\'re reporting this :type for: :message',
+    'writeYourCaptionDotDotDot' => 'Escribe tu descripción...',
+    'yourReportingThis' => 'Estás reportando este :type por :message',
 ];
