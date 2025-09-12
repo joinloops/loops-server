@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'allCaughtUp' => '¡Ya estás al día!',
+    'errorLoadingNotifications' => 'Error al cargar las notificaciones',
     'messageTypes' => [
-        'videoLike' => 'liked your video',
-        'newFollower' => 'started following you',
-        'videoComment' => 'commented on your video',
-        'videoShare' => 'shared your video',
-        'default' => 'interacted with your content',
+        'videoLike' => 'le ha gustado tu vídeo',
+        'newFollower' => 'ha comenzado a seguirte',
+        'videoComment' => 'ha comentado en tu vídeo',
+        'videoShare' => 'ha compartido tu vídeo',
+        'default' => 'ha interactuado con tu contenido',
     ],
-    'noNotifications' => 'No notifications',
+    'noNotifications' => 'Sin notificaciones',
 ];
