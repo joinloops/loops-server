@@ -71,13 +71,11 @@ export default {
 
                 switch (status) {
                     case 401:
-                        return "The content you're trying to view is not available";
+                        return "Please log in to continue";
                     case 404:
                         return "The content you're looking for could not be found";
                     case 403:
                         return "You don't have permission to access this content";
-                    case 401:
-                        return "Please log in to continue";
                     case 429:
                         return "Too many requests. Please try again later";
                     case 500:
