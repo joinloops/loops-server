@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Profile;
+use Exception;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
@@ -24,7 +25,7 @@ class AvatarService
         try {
             $hashid = HashidService::safeEncode($profileId);
         } catch (Exception $e) {
-            return new Exception('Error storing avatar');
+            throw new Exception('Error storing avatar');
         }
 
         self::deleteExistingAvatars($hashid);
@@ -45,7 +46,7 @@ class AvatarService
         try {
             $hashid = HashidService::safeEncode($profileId);
         } catch (Exception $e) {
-            return new Exception('Error storing avatar');
+            throw new Exception('Error storing avatar');
         }
 
         self::deleteExistingAvatars($hashid);
