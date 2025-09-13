@@ -62,7 +62,7 @@ class UserRegisterVerifyController extends Controller
         $code = $request->code;
         $reg = UserRegisterVerify::whereEmail($request->email)->whereVerifyCode($code)->first();
 
-        if (! $reg || $reg->verifed_at !== null || $reg->email_last_sent_at === null) {
+        if (! $reg || $reg->verified_at !== null || $reg->email_last_sent_at === null) {
             return $this->error('Invalid or expired code');
         }
 
