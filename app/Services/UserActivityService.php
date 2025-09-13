@@ -15,7 +15,7 @@ class UserActivityService
         $ymd = $ts->format('Ymd');
         $key = "ua:{$user->id}:{$ymd}";
 
-        $ttl = $ts->startOfDay()->addDay()->diffInSeconds($ts) + 5;
+        $ttl = (int) ($ts->startOfDay()->addDay()->diffInSeconds($ts) + 5);
 
         Cache::remember($key, $ttl, function () use ($ts, $user) {
             $user->forceFill(['last_active_at' => $ts])->saveQuietly();
