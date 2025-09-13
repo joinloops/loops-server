@@ -54,7 +54,9 @@ export const useVideoStore = defineStore("video", {
                     .then((res) => {
                         this.currentVideo = res.data;
                     });
-            } catch (error) {}
+            } catch (error) {
+                console.error('Error fetching video:', error);
+            }
         },
 
         async decrementCommentCount() {
