@@ -1,38 +1,89 @@
 import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
-import globals from "globals";
 import tseslint from 'typescript-eslint'
+import vueConfigTypeScript from '@vue/eslint-config-typescript'
+import vueConfigPrettier from '@vue/eslint-config-prettier'
+import globals from 'globals'
 
 export default [
+  // Base ESLint recommended rules
   js.configs.recommended,
+  
+  // Vue.js essential rules
   ...vue.configs['flat/essential'],
+  
+  // TypeScript rules
+  ...tseslint.configs.recommended,
+  
+  // Vue + TypeScript configuration
+  ...vueConfigTypeScript(),
+  
+  // Prettier integration (should be last)
+  vueConfigPrettier,
+  
   {
-    files: ['resources/**/*.{js,vue}'],
+    files: ['**/*.{js,mjs,cjs,vue,ts}'],
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
       globals: {
         ...globals.browser,
         ...globals.node,
-        process: 'readonly',
-        import: 'readonly',
-        route: 'readonly',
-        axios: 'readonly'
+        process: 'readonly'
       }
     },
     rules: {
+      // Vue-specific rules
       'vue/multi-word-component-names': 'off',
-      'no-console': 'off',
       'vue/no-v-html': 'warn',
       'vue/require-default-prop': 'off',
       'vue/require-explicit-emits': 'error',
-      'no-debugger': 'off',
-      'no-unused-vars': 'warn'
+      'vue/component-definition-name-casing': ['error', 'PascalCase'],
+      'vue/component-name-in-template-casing': ['error', 'PascalCase'],
+      
+      // General rules
+      'no-console': process.env.NODE_ENV === 'production' ? 'error' : 'warn',
+      'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
+      'no-unused-vars': 'warn',
+      
+      // TypeScript rules
+      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off'
     }
   },
-  // Only apply TypeScript rules to .ts files
-  ...tseslint.configs.recommended.map(config => ({
-    ...config,
-    files: ['resources/**/*.ts']
-  }))
+  
+  // TypeScript-specific overrides
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      'no-unused-vars': 'off', // Turn off base rule for TS files
+      '@typescript-eslint/no-unused-vars': 'error'
+    }
+  },
+  
+  // Vue SFC script setup specific rules
+  {
+    files: ['**/*.vue'],
+    languageOptions: {
+      parserOptions: {
+        parser: '@typescript-eslint/parser'
+      }
+    },
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off' // Vue compiler handles this
+    }
+  },
+  
+  // Ignore patterns
+  {
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'build/**',
+      'public/**',
+      '*.min.js'
+    ]
+  }
 ]
