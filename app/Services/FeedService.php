@@ -16,7 +16,8 @@ class FeedService
                 match ($sort) {
                     'Latest' => $query->orderByDesc('id'),
                     'Popular' => $query->orderByDesc('likes'),
-                    'Oldest' => $query->orderBy('created_at')
+                    'Oldest' => $query->orderBy('created_at'),
+                    default => $query->orderByDesc('id')
                 };
             })
             ->cursorPaginate(10);
