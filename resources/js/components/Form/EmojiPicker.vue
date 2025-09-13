@@ -20,7 +20,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import { Picker } from "emoji-mart-vue-fast/src";
 import { useEmojiStore } from "@/stores/emojiStore";

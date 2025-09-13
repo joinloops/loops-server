@@ -7,7 +7,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import Header from "~/components/Layout/Header.vue";
 </script>

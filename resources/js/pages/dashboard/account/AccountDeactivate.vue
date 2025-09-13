@@ -206,7 +206,7 @@
     </SettingsLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import SettingsLayout from "~/layouts/SettingsLayout.vue";
 

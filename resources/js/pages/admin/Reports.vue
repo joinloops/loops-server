@@ -106,7 +106,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
 import DataTable from "@/components/DataTable.vue";
 import { reportsApi } from "@/services/adminApi";

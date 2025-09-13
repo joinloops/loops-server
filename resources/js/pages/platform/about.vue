@@ -43,7 +43,7 @@
     </MainLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, inject } from "vue";
 import MainLayout from "@/layouts/FeedLayout.vue";
 

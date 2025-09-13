@@ -14,7 +14,7 @@
     </FullLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch, inject, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute, useRouter } from "vue-router";

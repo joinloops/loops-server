@@ -73,7 +73,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from "vue";
 import DataTable from "@/components/DataTable.vue";
 import { commentsApi } from "@/services/adminApi";

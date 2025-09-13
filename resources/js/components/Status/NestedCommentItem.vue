@@ -121,7 +121,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed, inject } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useCommentStore } from "@/stores/comments";

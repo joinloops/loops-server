@@ -25,7 +25,7 @@
     </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
 import Header from "~/components/Layout/Header.vue";
 import Sidebar from "~/components/Layout/Sidebar.vue";

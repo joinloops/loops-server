@@ -3,7 +3,7 @@
     <AuthModal v-if="authStore.isOpen" :mode="authStore.authMode" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, watch, inject } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import AuthModal from "@/components/AuthModal.vue";

@@ -35,7 +35,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from "vue";
 import Login from "@/components/Login.vue";
 import Register from "@/components/Register.vue";

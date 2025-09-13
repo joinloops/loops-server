@@ -215,7 +215,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed, onMounted, watch, inject } from "vue";
 import { useUtils } from "@/composables/useUtils";
 import {

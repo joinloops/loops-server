@@ -152,7 +152,7 @@
     </FullLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, inject } from "vue";
 import { storeToRefs } from "pinia";
 import FullLayout from "@/layouts/FullLayout.vue";

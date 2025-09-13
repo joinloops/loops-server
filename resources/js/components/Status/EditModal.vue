@@ -147,7 +147,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, computed } from "vue";
 import { XMarkIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
 import { useAlertModal } from "@/composables/useAlertModal.js";
