@@ -60,11 +60,11 @@
 </template>
 
 <script setup>
-let name = ref(null);
-let email = ref(null);
-let password = ref(null);
-let confirmPassword = ref(null);
-let errors = ref(null);
+const name = ref(null);
+const email = ref(null);
+const password = ref(null);
+const confirmPassword = ref(null);
+const errors = ref(null);
 
 const register = async () => {
     errors.value = null;
