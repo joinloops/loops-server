@@ -39,7 +39,7 @@ class SettingsController extends Controller
         $originalData = $user->only(['name', 'bio']);
 
         if ($request->filled('name')) {
-            $name = $request->filled('name') ? $request->input('name') : AccountService::getDefaultDisplayName($user->profile_id);
+            $name = $request->input('name') ?: AccountService::getDefaultDisplayName($user->profile_id);
             $profile->name = $this->purify($name);
             $user->name = $this->purify($name);
             $user->save();
