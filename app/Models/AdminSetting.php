@@ -59,7 +59,7 @@ class AdminSetting extends Model
                 'is_public' => $isPublic,
                 'description' => $description,
                 'updated_by' => auth()->id(),
-                'version' => static::where('key', $key)->value('version') + 1 ?? 1,
+                'version' => (static::where('key', $key)->value('version') ?? 0) + 1,
             ]
         );
     }
