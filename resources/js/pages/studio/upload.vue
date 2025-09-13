@@ -1118,7 +1118,7 @@ const handleSubmit = async () => {
 
     isSubmitting.value = true;
 
-    let videoToUpload = uploadedFile.value;
+    const videoToUpload = uploadedFile.value;
 
     try {
         const formData = new FormData();
