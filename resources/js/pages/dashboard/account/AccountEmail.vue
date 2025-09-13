@@ -351,7 +351,9 @@ const fetchEmailData = async () => {
                 pendingEmail.value = res.data.data.pending_email;
                 console.log(res.data.data);
             });
-    } catch (error) {}
+    } catch (error) {
+        console.error('Error fetching email settings:', error);
+    }
 };
 
 const validateEmail = () => {
