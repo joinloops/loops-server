@@ -26,7 +26,7 @@ return [
     */
 
     'force_https' => env('FORCE_HTTPS', true),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
