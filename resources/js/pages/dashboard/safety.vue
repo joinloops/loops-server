@@ -100,7 +100,7 @@ const fetchTotalBlocked = async () => {
                 blockedAccountsCount.value = res.data.data.count;
             });
     } catch (error) {
-        console.error('Error fetching blocked accounts:', error);
+        console.error("Error fetching blocked accounts:", error);
     }
 };
 

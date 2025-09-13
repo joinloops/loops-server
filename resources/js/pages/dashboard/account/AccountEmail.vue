@@ -352,7 +352,7 @@ const fetchEmailData = async () => {
                 console.log(res.data.data);
             });
     } catch (error) {
-        console.error('Error fetching email settings:', error);
+        console.error("Error fetching email settings:", error);
     }
 };
 

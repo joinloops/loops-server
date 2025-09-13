@@ -55,7 +55,7 @@ export const useVideoStore = defineStore("video", {
                         this.currentVideo = res.data;
                     });
             } catch (error) {
-                console.error('Error fetching video:', error);
+                console.error("Error fetching video:", error);
             }
         },
 
