@@ -65,7 +65,7 @@ class VideoController extends Controller
         $model->is_sensitive = $request->filled('is_sensitive') ? (bool) $request->boolean('is_sensitive') : false;
         $model->comment_state = $request->filled('comment_state') ? ($request->input('comment_state') == 4 ? 4 : 0) : 4;
         $model->can_download = $request->filled('can_download') ? $request->boolean('can_download') : false;
-        $model->media_metadata = $videoMeta;
+        $model->media_metadata = json_encode($videoMeta);
         $model->save();
         $path = $request->video->store('videos/'.$pid.'/'.$model->id, 's3');
         $model->vid = $path;
