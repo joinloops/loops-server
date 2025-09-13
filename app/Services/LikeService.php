@@ -66,7 +66,7 @@ class LikeService
         Redis::sadd($cacheKey, $profileId);
         Redis::expire($cacheKey, self::CACHE_TTL);
 
-        Redis::set($timestampKey, time(), 'EX', self::CACHE_TTL);
+        Redis::set($timestampKey, time(), ['EX' => self::CACHE_TTL]);
 
         return true;
     }
@@ -138,7 +138,7 @@ class LikeService
 
         Redis::sadd($cacheKey, $profileId);
         Redis::expire($cacheKey, self::CACHE_TTL);
-        Redis::set($timestampKey, time(), 'EX', self::CACHE_TTL);
+        Redis::set($timestampKey, time(), ['EX' => self::CACHE_TTL]);
 
         return true;
     }
@@ -190,7 +190,7 @@ class LikeService
 
         Redis::sadd($cacheKey, $profileId);
         Redis::expire($cacheKey, self::CACHE_TTL);
-        Redis::set($timestampKey, time(), 'EX', self::CACHE_TTL);
+        Redis::set($timestampKey, time(), ['EX' => self::CACHE_TTL]);
 
         return true;
     }
