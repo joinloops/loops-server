@@ -5,10 +5,10 @@ return [
     'errorLoadingNotifications' => 'Error loading notifications',
     'messageTypes' => [
         'videoLike' => 'liked your video',
-        'newFollower' => 'started following you',
-        'videoComment' => 'commented on your video',
-        'videoShare' => 'shared your video',
-        'default' => 'interacted with your content',
+        'newFollower' => 'ha iniziato a seguirti',
+        'videoComment' => 'ha commentato sul tuo video',
+        'videoShare' => 'ha condiviso il tuo video',
+        'default' => 'ha interagito con il tuo contenuto',
     ],
-    'noNotifications' => 'No notifications',
+    'noNotifications' => 'Nessuna notifica',
 ];
