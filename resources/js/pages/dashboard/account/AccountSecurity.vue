@@ -302,7 +302,7 @@
     </SettingsLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, nextTick } from "vue";
 import SettingsLayout from "~/layouts/SettingsLayout.vue";
 import ToggleSwitch from "@/components/Form/ToggleSwitch.vue";

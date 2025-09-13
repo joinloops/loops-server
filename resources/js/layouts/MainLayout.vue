@@ -23,7 +23,7 @@
     </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, inject } from "vue";
 import { storeToRefs } from "pinia";
 import Header from "~/components/Layout/Header.vue";

@@ -23,7 +23,7 @@
     </aside>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref } from "vue";
 import SidebarItem from "./SidebarItem.vue";
 import { useI18n } from "vue-i18n";

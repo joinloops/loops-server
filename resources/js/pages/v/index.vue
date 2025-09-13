@@ -336,7 +336,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch, computed, inject } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useAppStore } from "~/stores/app";

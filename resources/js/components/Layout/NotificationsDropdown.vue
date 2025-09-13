@@ -156,7 +156,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { useNotificationStore } from "~/stores/notifications";
 import { useNotifications } from "~/composables/useNotifications";

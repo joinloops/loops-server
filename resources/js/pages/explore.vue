@@ -109,7 +109,7 @@
     </MainLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, inject } from "vue";
 import { storeToRefs } from "pinia";
 import { HeartIcon } from "@heroicons/vue/24/outline";

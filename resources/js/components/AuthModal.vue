@@ -844,7 +844,7 @@
     </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, nextTick, inject } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import CloudflareTurnstile from "@/components/Captcha/CloudflareTurnstile.vue";

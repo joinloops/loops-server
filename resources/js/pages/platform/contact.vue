@@ -223,7 +223,7 @@
     </MainLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from "vue";
 import MainLayout from "@/layouts/MainLayout.vue";
 import {

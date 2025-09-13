@@ -107,7 +107,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, inject, nextTick } from "vue";
 import { useAuthStore } from "@/stores/auth";
 import { useCommentStore } from "@/stores/comments";

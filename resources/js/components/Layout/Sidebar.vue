@@ -210,7 +210,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject, ref, computed, onMounted, onUnmounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";

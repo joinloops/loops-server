@@ -89,7 +89,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, watch, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import DataTable from "@/components/DataTable.vue";

@@ -696,7 +696,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import { reportsApi } from "@/services/adminApi";
 import { useRoute, useRouter } from "vue-router";

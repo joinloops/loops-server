@@ -20,7 +20,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted, inject } from "vue";
 import { storeToRefs } from "pinia";
 import StudioHeader from "~/components/Layout/StudioHeader.vue";

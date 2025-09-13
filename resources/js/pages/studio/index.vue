@@ -88,7 +88,7 @@
     </StudioLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import {
     ref,
     reactive,

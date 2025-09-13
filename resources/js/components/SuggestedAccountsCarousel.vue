@@ -87,7 +87,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, reactive, computed, onMounted, onUnmounted } from "vue";
 import { useSuggestedAccounts } from "~/composables/useSuggestedAccounts";
 import { useFollowAccount } from "~/composables/useFollowAccount";

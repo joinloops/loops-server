@@ -221,7 +221,7 @@
     </Teleport>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted, computed } from "vue";
 import { useAuthStore } from "~/stores/auth";
 import { useProfileStore } from "~/stores/profile";

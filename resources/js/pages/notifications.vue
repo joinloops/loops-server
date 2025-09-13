@@ -149,7 +149,7 @@
     </MainLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject, onMounted, watch, computed } from "vue";
 import { useNotificationStore } from "~/stores/notifications";
 import {

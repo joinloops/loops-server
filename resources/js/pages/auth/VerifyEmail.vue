@@ -177,7 +177,7 @@
     </FullLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject, onMounted, ref, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import FullLayout from "@/layouts/FullLayout.vue";
