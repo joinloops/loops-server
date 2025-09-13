@@ -1078,7 +1078,7 @@ const handleSendCode = async () => {
     loading.value = true;
 
     try {
-        let data = {
+        const data = {
             email: form.value.email,
             captcha_type: form.value.captcha_type,
             captcha_token: form.value.captcha_token,
