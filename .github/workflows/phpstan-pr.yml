@@ -22,4 +22,4 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       - name: Run Larastan
-        run: php artisan code:analyse
+        run: ./vendor/bin/phpstan analyse
