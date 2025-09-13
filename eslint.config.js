@@ -20,6 +20,11 @@ export default [
         route: 'readonly',
         axios: 'readonly'
       },
+      parserOptions: {
+        ecmaFeatures: {
+          jsx: true
+        }
+      }
     },
     rules: {
       'vue/multi-word-component-names': 'off',
@@ -30,6 +35,23 @@ export default [
       'no-debugger': 'off',
       'no-unused-vars': 'warn',
       '@typescript-eslint/no-unused-vars': 'warn'
+    }
+  },
+  // Specific overrides for TypeScript files to avoid conflicts
+  {
+    files: ['resources/**/*.ts'],
+    rules: {
+      'no-unused-vars': 'off', // Turn off base rule for TS files
+      '@typescript-eslint/no-unused-vars': 'warn'
+    }
+  },
+  // Ignore TypeScript rules for plain JS and Vue files
+  {
+    files: ['resources/**/*.{js,vue}'],
+    rules: {
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-require-imports': 'off'
     }
   }
 ]
