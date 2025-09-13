@@ -60,6 +60,8 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 let name = ref(null);
 let email = ref(null);
 let password = ref(null);

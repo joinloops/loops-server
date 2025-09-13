@@ -261,7 +261,7 @@ const submitVerification = async () => {
                     ? "Your email address has been successfully updated!"
                     : "Your email has been verified and your account is now active!");
         } else {
-            throw new Error(data.message || "Verification failed");
+            throw new Error(response.data.message || "Verification failed");
         }
     } catch (error) {
         verificationStatus.value = "error";
