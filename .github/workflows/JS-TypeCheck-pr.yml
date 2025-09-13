@@ -1,0 +1,20 @@
+name: JS - TypeCheck
+
+on: [pull_request]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Build Vue type-check (Typescript)
+        run: npm run type-check
