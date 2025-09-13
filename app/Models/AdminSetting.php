@@ -67,7 +67,6 @@ class AdminSetting extends Model
     public static function getPublicSettings()
     {
         return static::where('is_public', true)
-            ->get()
             ->pluck('value', 'key')
             ->toArray();
     }
