@@ -7,7 +7,9 @@
         "lint": "eslint resources/js/ --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
         "lint:check": "eslint resources/js/ --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts",
         "format": "prettier --write 'resources/**/*.{js,vue,ts,css,scss}'",
-        "format:check": "prettier --check 'resources/**/*.{js,vue,ts,css,scss}'"
+        "format:check": "prettier --check 'resources/**/*.{js,vue,ts,css,scss}'",
+        "type-check": "vue-tsc --noEmit",
+        "test": "npm run lint:check && npm run format:check && npm run type-check"
     },
     "dependencies": {
         "@heroicons/vue": "^2.2.0",
@@ -44,12 +46,17 @@
     "devDependencies": {
         "@eslint/css": "^0.11.0",
         "@eslint/js": "^9.34.0",
+        "@types/fs-extra": "^11.0.4",
+        "@types/lodash": "^4.17.20",
+        "@types/video.js": "^7.3.58",
         "@vue/eslint-config-prettier": "^10.2.0",
         "esbuild": ">=0.25.0",
         "eslint": "^9.34.0",
         "eslint-plugin-vue": "^10.4.0",
         "globals": "^16.3.0",
         "prettier": "^3.6.2",
-        "typescript-eslint": "^8.42.0"
+        "typescript": "^5.9.2",
+        "typescript-eslint": "^8.42.0",
+        "vue-tsc": "^3.0.7"
     }
 }
