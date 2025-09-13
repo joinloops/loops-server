@@ -10,7 +10,7 @@ trait ApiHelpers
     {
         $res = compact('data');
         if ($addl && is_array($addl)) {
-            array_merge($res, $addl);
+            $res = array_merge($res, $addl);
         }
 
         return response()->json($res, $code, $headers, JSON_UNESCAPED_SLASHES);

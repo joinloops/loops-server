@@ -95,7 +95,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     'data' => [],
                     'error' => [
                         'code' => 403,
-                        'message' => $e->getMessage() ?? 'This action is not authorized.',
+                        'message' => $e->getMessage(),
                     ],
                 ], 403);
             }
