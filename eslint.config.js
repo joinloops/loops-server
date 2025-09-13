@@ -4,11 +4,13 @@ import globals from "globals";
 import tseslint from 'typescript-eslint'
 
 export default [
+  // Base configs
   js.configs.recommended,
-  ...vue.configs['flat/essential'],
-  ...tseslint.configs.recommended,
+  
+  // Vue-specific configuration
   {
-    files: ['resources/**/*.{js,vue,ts}'],
+    files: ['**/*.vue'],
+    ...vue.configs['flat/essential'][0], // Get the Vue config
     languageOptions: {
       ecmaVersion: 2022,
       sourceType: 'module',
@@ -19,11 +21,6 @@ export default [
         import: 'readonly',
         route: 'readonly',
         axios: 'readonly'
-      },
-      parserOptions: {
-        ecmaFeatures: {
-          jsx: true
-        }
       }
     },
     rules: {
@@ -33,25 +30,52 @@ export default [
       'vue/require-default-prop': 'off',
       'vue/require-explicit-emits': 'error',
       'no-debugger': 'off',
-      'no-unused-vars': 'warn',
-      '@typescript-eslint/no-unused-vars': 'warn'
+      'no-unused-vars': 'warn'
     }
   },
-  // Specific overrides for TypeScript files to avoid conflicts
+  
+  // TypeScript files only
   {
     files: ['resources/**/*.ts'],
+    ...tseslint.configs.recommended[0],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        process: 'readonly',
+        import: 'readonly',
+        route: 'readonly',
+        axios: 'readonly'
+      }
+    },
     rules: {
-      'no-unused-vars': 'off', // Turn off base rule for TS files
+      'no-console': 'off',
+      'no-debugger': 'off',
       '@typescript-eslint/no-unused-vars': 'warn'
     }
   },
-  // Ignore TypeScript rules for plain JS and Vue files
+  
+  // JavaScript files
   {
-    files: ['resources/**/*.{js,vue}'],
+    files: ['resources/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        process: 'readonly',
+        import: 'readonly',
+        route: 'readonly',
+        axios: 'readonly'
+      }
+    },
     rules: {
-      '@typescript-eslint/no-unused-vars': 'off',
-      '@typescript-eslint/no-explicit-any': 'off',
-      '@typescript-eslint/no-require-imports': 'off'
+      'no-console': 'off',
+      'no-debugger': 'off',
+      'no-unused-vars': 'warn'
     }
   }
 ]
