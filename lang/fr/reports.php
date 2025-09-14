@@ -6,11 +6,11 @@ return [
         'title' => 'Report Error',
     ],
     'success' => [
-        'message' => 'Your report was successfully sent and will be reviewed by our content moderation team.<br /><br />Thank you for helping keeping our community safe ❤️',
+        'message' => 'Votre signalement a été envoyé et sera examiné par notre équipe de modération.<br /><br />Merci d’aider à garder notre communauté sûre ❤️',
         'title' => 'Report Submitted!',
     ],
     'types' => [
-        1010 => 'Inappropriate and irrelevant search',
+        1010 => 'Recherche inappropriée et non pertinente',
         1011 => 'Violence, abuse, and criminal exploitation',
         1012 => 'Hate and harassment',
         1013 => 'Suicide and self-harm',
