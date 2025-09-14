@@ -12,8 +12,8 @@ return [
     'responseTime' => 'Response Time',
     'responseTimeMessage' => 'We typically respond to all inquiries within 24 hours during business days. For urgent technical issues, please include "URGENT" in your subject line.',
     'socialConnect' => 'Social Connect',
-    'socialConnectMessage' => 'Follow us on the fediverse for updates and quick questions via direct messages.',
+    'socialConnectMessage' => 'Folgen Sie uns im "Fediverse", für Aktualisierungen und schnelle Fragen über direkte Nachrichten.',
     'technicalSupport' => 'Technical Support',
     'technicalSupportMessage' => 'Need help with our platform? Get technical assistance and troubleshooting support.',
-    'visitForum' => 'Visit Forum',
+    'visitForum' => 'Besuche das Forum',
 ];
