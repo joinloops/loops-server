@@ -43,5 +43,5 @@ return [
     'unfollow' => 'Unfollow',
     'unread' => 'Unread',
     'videos' => 'Videos',
-    'yesterday' => 'Yesterday',
+    'yesterday' => 'Gestern',
 ];
