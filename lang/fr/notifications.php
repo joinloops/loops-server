@@ -2,13 +2,13 @@
 
 return [
     'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'errorLoadingNotifications' => 'Erreur de chargement des notifications',
     'messageTypes' => [
-        'videoLike' => 'liked your video',
+        'videoLike' => 'a aimé votre vidéo',
         'newFollower' => 'started following you',
         'videoComment' => 'commented on your video',
         'videoShare' => 'shared your video',
         'default' => 'interacted with your content',
     ],
-    'noNotifications' => 'No notifications',
+    'noNotifications' => 'Aucune notification',
 ];
