@@ -29,7 +29,7 @@ return [
     'next' => 'Suivant',
     'notifications' => 'Notifications',
     'profile' => 'Profil',
-    'report' => 'Report',
+    'report' => 'Signaler',
     'retry' => 'Réessayer',
     'retryingDotDotDot' => 'Nouvel essai...',
     'save' => 'Sauvegarder',
