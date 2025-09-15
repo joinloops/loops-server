@@ -11,9 +11,9 @@ return [
     'loadingContactInformationDotDotDot' => 'Chargement des infos de contact...',
     'responseTime' => 'Délai de réponse',
     'responseTimeMessage' => 'Nous répondons généralement sous 24h les jours ouvrés. Pour les urgences techniques, ajoutez "URGENT" dans l\'objet.',
-    'socialConnect' => 'Social Connect',
+    'socialConnect' => 'Réseaux sociaux',
     'socialConnectMessage' => 'Suivez-nous sur le Fédivers pour connaitre les nouveautés et poser des questions en message privé.',
-    'technicalSupport' => 'Technical Support',
+    'technicalSupport' => 'Support technique',
     'technicalSupportMessage' => 'Besoin d\'aide avec la plateforme ? Obtenez de l\'assistance et du dépannage.',
     'visitForum' => 'Visiter le forum',
 ];
