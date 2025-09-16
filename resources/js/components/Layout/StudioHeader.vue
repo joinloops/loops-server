@@ -85,7 +85,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, inject, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import { useSearchStore } from "@/stores/search";

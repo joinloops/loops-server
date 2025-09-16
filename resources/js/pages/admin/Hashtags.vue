@@ -62,7 +62,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, watch } from "vue";
 import DataTable from "@/components/DataTable.vue";
 import { hashtagsApi } from "@/services/adminApi";

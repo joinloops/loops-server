@@ -458,7 +458,7 @@
     </SettingsLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from "vue";
 import SettingsLayout from "~/layouts/SettingsLayout.vue";
 import axios from "~/plugins/axios";

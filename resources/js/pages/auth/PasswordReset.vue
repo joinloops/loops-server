@@ -171,7 +171,7 @@
     </FullLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { onMounted, ref, inject } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { storeToRefs } from "pinia";

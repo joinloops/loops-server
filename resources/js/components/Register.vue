@@ -59,7 +59,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 let name = ref(null);
 let email = ref(null);
 let password = ref(null);

@@ -80,7 +80,7 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, inject } from "vue";
 
 const authStore = inject("authStore");

@@ -75,7 +75,7 @@
     </FeedLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { inject, computed, ref } from "vue";
 import { useFollowingFeed } from "~/composables/useFollowingFeed";
 import FeedLayout from "~/layouts/FeedLayout.vue";
