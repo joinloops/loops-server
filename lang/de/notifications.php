@@ -10,5 +10,5 @@ return [
         'videoShare' => 'shared your video',
         'default' => 'interacted with your content',
     ],
-    'noNotifications' => 'No notifications',
+    'noNotifications' => 'Keine Benachrichtigungen',
 ];
