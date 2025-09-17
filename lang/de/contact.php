@@ -7,7 +7,7 @@ return [
     'communityForum' => 'Community Forum',
     'communityForumMessage' => 'Join our community discussions, ask questions, and share knowledge with other users.',
     'failedToLoadContactInformation' => 'Failed to load contact information. Please try again later.',
-    'getInTouch' => 'Get in Touch',
+    'getInTouch' => 'Kontaktiere uns',
     'loadingContactInformationDotDotDot' => 'Loading contact information...',
     'responseTime' => 'Response Time',
     'responseTimeMessage' => 'We typically respond to all inquiries within 24 hours during business days. For urgent technical issues, please include "URGENT" in your subject line.',
