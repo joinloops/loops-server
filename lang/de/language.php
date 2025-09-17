@@ -7,6 +7,6 @@ return [
         'select' => 'Select Language:',
         'applyChanges' => 'Apply Changes',
         'current' => 'Current Language:',
-        'note' => 'Your language preference will be saved automatically.',
+        'note' => 'Ihre Spracheinstellungen werden automatisch gespeichert.',
     ],
 ];
