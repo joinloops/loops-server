@@ -5,7 +5,7 @@ return [
     'avatar' => 'Avatar',
     'cancel' => 'Cancel',
     'clickToReveal' => 'Click to reveal',
-    'close' => 'Close',
+    'close' => 'Schließen',
     'comment' => 'Comment',
     'delete' => 'Delete',
     'disable' => 'Disable',
