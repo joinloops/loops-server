@@ -25,5 +25,5 @@ return [
     'settings' => 'Settings',
     'terms' => 'Terms',
     'upload' => 'Upload',
-    'uploadLoop' => 'Upload Loop',
+    'uploadLoop' => 'Loop hochladen',
 ];
