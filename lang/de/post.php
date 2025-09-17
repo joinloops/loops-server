@@ -50,7 +50,7 @@ return [
     'submittingDotDotDot' => 'Submitting...',
     'thisActionCannotBeUndone' => 'This action cannot be undone. Your video will be permanently removed.',
     'view' => 'View',
-    'writeAReplyDotDotDot' => 'Write a reply...',
+    'writeAReplyDotDotDot' => 'Eine Antwort verfassen ...',
     'writeYourCaptionDotDotDot' => 'Write your caption...',
     'yourReportingThis' => 'You\'re reporting this :type for: :message',
 ];
