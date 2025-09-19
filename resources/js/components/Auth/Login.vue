@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, inject } from "vue";
 
 const authStore = inject("authStore");
 const appStore = inject("appStore");
