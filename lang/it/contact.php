@@ -3,7 +3,7 @@
 return [
     'adminContact' => 'Contatta l\'amministratore',
     'adminContactMessage' => 'For inquiries related to essential operational matters (please use the in‑app reporting system for content issues).',
-    'bodyMessage' => 'We\'re here to help. Reach out to us through any of the channels below and we\'ll get back to you as soon as possible.',
+    'bodyMessage' => 'Siamo qui per aiutarti. Contattaci attraverso uno dei canali disponibili e ti risponderemo il prima possibile.',
     'communityForum' => 'Forum della Community',
     'communityForumMessage' => 'Unisciti alla nostra community, chiedi e condividi le conoscenze con altri utenti.',
     'failedToLoadContactInformation' => 'Impossibile caricare le informazioni di contatto. Riprova più tardi.',
