@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'adminContact' => 'Admin Contact',
+    'adminContact' => 'Contatta l\'amministratore',
     'adminContactMessage' => 'For inquiries related to essential operational matters (please use the in‑app reporting system for content issues).',
     'bodyMessage' => 'We\'re here to help. Reach out to us through any of the channels below and we\'ll get back to you as soon as possible.',
     'communityForum' => 'Forum della Community',
