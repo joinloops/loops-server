@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'about' => 'About',
-    'admin' => 'Admin',
-    'clearAll' => 'Clear All',
+    'about' => 'Über uns',
+    'admin' => 'Administrator:innen',
+    'clearAll' => 'Alle Entfernen',
     'community' => 'Community',
-    'contact' => 'Contact',
-    'developers' => 'Developers',
+    'contact' => 'Kontakt',
+    'developers' => 'Entwickler:innen',
     'federation' => 'Federation',
     'help' => 'Help',
     'home' => 'Home',
