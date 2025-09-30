@@ -4,11 +4,11 @@ return [
     'allCaughtUp' => 'Du bist auf dem neusten Stand!',
     'errorLoadingNotifications' => 'Fehler beim Laden der Benachrichtigungen',
     'messageTypes' => [
-        'videoLike' => 'liked your video',
-        'newFollower' => 'started following you',
-        'videoComment' => 'commented on your video',
-        'videoShare' => 'shared your video',
-        'default' => 'interacted with your content',
+        'videoLike' => 'gefällt dein Video',
+        'newFollower' => 'folgt Dir jetzt',
+        'videoComment' => 'hat dein Video kommentiert',
+        'videoShare' => 'teilte dein Video',
+        'default' => 'hat mit deinen Inhalten interagiert',
     ],
     'noNotifications' => 'Keine Benachrichtigungen',
 ];
