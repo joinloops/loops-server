@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'allCaughtUp' => 'Du bist auf dem neusten Stand!',
+    'errorLoadingNotifications' => 'Fehler beim Laden der Benachrichtigungen',
     'messageTypes' => [
         'videoLike' => 'liked your video',
         'newFollower' => 'started following you',
