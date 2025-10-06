@@ -17,6 +17,7 @@ return [
     'displayNameHelp' => 'Display names can be up to 30 characters long.',
     'editProfile' => 'Edit Profile',
     'failedToUpdateProfileErrorMessage' => 'Failed to update profile. Please try again.',
+    'followRequestPending' => 'Follow Request Pending',
     'likes' => 'Likes',
     'loadingProfileDotDotDot' => 'Loading profile...',
     'noFollowersYet' => 'No followers yet',
