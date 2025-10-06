@@ -1,5 +1,3 @@
-import { ref } from "vue";
-
 export function useHashids() {
     const charset =
         "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ-_".split(
