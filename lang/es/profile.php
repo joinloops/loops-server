@@ -17,6 +17,7 @@ return [
     'displayNameHelp' => 'Los nombres a mostrar pueden tener hasta 30 caracteres.',
     'editProfile' => 'Editar perfil',
     'failedToUpdateProfileErrorMessage' => 'No se ha podido actualizar el perfil. Inténtalo de nuevo.',
+    'followRequestPending' => 'Follow Request Pending',
     'likes' => 'Me gusta',
     'loadingProfileDotDotDot' => 'Cargando perfil...',
     'noFollowersYet' => 'Todavía no tienes seguidores',
