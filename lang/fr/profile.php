@@ -17,6 +17,7 @@ return [
     'displayNameHelp' => 'Le nom d’affichage peut contenir jusqu’à 30 caractères.',
     'editProfile' => 'Modifier le profil',
     'failedToUpdateProfileErrorMessage' => 'Échec de la mise à jour du profil. Réessayez.',
+    'followRequestPending' => 'Follow Request Pending',
     'likes' => 'J\'aime',
     'loadingProfileDotDotDot' => 'Chargement du profil...',
     'noFollowersYet' => 'Pas encore d\'abonnés',
