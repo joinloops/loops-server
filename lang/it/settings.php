@@ -47,7 +47,7 @@ return [
     'exportHistory' => 'Export history',
     'hoursWatched' => 'Hours watched',
     'invalidVerificationCodePleaseTryAgain' => 'Invalid verification code. Please try again.',
-    'likesGiven' => 'Likes given',
+    'likesGiven' => 'Mi piace messi',
     'manageAccount' => 'Manage account',
     'manageYourAccountEmail' => 'Manage your account email.',
     'manageYourAccountSecuritySettings' => 'Manage your account security settings.',
