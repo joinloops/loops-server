@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'Inloggningsuppgifterna matchar inte de lagrade uppgifterna.',
+    'password' => 'Det angivna lösenordet är felaktigt.',
+    'throttle' => 'För många inloggningsförsök. Försök igen om :seconds sekunder.',
 ];
