@@ -3,7 +3,7 @@
 return [
     'actions' => 'Acciones',
     'allowOthersTo' => 'Permitir a otros',
-    'aspectRatios' => 'Radios de aspecto',
+    'aspectRatios' => 'Relaciones de aspecto',
     'aspectRatiosMessage' => 'Recomendados: 16:9 para horizontal, 9:16 para vertical.',
     'caption' => 'Título',
     'commentMessage' => 'Permitir que otros publiquen comentarios y respuestas en esta publicación',
@@ -12,7 +12,7 @@ return [
     'containsNSFWMessage' => 'Marca esta publicación como sensible para mostrar una advertencia',
     'contentCreatedOn' => 'Contenido (Creado el)',
     'customCover' => 'Portada personalizada',
-    'describeYourVideoDotDotDot' => 'Describe tu video...',
+    'describeYourVideoDotDotDot' => 'Describe tu vídeo...',
     'details' => 'Detalles',
     'download' => 'Descargar',
     'downloadMessage' => 'Permitir a otros descarguen este vídeo',
