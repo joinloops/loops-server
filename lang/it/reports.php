@@ -26,6 +26,6 @@ return [
         1023 => 'Report illegal content',
         1024 => 'Counterfeits and intellectual property',
         1025 => 'Undisclosed branded content',
-        1026 => 'Other',
+        1026 => 'Altro',
     ],
 ];
