@@ -2,11 +2,11 @@
 
 return [
     'picker' => [
-        'title' => 'Select Language',
-        'description' => 'Select your preferred language. This will change the language for the entire application.',
-        'select' => 'Select Language:',
-        'applyChanges' => 'Apply Changes',
-        'current' => 'Current Language:',
-        'note' => 'Your language preference will be saved automatically.',
+        'title' => 'Taal selecteren',
+        'description' => 'Selecteer uw voorkeurstaal. Dit verandert de taal voor de hele toepassing.',
+        'select' => 'Taal selecteren:',
+        'applyChanges' => 'Wijzigingen toepassen',
+        'current' => 'Huidige taal:',
+        'note' => 'Je taalvoorkeur wordt automatisch opgeslagen.',
     ],
 ];
