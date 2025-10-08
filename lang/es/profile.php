@@ -17,7 +17,7 @@ return [
     'displayNameHelp' => 'Los nombres a mostrar pueden tener hasta 30 caracteres.',
     'editProfile' => 'Editar perfil',
     'failedToUpdateProfileErrorMessage' => 'No se ha podido actualizar el perfil. Inténtalo de nuevo.',
-    'followRequestPending' => 'Follow Request Pending',
+    'followRequestPending' => 'Solicitudes pendientes para seguirte',
     'likes' => 'Me gusta',
     'loadingProfileDotDotDot' => 'Cargando perfil...',
     'noFollowersYet' => 'Todavía no tienes seguidores',
@@ -27,7 +27,7 @@ return [
     'profile404ErrorMessage' => 'No se ha podido encontrar un perfil con el nombre de usuario &commat;<b>:userId</b>. Por favor verifica el nombre de usuario e inténtalo de nuevo.',
     'profile500ErrorMessage' => 'Nuestros servidores están experimentando problemas en este momento. Por favor, inténtalo de nuevo en unos minutos.',
     'profileNotFound' => 'Perfil no encontrado',
-    'profileOfflineErrorMessage' => 'Comprueba tu conexión a Internet e inténtalo de nuevo.',
+    'profileOfflineErrorMessage' => 'Comprueba tu conexión a internet e inténtalo de nuevo.',
     'profileUnknownErrorMessage' => 'Ha ocurrido un imprevisto. Vuelve a intentarlo o ponte en contacto con nosotros si el problema persiste.',
     'tabFilterOptions' => [
         'Latest' => 'Recientes',
