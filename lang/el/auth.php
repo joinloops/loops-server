@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'Αυτά τα διαπιστευτήρια δεν ταιριάζουν με τα αρχεία μας.',
+    'password' => 'Ο παρεχόμενος κωδικός πρόσβασης είναι λανθασμένος.',
+    'throttle' => 'Παρα πολλές προσπάθειες σύνδεσης. Παρακαλώ δοκίμασε ξανά σε :seconds δευτερόλεπτα.',
 ];
