@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'noVideosFoundForThisHashtag' => 'No videos found for this hashtag',
+    'noVideosFoundForThisHashtag' => 'Δεν βρέθηκαν βίντεο για αυτήν την ετικέτα',
 ];
