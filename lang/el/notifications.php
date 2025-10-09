@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'allCaughtUp' => 'Έχεις καλύψει τα πάντα!',
+    'errorLoadingNotifications' => 'Σφάλμα φόρτωσης ειδοποιήσεων',
     'messageTypes' => [
-        'videoLike' => 'liked your video',
-        'newFollower' => 'started following you',
-        'videoComment' => 'commented on your video',
-        'videoShare' => 'shared your video',
-        'default' => 'interacted with your content',
+        'videoLike' => 'άρεσε το βίντεό σου',
+        'newFollower' => 'ξεκίνησε να σε ακολουθεί',
+        'videoComment' => 'σχολίασε στο βίντεό σου',
+        'videoShare' => 'κοινοποίησε το βίντεό σου',
+        'default' => 'αλληλεπίδρασε με το περιεχόμενό σου',
     ],
-    'noNotifications' => 'No notifications',
+    'noNotifications' => 'Καμία ειδοποίηση',
 ];
