@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'addCommentDotDotDot' => 'Add comment...',
-    'additionalDetails' => 'Additional details',
+    'addCommentDotDotDot' => 'Προσθήκη σχολίου...',
+    'additionalDetails' => 'Πρόσθετες λεπτομέρειες',
     'allowPeopleToCommentOnThisVideo' => 'Allow people to comment on this video',
     'allowPeopleToDownloadThisVideo' => 'Allow people to download this video',
     'caption' => 'Caption',
