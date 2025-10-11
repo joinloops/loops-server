@@ -18,7 +18,7 @@ return [
     'editProfile' => 'Modifica Profilo',
     'failedToUpdateProfileErrorMessage' => 'Failed to update profile. Please try again.',
     'followRequestPending' => 'Follow Request Pending',
-    'likes' => 'Likes',
+    'likes' => 'Mi piace',
     'loadingProfileDotDotDot' => 'Loading profile...',
     'noFollowersYet' => 'No followers yet',
     'noMorePostsToLoad' => 'No more posts to load',
@@ -37,7 +37,7 @@ return [
     'tabOptions' => [
         'Videos' => 'Video',
     ],
-    'unblock' => 'Unblock',
+    'unblock' => 'Sblocca',
     'userHasntPostedAnyVideosYet' => ':username hasn\'t posted any videos yet',
     'whenPeopleFollowThisAccount' => 'When people follow this account, they\'ll appear here.',
     'whenThisAccountFollowsSomeone' => 'When this account follows someone, they\'ll appear here.',
