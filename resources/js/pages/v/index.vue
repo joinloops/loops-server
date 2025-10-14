@@ -811,7 +811,7 @@ const unlikePost = async () => {
 };
 
 const deletePost = async () => {
-    let res = confirm("Are you sure you want to delete this post?");
+    const res = confirm("Are you sure you want to delete this post?");
     if (res) {
         try {
             await videoStore.deleteVideoById(currentVideo.value.id);

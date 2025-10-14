@@ -339,7 +339,7 @@ const mainLinks = computed(() => {
 });
 
 const footerLinks = computed(() => {
-    let links = [
+    const links = [
         { name: t("nav.about"), path: "/about" },
         { name: t("nav.contact"), path: "/contact" },
         { name: t("nav.community"), path: "/community-guidelines" },
