@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'discoverTrendingContent' => 'Discover trending content',
+    'discoverTrendingContent' => 'Ανακάλυψε δημοφιλές περιεχόμενο',
     'noVideosFoundForThisHashtag' => 'Δεν βρέθηκαν βίντεο για αυτήν την ετικέτα',
 ];
