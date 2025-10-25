@@ -1,0 +1,59 @@
+services:
+  db:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=mariadb
+      - MYSQL_DATABASE=loops_server
+      - MYSQL_USER=mariadb
+      - MYSQL_PASSWORD=mariadb
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/init:/docker-entrypoint-initdb.d:ro
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    networks:
+      - internal_network
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - ./redis:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - internal_network
+
+  nginx:
+    image: nginx:alpine
+    volumes:
+      - ./php_sockets:/var/run/php
+      - ./app_public:/app/public:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "5003:5003"
+    networks:
+      - internal_network
+      - external_network
+    depends_on:
+      - loops
+
+
+  loops:
+    image: loops.org:latest
+    build: .
+    volumes:
+      - ./.env:/app/.env
+      - ./logs:/app/storage/logs
+      - ./php_sockets:/var/run/php
+    networks:
+      - internal_network
+      - external_network
+    depends_on:
+      - db
+      - redis
+
+networks:
+  internal_network:
+  external_network:
+    name: loops-network
