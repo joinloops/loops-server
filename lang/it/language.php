@@ -3,7 +3,7 @@
 return [
     'picker' => [
         'title' => 'Seleziona lingua',
-        'description' => 'Select your preferred language. This will change the language for the entire application.',
+        'description' => 'Seleziona la tua lingua preferita. Questo cambierà la lingua per l\'intera applicazione.',
         'select' => 'Seleziona lingua:',
         'applyChanges' => 'Applica Modifiche',
         'current' => 'Lingua attuale:',
