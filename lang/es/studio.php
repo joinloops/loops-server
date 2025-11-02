@@ -3,7 +3,7 @@
 return [
     'actions' => 'Acciones',
     'allowOthersTo' => 'Permitir a otros',
-    'altText' => 'Alt Text',
+    'altText' => 'Texto alternativo',
     'altTextHelp' => 'Describe your video content to make it accessible for visually impaired viewers using screen readers',
     'aspectRatios' => 'Relaciones de aspecto',
     'aspectRatiosMessage' => 'Recomendados: 16:9 para horizontal, 9:16 para vertical.',
