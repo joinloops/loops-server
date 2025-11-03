@@ -20,7 +20,7 @@ updates:
       - "github-actions"
 
   - package-ecosystem: "docker"
-    directory: "/docker"
+    directory: "/docker/complete"
     schedule:
       interval: daily
       time: '05:00'
