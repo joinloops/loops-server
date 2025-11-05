@@ -21,7 +21,7 @@
         "@vitejs/plugin-vue": "^6.0.0",
         "@vueuse/core": "^14.0.0",
         "autoprefixer": "^10.4.20",
-        "axios": "^1.6.4",
+        "axios": "^1.13.2",
         "boxicons": "^2.1.4",
         "date-fns": "^4.1.0",
         "emoji-mart-vue-fast": "^15.0.3",
