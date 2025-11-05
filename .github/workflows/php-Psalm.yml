@@ -1,6 +1,14 @@
 name: PHP - Psalm
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - dev
+      - staging
+  pull_request:
+    branches:
+      - dev
+      - staging
 
 jobs:
   Psalm:
