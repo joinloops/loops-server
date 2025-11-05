@@ -47,7 +47,7 @@ return [
     'exportHistory' => 'Exportar historial',
     'hoursWatched' => 'Horas vistas',
     'invalidVerificationCodePleaseTryAgain' => 'Código de verificación no válido. Inténtalo de nuevo.',
-    'likesGiven' => 'Megusta dados',
+    'likesGiven' => 'Me gusta dados',
     'manageAccount' => 'Gestión de la cuenta',
     'manageYourAccountEmail' => 'Gestionar el correo electrónico de tu cuenta.',
     'manageYourAccountSecuritySettings' => 'Gestionar la configuración de seguridad de tu cuenta.',
