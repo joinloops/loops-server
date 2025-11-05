@@ -1,6 +1,16 @@
 name: JS - Prettier
 
-on: [pull_request]
+on:
+  push:
+    branches:
+      - main
+      - dev
+      - staging
+  pull_request:
+    branches:
+      - main
+      - dev
+      - staging
 
 jobs:
   tests:
