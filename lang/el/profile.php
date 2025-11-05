@@ -37,10 +37,10 @@ return [
     'tabOptions' => [
         'Videos' => 'Βίντεο',
     ],
-    'unblock' => 'Unblock',
-    'userHasntPostedAnyVideosYet' => ':username hasn\'t posted any videos yet',
-    'whenPeopleFollowThisAccount' => 'When people follow this account, they\'ll appear here.',
-    'whenThisAccountFollowsSomeone' => 'When this account follows someone, they\'ll appear here.',
-    'youHaventPostedAnyVideosYet' => 'You haven\'t posted any videos yet',
-    'youveReachedTheEndOfThisList' => 'You\'ve reached the end of this list',
+    'unblock' => 'Άρση αποκλεισμού',
+    'userHasntPostedAnyVideosYet' => ':username δεν έχει δημοσιεύσει κανένα βίντεο ακόμα',
+    'whenPeopleFollowThisAccount' => 'Όταν κάποιος ακολουθεί αυτόν τον λογαριασμό, θα εμφανίζεται εδώ.',
+    'whenThisAccountFollowsSomeone' => 'Όταν αυτός ο λογαριασμός ακολουθεί κάποιον, θα εμφανιστεί εδώ.',
+    'youHaventPostedAnyVideosYet' => 'Δεν έχεις δημοσιεύσει κανένα βίντεο ακόμα',
+    'youveReachedTheEndOfThisList' => 'Έφτασες στο τέλος αυτής της λίστας',
 ];
