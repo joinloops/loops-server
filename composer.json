@@ -30,7 +30,7 @@
         "pbmedia/laravel-ffmpeg": "^8.7",
         "pragmarx/google2fa-laravel": "^2.2",
         "predis/predis": "^3.2",
-        "resend/resend-php": "^0.18.1",
+        "resend/resend-php": "^1.0.0",
         "stevebauman/purify": "^6.3",
         "symfony/http-client": "^7.3",
         "symfony/mailgun-mailer": "^7.3"

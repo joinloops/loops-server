@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e2b47af541ffd0dd0840fc3f24a2149e",
+    "content-hash": "d15515fddb6583be704ee962d21fe17c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -5594,16 +5594,16 @@
         },
         {
             "name": "resend/resend-php",
-            "version": "v0.18.1",
+            "version": "v1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resend/resend-php.git",
-                "reference": "f20a9a50a7f705294af1662995c93bfd806fed3e"
+                "reference": "ec5b67751a557f4de2b8319449c745bfe58d1bc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resend/resend-php/zipball/f20a9a50a7f705294af1662995c93bfd806fed3e",
-                "reference": "f20a9a50a7f705294af1662995c93bfd806fed3e",
+                "url": "https://api.github.com/repos/resend/resend-php/zipball/ec5b67751a557f4de2b8319449c745bfe58d1bc3",
+                "reference": "ec5b67751a557f4de2b8319449c745bfe58d1bc3",
                 "shasum": ""
             },
             "require": {
@@ -5645,9 +5645,9 @@
             ],
             "support": {
                 "issues": "https://github.com/resend/resend-php/issues",
-                "source": "https://github.com/resend/resend-php/tree/v0.18.1"
+                "source": "https://github.com/resend/resend-php/tree/v1.0.0"
             },
-            "time": "2025-07-04T00:12:53+00:00"
+            "time": "2025-11-01T00:14:24+00:00"
         },
         {
             "name": "spatie/temporary-directory",
