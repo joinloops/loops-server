@@ -16,7 +16,7 @@
         "@mdi/font": "^7.4.47",
         "@tailwindcss/postcss": "^4.1.10",
         "@tailwindcss/vite": "^4.0.15",
-        "@tanstack/vue-query": "^5.90.6",
+        "@tanstack/vue-query": "^5.90.7",
         "@unhead/vue": "^2.0.19",
         "@vitejs/plugin-vue": "^6.0.0",
         "@vueuse/core": "^14.0.0",
