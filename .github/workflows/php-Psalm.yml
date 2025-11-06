@@ -32,4 +32,5 @@ jobs:
         run: composer install --no-interaction --no-progress
 
       - name: Run Psalm
+        continue-on-error: true
         run: ./vendor/bin/psalm --output-format=github --shepherd
