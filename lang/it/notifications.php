@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'allCaughtUp' => 'Sai già tutto!',
+    'errorLoadingNotifications' => 'Errore nel caricamento delle notifiche',
     'messageTypes' => [
-        'videoLike' => 'liked your video',
+        'videoLike' => 'ha messo mi piace al tuo video',
         'newFollower' => 'ha iniziato a seguirti',
         'videoComment' => 'ha commentato sul tuo video',
-        'videoCommentReply' => 'replied to a comment on your video',
-        'videoCommentLike' => 'liked your comment',
-        'videoCommentReplyLike' => 'liked your comment reply',
-        'videoCommentShare' => 'shared your comment',
-        'videoCommentReplyShare' => 'shared your comment reply',
+        'videoCommentReply' => 'ha risposto a un commento sul tuo video',
+        'videoCommentLike' => 'gli piace il tuo commento',
+        'videoCommentReplyLike' => 'ha apprezzato la tua risposta al commento',
+        'videoCommentShare' => 'ha condiviso il tuo commento',
+        'videoCommentReplyShare' => 'ha condiviso la tua risposta al commento',
         'videoShare' => 'ha condiviso il tuo video',
         'default' => 'ha interagito con il tuo contenuto',
     ],
