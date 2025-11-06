@@ -36,7 +36,7 @@
         "symfony/mailgun-mailer": "^7.3"
     },
     "require-dev": {
-        "barryvdh/laravel-ide-helper": "^3.6",
+        "barryvdh/laravel-ide-helper": "^3.5",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.1",
@@ -46,7 +46,8 @@
         "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^3.0",
         "phpstan/phpstan": "^2.1",
-        "phpunit/phpunit": "^11.0.1"
+        "phpunit/phpunit": "^11.0.1",
+        "psalm/plugin-laravel": "^3.0"
     },
     "autoload": {
         "psr-4": {
