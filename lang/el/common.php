@@ -101,6 +101,7 @@ return [
     'newVerificationCodeSent' => 'Ο νέος κωδικός επαλήθευσης εστάλη!',
     'next' => 'Επόμενο',
     'noMoreResults' => 'Δεν υπάρχουν άλλα αποτελέσματα.',
+    'noPostsYet' => 'No posts yet',
     'notifications' => 'Ειδοποιήσεις',
     'password' => 'Κωδικός πρόσβασης',
     'passwordResetLinkHasBeenSentToYourEmail' => 'Ο σύνδεσμος επαναφοράς κωδικού έχει σταλεί στο email σου.',
