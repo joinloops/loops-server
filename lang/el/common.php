@@ -134,6 +134,7 @@ return [
     'somethingWentWrong' => 'Κάτι πήγε στραβά',
     'status' => 'Κατάσταση',
     'suggestions' => 'Προτάσεις',
+    'tapToPlay' => 'Tap to Play',
     'termsOfService' => 'Όροι Παροχής Υπηρεσιών',
     'today' => 'Σήμερα',
     'tooManyFailedAttemptsPleaseTryAgainLater' => 'Πάρα πολλές αποτυχημένες προσπάθειες, παρακαλώ προσπάθησε ξανά αργότερα',
