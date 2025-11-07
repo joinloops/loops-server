@@ -101,6 +101,7 @@ return [
     'newVerificationCodeSent' => 'New verification code sent!',
     'next' => 'Next',
     'noMoreResults' => 'No more results.',
+    'noPostsYet' => 'No posts yet',
     'notifications' => 'Notifications',
     'password' => 'Password',
     'passwordResetLinkHasBeenSentToYourEmail' => 'Password reset link has been sent to your email.',
