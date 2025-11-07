@@ -101,6 +101,7 @@ return [
     'newVerificationCodeSent' => '¡Nuevo código de verificación enviado!',
     'next' => 'Siguiente',
     'noMoreResults' => 'No hay más resultados.',
+    'noPostsYet' => 'No posts yet',
     'notifications' => 'Notificaciones',
     'password' => 'Contraseña',
     'passwordResetLinkHasBeenSentToYourEmail' => 'Se ha enviado un enlace a tu correo electrónico para restablecer tu contraseña.',
