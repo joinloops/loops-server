@@ -101,6 +101,7 @@ return [
     'newVerificationCodeSent' => 'Nuovo codice di verifica inviato!',
     'next' => 'Avanti',
     'noMoreResults' => 'Non ci sono altri risultati.',
+    'noPostsYet' => 'No posts yet',
     'notifications' => 'Notifiche',
     'password' => 'Password',
     'passwordResetLinkHasBeenSentToYourEmail' => 'Il link per reimpostare la password è stato inviato alla tua E-mail.',
