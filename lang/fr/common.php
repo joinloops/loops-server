@@ -134,6 +134,7 @@ return [
     'somethingWentWrong' => 'Une erreur est survenue',
     'status' => 'État',
     'suggestions' => 'Suggestions',
+    'tapToPlay' => 'Tap to Play',
     'termsOfService' => 'Terms of Service',
     'today' => 'Aujourd\'hui',
     'tooManyFailedAttemptsPleaseTryAgainLater' => 'Too many failed attempts, please try again later',
