@@ -134,7 +134,7 @@ return [
     'somethingWentWrong' => 'Qualcosa è andato storto',
     'status' => 'Stato',
     'suggestions' => 'Suggerimenti',
-    'tapToPlay' => 'Tap to Play',
+    'tapToPlay' => 'Tocca per riprodurre',
     'termsOfService' => 'Termini di Servizio',
     'today' => 'Oggi',
     'tooManyFailedAttemptsPleaseTryAgainLater' => 'Troppi tentativi falliti, riprova tra un po\'',
