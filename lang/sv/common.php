@@ -134,6 +134,7 @@ return [
     'somethingWentWrong' => 'Något gick fel',
     'status' => 'Status',
     'suggestions' => 'Förslag',
+    'tapToPlay' => 'Tap to Play',
     'termsOfService' => 'Användarvillkor',
     'today' => 'Idag',
     'tooManyFailedAttemptsPleaseTryAgainLater' => 'För många misslyckade försök, försök igen senare',
