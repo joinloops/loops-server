@@ -17,7 +17,7 @@ return [
     'displayNameHelp' => 'Anzeigename kann bis zu 30 Zeichen lang sein.',
     'editProfile' => 'Profil bearbeiten',
     'failedToUpdateProfileErrorMessage' => 'Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut.',
-    'followRequestPending' => 'Follow Request Pending',
+    'followRequestPending' => 'Follow-Anfrage ausstehend',
     'likes' => '"Gefällt mir"-Angaben',
     'loadingProfileDotDotDot' => 'Lade Profil...',
     'noFollowersYet' => 'Noch keine Follower',
