@@ -20,7 +20,7 @@
         "@unhead/vue": "^2.0.19",
         "@vitejs/plugin-vue": "^6.0.0",
         "@vueuse/core": "^14.0.0",
-        "autoprefixer": "^10.4.20",
+        "autoprefixer": "^10.4.22",
         "axios": "^1.13.2",
         "boxicons": "^2.1.4",
         "date-fns": "^4.1.0",
