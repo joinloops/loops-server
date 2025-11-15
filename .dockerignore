@@ -1,8 +1,8 @@
 # Folders
 .git/
-!storage/app/public/m/
-storage/app/public/m/*
-mariadb-11-data/
+#!storage/app/public/m/
+#storage/app/public/m/*
+mysql-9-data/
 redis-data/
 tests/
 node_modules/
