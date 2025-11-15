@@ -1,7 +1,7 @@
 services:
 ## MariaDB and Redis (optional)
   mysqldb:
-    image: mysqldb:9
+    image: mysql:9
     container_name: loops-db
     restart: unless-stopped
     env_file:
