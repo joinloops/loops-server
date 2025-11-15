@@ -146,7 +146,6 @@ services:
     env_file:
       - .env
     environment:
-    environment:
       # Laravel Auto-run Configuration
       AUTORUN_ENABLED: "false"
       AUTORUN_LARAVEL_MIGRATION: "false"
