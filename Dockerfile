@@ -1,9 +1,5 @@
-# renovate: datasource=node-version depName=node
-ARG NODE_MAJOR_VERSION="24"  # Node.js version to use in base image, change with [--build-arg NODE_MAJOR_VERSION="22"]
-ARG DEBIAN_VERSION="trixie"  # Debian image to use for base image, change with [--build-arg DEBIAN_VERSION="trixie"]
 # Node.js stage for building assets
-FROM node:${NODE_MAJOR_VERSION}-${DEBIAN_VERSION}-slim AS node
-
+FROM node:24-trixie-slim AS node
 # PHP base image
 FROM serversideup/php:8.4-fpm-nginx
 
@@ -12,10 +8,6 @@ WORKDIR /var/www/html
 
 # Switch to root to install packages
 USER root
-
-# Copy Node.js binaries/libraries from node stage
-COPY --from=node /usr/local/bin /usr/local/bin
-COPY --from=node /usr/local/lib /usr/local/lib
 
 # Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
@@ -58,6 +50,10 @@ RUN chown -R www-data:www-data /var/www/html \
 
 # Install composer dependencies
 RUN composer install --no-ansi --no-interaction --optimize-autoloader
+
+# Copy Node.js binaries/libraries from node stage
+COPY --from=node /usr/local/bin /usr/local/bin
+COPY --from=node /usr/local/lib /usr/local/lib
 
 # Install npm dependencies and build assets
 ENV NODE_ENV="production"

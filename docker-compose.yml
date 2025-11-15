@@ -72,7 +72,7 @@ services:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     depends_on:
-      - db
+      - mysqldb
       - redis
     networks:
       - loops-network
@@ -100,7 +100,7 @@ services:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     depends_on:
-      - db
+      - mysqldb
       - redis
     healthcheck:
       test: ["CMD", "php", "artisan", "horizon:status"]
@@ -134,7 +134,7 @@ services:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
     depends_on:
-      - db
+      - mysqldb
       - redis
     healthcheck:
       test: ["CMD", "healthcheck-schedule"]
