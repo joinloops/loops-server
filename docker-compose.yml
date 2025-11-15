@@ -76,9 +76,10 @@ services:
       SSL_MODE: "off"
 
       # PHP Configuration
-      PHP_POST_MAX_SIZE: "500M"
-      PHP_UPLOAD_MAX_FILE_SIZE: "500M"
+      PHP_POST_MAX_SIZE: "100M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_OPCACHE_ENABLE: "1"
+      PHP_MEMORY_LIMIT: "512M"
       
       # Laravel Auto-run Configuration
       AUTORUN_ENABLED: "true"
