@@ -62,6 +62,7 @@ return [
     'following' => 'Seguiti',
     'forgotPassword' => 'Hai dimenticato la password?',
     'formattedAs' => 'Formattato come',
+    'goBackHome' => 'Go back home',
     'goToHome' => 'Vai alla Home',
     'hashtagContainsAgeRestrictedContent' => 'Questo hashtag contiene contenuti con limiti di età. Effettua il login per verificare la tua età e visualizzare questi video.',
     'hashtagMayNotExist' => 'Questo hashtag potrebbe non esistere, potrebbe essere bandito o potrebbe contenere un tipo.',
