@@ -38,28 +38,6 @@ services:
     networks:
       - loops-network
 
-  minio:
-    image: minio/minio:latest
-    container_name: loops-minio
-    restart: unless-stopped
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    environment:
-      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-minioadmin}
-      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
-    command: server /data --console-address ":9001"
-    volumes:
-      - ./minio-data:/data
-    healthcheck:
-      test: ["CMD", "mc", "ready", "local"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 10s
-    networks:
-      - loops-network
-
 ## Pixelfed containers - App (Web/API), Horizon Queue, Scheduled task.
   loops:
     build:
