@@ -2,7 +2,7 @@
 .git/
 #!storage/app/public/m/
 #storage/app/public/m/*
-mysql-9-data/
+mysqldb-9-data/
 redis-data/
 tests/
 node_modules/
