@@ -242,6 +242,14 @@ export const profilesApi = {
         );
     },
 
+    async updateProfileSuspend(id) {
+        return await apiClient.post(`/api/v1/admin/profiles/${id}/suspend`);
+    },
+
+    async updateProfileUnsuspend(id) {
+        return await apiClient.post(`/api/v1/admin/profiles/${id}/unsuspend`);
+    },
+
     async deleteProfile(id) {
         return { success: true };
     },

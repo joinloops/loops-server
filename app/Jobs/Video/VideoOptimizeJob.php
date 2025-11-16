@@ -70,8 +70,7 @@ class VideoOptimizeJob implements ShouldQueue
         }
 
         $width = 720;
-        $videoBitrate = 1200;
-        $crf = 28;
+        $crf = 26;
 
         $ext = pathinfo($video->vid, PATHINFO_EXTENSION);
         $name = str_replace('.'.$ext, '.720p.mp4', $video->vid);
@@ -82,7 +81,6 @@ class VideoOptimizeJob implements ShouldQueue
 
         $format = new X264('aac');
         $format
-            ->setKiloBitrate($videoBitrate)
             ->setAudioKiloBitrate(128)
             ->setAdditionalParameters([
                 '-preset', 'slow',
@@ -91,12 +89,15 @@ class VideoOptimizeJob implements ShouldQueue
                 '-level', '4.0',
                 '-movflags', '+faststart',
                 '-pix_fmt', 'yuv420p',
+                '-ac', '2',
             ]);
 
         // @phpstan-ignore-next-line
         $media = FFMpeg::fromDisk('s3')
             ->open($video->vid)
             ->addFilter(['-vf', "scale={$width}:-2"])
+            ->addFilter('-err_detect', 'ignore_err')
+            ->addFilter('-fflags', '+genpts')
             ->export()
             ->toDisk('s3')
             ->inFormat($format)
