@@ -62,6 +62,7 @@ return [
     'following' => 'Gefolgt',
     'forgotPassword' => 'Passwort vergessen?',
     'formattedAs' => 'Formatiert als',
+    'goBackHome' => 'Go back home',
     'goToHome' => 'Zurück zur Startseite',
     'hashtagContainsAgeRestrictedContent' => 'Dieser Hashtag enthält altersbeschränkten Inhalt. Bitte melde dich an, um dein Alter zu überprüfen und diese Videos anzusehen.',
     'hashtagMayNotExist' => 'Dieser Hashtag existiert möglicherweise nicht, kann gebannt werden oder einen Tippfehler enthalten.',
