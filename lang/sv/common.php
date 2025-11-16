@@ -62,6 +62,7 @@ return [
     'following' => 'Following',
     'forgotPassword' => 'Forgot password?',
     'formattedAs' => 'Formatted as',
+    'goBackHome' => 'Go back home',
     'goToHome' => 'Go to Home',
     'hashtagContainsAgeRestrictedContent' => 'This hashtag contains age-restricted content. Please log in to verify your age and view these videos.',
     'hashtagMayNotExist' => 'This hashtag may not exist, could be banned, or might contain a typo.',
