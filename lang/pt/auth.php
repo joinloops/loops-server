@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'registrationsAreCurrentlyClosed' => 'Registrations are currently closed',
-    'thisServerIsntAccepting' => 'This server isn’t accepting new signups right now. Please check back later or choose another Loops server.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'Essas credenciais não correspondem aos nossos registos.',
+    'password' => 'A senha informada está incorreta.',
+    'registrationsAreCurrentlyClosed' => 'Os registos estão atualmente fechados',
+    'thisServerIsntAccepting' => 'Este servidor não aceita novas inscrições no momento. Por favor, volte mais tarde ou escolha outro servidor de laços.',
+    'throttle' => 'Demasiadas tentativas de acesso. Por favor, tente novamente.',
 ];
