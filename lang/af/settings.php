@@ -31,6 +31,7 @@ return [
     'dataSharingForResearchMessage' => 'Allow anonymized data to be used for academic research and platform improvements.',
     'deactivate' => 'Deactivate',
     'deactivateAccount' => 'Deactivate account',
+    'delete' => 'Delete',
     'deleteAccount' => 'Delete account',
     'disable2FAButton' => 'Disable Two Factor',
     'disableTwoFactor' => 'Disable Two-Factor Authentication',
