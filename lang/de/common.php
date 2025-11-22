@@ -2,6 +2,7 @@
 
 return [
     'accountCreatedSuccessfullyWelcomeAboard' => 'Konto erfolgreich erstellt! Willkommen an Bord!',
+    'actions' => 'Actions',
     'ageRestrictedContent' => 'Inhalt mit Altersbeschränkung',
     'alreadyHaveAnAccount' => 'Hast du bereits ein Konto?',
     'anUnexpectedErrorOccuredPleaseTryAgain' => 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.',
@@ -32,6 +33,7 @@ return [
     'createANewAccountToGetStarted' => 'Erstelle ein neues Konto, um loszulegen',
     'createAStrongPassword' => 'Erstelle ein starkes Passwort',
     'createAccount' => 'Konto erstellen',
+    'created' => 'Created',
     'day' => 'Tag',
     'delete' => 'Löschen',
     'disable' => 'Deaktivieren',
@@ -80,6 +82,7 @@ return [
     'loginFailedPleaseTryAgain' => 'Anmeldung fehlgeschlagen. Bitte erneut versuchen.',
     'loginToContinue' => 'Anmelden, um fortzufahren',
     'loginToContinueExploring' => 'Log dich ein, um weitere Videos zu entdecken und tolle Inhalte von Künstlern aus aller Welt zu sehen.',
+    'manage' => 'Manage',
     'markAllAsReadConfirmMessage' => 'Sind Sie sicher, dass Sie alle ungelesenen Benachrichtigungen als gelesen markieren möchten?',
     'markAllRead' => 'Alle als gelesen markieren',
     'markAsRead' => 'Als gelesen markieren',
@@ -117,6 +120,7 @@ return [
     'readMore' => 'Weitere Informationen',
     'registrationFailedPleaseTryAgain' => 'Registrierung fehlgeschlagen. Bitte versuche es erneut.',
     'rememberMe' => 'Errinere mich',
+    'remove' => 'Remove',
     'report' => 'Melden',
     'resendCode' => 'Neuen Code anfordern',
     'resendIn' => 'Erneut senden',
