@@ -2,6 +2,7 @@
 
 return [
     'accountCreatedSuccessfullyWelcomeAboard' => 'Account creato con successo! Benvenuto a bordo!',
+    'actions' => 'Actions',
     'ageRestrictedContent' => 'Contenuto con Restrizioni di Età',
     'alreadyHaveAnAccount' => 'Ha già un account?',
     'anUnexpectedErrorOccuredPleaseTryAgain' => 'Si è verificato un errore imprevisto. Per favore riprova.',
@@ -32,6 +33,7 @@ return [
     'createANewAccountToGetStarted' => 'Crea un nuovo account per iniziare',
     'createAStrongPassword' => 'Crea una password sicura',
     'createAccount' => 'Crea Account',
+    'created' => 'Created',
     'day' => 'Giorno',
     'delete' => 'Elimina',
     'disable' => 'Disabilita',
@@ -80,6 +82,7 @@ return [
     'loginFailedPleaseTryAgain' => 'Accesso non riuscito. Riprova.',
     'loginToContinue' => 'Accedi per continuare',
     'loginToContinueExploring' => 'Accedi per continuare ad esplorare video e scoprire contenuti incredibili da creatori in tutto il mondo.',
+    'manage' => 'Manage',
     'markAllAsReadConfirmMessage' => 'Sei sicuro di voler segnare tutte le notifiche non lette come lette?',
     'markAllRead' => 'Segna tutti come letti',
     'markAsRead' => 'Segna come letto',
@@ -117,6 +120,7 @@ return [
     'readMore' => 'Continua a leggere',
     'registrationFailedPleaseTryAgain' => 'Registrazione fallita. Riprova.',
     'rememberMe' => 'Ricordami',
+    'remove' => 'Remove',
     'report' => 'Segnala',
     'resendCode' => 'Invia il codice di nuovo',
     'resendIn' => 'Reinvia in',
