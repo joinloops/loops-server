@@ -2,8 +2,8 @@
 
 return [
     'failed' => 'Estas credenciais não estão nos nossos registros.',
-    'password' => 'The provided password is incorrect.',
-    'registrationsAreCurrentlyClosed' => 'Registrations are currently closed',
-    'thisServerIsntAccepting' => 'This server isn’t accepting new signups right now. Please check back later or choose another Loops server.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'password' => 'A senha fornecida está incorreta.',
+    'registrationsAreCurrentlyClosed' => 'Os registros estão fechados no momento',
+    'thisServerIsntAccepting' => 'Este servidor não está aceitando novas inscrições no momento. Por favor, volte mais tarde ou escolha outro servidor de Repetições.',
+    'throttle' => 'Você realizou muitas tentativas de \'login\'. Por favor, tente novamente em: \'segundos\' \'segundos\'.',
 ];
