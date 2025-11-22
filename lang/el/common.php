@@ -2,6 +2,7 @@
 
 return [
     'accountCreatedSuccessfullyWelcomeAboard' => 'Ο λογαριασμός δημιουργήθηκε επιτυχώς! Καλώς ήρθες!',
+    'actions' => 'Actions',
     'ageRestrictedContent' => 'Περιεχόμενο Περιορισμένης Ηλικίας',
     'alreadyHaveAnAccount' => 'Έχεις ήδη λογαριασμό;',
     'anUnexpectedErrorOccuredPleaseTryAgain' => 'Παρουσιάστηκε μη αναμενόμενο σφάλμα. Παρακαλούμε προσπάθησε ξανά.',
@@ -32,6 +33,7 @@ return [
     'createANewAccountToGetStarted' => 'Δημιούργησε ένα νέο λογαριασμό για να ξεκινήσεις',
     'createAStrongPassword' => 'Δημιουργία ισχυρού κωδικού πρόσβασης',
     'createAccount' => 'Δημιουργία λογαριασμού',
+    'created' => 'Created',
     'day' => 'Ημέρα',
     'delete' => 'Διαγραφή',
     'disable' => 'Απενεργοποίηση',
@@ -80,6 +82,7 @@ return [
     'loginFailedPleaseTryAgain' => 'Η σύνδεση απέτυχε. Παρακαλούμε προσπάθησε ξανά.',
     'loginToContinue' => 'Σύνδεση για να συνέχεια',
     'loginToContinueExploring' => 'Συνδέσου για να συνεχίσεις να εξερευνάς βίντεο και να ανακαλύψεις εκπληκτικό περιεχόμενο από δημιουργούς σε όλο τον κόσμο.',
+    'manage' => 'Manage',
     'markAllAsReadConfirmMessage' => 'Σίγουρα θες να επισημάνεις όλες τις μη αναγνωσμένες ειδοποιήσεις ως αναγνωσμένες;',
     'markAllRead' => 'Επισήμανση Όλων Ως Αναγ/ων',
     'markAsRead' => 'Σήμανση ως αναγνωσμένο',
@@ -117,6 +120,7 @@ return [
     'readMore' => 'Διάβασε περισσότερα',
     'registrationFailedPleaseTryAgain' => 'Η εγγραφή απέτυχε. Παρακαλώ δοκίμασε ξανά.',
     'rememberMe' => 'Να με θυμάσαι',
+    'remove' => 'Remove',
     'report' => 'Αναφορά',
     'resendCode' => 'Επαναποστολή κωδικού',
     'resendIn' => 'Επαναποστολή σε',
