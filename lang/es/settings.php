@@ -31,7 +31,7 @@ return [
     'dataSharingForResearchMessage' => 'Permitir el uso de datos anónimos para la investigación académica y la mejora de la plataforma.',
     'deactivate' => 'Desactivar',
     'deactivateAccount' => 'Desactivar cuenta',
-    'delete' => 'Delete',
+    'delete' => 'Eliminar',
     'deleteAccount' => 'Eliminar cuenta',
     'disable2FAButton' => 'Deshabilitar la autenticación de dos factores',
     'disableTwoFactor' => 'Deshabilitar la autenticación de dos factores',
