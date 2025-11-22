@@ -36,6 +36,7 @@ return [
     'noCommentsYet' => 'No comments yet',
     'permalink' => 'Permalink',
     'pinToProfile' => 'Pin to Profile',
+    'pinned' => 'Pinned',
     'pleaseSelectAScenario' => 'Please select a scenario',
     'post' => 'Post',
     'postingDotDotDot' => 'Posting...',
