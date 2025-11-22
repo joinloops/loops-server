@@ -36,6 +36,7 @@ return [
     'noCommentsYet' => 'Ancora nessun commento',
     'permalink' => 'Permalink',
     'pinToProfile' => 'Fissa sul profilo',
+    'pinned' => 'Pinned',
     'pleaseSelectAScenario' => 'Seleziona uno scenario',
     'post' => 'Pubblica',
     'postingDotDotDot' => 'Pubblicando...',
