@@ -2,6 +2,7 @@
 
 return [
     'accountCreatedSuccessfullyWelcomeAboard' => 'Kontot har skapats! Välkommen!',
+    'actions' => 'Actions',
     'ageRestrictedContent' => 'Åldersbegränsat innehåll',
     'alreadyHaveAnAccount' => 'Har du redan ett konto?',
     'anUnexpectedErrorOccuredPleaseTryAgain' => 'Ett oväntat fel uppstod. Försök igen.',
@@ -32,6 +33,7 @@ return [
     'createANewAccountToGetStarted' => 'Skapa ett nytt konto för att komma igång',
     'createAStrongPassword' => 'Skapa ett starkt lösenord',
     'createAccount' => 'Skapa konto',
+    'created' => 'Created',
     'day' => 'Day',
     'delete' => 'Ta bort',
     'disable' => 'Inaktivera',
@@ -80,6 +82,7 @@ return [
     'loginFailedPleaseTryAgain' => 'Login failed. Please try again.',
     'loginToContinue' => 'Log in to continue',
     'loginToContinueExploring' => 'Log in to continue exploring videos and discover amazing content from creators around the world.',
+    'manage' => 'Manage',
     'markAllAsReadConfirmMessage' => 'Are you sure you want to mark all unread notifications as read?',
     'markAllRead' => 'Mark All Read',
     'markAsRead' => 'Mark as Read',
@@ -117,6 +120,7 @@ return [
     'readMore' => 'Read more',
     'registrationFailedPleaseTryAgain' => 'Registration failed. Please try again.',
     'rememberMe' => 'Remember me',
+    'remove' => 'Remove',
     'report' => 'Report',
     'resendCode' => 'Resend code',
     'resendIn' => 'Resend in',
