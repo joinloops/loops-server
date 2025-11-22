@@ -36,6 +36,7 @@ return [
     'noCommentsYet' => 'Aucun commentaire pour le moment',
     'permalink' => 'Lien permanent',
     'pinToProfile' => 'Épingler au profil',
+    'pinned' => 'Pinned',
     'pleaseSelectAScenario' => 'Choisissez un scénario',
     'post' => 'Publier',
     'postingDotDotDot' => 'Publication...',
