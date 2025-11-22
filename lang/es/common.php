@@ -2,6 +2,7 @@
 
 return [
     'accountCreatedSuccessfullyWelcomeAboard' => '¡Cuenta creada con éxito! ¡Bienvenido/a!',
+    'actions' => 'Actions',
     'ageRestrictedContent' => 'Contenido con restricción por edades',
     'alreadyHaveAnAccount' => '¿Ya tienes una cuenta?',
     'anUnexpectedErrorOccuredPleaseTryAgain' => 'Ha ocurrido un error inesperado. Por favor inténtalo de nuevo.',
@@ -32,6 +33,7 @@ return [
     'createANewAccountToGetStarted' => 'Crea una nueva cuenta para comenzar',
     'createAStrongPassword' => 'Crea una contraseña segura',
     'createAccount' => 'Crear cuenta',
+    'created' => 'Created',
     'day' => 'Día',
     'delete' => 'Eliminar',
     'disable' => 'Deshabilitar',
@@ -80,6 +82,7 @@ return [
     'loginFailedPleaseTryAgain' => 'Inicio de sesión fallido. Por favor inténtalo de nuevo.',
     'loginToContinue' => 'Inicia sesión para continuar',
     'loginToContinueExploring' => 'Inicia sesión para continuar explorando vídeos y descubre contenido increíble de creadores de todo el mundo.',
+    'manage' => 'Manage',
     'markAllAsReadConfirmMessage' => '¿Estás seguro de que deseas marcar todas las notificaciones no leídas como leídas?',
     'markAllRead' => 'Marcar todo como leído',
     'markAsRead' => 'Marcar como leído',
@@ -117,6 +120,7 @@ return [
     'readMore' => 'Leer más',
     'registrationFailedPleaseTryAgain' => 'Registro fallido. Por favor inténtalo de nuevo.',
     'rememberMe' => 'Recordar mis datos',
+    'remove' => 'Remove',
     'report' => 'Reportar',
     'resendCode' => 'Reenviar código',
     'resendIn' => 'Reenviar',
