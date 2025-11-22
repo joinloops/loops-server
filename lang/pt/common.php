@@ -2,6 +2,7 @@
 
 return [
     'accountCreatedSuccessfullyWelcomeAboard' => 'Conta criada com sucesso! Bem-vindo a bordo!',
+    'actions' => 'Actions',
     'ageRestrictedContent' => 'Conteúdo Restrito a Idade',
     'alreadyHaveAnAccount' => 'Já tem uma conta?',
     'anUnexpectedErrorOccuredPleaseTryAgain' => 'Ocorreu um erro inesperado. Tente novamente.',
@@ -32,6 +33,7 @@ return [
     'createANewAccountToGetStarted' => 'Crie uma conta para começar',
     'createAStrongPassword' => 'Crie uma senha segura',
     'createAccount' => 'Criar Conta',
+    'created' => 'Created',
     'day' => 'Dia',
     'delete' => 'Apagar',
     'disable' => 'Desativar',
@@ -80,6 +82,7 @@ return [
     'loginFailedPleaseTryAgain' => 'Falha ao iniciar sessão. Por favor, tente novamente.',
     'loginToContinue' => 'Inicia sessão para continuar',
     'loginToContinueExploring' => 'Inicie a sessão para continuar a explorar vídeos e descobrir conteúdo incrível de criadores de todo o mundo.',
+    'manage' => 'Manage',
     'markAllAsReadConfirmMessage' => 'Tem certeza de que deseja marcar todas não lidas como lidas?',
     'markAllRead' => 'Marcar todas como lidas',
     'markAsRead' => 'Marcar como Lido',
@@ -117,6 +120,7 @@ return [
     'readMore' => 'Mais informações',
     'registrationFailedPleaseTryAgain' => 'Não foi possível efetuar o registo. Tente novamente.',
     'rememberMe' => 'Lembrar-me',
+    'remove' => 'Remove',
     'report' => 'Denunciar',
     'resendCode' => 'Reenviar o código',
     'resendIn' => 'Reenviar em',
