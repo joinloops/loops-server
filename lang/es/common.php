@@ -62,7 +62,7 @@ return [
     'following' => 'Siguiendo',
     'forgotPassword' => '¿Olvidaste la contraseña?',
     'formattedAs' => 'Formato tipo',
-    'goBackHome' => 'Go back home',
+    'goBackHome' => 'Volver a Inicio',
     'goToHome' => 'Ir al inicio',
     'hashtagContainsAgeRestrictedContent' => 'Esta etiqueta incluye contenido con restricción por edades. Por favor inicia sesión para verificar tu edad y ver estos vídeos.',
     'hashtagMayNotExist' => 'Esta etiqueta puede no existir, estar prohibida, o contener un error tipográfico.',
