@@ -36,7 +36,7 @@ return [
     'noCommentsYet' => 'Κανένα σχόλιο ακόμα',
     'permalink' => 'Μόνιμος σύνδεσμος',
     'pinToProfile' => 'Καρφίτσωμα στο Προφίλ',
-    'pinned' => 'Pinned',
+    'pinned' => 'Καρφιτσώθηκε',
     'pleaseSelectAScenario' => 'Παρακαλώ επέλεξε ένα σενάριο',
     'post' => 'Ανάρτηση',
     'postingDotDotDot' => 'Δημοσίευση...',
