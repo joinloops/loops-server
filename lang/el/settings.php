@@ -31,7 +31,7 @@ return [
     'dataSharingForResearchMessage' => 'Να επιτρέπεται η χρήση ανώνυμων δεδομένων για ακαδημαϊκή έρευνα και βελτιώσεις πλατφόρμας.',
     'deactivate' => 'Απενεργοποίηση',
     'deactivateAccount' => 'Απενεργοποίηση λογαριασμού',
-    'delete' => 'Delete',
+    'delete' => 'Διαγραφή',
     'deleteAccount' => 'Διαγραφή λογαριασμού',
     'disable2FAButton' => 'Απενεργοποίηση Δύο Παραγόντων',
     'disableTwoFactor' => 'Απενεργοποίηση Ταυτοποίησης Δύο Παραγόντων',
