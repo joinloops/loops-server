@@ -18,10 +18,10 @@ $authorName = data_get($videoData, 'account.name', '');
 $authorUsername = data_get($videoData, 'account.username', '');
 $authorAvatar = data_get($videoData, 'account.avatar', url('/storage/avatars/default.jpg'));
 
-$videoCdnUrl = data_get($videoData, 'src_url', '');
-videoWidth = data_get($videoData, 'media.width', '');
-videoHeight = data_get($videoData, 'media.height', '');
-<!-- videoDuration =  ''; -->
+$videoCdnUrl = data_get($videoData, 'media.src_url', null);
+$videoWidth = data_get($videoData, 'media.width', null);
+$videoHeight = data_get($videoData, 'media.height', null);
+$videoDuration =  data_get($videoData, 'media.duration', null);
 $videoType ='video/mp4';
 
 if ($videoData) {
@@ -52,7 +52,7 @@ if ($videoData) {
     <meta property="og:video" content="{{ $videoCdnUrl }}" />
     <meta property="og:video:width" content="{{ $videoWidth }}">
     <meta property="og:video:height" content="{{ $videoHeight }}">
-    <!-- <meta property="og:video:duration" content="{{ $videoDuration }}"> -->
+    <meta property="og:video:duration" content="{{ $videoDuration }}">
     <meta property="og:video:type" content="{{ $videoType }}" />
     <meta property="og:locale" content="en_US" />
     <meta property="og:logo" content="{{ url('/nav-logo.png') }}" />
