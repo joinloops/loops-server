@@ -14,15 +14,14 @@ $videoLikes = data_get($videoData, 'likes', 0);
 $videoComments = data_get($videoData, 'comments', 0);
 $videoUrl = data_get($videoData, 'url', url('/'));
 $videoThumbnail = data_get($videoData, 'media.thumbnail', url('/storage/avatars/default.jpg'));
-$authorName = data_get($videoData, 'account.name', '');
-$authorUsername = data_get($videoData, 'account.username', '');
-$authorAvatar = data_get($videoData, 'account.avatar', url('/storage/avatars/default.jpg'));
-
 $videoCdnUrl = data_get($videoData, 'media.src_url', null);
 $videoWidth = data_get($videoData, 'media.width', null);
 $videoHeight = data_get($videoData, 'media.height', null);
 $videoDuration = data_get($videoData, 'media.duration', null);
 $videoType ='video/mp4';
+$authorName = data_get($videoData, 'account.name', '');
+$authorUsername = data_get($videoData, 'account.username', '');
+$authorAvatar = data_get($videoData, 'account.avatar', url('/storage/avatars/default.jpg'));
 
 if ($videoData) {
     if (!empty($videoData['captionText'])) {
