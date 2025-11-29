@@ -21,7 +21,7 @@ $authorAvatar = data_get($videoData, 'account.avatar', url('/storage/avatars/def
 $videoCdnUrl = data_get($videoData, 'media.src_url', null);
 $videoWidth = data_get($videoData, 'media.width', null);
 $videoHeight = data_get($videoData, 'media.height', null);
-$videoDuration =  data_get($videoData, 'media.duration', null);
+$videoDuration = data_get($videoData, 'media.duration', null);
 $videoType ='video/mp4';
 
 if ($videoData) {
@@ -43,7 +43,9 @@ if ($videoData) {
 
     <meta name="description" content="{{ $videoDesc }}">
     <meta name="author" content="{{ $authorName }} ({{ '@' . $authorUsername }})">
-
+    <meta property="article:author" content="{{ url('/@' . $authorUsername) }}" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:logo" content="{{ url('/nav-logo.png') }}" />
     <meta property="og:title" content="{{ $videoTitle }}" />
     <meta property="og:description" content="{{ $videoDesc }}" />
     <meta property="og:type" content="video" />
@@ -54,15 +56,11 @@ if ($videoData) {
     <meta property="og:video:height" content="{{ $videoHeight }}">
     <meta property="og:video:duration" content="{{ $videoDuration }}">
     <meta property="og:video:type" content="{{ $videoType }}" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:logo" content="{{ url('/nav-logo.png') }}" />
+    <meta property="video:release_date" content="{{ $videoData['created_at'] ?? '' }}" />
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="{{ $videoTitle }}" />
     <meta name="twitter:description" content="{{ $videoDesc }}" />
     <meta name="twitter:image" content="{{ $videoThumbnail }}" />
-
-    <meta property="video:release_date" content="{{ $videoData['created_at'] ?? '' }}" />
-    <meta property="article:author" content="{{ url('/@' . $authorUsername) }}" />
 
     @vite(['resources/js/app.js'])
     {!! FrontendService::getCustomCss() !!}
