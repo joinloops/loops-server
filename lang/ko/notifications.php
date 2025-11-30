@@ -1,19 +1,19 @@
 <?php
 
 return [
-    'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'allCaughtUp' => '모든 알림을 확인했습니다!',
+    'errorLoadingNotifications' => '알림을 불러오는 중 오류가 발생했습니다',
     'messageTypes' => [
-        'videoLike' => 'liked your video',
-        'newFollower' => 'started following you',
-        'videoComment' => 'commented on your video',
+        'videoLike' => '동영상에 좋아요를 눌렀습니다',
+        'newFollower' => '팔로우를 시작했습니다',
+        'videoComment' => '동영상에 댓글을 남겼습니다',
         'videoCommentReply' => 'replied to a comment on your video',
         'videoCommentLike' => 'liked your comment',
         'videoCommentReplyLike' => 'liked your comment reply',
         'videoCommentShare' => 'shared your comment',
         'videoCommentReplyShare' => 'shared your comment reply',
-        'videoShare' => 'shared your video',
-        'default' => 'interacted with your content',
+        'videoShare' => '동영상을 공유했습니다',
+        'default' => '콘텐츠와 상호작용했습니다',
     ],
-    'noNotifications' => 'No notifications',
+    'noNotifications' => '알림이 없습니다',
 ];
