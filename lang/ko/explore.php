@@ -2,5 +2,5 @@
 
 return [
     'discoverTrendingContent' => 'Discover trending content',
-    'noVideosFoundForThisHashtag' => 'No videos found for this hashtag',
+    'noVideosFoundForThisHashtag' => '이 해시태그에 대한 동영상을 찾을 수 없습니다.',
 ];
