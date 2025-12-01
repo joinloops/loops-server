@@ -59,7 +59,7 @@
         "eslint": "^9.39.1",
         "eslint-plugin-vue": "^10.6.2",
         "globals": "^16.4.0",
-        "prettier": "^3.7.1",
+        "prettier": "^3.7.3",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.48.0",
         "vue-eslint-parser": "^10.2.0",
