@@ -2,12 +2,14 @@
 
 return [
     'about' => 'Über uns',
+    'activity' => 'Activity',
     'admin' => 'Administrator:innen',
     'clearAll' => 'Alle Entfernen',
     'community' => 'Community',
     'contact' => 'Kontakt',
     'developers' => 'Entwickler:innen',
     'federation' => 'Föderation',
+    'forYou' => 'For You',
     'help' => 'Hilfe',
     'home' => 'Startseite',
     'join' => 'Beitreten',
