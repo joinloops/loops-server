@@ -2,12 +2,14 @@
 
 return [
     'about' => 'Σχετικά',
+    'activity' => 'Activity',
     'admin' => 'Διαχειριστής',
     'clearAll' => 'Εκκαθάριση Όλων',
     'community' => 'Κοινότητα',
     'contact' => 'Επικοινωνία',
     'developers' => 'Προγραμματιστές',
     'federation' => 'Ομοσπονδία',
+    'forYou' => 'For You',
     'help' => 'Βοήθεια',
     'home' => 'Αρχική',
     'join' => 'Συμμετοχή',
