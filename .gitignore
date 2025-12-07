@@ -20,7 +20,6 @@ yarn-error.log
 /.fleet
 /.idea
 /.nova
-/.vscode
 /.zed
 /app/Console/Commands/FindMissingTranslations.php
 /app/Console/Commands/FindDuplicateLangKeys.php

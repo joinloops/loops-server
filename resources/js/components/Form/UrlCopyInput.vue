@@ -14,34 +14,34 @@
             class="px-4 py-2 text-sm text-black font-bold dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-800 focus:outline-none transition-colors duration-200"
             :class="{ 'text-green-700': copied }"
         >
-            {{ copied ? $t("post.copiedExclamation") : $t("post.copyLink") }}
+            {{ copied ? $t('post.copiedExclamation') : $t('post.copyLink') }}
         </button>
     </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue'
 
 const props = defineProps({
     url: {
         type: String,
-        required: true,
-    },
-});
+        required: true
+    }
+})
 
-const urlInput = ref(null);
-const copied = ref(false);
+const urlInput = ref(null)
+const copied = ref(false)
 
 const copyToClipboard = async () => {
     try {
-        await navigator.clipboard.writeText(props.url);
-        copied.value = true;
+        await navigator.clipboard.writeText(props.url)
+        copied.value = true
 
         setTimeout(() => {
-            copied.value = false;
-        }, 2000);
+            copied.value = false
+        }, 2000)
     } catch (err) {
-        console.error("Failed to copy:", err);
+        console.error('Failed to copy:', err)
     }
-};
+}
 </script>

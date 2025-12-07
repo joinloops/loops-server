@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Storage;
@@ -56,6 +57,10 @@ use Storage;
  * @property int $has_hls
  * @property int $can_download
  * @property int $can_duet
+ * @property bool $is_duet
+ * @property string|null $original_duet_id
+ * @property string|null $duet_path
+ * @property int $duet_layout
  * @property int $can_stitch
  * @property int $is_pinned
  * @property int|null $pinned_order
@@ -174,6 +179,7 @@ class Video extends Model
             'media_metadata' => 'array',
             'is_local' => 'boolean',
             'is_edited' => 'boolean',
+            'is_pinned' => 'boolean',
             'can_duet' => 'boolean',
             'can_stitch' => 'boolean',
             'can_download' => 'boolean',
@@ -290,5 +296,18 @@ class Video extends Model
     public function edits(): HasMany
     {
         return $this->hasMany(VideoCaptionEdit::class);
+    }
+
+    /** @return BelongsToMany<Playlist, $this> */
+    public function playlists(): BelongsToMany
+    {
+        return $this->belongsToMany(Playlist::class)
+            ->withPivot('position')
+            ->withTimestamps();
+    }
+
+    public function playlist(): ?Playlist
+    {
+        return $this->playlists()->first();
     }
 }

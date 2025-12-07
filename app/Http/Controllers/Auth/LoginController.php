@@ -164,9 +164,11 @@ class LoginController extends Controller
     protected function authenticated(Request $request, $user)
     {
         $intendedUrl = session('url.intended');
+        $hasRecovered = false;
 
         if (in_array($user->status, [7, 8])) {
-            $user->update(['status' => 1]);
+            $hasRecovered = true;
+            $user->update(['status' => 1, 'delete_after' => null]);
             $user->profile->update(['status' => 1]);
         }
 
@@ -184,7 +186,7 @@ class LoginController extends Controller
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
-                'redirect' => url('/'),
+                'redirect' => $hasRecovered ? url('/dashboard/account/status?restored=true') : url('/'),
             ]);
         }
 

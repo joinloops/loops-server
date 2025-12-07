@@ -4,44 +4,28 @@
             <div class="py-6">
                 <div class="flex items-start justify-between mb-4">
                     <div class="min-w-0 flex-1">
-                        <h1
-                            class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2"
-                        >
-                            {{ $t("common.explore") }}
+                        <h1 class="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                            {{ $t('common.explore') }}
                         </h1>
 
-                        <div
-                            v-if="activeHashtag"
-                            class="flex items-center gap-3 text-sm flex-wrap"
-                        >
-                            <span
-                                class="text-gray-600 dark:text-gray-400 font-medium"
-                            >
+                        <div v-if="activeHashtag" class="flex items-center gap-3 text-sm flex-wrap">
+                            <span class="text-gray-600 dark:text-gray-400 font-medium">
                                 {{ formatNumber(totalResults || 0) }}
-                                {{
-                                    totalResults === 1
-                                        ? $t("common.video")
-                                        : $t("common.videos")
-                                }}
+                                {{ totalResults === 1 ? $t('common.video') : $t('common.videos') }}
                             </span>
                         </div>
 
-                        <p
-                            v-else
-                            class="text-gray-500 dark:text-gray-400 text-sm"
-                        >
+                        <p v-else class="text-gray-500 dark:text-gray-400 text-sm">
                             {{
-                                $t("explore.discoverTrendingContent") ||
-                                "Discover trending content and popular hashtags"
+                                $t('explore.discoverTrendingContent') ||
+                                'Discover trending content and popular hashtags'
                             }}
                         </p>
                     </div>
                 </div>
 
                 <div v-if="hashtags && hashtags.length" class="relative">
-                    <div
-                        class="mr-4 flex gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-1 px-3"
-                    >
+                    <div class="mr-4 flex gap-2 overflow-x-auto no-scrollbar pb-2 -mx-1 px-3">
                         <button
                             v-for="hashtag in hashtags"
                             :key="hashtag.id"
@@ -51,7 +35,7 @@
                                 'disabled:opacity-50 disabled:cursor-not-allowed',
                                 activeHashtag?.id === hashtag.id
                                     ? 'bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900'
-                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700',
+                                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
                             ]"
                             :disabled="loading"
                         >
@@ -70,28 +54,28 @@
 </template>
 
 <script setup>
-import { useUtils } from "@/composables/useUtils";
+import { useUtils } from '@/composables/useUtils'
 
-const { formatNumber } = useUtils();
+const { formatNumber } = useUtils()
 
 defineProps({
     hashtags: {
         type: Array,
-        default: () => [],
+        default: () => []
     },
     activeHashtag: {
         type: Object,
-        default: null,
+        default: null
     },
     totalResults: {
         type: Number,
-        default: null,
+        default: null
     },
     loading: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-defineEmits(["selectHashtag"]);
+defineEmits(['selectHashtag'])
 </script>

@@ -1,23 +1,17 @@
 <template>
     <div
-        class="relative flex justify-center h-[100dvh] lg:h-[calc(100dvh-130px)] w-full overflow-hidden video-wrapper"
+        class="relative flex justify-center h-[100dvh] lg:h-[calc(100dvh-60px)] w-full overflow-hidden video-wrapper"
     >
-        <div
-            class="flex items-center h-full w-full lg:max-w-7xl lg:mx-auto px-0 lg:px-4 lg:py-4"
-        >
+        <div class="flex items-center h-full w-full lg:max-w-7xl lg:mx-auto px-0 lg:px-4 lg:py-4">
             <div
                 :class="[
                     'relative h-full transition-transform duration-300 w-full lg:flex-1',
-                    showComments ? 'lg:-translate-x-[150px]' : 'translate-x-0',
+                    showComments ? 'lg:-translate-x-[150px]' : 'translate-x-0'
                 ]"
             >
-                <div
-                    class="flex items-center lg:items-end h-full justify-center w-full"
-                >
+                <div class="flex items-center lg:items-end h-full justify-center w-full">
                     <div
                         class="relative flex items-center h-full w-full lg:max-w-sm xl:max-w-md 2xl:max-w-lg lg:aspect-[9/16] bg-black border-0 lg:border lg:border-black lg:dark:border-slate-800 overflow-hidden rounded-none lg:rounded-xl video-container"
-                        @mouseover="pauseOverlay = true"
-                        @mouseleave="pauseOverlay = false"
                         @touchstart="handleTouchStart"
                         @touchmove="handleTouchMove"
                         @touchend="handleTouchEnd"
@@ -40,16 +34,13 @@
                                 <i
                                     class="bx bx-low-vision text-white text-[48px] sm:text-[64px] mb-4"
                                 ></i>
-                                <h3
-                                    class="text-white text-lg sm:text-xl font-semibold mb-2"
-                                >
-                                    {{ $t("post.sensitiveContent") }}
+                                <h3 class="text-white text-lg sm:text-xl font-semibold mb-2">
+                                    {{ $t('post.sensitiveContent') }}
                                 </h3>
                                 <p
                                     class="text-white/80 text-sm sm:text-base px-6 mb-4 leading-relaxed"
                                 >
-                                    This content may not be suitable for all
-                                    audiences
+                                    This content may not be suitable for all audiences
                                 </p>
                                 <button
                                     @click.stop="revealSensitiveContent"
@@ -60,102 +51,72 @@
                             </div>
                         </div>
 
-                        <div
-                            v-show="showPlayButton && canInteract"
-                            class="play-overlay"
-                        >
-                            <button
-                                class="play-button"
-                                @click.stop="handlePlayClick"
-                            >
-                                <i
-                                    class="bx bx-play text-[40px] sm:text-[60px] text-white"
-                                ></i>
+                        <div v-show="showPlayButton && canInteract" class="play-overlay">
+                            <button class="play-button" @click.stop="handlePlayClick">
+                                <i class="bx bx-play text-[40px] sm:text-[60px] text-white"></i>
                             </button>
                         </div>
 
                         <div
-                            v-if="
-                                !showPlayButton &&
-                                pauseOverlay &&
-                                !isMobile &&
-                                canInteract
-                            "
-                            class="play-overlay"
-                        >
-                            <button class="play-button" @click.stop="pause">
-                                <i
-                                    class="bx bx-pause text-[40px] sm:text-[60px] -ml-2 text-white"
-                                ></i>
-                            </button>
-                        </div>
-
-                        <div
-                            v-if="
-                                !isPaused &&
-                                showMobilePauseButton &&
-                                isMobile &&
-                                canInteract
-                            "
+                            v-if="!isPaused && showMobilePauseButton && isMobile && canInteract"
                             class="mobile-pause-overlay"
                         >
                             <button class="play-button" @click.stop="pause">
-                                <i
-                                    class="bx bx-pause text-[40px] text-white"
-                                ></i>
+                                <i class="bx bx-pause text-[40px] text-white"></i>
                             </button>
                         </div>
 
                         <button
-                            v-if="
-                                !isPaused &&
-                                hasGlobalInteraction &&
-                                isMuted &&
-                                canInteract
-                            "
+                            v-if="!isPaused && hasGlobalInteraction && isMuted && canInteract"
                             @click.stop="toggleMute"
-                            class="absolute bottom-22 left-4 lg:bottom-4 lg:right-auto lg:left-4 z-10 bg-black/50 rounded-full p-2 text-white flex items-center justify-center hover:bg-black/70"
+                            class="absolute bottom-[106px] left-4 lg:bottom-4 lg:right-auto lg:left-4 z-10 bg-black/50 rounded-full p-2 text-white flex items-center justify-center hover:bg-black/70"
                         >
                             <i
-                                :class="
-                                    isMuted
-                                        ? 'bx bx-volume-mute'
-                                        : 'bx bx-volume-full'
-                                "
+                                :class="isMuted ? 'bx bx-volume-mute' : 'bx bx-volume-full'"
                                 class="text-xl"
                             ></i>
                         </button>
 
                         <div
+                            class="absolute bottom-10 lg:bottom-0 left-0 right-0 h-30 bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none z-0"
+                        ></div>
+
+                        <div
                             v-if="canInteract"
-                            class="absolute bottom-2 left-2 right-20 lg:right-4 p-2 lg:p-4 text-white pointer-events-none"
+                            class="absolute bottom-10 left-2 right-20 lg:bottom-2 lg:right-4 p-2 lg:p-4 text-white pointer-events-none z-10"
                         >
-                            <div class="mb-2">
-                                <span class="text-base sm:text-lg font-semibold"
+                            <div class="mb-0">
+                                <span class="text-base sm:text-lg font-semibold drop-shadow-lg"
                                     >@{{ username }}</span
                                 >
                             </div>
-                            <div class="mb-4">
-                                <p class="text-sm">{{ caption }}</p>
+                            <div class="mb-2">
+                                <AutolinkedText
+                                    :caption="caption"
+                                    :mentions="mentions"
+                                    :tags="hashtags"
+                                    text-size="text-[14px]"
+                                    root-class="text-gray-300 dark:text-slate-300 whitespace-pre-wrap leading-relaxed pointer-events-auto drop-shadow-md"
+                                    :max-char-limit="80"
+                                />
                             </div>
                         </div>
 
                         <div
                             v-if="canInteract"
-                            class="absolute right-2 bottom-4 flex flex-col items-center space-y-6 lg:hidden pointer-events-auto z-10"
+                            class="absolute right-2 bottom-15 lg:bottom-4 flex flex-col items-center space-y-6 lg:hidden pointer-events-auto z-10"
                         >
                             <div class="flex flex-col items-center">
                                 <router-link :to="`/@${username}`">
                                     <div
-                                        class="h-10 w-10 sm:h-12 sm:w-12 overflow-hidden shadow rounded-full bg-gray-2 00 dark:border-slate-800"
+                                        class="h-10 w-10 sm:h-12 sm:w-12 overflow-hidden shadow rounded-full bg-gray-200 dark:border-slate-800"
                                     >
                                         <img
                                             :src="profileImage"
                                             alt="Profile"
                                             class="h-full w-full object-cover rounded-full"
                                             @error="
-                                                $event.target.src =
-                                                    '/storage/avatars/default.jpg'
+                                                $event.target.src = '/storage/avatars/default.jpg'
                                             "
                                         />
                                     </div>
@@ -168,32 +129,22 @@
                                     :class="[
                                         videoLiked
                                             ? 'text-red-500 hover:text-red-400'
-                                            : 'text-white hover:text-red-500 dark:text-white',
+                                            : 'text-white hover:text-red-500 dark:text-white'
                                     ]"
                                     class="mobile-interaction-btn"
                                 >
                                     <i
                                         class="text-[28px]"
-                                        :class="[
-                                            videoLiked
-                                                ? 'bx bxs-heart'
-                                                : 'bx bx-heart',
-                                        ]"
+                                        :class="[videoLiked ? 'bx bxs-heart' : 'bx bx-heart']"
                                     ></i>
                                 </button>
-                                <span
-                                    class="mt-1 text-xs font-medium text-white dark:text-white"
-                                    >{{ formatCount(likeCount) }}</span
-                                >
+                                <span class="mt-1 text-xs font-medium text-white dark:text-white">{{
+                                    formatCount(likeCount)
+                                }}</span>
                             </div>
 
-                            <div
-                                class="flex flex-col items-center text-white hover:text-red-500"
-                            >
-                                <button
-                                    @click.stop="toggleComments"
-                                    class="mobile-interaction-btn"
-                                >
+                            <div class="flex flex-col items-center text-white hover:text-red-500">
+                                <button @click.stop="toggleComments" class="mobile-interaction-btn">
                                     <i
                                         class="bx bx-message-square-dots text-[24px] sm:text-[28px]"
                                     ></i>
@@ -203,17 +154,10 @@
                                 }}</span>
                             </div>
 
-                            <div
-                                class="flex flex-col items-center text-white hover:text-red-500"
-                            >
+                            <div class="flex flex-col items-center text-white hover:text-red-500">
                                 <ShareModal :url="shareUrl">
-                                    <button
-                                        class="mobile-interaction-btn"
-                                        @click.stop
-                                    >
-                                        <i
-                                            class="bx bx-share text-[24px] sm:text-[28px]"
-                                        ></i>
+                                    <button class="mobile-interaction-btn" @click.stop>
+                                        <i class="bx bx-share text-[24px] sm:text-[28px]"></i>
                                     </button>
                                 </ShareModal>
                                 <span class="mt-1 text-xs font-medium">{{
@@ -227,9 +171,7 @@
                                         class="mt-1 text-white hover:text-gray-300 mobile-interaction-btn"
                                         @click.stop="showMenu = !showMenu"
                                     >
-                                        <i
-                                            class="bx bx-cog text-[24px] sm:text-[28px]"
-                                        ></i>
+                                        <i class="bx bx-cog text-[24px] sm:text-[28px]"></i>
                                     </button>
 
                                     <div
@@ -240,15 +182,10 @@
                                             class="flex w-full items-center justify-start gap-2 py-3 px-4 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-slate-800 cursor-pointer"
                                             :id="videoId"
                                         >
-                                            <i
-                                                class="bx bx-link text-[20px]"
-                                            ></i>
-                                            <span
-                                                class="pl-2 font-semibold text-sm"
-                                                >{{
-                                                    $t("post.permalink")
-                                                }}</span
-                                            >
+                                            <i class="bx bx-link text-[20px]"></i>
+                                            <span class="pl-2 font-semibold text-sm">{{
+                                                $t('post.permalink')
+                                            }}</span>
                                         </LoopLink>
                                         <button
                                             v-if="
@@ -258,13 +195,10 @@
                                             class="flex w-full items-center justify-start gap-2 py-3 px-4 hover:bg-gray-100 dark:text-slate-200 dark:hover:bg-slate-800 cursor-pointer"
                                             @click="handleReport"
                                         >
-                                            <i
-                                                class="bx bx-flag text-[20px]"
-                                            ></i>
-                                            <span
-                                                class="pl-2 font-semibold text-sm"
-                                                >{{ $t("common.report") }}</span
-                                            >
+                                            <i class="bx bx-flag text-[20px]"></i>
+                                            <span class="pl-2 font-semibold text-sm">{{
+                                                $t('common.report')
+                                            }}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -285,37 +219,28 @@
                                         :src="profileImage"
                                         alt="Profile"
                                         class="h-full w-full object-cover rounded-full"
-                                        @error="
-                                            $event.target.src =
-                                                '/storage/avatars/default.jpg'
-                                        "
+                                        @error="$event.target.src = '/storage/avatars/default.jpg'"
                                     />
                                 </div>
                             </router-link>
                         </div>
-
                         <div class="flex flex-col items-center">
                             <button
                                 @click="toggleLike"
                                 :class="[
                                     videoLiked
                                         ? 'text-red-500 hover:text-red-400'
-                                        : 'text-dark hover:text-red-500 dark:text-white',
+                                        : 'text-dark hover:text-red-500 dark:text-white'
                                 ]"
                             >
                                 <i
                                     class="text-[30px]"
-                                    :class="[
-                                        videoLiked
-                                            ? 'bx bxs-heart'
-                                            : 'bx bx-heart',
-                                    ]"
+                                    :class="[videoLiked ? 'bx bxs-heart' : 'bx bx-heart']"
                                 ></i>
                             </button>
-                            <span
-                                class="mt-1 text-sm font-medium dark:text-white"
-                                >{{ formatCount(likeCount) }}</span
-                            >
+                            <span class="mt-1 text-sm font-medium dark:text-white">{{
+                                formatCount(likeCount)
+                            }}</span>
                         </div>
 
                         <div
@@ -323,9 +248,7 @@
                             class="flex flex-col items-center text-dark hover:text-red-500 dark:text-white"
                         >
                             <button @click="toggleComments">
-                                <i
-                                    class="bx bx-message-square-dots text-[30px]"
-                                ></i>
+                                <i class="bx bx-message-square-dots text-[30px]"></i>
                             </button>
                             <span class="mt-1 text-sm font-medium">{{
                                 formatCount(commentCount)
@@ -335,18 +258,12 @@
                         <div
                             class="flex flex-col items-center text-dark hover:text-red-500 dark:text-white cursor-pointer"
                         >
-                            <ShareModal
-                                type="video"
-                                :username="username"
-                                :url="shareUrl"
-                            >
+                            <ShareModal type="video" :username="username" :url="shareUrl">
                                 <button>
                                     <i class="bx bx-share text-[30px]"></i>
                                 </button>
                             </ShareModal>
-                            <span class="mt-1 text-sm font-medium">{{
-                                formatCount(shares)
-                            }}</span>
+                            <span class="mt-1 text-sm font-medium">{{ formatCount(shares) }}</span>
                         </div>
 
                         <div class="flex flex-col items-center">
@@ -367,10 +284,9 @@
                                         :id="videoId"
                                     >
                                         <i class="bx bx-link text-[20px]"></i>
-                                        <span
-                                            class="pl-2 font-semibold text-sm"
-                                            >{{ $t("post.permalink") }}</span
-                                        >
+                                        <span class="pl-2 font-semibold text-sm">{{
+                                            $t('post.permalink')
+                                        }}</span>
                                     </LoopLink>
                                     <button
                                         v-if="
@@ -381,10 +297,9 @@
                                         @click="handleReport"
                                     >
                                         <i class="bx bx-flag text-[20px]"></i>
-                                        <span
-                                            class="pl-2 font-semibold text-sm"
-                                            >{{ $t("common.report") }}</span
-                                        >
+                                        <span class="pl-2 font-semibold text-sm">{{
+                                            $t('common.report')
+                                        }}</span>
                                     </button>
                                     <button
                                         v-if="
@@ -395,10 +310,9 @@
                                         @click="handleVideoDelete"
                                     >
                                         <i class="bx bx-trash text-[20px]"></i>
-                                        <span
-                                            class="pl-2 font-semibold text-sm"
-                                            >{{ $t("common.delete") }}</span
-                                        >
+                                        <span class="pl-2 font-semibold text-sm">{{
+                                            $t('common.delete')
+                                        }}</span>
                                     </button>
                                 </div>
                             </div>
@@ -421,7 +335,7 @@
             v-if="showComments"
             :class="[
                 'fixed top-[70px] bottom-0 right-0 bg-gray-50 dark:bg-slate-900 border-l border-t lg:border-t border-gray-100 dark:border-slate-800 transform transition-transform duration-300 z-50 flex flex-col w-full sm:w-[400px] lg:w-[400px] shadow-xl comments-panel',
-                showComments ? 'translate-x-0' : 'translate-x-full',
+                showComments ? 'translate-x-0' : 'translate-x-full'
             ]"
             @touchstart.stop
             @touchmove.stop
@@ -433,17 +347,10 @@
                 <div
                     class="flex items-center justify-between p-4 border-b border-gray-300 dark:border-slate-700"
                 >
-                    <h2
-                        class="text-lg font-semibold text-black dark:text-gray-400"
-                    >
-                        {{ $t("post.comments") }} ({{
-                            formatCount(commentCount)
-                        }})
+                    <h2 class="text-lg font-semibold text-black dark:text-gray-400">
+                        {{ $t('post.comments') }} ({{ formatCount(commentCount) }})
                     </h2>
-                    <button
-                        @click.stop="toggleComments"
-                        class="text-gray-400 hover:text-gray-300"
-                    >
+                    <button @click.stop="toggleComments" class="text-gray-400 hover:text-gray-300">
                         <i class="bx bx-x text-[20px]" />
                     </button>
                 </div>
@@ -462,7 +369,7 @@
                     class="h-full flex items-center justify-center flex-grow text-dark dark:text-gray-600"
                 >
                     <p class="text-sm text-gray-400">
-                        {{ $t("post.noCommentsYet") }}
+                        {{ $t('post.noCommentsYet') }}
                     </p>
                 </div>
 
@@ -473,7 +380,9 @@
                     :videoId="videoId"
                 />
 
-                <div v-if="isLoading" class="p-4 text-center"><Spinner /></div>
+                <div v-if="isLoading" class="p-4 text-center">
+                    <Spinner />
+                </div>
             </div>
 
             <div
@@ -484,10 +393,7 @@
                 @touchend.stop
                 @click.stop
             >
-                <form
-                    @submit.prevent.stop="submitComment"
-                    class="flex items-center space-x-2"
-                >
+                <form @submit.prevent.stop="submitComment" class="flex items-center space-x-2">
                     <div class="flex-1 relative">
                         <textarea
                             v-model="newComment"
@@ -504,10 +410,7 @@
                         <div
                             class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-2"
                         >
-                            <EmojiPicker
-                                v-model="selectedEmoji"
-                                @select="onEmojiSelect"
-                            >
+                            <EmojiPicker v-model="selectedEmoji" @select="onEmojiSelect">
                                 <template #trigger="{ toggle }">
                                     <button
                                         type="button"
@@ -530,7 +433,7 @@
                         @touchstart.stop
                         @touchend.stop
                     >
-                        {{ $t("post.post") }}
+                        {{ $t('post.post') }}
                     </button>
                 </form>
             </div>
@@ -539,37 +442,30 @@
 </template>
 
 <script setup>
-import {
-    ref,
-    onMounted,
-    onUnmounted,
-    computed,
-    watch,
-    inject,
-    nextTick,
-} from "vue";
-import { useCommentStore } from "~/stores/comments";
-import { useFeedInteraction } from "~/composables/useFeedInteraction";
-import EmojiPicker from "@/components/Form/EmojiPicker.vue";
-import ShareModal from "@/components/Feed/ShareModal.vue";
-import Spinner from "@/components/Spinner.vue";
-import videojs from "video.js";
-import "video.js/dist/video-js.css";
-import LoopLink from "../LoopLink.vue";
-import { useReportModal } from "@/composables/useReportModal";
-import { useQueryClient } from "@tanstack/vue-query";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-import { useI18n } from "vue-i18n";
+import { ref, onMounted, onUnmounted, computed, watch, inject, nextTick } from 'vue'
+import { useCommentStore } from '~/stores/comments'
+import { useFeedInteraction } from '~/composables/useFeedInteraction'
+import EmojiPicker from '@/components/Form/EmojiPicker.vue'
+import ShareModal from '@/components/Feed/ShareModal.vue'
+import Spinner from '@/components/Spinner.vue'
+import videojs from 'video.js'
+import 'video.js/dist/video-js.css'
+import LoopLink from '../LoopLink.vue'
+import { useReportModal } from '@/composables/useReportModal'
+import { useQueryClient } from '@tanstack/vue-query'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
     videoId: { type: String, required: true },
     videoUrl: { type: String, required: true },
     shareUrl: { type: String, required: true },
-    username: { type: String, default: "username" },
-    caption: { type: String, default: "" },
+    username: { type: String, default: 'username' },
+    caption: { type: String, default: '' },
     hashtags: { type: Array, default: () => [] },
-    profileImage: { type: String, default: "" },
-    profileId: { type: String, default: "" },
+    mentions: { type: Array, default: () => [] },
+    profileImage: { type: String, default: '' },
+    profileId: { type: String, default: '' },
     likes: { type: Number, default: 0 },
     hasLiked: { type: Boolean, default: false },
     canComment: { type: Boolean, default: true },
@@ -579,428 +475,411 @@ const props = defineProps({
     commentCount: { type: Number, default: 0 },
     index: { type: Number, default: 0 },
     isSensitive: { type: Boolean, default: false },
-    altText: { type: String, default: "" },
-});
+    altText: { type: String, default: '' }
+})
 
-const emit = defineEmits(["interaction"]);
+const emit = defineEmits(['interaction'])
 
-const authStore = inject("authStore");
-const videoStore = inject("videoStore");
-const showMenu = ref(false);
-const pauseOverlay = ref(false);
-const showComments = ref(false);
-const commentStore = useCommentStore();
-const comments = computed(() => commentStore.getComments(props.videoId));
-const isLoading = computed(() => commentStore.isLoading(props.videoId));
-const hasMore = computed(() => commentStore.hasMore(props.videoId));
-const videoRef = ref(null);
-const isPaused = ref(true);
-const newComment = ref("");
-const likeCount = ref(0);
-const videoLiked = ref(false);
-const selectedEmoji = ref("");
-const isVisible = ref(false);
-const playerReady = ref(false);
-const isSensitiveRevealed = ref(false);
-const pendingPlay = ref(false);
-const { openReportModal } = useReportModal();
-const queryClient = useQueryClient();
-const { alertModal, confirmModal } = useAlertModal();
-const { t } = useI18n();
+const authStore = inject('authStore')
+const videoStore = inject('videoStore')
+const showMenu = ref(false)
+const showComments = ref(false)
+const commentStore = useCommentStore()
+const comments = computed(() => commentStore.getComments(props.videoId))
+const isLoading = computed(() => commentStore.isLoading(props.videoId))
+const hasMore = computed(() => commentStore.hasMore(props.videoId))
+const videoRef = ref(null)
+const isPaused = ref(true)
+const newComment = ref('')
+const likeCount = ref(0)
+const videoLiked = ref(false)
+const selectedEmoji = ref('')
+const isVisible = ref(false)
+const playerReady = ref(false)
+const isSensitiveRevealed = ref(false)
+const pendingPlay = ref(false)
+const { openReportModal } = useReportModal()
+const queryClient = useQueryClient()
+const { alertModal, confirmModal } = useAlertModal()
+const { t } = useI18n()
 
 const {
     hasInteracted: hasGlobalInteraction,
     handleFirstInteraction: globalHandleFirstInteraction,
     globalMuted,
-    setGlobalMuted,
-} = useFeedInteraction();
+    setGlobalMuted
+} = useFeedInteraction()
 
 const isMuted = computed({
     get: () => globalMuted.value,
-    set: (value) => setGlobalMuted(value),
-});
+    set: (value) => setGlobalMuted(value)
+})
 
-const canInteract = computed(
-    () => !props.isSensitive || isSensitiveRevealed.value,
-);
+const canInteract = computed(() => !props.isSensitive || isSensitiveRevealed.value)
 
-const showPlayButton = computed(
-    () => !hasGlobalInteraction.value || isPaused.value,
-);
+const showPlayButton = computed(() => !hasGlobalInteraction.value || isPaused.value)
 
-const windowWidth = ref(
-    typeof window !== "undefined" ? window.innerWidth : 1024,
-);
-const isMobile = computed(() => windowWidth.value < 1024);
-const showMobilePauseButton = ref(false);
-const touchTimeout = ref(null);
+const windowWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1024)
+const isMobile = computed(() => windowWidth.value < 1024)
+const showMobilePauseButton = ref(false)
+const touchTimeout = ref(null)
 
-const touchStartTime = ref(0);
-const touchStartX = ref(0);
-const touchStartY = ref(0);
-const isLongPress = ref(false);
-const longPressTimeout = ref(null);
+const touchStartTime = ref(0)
+const touchStartX = ref(0)
+const touchStartY = ref(0)
+const isLongPress = ref(false)
+const longPressTimeout = ref(null)
 
-let player = null;
+let player = null
 
 const revealSensitiveContent = async () => {
-    isSensitiveRevealed.value = true;
+    isSensitiveRevealed.value = true
     if (pendingPlay.value) {
-        pendingPlay.value = false;
-        await nextTick();
-        await handlePlayClick();
+        pendingPlay.value = false
+        await nextTick()
+        await handlePlayClick()
     }
-};
+}
 
 const handleTouchStart = (e) => {
-    if (!canInteract.value) return;
-    touchStartTime.value = Date.now();
-    touchStartX.value = e.touches[0].clientX;
-    touchStartY.value = e.touches[0].clientY;
-    isLongPress.value = false;
-    if (longPressTimeout.value) clearTimeout(longPressTimeout.value);
+    if (!canInteract.value) return
+    touchStartTime.value = Date.now()
+    touchStartX.value = e.touches[0].clientX
+    touchStartY.value = e.touches[0].clientY
+    isLongPress.value = false
+    if (longPressTimeout.value) clearTimeout(longPressTimeout.value)
     if (isMobile.value && hasGlobalInteraction.value && !isPaused.value) {
         longPressTimeout.value = setTimeout(() => {
-            isLongPress.value = true;
-            showMobilePauseButton.value = true;
-            if (touchTimeout.value) clearTimeout(touchTimeout.value);
-            touchTimeout.value = setTimeout(
-                () => (showMobilePauseButton.value = false),
-                2000,
-            );
-        }, 500);
+            isLongPress.value = true
+            showMobilePauseButton.value = true
+            if (touchTimeout.value) clearTimeout(touchTimeout.value)
+            touchTimeout.value = setTimeout(() => (showMobilePauseButton.value = false), 2000)
+        }, 500)
     }
-};
+}
 
 const handleTouchMove = (e) => {
     if (longPressTimeout.value) {
-        const deltaX = Math.abs(e.touches[0].clientX - touchStartX.value);
-        const deltaY = Math.abs(e.touches[0].clientY - touchStartY.value);
+        const deltaX = Math.abs(e.touches[0].clientX - touchStartX.value)
+        const deltaY = Math.abs(e.touches[0].clientY - touchStartY.value)
         if (deltaX > 10 || deltaY > 10) {
-            clearTimeout(longPressTimeout.value);
-            longPressTimeout.value = null;
+            clearTimeout(longPressTimeout.value)
+            longPressTimeout.value = null
         }
     }
-};
+}
 
 const handleTouchEnd = (e) => {
-    if (!canInteract.value) return;
-    const touchEndTime = Date.now();
-    const touchDuration = touchEndTime - touchStartTime.value;
+    if (!canInteract.value) return
+    const touchEndTime = Date.now()
+    const touchDuration = touchEndTime - touchStartTime.value
     if (longPressTimeout.value) {
-        clearTimeout(longPressTimeout.value);
-        longPressTimeout.value = null;
+        clearTimeout(longPressTimeout.value)
+        longPressTimeout.value = null
     }
     if (isLongPress.value) {
-        isLongPress.value = false;
-        return;
+        isLongPress.value = false
+        return
     }
     if (touchDuration < 500) {
-        const deltaX = Math.abs(
-            e.changedTouches[0].clientX - touchStartX.value,
-        );
-        const deltaY = Math.abs(
-            e.changedTouches[0].clientY - touchStartY.value,
-        );
-        if (deltaX < 10 && deltaY < 10) handleVideoClick(e);
+        const deltaX = Math.abs(e.changedTouches[0].clientX - touchStartX.value)
+        const deltaY = Math.abs(e.changedTouches[0].clientY - touchStartY.value)
+        if (deltaX < 10 && deltaY < 10) handleVideoClick(e)
     }
-};
+}
 
 const handleVideoClick = async (e) => {
-    if (e.target.closest("button, a, .mobile-interaction-btn")) return;
-    if (!canInteract.value) return;
+    if (e.target.closest('button, a, .mobile-interaction-btn')) return
+    if (!canInteract.value) return
     if (!hasGlobalInteraction.value || isPaused.value) {
-        await handlePlayClick();
+        await handlePlayClick()
     } else if (isMobile.value) {
-        pause();
+        pause()
     } else {
         if (player && !player.paused()) {
-            pause();
+            pause()
         } else {
-            await handlePlayClick();
+            await handlePlayClick()
         }
     }
-};
+}
 
 const handleResize = () => {
-    windowWidth.value = window.innerWidth;
-};
+    windowWidth.value = window.innerWidth
+}
 
 const onEmojiSelect = (emoji) => {
-    newComment.value += emoji.native;
-};
+    newComment.value += emoji.native
+}
 
 const autoResize = (e) => {
-    const textarea = e.target;
-    textarea.style.height = "auto";
-    textarea.style.height = Math.min(textarea.scrollHeight, 120) + "px";
-};
+    const textarea = e.target
+    textarea.style.height = 'auto'
+    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'
+}
 
 const submitComment = async () => {
-    if (!newComment.value.trim()) return;
+    if (!newComment.value.trim()) return
     try {
-        await commentStore
-            .addComment(props.videoId, newComment.value)
-            .then(() => {
-                newComment.value = "";
-            });
+        await commentStore.addComment(props.videoId, newComment.value).then(() => {
+            newComment.value = ''
+        })
     } catch (error) {
-        console.error("Error submitting comment:", error);
+        console.error('Error submitting comment:', error)
     }
-};
+}
 
 const toggleLike = async () => {
-    const state = videoLiked.value;
+    const state = videoLiked.value
 
     if (state) {
         await videoStore.unlikeVideo(props.videoId).then((res) => {
-            videoStore.setVideo(res.data);
-            videoLiked.value = false;
-            likeCount.value = res.data.likes;
-        });
+            videoStore.setVideo(res.data)
+            videoLiked.value = false
+            likeCount.value = res.data.likes
+        })
     } else {
         await videoStore.likeVideo(props.videoId).then((res) => {
-            videoStore.setVideo(res.data);
-            videoLiked.value = true;
-            likeCount.value = res.data.likes;
-        });
+            videoStore.setVideo(res.data)
+            videoLiked.value = true
+            likeCount.value = res.data.likes
+        })
     }
-};
+}
 
 const toggleMute = () => {
     if (player) {
-        const newMutedState = !isMuted.value;
-        setGlobalMuted(newMutedState);
-        player.muted(newMutedState);
+        const newMutedState = !isMuted.value
+        setGlobalMuted(newMutedState)
+        player.muted(newMutedState)
     }
-};
+}
 
 onMounted(async () => {
-    await nextTick();
-    window.addEventListener("resize", handleResize);
+    await nextTick()
+    window.addEventListener('resize', handleResize)
     videoStore.setVideo({
         id: props.videoId,
         account: { id: props.profileId },
         comments: props.commentCount,
         likes: props.likesCount,
-        has_liked: props.hasLiked,
-    });
-    likeCount.value = props.likes;
-    videoLiked.value = props.hasLiked;
+        has_liked: props.hasLiked
+    })
+    likeCount.value = props.likes
+    videoLiked.value = props.hasLiked
     if (videoRef.value) {
         player = videojs(videoRef.value, {
             controls: false,
             autoplay: false,
-            preload: "auto",
+            preload: 'auto',
             loop: true,
             fluid: true,
             muted: true,
             playbackRates: [0.5, 1, 1.5, 2],
             controlBar: {
                 children: [
-                    "playToggle",
-                    "volumePanel",
-                    "progressControl",
-                    "remainingTimeDisplay",
-                    "playbackRateMenuButton",
-                    "fullscreenToggle",
-                ],
-            },
-        });
-        player.on("ready", () => {
-            playerReady.value = true;
+                    'playToggle',
+                    'volumePanel',
+                    'progressControl',
+                    'remainingTimeDisplay',
+                    'playbackRateMenuButton',
+                    'fullscreenToggle'
+                ]
+            }
+        })
+        player.on('ready', () => {
+            playerReady.value = true
 
             if (props.altText) {
-                const el = player.el().querySelector("video");
+                const el = player.el().querySelector('video')
 
                 if (el) {
-                    el.setAttribute("aria-label", props.altText);
+                    el.setAttribute('aria-label', props.altText)
                 }
             }
-        });
-        player.on("play", function () {
-            isPaused.value = false;
+        })
+        player.on('play', function () {
+            isPaused.value = false
             if (hasGlobalInteraction.value) {
-                player.muted(isMuted.value);
+                player.muted(isMuted.value)
             }
-        });
-        player.on("pause", function () {
-            isPaused.value = true;
-            showMobilePauseButton.value = false;
-        });
-        player.on("error", function (e) {
-            console.error("Video error:", e, props.videoId);
-            playerReady.value = false;
-        });
+        })
+        player.on('pause', function () {
+            isPaused.value = true
+            showMobilePauseButton.value = false
+        })
+        player.on('error', function (e) {
+            console.error('Video error:', e, props.videoId)
+            playerReady.value = false
+        })
     }
-});
+})
 
 watch(
     () => [props.videoId, props.isSensitive],
     () => {
-        isSensitiveRevealed.value = false;
-        pendingPlay.value = false;
-        pause();
-    },
-);
+        isSensitiveRevealed.value = false
+        pendingPlay.value = false
+        pause()
+    }
+)
 
 watch(showComments, async (newVal) => {
     if (newVal) {
-        await commentStore.fetchComments(props.videoId, true);
+        await commentStore.fetchComments(props.videoId, true)
     }
-});
+})
 
 const handleScroll = async (e) => {
-    const container = e.target;
+    const container = e.target
     const bottomReached =
-        container.scrollHeight - container.scrollTop <=
-        container.clientHeight + 100;
+        container.scrollHeight - container.scrollTop <= container.clientHeight + 100
     if (bottomReached && !isLoading.value && hasMore.value) {
-        await commentStore.fetchComments(props.videoId);
+        await commentStore.fetchComments(props.videoId)
     }
-};
+}
 
 onUnmounted(() => {
-    window.removeEventListener("resize", handleResize);
-    if (touchTimeout.value) clearTimeout(touchTimeout.value);
-    if (longPressTimeout.value) clearTimeout(longPressTimeout.value);
-    commentStore.clearComments(props.videoId);
+    window.removeEventListener('resize', handleResize)
+    if (touchTimeout.value) clearTimeout(touchTimeout.value)
+    if (longPressTimeout.value) clearTimeout(longPressTimeout.value)
+    commentStore.clearComments(props.videoId)
     if (player) {
-        player.dispose();
-        player = null;
+        player.dispose()
+        player = null
     }
-});
+})
 
 const play = async () => {
-    if (!player) return Promise.resolve();
-    if (!canInteract.value) return Promise.resolve();
+    if (!player) return Promise.resolve()
+    if (!canInteract.value) return Promise.resolve()
     try {
-        isVisible.value = true;
+        isVisible.value = true
         if (!playerReady.value) {
             await new Promise((resolve) => {
-                player.one("ready", resolve);
-                setTimeout(resolve, 3000);
-            });
+                player.one('ready', resolve)
+                setTimeout(resolve, 3000)
+            })
         }
         if (player.readyState() < 2) {
-            player.load();
+            player.load()
             await new Promise((resolve) => {
                 const checkReady = () => {
-                    if (player.readyState() >= 2) resolve();
-                    else setTimeout(checkReady, 50);
-                };
-                checkReady();
-            });
+                    if (player.readyState() >= 2) resolve()
+                    else setTimeout(checkReady, 50)
+                }
+                checkReady()
+            })
         }
-        player.muted(hasGlobalInteraction.value ? isMuted.value : true);
-        await player.play();
-        isPaused.value = false;
+        player.muted(hasGlobalInteraction.value ? isMuted.value : true)
+        await player.play()
+        isPaused.value = false
     } catch (error) {
         try {
-            player.muted(true);
-            await player.play();
-            isPaused.value = false;
+            player.muted(true)
+            await player.play()
+            isPaused.value = false
         } catch (retryError) {
-            console.error("Failed to play video even when muted:", retryError);
-            throw retryError;
+            console.error('Failed to play video even when muted:', retryError)
+            throw retryError
         }
     }
-};
+}
 
 const pause = () => {
     if (player) {
-        player.pause();
-        showMobilePauseButton.value = false;
-        isPaused.value = true;
+        player.pause()
+        showMobilePauseButton.value = false
+        isPaused.value = true
     }
-};
+}
 
 const hideUI = () => {
-    if (showComments.value) showComments.value = false;
-    if (showMenu.value) showMenu.value = false;
-    showMobilePauseButton.value = false;
-};
+    if (showComments.value) showComments.value = false
+    if (showMenu.value) showMenu.value = false
+    showMobilePauseButton.value = false
+}
 
 const toggleComments = (e) => {
     if (e) {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
     }
-    showComments.value = !showComments.value;
-    if (showComments.value && showMenu.value) showMenu.value = false;
-};
+    showComments.value = !showComments.value
+    if (showComments.value && showMenu.value) showMenu.value = false
+}
 
 const handlePlayClick = async () => {
     if (!canInteract.value) {
-        pendingPlay.value = true;
-        return;
+        pendingPlay.value = true
+        return
     }
     if (!hasGlobalInteraction.value) {
-        globalHandleFirstInteraction();
-        emit("interaction");
-        setGlobalMuted(false);
+        globalHandleFirstInteraction()
+        emit('interaction')
+        setGlobalMuted(false)
     }
-    isPaused.value = false;
-    await play();
-};
+    isPaused.value = false
+    await play()
+}
 
 const preload = async () => {
     if (player && player.readyState() < 1) {
         try {
-            player.load();
+            player.load()
         } catch (error) {
-            console.warn("Failed to preload video:", error);
+            console.warn('Failed to preload video:', error)
         }
     }
-};
+}
 
 const cleanup = () => {
-    if (player) player.pause();
-    isVisible.value = false;
-    showComments.value = false;
-    showMenu.value = false;
-    showMobilePauseButton.value = false;
-};
+    if (player) player.pause()
+    isVisible.value = false
+    showComments.value = false
+    showMenu.value = false
+    showMobilePauseButton.value = false
+}
 
 const onVisible = () => {
-    isVisible.value = true;
-};
+    isVisible.value = true
+}
 const onHidden = () => {
-    isVisible.value = false;
-    pause();
-};
+    isVisible.value = false
+    pause()
+}
 const handleReport = () => {
-    openReportModal("video", props.videoId, window.location.href);
-    showMenu.value = false;
-};
+    openReportModal('video', props.videoId, window.location.href)
+    showMenu.value = false
+}
 
 const formatCount = (count) => {
-    if (count >= 1000000) return (count / 1000000).toFixed(1) + "M";
-    if (count >= 1000) return (count / 1000).toFixed(1) + "K";
-    return count.toString();
-};
+    if (count >= 1000000) return (count / 1000000).toFixed(1) + 'M'
+    if (count >= 1000) return (count / 1000).toFixed(1) + 'K'
+    return count.toString()
+}
 
 const handleVideoDelete = async () => {
-    showMenu.value = false;
+    showMenu.value = false
 
     const result = await confirmModal(
-        t("post.deleteVideo"),
-        t("post.deleteVideoConfirmMessage"),
-        t("common.delete"),
-        t("common.cancel"),
-    );
+        t('post.deleteVideo'),
+        t('post.deleteVideoConfirmMessage'),
+        t('common.delete'),
+        t('common.cancel')
+    )
     if (result) {
         try {
-            await videoStore.deleteVideoById(props.videoId);
-            await nextTick();
-            queryClient.invalidateQueries({ queryKey: ["feed"] });
-            queryClient.invalidateQueries({ queryKey: ["following-feed"] });
-            window.location.reload();
+            await videoStore.deleteVideoById(props.videoId)
+            await nextTick()
+            queryClient.invalidateQueries({ queryKey: ['feed'] })
+            queryClient.invalidateQueries({ queryKey: ['following-feed'] })
+            window.location.reload()
         } catch (error) {
-            console.log(error);
+            console.log(error)
         }
     }
-};
+}
 
 defineExpose({
     play,
@@ -1013,8 +892,8 @@ defineExpose({
     playVideo: play,
     pauseVideo: pause,
     hideComments: hideUI,
-    revealSensitiveContent,
-});
+    revealSensitiveContent
+})
 </script>
 
 <style scoped>
@@ -1024,11 +903,33 @@ defineExpose({
         height: calc(100dvh - 70px);
     }
 
+    @media (max-width: 767px) {
+        .video-wrapper {
+            height: calc(100dvh - 80px);
+        }
+    }
+
     @media (min-width: 1024px) {
         .video-wrapper {
             height: calc(100vh - 130px);
             height: calc(100dvh - 130px);
         }
+    }
+}
+
+.video-wrapper {
+    height: 100dvh;
+}
+
+@media (max-width: 767px) {
+    .video-wrapper {
+        height: calc(100dvh - 80px);
+    }
+}
+
+@media (min-width: 1024px) {
+    .video-wrapper {
+        height: calc(100dvh - 60px);
     }
 }
 
@@ -1096,11 +997,10 @@ defineExpose({
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2;
+    z-index: 1;
 }
 
 .mobile-pause-overlay {

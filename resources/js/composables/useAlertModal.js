@@ -1,10 +1,10 @@
-import { ref, createApp, h } from "vue";
-import AlertModal from "@/components/AlertModal.vue";
+import { ref, createApp, h } from 'vue'
+import AlertModal from '@/components/AlertModal.vue'
 
-const isVisible = ref(false);
-const modalProps = ref({});
+const isVisible = ref(false)
+const modalProps = ref({})
 
-let modalInstance = null;
+let modalInstance = null
 
 export const useAlertModal = () => {
     const alertModal = (title, body, actions = [], options = {}) => {
@@ -12,67 +12,67 @@ export const useAlertModal = () => {
             const defaultOptions = {
                 closeOnBackdrop: true,
                 persistModal: false,
-                closeOnEscape: true,
-            };
+                closeOnEscape: true
+            }
 
-            const modalOptions = { ...defaultOptions, ...options };
+            const modalOptions = { ...defaultOptions, ...options }
 
             if (actions.length === 0) {
                 actions = [
                     {
-                        text: "OK",
-                        type: "cancel",
-                        callback: () => resolve(null),
-                    },
-                ];
+                        text: 'OK',
+                        type: 'cancel',
+                        callback: () => resolve(null)
+                    }
+                ]
             }
 
             const wrappedActions = actions.map((action, index) => ({
                 ...action,
                 callback: () => {
-                    if (action.callback) action.callback();
-                    resolve(index);
-                },
-            }));
+                    if (action.callback) action.callback()
+                    resolve(index)
+                }
+            }))
 
             modalProps.value = {
                 title,
                 body,
                 actions: wrappedActions,
                 modelValue: true,
-                ...modalOptions,
-            };
+                ...modalOptions
+            }
 
             if (!modalInstance) {
-                const modalContainer = document.createElement("div");
-                document.body.appendChild(modalContainer);
+                const modalContainer = document.createElement('div')
+                document.body.appendChild(modalContainer)
 
                 modalInstance = createApp({
                     render() {
                         return h(AlertModal, {
                             ...modalProps.value,
-                            "onUpdate:modelValue": (value) => {
-                                modalProps.value.modelValue = value;
-                                if (!value) resolve(null);
+                            'onUpdate:modelValue': (value) => {
+                                modalProps.value.modelValue = value
+                                if (!value) resolve(null)
                             },
-                            onClose: () => resolve(null),
-                        });
-                    },
-                });
+                            onClose: () => resolve(null)
+                        })
+                    }
+                })
 
-                modalInstance.mount(modalContainer);
+                modalInstance.mount(modalContainer)
             }
 
-            isVisible.value = true;
-        });
-    };
+            isVisible.value = true
+        })
+    }
 
     const confirmModal = (
         title,
         body,
-        confirmText = "Confirm",
-        cancelText = "Cancel",
-        options = {},
+        confirmText = 'Confirm',
+        cancelText = 'Cancel',
+        options = {}
     ) => {
         return new Promise((resolve) => {
             alertModal(
@@ -81,44 +81,44 @@ export const useAlertModal = () => {
                 [
                     {
                         text: cancelText,
-                        type: "cancel",
-                        callback: () => resolve(false),
+                        type: 'cancel',
+                        callback: () => resolve(false)
                     },
                     {
                         text: confirmText,
-                        type: "danger",
-                        callback: () => resolve(true),
-                    },
+                        type: 'danger',
+                        callback: () => resolve(true)
+                    }
                 ],
-                options,
-            );
-        });
-    };
+                options
+            )
+        })
+    }
 
     const persistentModal = (title, body, actions = []) => {
         return alertModal(title, body, actions, {
             closeOnBackdrop: false,
             persistModal: true,
-            closeOnEscape: false,
-        });
-    };
+            closeOnEscape: false
+        })
+    }
 
     return {
         alertModal,
         confirmModal,
-        persistentModal,
-    };
-};
+        persistentModal
+    }
+}
 
 export default {
     install(app) {
-        const { alertModal, confirmModal, persistentModal } = useAlertModal();
+        const { alertModal, confirmModal, persistentModal } = useAlertModal()
 
-        app.config.globalProperties.$alertModal = alertModal;
-        app.config.globalProperties.$confirmModal = confirmModal;
-        app.config.globalProperties.$persistentModal = persistentModal;
-        app.provide("alertModal", alertModal);
-        app.provide("confirmModal", confirmModal);
-        app.provide("persistentModal", persistentModal);
-    },
-};
+        app.config.globalProperties.$alertModal = alertModal
+        app.config.globalProperties.$confirmModal = confirmModal
+        app.config.globalProperties.$persistentModal = persistentModal
+        app.provide('alertModal', alertModal)
+        app.provide('confirmModal', confirmModal)
+        app.provide('persistentModal', persistentModal)
+    }
+}

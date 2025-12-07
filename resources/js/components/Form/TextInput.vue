@@ -17,40 +17,40 @@
 </template>
 
 <script setup>
-import { onMounted, computed } from "vue";
+import { onMounted, computed } from 'vue'
 
 const props = defineProps({
     modelValue: {
         type: [String, Number],
-        default: "",
+        default: ''
     },
     placeholder: {
         type: String,
-        default: "",
+        default: ''
     },
     inputType: {
         type: String,
-        default: "text",
+        default: 'text'
     },
     max: {
         type: [String, Number],
-        default: undefined,
+        default: undefined
     },
     autoFocus: {
         type: Boolean,
-        default: false,
+        default: false
     },
     error: {
         type: String,
-        default: "",
-    },
-});
+        default: ''
+    }
+})
 
-defineEmits(["update:modelValue"]);
+defineEmits(['update:modelValue'])
 
 onMounted(() => {
     if (props.autoFocus) {
-        document.getElementById(`input-${props.placeholder}`).focus();
+        document.getElementById(`input-${props.placeholder}`).focus()
     }
-});
+})
 </script>

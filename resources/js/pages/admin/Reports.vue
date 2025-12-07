@@ -1,12 +1,8 @@
 <template>
     <div>
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Reports Management
-            </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
-                Review and handle user reports
-            </p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Reports Management</h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-400">Review and handle user reports</p>
         </div>
 
         <DataTable
@@ -45,23 +41,16 @@
                             :src="item.reporter.avatar"
                             :alt="item.reporter.username"
                             class="w-8 h-8 rounded-full mr-2"
-                            @error="
-                                $event.target.src =
-                                    '/storage/avatars/default.jpg'
-                            "
+                            @error="$event.target.src = '/storage/avatars/default.jpg'"
                         />
-                        <span class="font-bold">{{
-                            item.reporter.username
-                        }}</span>
+                        <span class="font-bold">{{ item.reporter.username }}</span>
                     </div>
                 </router-link>
             </template>
 
             <template #cell-reported_content="{ item }">
                 <div class="flex items-center">
-                    <span
-                        class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded mr-2"
-                    >
+                    <span class="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded mr-2">
                         {{ item.content_type }}
                     </span>
                 </div>
@@ -83,7 +72,7 @@
                             ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                             : value === 'pending'
                               ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+                              : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
                     ]"
                 >
                     {{ value }}
@@ -107,107 +96,107 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from "vue";
-import DataTable from "@/components/DataTable.vue";
-import { reportsApi } from "@/services/adminApi";
-import { useRoute, useRouter } from "vue-router";
-import { useUtils } from "@/composables/useUtils";
-const { formatDate } = useUtils();
+import { ref, onMounted, onUnmounted, watch } from 'vue'
+import DataTable from '@/components/DataTable.vue'
+import { reportsApi } from '@/services/adminApi'
+import { useRoute, useRouter } from 'vue-router'
+import { useUtils } from '@/composables/useUtils'
+const { formatDate } = useUtils()
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const reports = ref([]);
-const loading = ref(false);
+const reports = ref([])
+const loading = ref(false)
 const pagination = ref({
     cursor: null,
     hasPrevious: false,
-    hasNext: false,
-});
+    hasNext: false
+})
 
-const searchQuery = ref(route.query.q || "");
-const sortBy = ref("");
-const DEBOUNCE_DELAY = 300;
-let searchTimeout = null;
+const searchQuery = ref(route.query.q || '')
+const sortBy = ref('')
+const DEBOUNCE_DELAY = 300
+let searchTimeout = null
 
 const columns = [
-    { key: "id", label: "ID" },
-    { key: "reporter", label: "Reporter" },
-    { key: "reported_content", label: "Content" },
-    { key: "reason", label: "Reason" },
-    { key: "status", label: "Status" },
-    { key: "created_at", label: "Reported" },
-];
+    { key: 'id', label: 'ID' },
+    { key: 'reporter', label: 'Reporter' },
+    { key: 'reported_content', label: 'Content' },
+    { key: 'reason', label: 'Reason' },
+    { key: 'status', label: 'Status' },
+    { key: 'created_at', label: 'Reported' }
+]
 
 const sortOptions = [
-    { name: "Open", value: "open" },
-    { name: "Closed", value: "closed" },
-    { name: "All", value: "all" },
-];
+    { name: 'Open', value: 'open' },
+    { name: 'Closed', value: 'closed' },
+    { name: 'All', value: 'all' }
+]
 
-const fetchReports = async (cursor = null, direction = "next") => {
-    loading.value = true;
+const fetchReports = async (cursor = null, direction = 'next') => {
+    loading.value = true
     try {
-        const params = { cursor, direction };
+        const params = { cursor, direction }
 
         if (searchQuery.value) {
-            params.search = searchQuery.value;
+            params.search = searchQuery.value
         }
 
         if (sortBy.value) {
-            params.sort = sortBy.value;
+            params.sort = sortBy.value
         }
-        const response = await reportsApi.getReports(params);
-        reports.value = response.data;
-        pagination.value = response.meta;
+        const response = await reportsApi.getReports(params)
+        reports.value = response.data
+        pagination.value = response.meta
     } catch (error) {
-        console.error("Error fetching reports:", error);
+        console.error('Error fetching reports:', error)
     } finally {
-        loading.value = false;
+        loading.value = false
     }
-};
+}
 
 watch(searchQuery, (newQuery) => {
     if (searchTimeout) {
-        clearTimeout(searchTimeout);
+        clearTimeout(searchTimeout)
     }
 
     searchTimeout = setTimeout(() => {
-        fetchReports();
-    }, DEBOUNCE_DELAY);
-});
+        fetchReports()
+    }, DEBOUNCE_DELAY)
+})
 
 watch(sortBy, (newQuery) => {
     if (searchTimeout) {
-        clearTimeout(searchTimeout);
+        clearTimeout(searchTimeout)
     }
 
     searchTimeout = setTimeout(() => {
-        fetchReports();
-    }, DEBOUNCE_DELAY);
-});
+        fetchReports()
+    }, DEBOUNCE_DELAY)
+})
 
 const handleSort = (sortValue) => {
-    sortBy.value = sortValue;
-};
+    sortBy.value = sortValue
+}
 
 const handleSearch = (query) => {
-    searchQuery.value = query;
-};
+    searchQuery.value = query
+}
 
 const nextPage = () => {
     if (pagination.value.next_cursor) {
-        fetchReports(pagination.value.next_cursor, "next");
+        fetchReports(pagination.value.next_cursor, 'next')
     }
-};
+}
 
 const previousPage = () => {
     if (pagination.value.prev_cursor) {
-        fetchReports(pagination.value.prev_cursor, "previous");
+        fetchReports(pagination.value.prev_cursor, 'previous')
     }
-};
+}
 
 onMounted(() => {
-    fetchReports();
-});
+    fetchReports()
+})
 </script>

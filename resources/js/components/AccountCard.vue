@@ -13,14 +13,10 @@
             </div>
 
             <div class="w-full">
-                <h3
-                    class="font-semibold text-gray-900 dark:text-white text-sm truncate mb-1"
-                >
+                <h3 class="font-semibold text-gray-900 dark:text-white text-sm truncate mb-1">
                     {{ account.name || account.username }}
                 </h3>
-                <p class="text-gray-500 dark:text-gray-400 text-xs mb-2">
-                    @{{ account.username }}
-                </p>
+                <p class="text-gray-500 dark:text-gray-400 text-xs mb-2">@{{ account.username }}</p>
 
                 <p
                     v-if="account.bio"
@@ -29,21 +25,17 @@
                     {{ account.bio }}
                 </p>
 
-                <div
-                    class="flex items-center justify-center gap-4 text-xs text-gray-500 mb-3"
-                >
+                <div class="flex items-center justify-center gap-4 text-xs text-gray-500 mb-3">
                     <span v-if="account.follower_count !== undefined">
-                        <span
-                            class="font-medium text-gray-900 dark:text-gray-300"
-                            >{{ formatCount(account.follower_count) }}</span
-                        >
+                        <span class="font-medium text-gray-900 dark:text-gray-300">{{
+                            formatCount(account.follower_count)
+                        }}</span>
                         followers
                     </span>
                     <span v-if="account.post_count !== undefined">
-                        <span
-                            class="font-medium text-gray-900 dark:text-gray-300"
-                            >{{ formatCount(account.post_count) }}</span
-                        >
+                        <span class="font-medium text-gray-900 dark:text-gray-300">{{
+                            formatCount(account.post_count)
+                        }}</span>
                         posts
                     </span>
                 </div>
@@ -58,15 +50,11 @@
                 isFollowing
                     ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-300'
                     : 'bg-blue-500 text-white hover:bg-blue-600 shadow-sm',
-                isLoading && 'opacity-50 cursor-not-allowed',
+                isLoading && 'opacity-50 cursor-not-allowed'
             ]"
         >
             <span v-if="isLoading" class="flex items-center justify-center">
-                <svg
-                    class="animate-spin -ml-1 mr-2 h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                >
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
                     <circle
                         class="opacity-25"
                         cx="12"
@@ -84,54 +72,54 @@
                 Loading...
             </span>
             <span v-else>
-                {{ isFollowing ? "Following" : "Follow" }}
+                {{ isFollowing ? 'Following' : 'Follow' }}
             </span>
         </button>
     </div>
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed } from 'vue'
 
 const props = defineProps({
     account: {
         type: Object,
-        required: true,
+        required: true
     },
     isFollowing: {
         type: Boolean,
-        default: false,
+        default: false
     },
     isLoading: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const emit = defineEmits(["follow", "unfollow"]);
+const emit = defineEmits(['follow', 'unfollow'])
 
 const handleToggleFollow = () => {
-    if (props.isLoading) return;
+    if (props.isLoading) return
 
     if (props.isFollowing) {
-        emit("unfollow", props.account);
+        emit('unfollow', props.account)
     } else {
-        emit("follow", props.account);
+        emit('follow', props.account)
     }
-};
+}
 
 const onImageError = (event) => {
-    event.target.src = "/storage/avatars/default.jpg";
-};
+    event.target.src = '/storage/avatars/default.jpg'
+}
 
 const formatCount = (count) => {
     if (count >= 1000000) {
-        return (count / 1000000).toFixed(1) + "M";
+        return (count / 1000000).toFixed(1) + 'M'
     } else if (count >= 1000) {
-        return (count / 1000).toFixed(1) + "K";
+        return (count / 1000).toFixed(1) + 'K'
     }
-    return count?.toString() || "0";
-};
+    return count?.toString() || '0'
+}
 </script>
 
 <style scoped>

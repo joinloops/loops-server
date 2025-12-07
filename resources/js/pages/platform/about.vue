@@ -18,9 +18,7 @@
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mt-16">
                         <div class="text-center">
-                            <h2
-                                class="text-4xl font-bold text-gray-900 dark:text-white mb-6"
-                            >
+                            <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-6">
                                 About
                             </h2>
                             <div
@@ -44,26 +42,26 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
-import MainLayout from "@/layouts/FeedLayout.vue";
+import { ref, onMounted, inject } from 'vue'
+import MainLayout from '@/layouts/FeedLayout.vue'
 
-const loaded = ref(false);
-const pageContent = ref("");
+const loaded = ref(false)
+const pageContent = ref('')
 
-const axios = inject("axios");
+const axios = inject('axios')
 
 const loadContent = async () => {
     await axios
-        .get("/api/v1/page/content?slug=platform/about")
+        .get('/api/v1/page/content?slug=platform/about')
         .then((res) => {
-            pageContent.value = res.data.data;
+            pageContent.value = res.data.data
         })
         .finally(() => {
-            loaded.value = true;
-        });
-};
+            loaded.value = true
+        })
+}
 
 onMounted(() => {
-    loadContent();
-});
+    loadContent()
+})
 </script>

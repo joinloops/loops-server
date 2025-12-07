@@ -18,11 +18,6 @@ class SearchResultResource extends JsonResource
         /** @var CursorPaginator|null $pager */
         $pager = $this->resource['pager'] ?? null;
 
-        $next = $pager?->nextCursor()?->encode();
-        $prev = $pager?->previousCursor()?->encode();
-
-        $build = fn (?string $cursor) => $cursor ? $request->fullUrlWithQuery(['cursor' => $cursor]) : null;
-
         return [
             'data' => [
                 'hashtags' => HashtagResource::collection($hashtags),
@@ -32,14 +27,14 @@ class SearchResultResource extends JsonResource
             'links' => [
                 'first' => null,
                 'last' => null,
-                'prev' => $build($prev),
-                'next' => $build($next),
+                'prev' => null,
+                'next' => null,
             ],
             'meta' => [
                 'path' => $request->url(),
-                'per_page' => $pager?->perPage(),
-                'next_cursor' => $next,
-                'prev_cursor' => $prev,
+                'per_page' => $pager['limit'],
+                'next_cursor' => $pager['next_cursor'] ?? null,
+                'prev_cursor' => $pager['prev_cursor'] ?? null,
             ],
         ];
     }

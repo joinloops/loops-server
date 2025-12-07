@@ -1,105 +1,111 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { authMiddleware } from "@/middleware/auth";
-import { useAuthStore } from "@/stores/auth";
-import { initializeAuth } from "@/plugins/auth";
-import DynamicPage from "@/pages/DynamicPage.vue";
+import { createRouter, createWebHistory } from 'vue-router'
+import { authMiddleware } from '@/middleware/auth'
+import { useAuthStore } from '@/stores/auth'
+import { initializeAuth } from '@/plugins/auth'
+import DynamicPage from '@/pages/DynamicPage.vue'
 
 const router = createRouter({
     history: createWebHistory(),
     routes: [
         {
-            path: "/",
-            name: "home",
-            component: () => import("~/pages/index.vue"),
-            meta: { requiresAuth: false },
+            path: '/',
+            name: 'home',
+            component: () => import('~/pages/index.vue'),
+            meta: { requiresAuth: false }
         },
         {
-            path: "/feed/following",
-            name: "feedFollowingPage",
-            component: () => import("~/pages/feed/following.vue"),
-            meta: { requiresAuth: true },
+            path: '/feed/following',
+            name: 'feedFollowingPage',
+            component: () => import('~/pages/feed/following.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/explore",
-            name: "explorePage",
-            component: () => import("~/pages/explore.vue"),
-            meta: { requiresAuth: false },
+            path: '/explore',
+            name: 'explorePage',
+            component: () => import('~/pages/explore.vue'),
+            meta: { requiresAuth: false }
         },
         {
-            path: "/notifications",
-            name: "notifications",
-            component: () => import("~/pages/notifications.vue"),
-            meta: { requiresAuth: true },
+            path: '/notifications',
+            name: 'notifications',
+            component: () => import('~/pages/notifications.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/v/:id",
-            name: "videoPage",
-            component: () => import("~/pages/v/index.vue"),
-            meta: { requiresAuth: false, params: true },
+            path: '/search',
+            name: 'search',
+            component: () => import('~/pages/search.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/tag/:id",
-            name: "tagPage",
-            component: () => import("~/pages/tag/index.vue"),
-            meta: { requiresAuth: false, params: true },
+            path: '/v/:id',
+            name: 'videoPage',
+            component: () => import('~/pages/v/index.vue'),
+            meta: { requiresAuth: false, params: true }
         },
         {
-            path: "/@:id",
-            name: "profilePage",
-            component: () => import("~/pages/profile/index.vue"),
-            meta: { requiresAuth: false },
+            path: '/tag/:id',
+            name: 'tagPage',
+            component: () => import('~/pages/tag/index.vue'),
+            meta: { requiresAuth: false, params: true }
         },
         {
-            path: "/about",
-            name: "About",
+            path: '/@:id',
+            name: 'profilePage',
+            component: () => import('~/pages/profile/index.vue'),
+            meta: { requiresAuth: false }
+        },
+        {
+            path: '/about',
+            name: 'About',
             component: DynamicPage,
             meta: {
                 isDynamicPage: true,
-                title: "About",
-                requiresAuth: false,
-            },
+                title: 'About',
+                requiresAuth: false
+            }
         },
         {
-            path: "/terms",
-            name: "Terms of Service",
+            path: '/terms',
+            name: 'Terms of Service',
             component: DynamicPage,
             meta: {
                 isDynamicPage: true,
-                title: "Terms of Service",
-                requiresAuth: false,
-            },
+                title: 'Terms of Service',
+                requiresAuth: false
+            }
         },
         {
-            path: "/privacy",
-            name: "Privacy Policy",
+            path: '/privacy',
+            name: 'Privacy Policy',
             component: DynamicPage,
             meta: {
                 isDynamicPage: true,
-                title: "Privacy Policy",
-                requiresAuth: false,
-            },
+                title: 'Privacy Policy',
+                requiresAuth: false
+            }
         },
         {
-            path: "/community-guidelines",
-            name: "Community Guidelines",
+            path: '/community-guidelines',
+            name: 'Community Guidelines',
             component: DynamicPage,
             meta: {
                 isDynamicPage: true,
-                title: "Community Guidelines",
-                requiresAuth: false,
-            },
+                title: 'Community Guidelines',
+                requiresAuth: false
+            }
         },
         {
-            path: "/pages/:slug",
-            name: "CustomPage",
+            path: '/pages/:slug',
+            name: 'CustomPage',
             component: DynamicPage,
             meta: {
                 isDynamicPage: true,
-                requiresAuth: false,
+                requiresAuth: false
             },
             beforeEnter: async (to, from) => {
-                return true;
-            },
+                return true
+            }
         },
         // {
         //   path: '/platform/developers',
@@ -114,30 +120,30 @@ const router = createRouter({
         //   meta: { requiresAuth: false }
         // },
         {
-            path: "/contact",
-            name: "contact",
-            component: () => import("~/pages/platform/contact.vue"),
-            meta: { requiresAuth: false },
+            path: '/contact',
+            name: 'contact',
+            component: () => import('~/pages/platform/contact.vue'),
+            meta: { requiresAuth: false }
         },
 
         // AUTH
         {
-            path: "/auth/forgot-password",
-            name: "forgotPassword",
-            component: () => import("~/pages/auth/ForgotPassword.vue"),
-            meta: { requiresAuth: false },
+            path: '/auth/forgot-password',
+            name: 'forgotPassword',
+            component: () => import('~/pages/auth/ForgotPassword.vue'),
+            meta: { requiresAuth: false }
         },
         {
-            path: "/password/reset/:token",
-            name: "passwordResetConfirm",
-            component: () => import("~/pages/auth/PasswordReset.vue"),
-            meta: { requiresAuth: false },
+            path: '/password/reset/:token',
+            name: 'passwordResetConfirm',
+            component: () => import('~/pages/auth/PasswordReset.vue'),
+            meta: { requiresAuth: false }
         },
         {
-            path: "/auth/verify-email/:userId/:token",
-            name: "verifyEmail",
-            component: () => import("~/pages/auth/VerifyEmail.vue"),
-            meta: { requiresAuth: true },
+            path: '/auth/verify-email/:userId/:token',
+            name: 'verifyEmail',
+            component: () => import('~/pages/auth/VerifyEmail.vue'),
+            meta: { requiresAuth: true }
         },
         // {
         //   path: '/help-center',
@@ -152,93 +158,104 @@ const router = createRouter({
         //   meta: { requiresAuth: false }
         // },
         {
-            path: "/studio",
-            name: "Studio",
-            component: () => import("~/pages/studio/index.vue"),
-            meta: { requiresAuth: true },
+            path: '/studio',
+            name: 'Studio',
+            component: () => import('~/pages/studio/index.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/studio/upload",
-            name: "upload",
-            component: () => import("~/pages/studio/upload.vue"),
-            meta: { requiresAuth: true },
+            path: '/studio/playlists',
+            name: 'playlists',
+            component: () => import('~/pages/studio/playlists/index.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/studio/posts",
-            name: "StudioPosts",
-            component: () => import("~/pages/studio/posts.vue"),
-            meta: { requiresAuth: true },
+            path: '/studio/playlists/:id',
+            name: 'playlistDetails',
+            component: () => import('~/pages/studio/playlists/details.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/login",
-            name: "login",
-            component: () => import("~/pages/auth/login.vue"),
-            meta: { requiresAuth: false },
+            path: '/studio/upload',
+            name: 'upload',
+            component: () => import('~/pages/studio/upload.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/dashboard",
-            redirect: "/dashboard/account",
+            path: '/studio/posts',
+            name: 'StudioPosts',
+            component: () => import('~/pages/studio/posts.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/dashboard/account",
-            name: "dashboard",
-            component: () => import("~/pages/dashboard/index.vue"),
-            meta: { requiresAuth: true },
+            path: '/login',
+            name: 'login',
+            component: () => import('~/pages/auth/login.vue'),
+            meta: { requiresAuth: false }
         },
         {
-            path: "/dashboard/account/data",
-            name: "dashboardAccountData",
-            component: () =>
-                import("~/pages/dashboard/account/AccountData.vue"),
-            meta: { requiresAuth: true },
+            path: '/register',
+            name: 'register',
+            component: () => import('~/pages/auth/register.vue'),
+            meta: { requiresAuth: false }
         },
         {
-            path: "/dashboard/account/security",
-            name: "dashboardAccountSecurity",
-            component: () =>
-                import("~/pages/dashboard/account/AccountSecurity.vue"),
-            meta: { requiresAuth: true },
+            path: '/dashboard',
+            redirect: '/dashboard/account'
         },
         {
-            path: "/dashboard/account/status",
-            name: "dashboardAccountStatus",
-            component: () =>
-                import("~/pages/dashboard/account/AccountStatus.vue"),
-            meta: { requiresAuth: true },
+            path: '/dashboard/account',
+            name: 'dashboard',
+            component: () => import('~/pages/dashboard/index.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/dashboard/account/email",
-            name: "dashboardAccountEmail",
-            component: () =>
-                import("~/pages/dashboard/account/AccountEmail.vue"),
-            meta: { requiresAuth: true },
-        },
-        // {
-        //     path: "/dashboard/account/deactivate",
-        //     name: "dashboardAccountDeactivate",
-        //     component: () =>
-        //         import("~/pages/dashboard/account/AccountDeactivate.vue"),
-        //     meta: { requiresAuth: true },
-        // },
-        // {
-        //     path: "/dashboard/account/delete",
-        //     name: "dashboardAccountDelete",
-        //     component: () =>
-        //         import("~/pages/dashboard/account/AccountDelete.vue"),
-        //     meta: { requiresAuth: true },
-        // },
-        {
-            path: "/dashboard/safety",
-            name: "dashboardSafety",
-            component: () => import("~/pages/dashboard/safety.vue"),
-            meta: { requiresAuth: true },
+            path: '/dashboard/account/data',
+            name: 'dashboardAccountData',
+            component: () => import('~/pages/dashboard/account/AccountData.vue'),
+            meta: { requiresAuth: true }
         },
         {
-            path: "/dashboard/safety/blocked-accounts",
-            name: "dashboardSafetyBlockedAccounts",
-            component: () =>
-                import("~/pages/dashboard/safety/SafetyBlockedAccounts.vue"),
-            meta: { requiresAuth: true },
+            path: '/dashboard/account/security',
+            name: 'dashboardAccountSecurity',
+            component: () => import('~/pages/dashboard/account/AccountSecurity.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/dashboard/account/status',
+            name: 'dashboardAccountStatus',
+            component: () => import('~/pages/dashboard/account/AccountStatus.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/dashboard/account/email',
+            name: 'dashboardAccountEmail',
+            component: () => import('~/pages/dashboard/account/AccountEmail.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/dashboard/account/deactivate',
+            name: 'dashboardAccountDeactivate',
+            component: () => import('~/pages/dashboard/account/AccountDeactivate.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/dashboard/account/delete',
+            name: 'dashboardAccountDelete',
+            component: () => import('~/pages/dashboard/account/AccountDelete.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/dashboard/safety',
+            name: 'dashboardSafety',
+            component: () => import('~/pages/dashboard/safety.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/dashboard/safety/blocked-accounts',
+            name: 'dashboardSafetyBlockedAccounts',
+            component: () => import('~/pages/dashboard/safety/SafetyBlockedAccounts.vue'),
+            meta: { requiresAuth: true }
         },
         // {
         //   path: '/dashboard/federation',
@@ -271,124 +288,124 @@ const router = createRouter({
         //     meta: { requiresAuth: true },
         // },
         {
-            path: "/admin",
-            component: () => import("~/layouts/AdminLayout.vue"),
+            path: '/admin',
+            component: () => import('~/layouts/AdminLayout.vue'),
             meta: { requiresAuth: true, requiresAdmin: true },
             children: [
                 {
-                    path: "",
-                    redirect: "/admin/dashboard",
+                    path: '',
+                    redirect: '/admin/dashboard'
                 },
                 {
-                    path: "dashboard",
-                    name: "Dashboard",
-                    component: () => import("~/pages/admin/Dashboard.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'dashboard',
+                    name: 'Dashboard',
+                    component: () => import('~/pages/admin/Dashboard.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "comments",
-                    name: "Comments",
-                    component: () => import("~/pages/admin/Comments.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'comments',
+                    name: 'Comments',
+                    component: () => import('~/pages/admin/Comments.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "replies",
-                    name: "Replies",
-                    component: () => import("~/pages/admin/Replies.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'replies',
+                    name: 'Replies',
+                    component: () => import('~/pages/admin/Replies.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "hashtags",
-                    name: "Hashtags",
-                    component: () => import("~/pages/admin/Hashtags.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'hashtags',
+                    name: 'Hashtags',
+                    component: () => import('~/pages/admin/Hashtags.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "reports/:id",
-                    name: "ReportView",
-                    component: () => import("~/pages/admin/ReportShow.vue"),
+                    path: 'reports/:id',
+                    name: 'ReportView',
+                    component: () => import('~/pages/admin/ReportShow.vue'),
                     params: true,
-                    meta: { requiresAdmin: true },
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "reports",
-                    name: "Reports",
-                    component: () => import("~/pages/admin/Reports.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'reports',
+                    name: 'Reports',
+                    component: () => import('~/pages/admin/Reports.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "profiles",
-                    name: "Profiles",
-                    component: () => import("~/pages/admin/Profiles.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'profiles',
+                    name: 'Profiles',
+                    component: () => import('~/pages/admin/Profiles.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "profiles/:id",
-                    name: "ProfileShow",
-                    component: () => import("~/pages/admin/ProfileShow.vue"),
+                    path: 'profiles/:id',
+                    name: 'ProfileShow',
+                    component: () => import('~/pages/admin/ProfileShow.vue'),
                     params: true,
-                    meta: { requiresAdmin: true },
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "videos",
-                    name: "Videos",
-                    component: () => import("~/pages/admin/Videos.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'videos',
+                    name: 'Videos',
+                    component: () => import('~/pages/admin/Videos.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "videos/:id",
-                    name: "VideoShow",
-                    component: () => import("~/pages/admin/VideoShow.vue"),
+                    path: 'videos/:id',
+                    name: 'VideoShow',
+                    component: () => import('~/pages/admin/VideoShow.vue'),
                     params: true,
-                    meta: { requiresAdmin: true },
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "instances",
-                    name: "instances",
-                    component: () => import("~/pages/admin/Instances.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'instances',
+                    name: 'instances',
+                    component: () => import('~/pages/admin/Instances.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "instances/:id",
-                    name: "InstancesShow",
-                    component: () => import("~/pages/admin/InstanceShow.vue"),
-                    meta: { requiresAdmin: true },
+                    path: 'instances/:id',
+                    name: 'InstancesShow',
+                    component: () => import('~/pages/admin/InstanceShow.vue'),
+                    meta: { requiresAdmin: true }
                 },
                 {
-                    path: "settings",
-                    name: "Settings",
-                    component: () => import("~/pages/admin/Settings.vue"),
-                    meta: { requiresAdmin: true },
-                },
-            ],
+                    path: 'settings',
+                    name: 'Settings',
+                    component: () => import('~/pages/admin/Settings.vue'),
+                    meta: { requiresAdmin: true }
+                }
+            ]
         },
         {
-            path: "/:pathMatch(.*)*",
-            name: "NotFound",
-            component: () => import("~/pages/notFound.vue"),
-        },
-    ],
-});
+            path: '/:pathMatch(.*)*',
+            name: 'NotFound',
+            component: () => import('~/pages/notFound.vue')
+        }
+    ]
+})
 
-let authInitialized = false;
+let authInitialized = false
 
 router.beforeEach(async (to, from, next) => {
-    const authStore = useAuthStore();
+    const authStore = useAuthStore()
 
     if (!authInitialized) {
-        await initializeAuth();
-        authInitialized = true;
+        await initializeAuth()
+        authInitialized = true
     }
 
     // Check if route requires admin access
     if (to.matched.some((record) => record.meta.requiresAdmin)) {
         if (!authStore.user || !authStore.user.is_admin) {
-            next("/");
-            return;
+            next('/')
+            return
         }
     }
 
-    authMiddleware(to, from, next);
-});
+    authMiddleware(to, from, next)
+})
 
-export default router;
+export default router

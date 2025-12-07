@@ -8,19 +8,19 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { SunIcon, MoonIcon } from "@heroicons/vue/24/outline";
+import { ref } from 'vue'
+import { SunIcon, MoonIcon } from '@heroicons/vue/24/outline'
 
-const isDark = ref(document.documentElement.classList.contains("dark"));
+const isDark = ref(document.documentElement.classList.contains('dark'))
 
 const handleToggleDarkMode = () => {
-    isDark.value = !isDark.value;
+    isDark.value = !isDark.value
     if (isDark.value) {
-        document.documentElement.classList.add("dark");
-        localStorage.setItem("theme", "dark");
+        document.documentElement.classList.add('dark')
+        localStorage.setItem('theme', 'dark')
     } else {
-        document.documentElement.classList.remove("dark");
-        localStorage.setItem("theme", "light");
+        document.documentElement.classList.remove('dark')
+        localStorage.setItem('theme', 'light')
     }
-};
+}
 </script>

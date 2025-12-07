@@ -51,6 +51,7 @@ class FeedController extends Controller
         $me = $request->user()->profile_id;
 
         $feed = Video::query()
+            ->published()
             ->where(function ($q) use ($me) {
                 $q->where('videos.profile_id', $me)
                     ->orWhereExists(function ($sub) use ($me) {

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\InstanceActor;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class WebfingerService
@@ -75,20 +76,24 @@ class WebfingerService
             return null;
         }
 
-        $webfingerUrl = "https://{$parsed['domain']}/.well-known/webfinger";
+        $webfingerUrl = "https://{$parsed['domain']}/.well-known/webfinger?resource=".urlencode($resource);
 
         try {
-            $response = app(ActivityPubService::class)
-                ->get($webfingerUrl, [
-                    'resource' => $resource,
-                ], false, false, false);
+            $response = Http::timeout(10)
+                ->withHeaders([
+                    'Accept' => 'application/jrd+json, application/json',
+                    'User-Agent' => app('user_agent'),
+                ])
+                ->get($webfingerUrl);
 
-            if ($response) {
-                return $response;
+            if ($response->successful()) {
+                return $response->json();
             }
 
             Log::warning('Failed to fetch remote webfinger', [
                 'resource' => $resource,
+                'status' => $response->status(),
+                'domain' => $parsed['domain'],
             ]);
         } catch (\Exception $e) {
             Log::error('Exception during webfinger lookup', [

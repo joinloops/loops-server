@@ -3,17 +3,9 @@
         <slot name="trigger" :toggle="togglePicker" />
 
         <Teleport to="body">
-            <div
-                v-if="isOpen"
-                class="emoji-picker-overlay"
-                @click="closeOnOverlay"
-            >
+            <div v-if="isOpen" class="emoji-picker-overlay" @click="closeOnOverlay">
                 <div class="emoji-picker-container" @click.stop>
-                    <Picker
-                        :data="emojiStore.emojiIndex"
-                        set="apple"
-                        @select="handleSelect"
-                    />
+                    <Picker :data="emojiStore.emojiIndex" set="apple" @select="handleSelect" />
                 </div>
             </div>
         </Teleport>
@@ -21,39 +13,39 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { Picker } from "emoji-mart-vue-fast/src";
-import { useEmojiStore } from "@/stores/emojiStore";
-import "emoji-mart-vue-fast/css/emoji-mart.css";
+import { ref } from 'vue'
+import { Picker } from 'emoji-mart-vue-fast/src'
+import { useEmojiStore } from '@/stores/emojiStore'
+import 'emoji-mart-vue-fast/css/emoji-mart.css'
 
 const props = defineProps({
     closeOnOutsideClick: {
         type: Boolean,
-        default: true,
-    },
-});
+        default: true
+    }
+})
 
-const emit = defineEmits(["update:modelValue", "select"]);
+const emit = defineEmits(['update:modelValue', 'select'])
 
-const emojiStore = useEmojiStore();
-const isOpen = ref(false);
+const emojiStore = useEmojiStore()
+const isOpen = ref(false)
 
 const togglePicker = () => {
-    isOpen.value = !isOpen.value;
-};
+    isOpen.value = !isOpen.value
+}
 
 const closeOnOverlay = (e) => {
     if (props.closeOnOutsideClick) {
-        isOpen.value = false;
+        isOpen.value = false
     }
-};
+}
 
 const handleSelect = (emoji) => {
-    emojiStore.addRecentEmoji(emoji);
-    emit("update:modelValue", emoji.native);
-    emit("select", emoji);
-    isOpen.value = false;
-};
+    emojiStore.addRecentEmoji(emoji)
+    emit('update:modelValue', emoji.native)
+    emit('select', emoji)
+    isOpen.value = false
+}
 </script>
 
 <style scoped>

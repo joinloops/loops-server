@@ -91,10 +91,10 @@ class UndoHandler extends BaseHandler
 
         $existingFollow->delete();
 
-        if ($targetProfile->followers > 0) {
+        if ($targetProfile->followers > 1) {
             $targetProfile->decrement('followers');
         }
-        if ($actor->following > 0) {
+        if ($actor->following > 1) {
             $actor->decrement('following');
         }
 

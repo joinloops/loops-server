@@ -1,0 +1,154 @@
+services:
+## MariaDB and Redis (optional)
+  mysqldb:
+    image: mysql:9
+    container_name: loops-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - ./mysqldb-9-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    networks:
+      - loops-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: loops-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 10s
+    networks:
+      - loops-network
+
+## Pixelfed containers - App (Web/API), Horizon Queue, Scheduled task.
+  loops:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: loops-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      # SSL Configuration (handled by reverse proxy)
+      SSL_MODE: "off"
+
+      # PHP Configuration
+      PHP_POST_MAX_SIZE: "100M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "100M"
+      PHP_OPCACHE_ENABLE: "1"
+      PHP_MEMORY_LIMIT: "512M"
+      
+      # Laravel Auto-run Configuration
+      AUTORUN_ENABLED: "true"
+      AUTORUN_LARAVEL_MIGRATION: "true"
+      AUTORUN_LARAVEL_MIGRATION_ISOLATION: "true"
+      AUTORUN_LARAVEL_STORAGE_LINK: "true"
+      AUTORUN_LARAVEL_EVENT_CACHE: "true"
+      AUTORUN_LARAVEL_ROUTE_CACHE: "true"
+      AUTORUN_LARAVEL_VIEW_CACHE: "true"
+      AUTORUN_LARAVEL_CONFIG_CACHE: "true"
+
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - mysqldb
+      - redis
+    networks:
+      - loops-network
+
+  horizon:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: loops-horizon
+    restart: unless-stopped
+    command: ["php", "artisan", "horizon"]
+    env_file:
+      - .env
+    environment:
+      # Laravel Auto-run Configuration
+      AUTORUN_ENABLED: "false"
+      AUTORUN_LARAVEL_MIGRATION: "false"
+      AUTORUN_LARAVEL_MIGRATION_ISOLATION: "false"
+      AUTORUN_LARAVEL_STORAGE_LINK: "true"
+      AUTORUN_LARAVEL_EVENT_CACHE: "false"
+      AUTORUN_LARAVEL_ROUTE_CACHE: "false"
+      AUTORUN_LARAVEL_VIEW_CACHE: "false"
+      AUTORUN_LARAVEL_CONFIG_CACHE: "true"
+      PHP_POST_MAX_SIZE: "500M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "500M"
+      PHP_OPCACHE_ENABLE: "1"
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - mysqldb
+      - redis
+    healthcheck:
+      test: ["CMD", "php", "artisan", "horizon:status"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - loops-network
+
+  scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: loops-scheduler
+    restart: unless-stopped
+    command: ["php", "artisan", "schedule:work"]
+    stop_signal: SIGTERM
+    env_file:
+      - .env
+    environment:
+      # Laravel Auto-run Configuration
+      AUTORUN_ENABLED: "false"
+      AUTORUN_LARAVEL_MIGRATION: "false"
+      AUTORUN_LARAVEL_MIGRATION_ISOLATION: "false"
+      AUTORUN_LARAVEL_STORAGE_LINK: "true"
+      AUTORUN_LARAVEL_EVENT_CACHE: "false"
+      AUTORUN_LARAVEL_ROUTE_CACHE: "false"
+      AUTORUN_LARAVEL_VIEW_CACHE: "false"
+      AUTORUN_LARAVEL_CONFIG_CACHE: "true"
+      PHP_POST_MAX_SIZE: "500M"
+      PHP_UPLOAD_MAX_FILE_SIZE: "500M"
+      PHP_OPCACHE_ENABLE: "1"
+    volumes:
+      - ./storage:/var/www/html/storage
+      - ./bootstrap/cache:/var/www/html/bootstrap/cache
+    depends_on:
+      - mysqldb
+      - redis
+    healthcheck:
+      test: ["CMD", "healthcheck-schedule"]
+      start_period: 10s
+    networks:
+      - loops-network
+
+networks:
+  loops-network:
+    driver: bridge

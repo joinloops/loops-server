@@ -10,18 +10,33 @@ class FeedService
 {
     public static function getAccountFeed($profileId, $limit = 10, $sort = 'Latest')
     {
-        $feed = Video::whereProfileId($profileId)
+        $request = request();
+        $isFirstPage = ! $request->has('cursor');
+
+        $query = Video::whereProfileId($profileId)
             ->whereStatus(2)
-            ->when($sort, function ($query, $sort) {
-                match ($sort) {
-                    'Latest' => $query->orderByDesc('id'),
-                    'Popular' => $query->orderByDesc('likes'),
-                    'Oldest' => $query->orderBy('created_at'),
-                    default => $query->orderByDesc('id')
-                };
-            })
-            ->cursorPaginate(10)
-            ->withQueryString();
+            ->where('is_pinned', false);
+
+        match ($sort) {
+            'Latest' => $query->orderByDesc('id'),
+            'Popular' => $query->orderByDesc('likes'),
+            'Oldest' => $query->orderBy('created_at'),
+            default => $query->orderByDesc('id')
+        };
+
+        $feed = $query->cursorPaginate($limit)->withQueryString();
+
+        if ($isFirstPage) {
+            $pinnedVideos = Video::whereProfileId($profileId)
+                ->whereStatus(2)
+                ->where('is_pinned', true)
+                ->orderBy('pinned_order')
+                ->limit(3)
+                ->get();
+
+            $items = $pinnedVideos->merge($feed->items());
+            $feed->setCollection($items);
+        }
 
         return VideoResource::collection($feed);
     }
@@ -37,6 +52,7 @@ class FeedService
             ->whereNull('blocked.account_id')
             ->orderBy('videos.id', 'desc')
             ->where('videos.status', 2)
+            ->where('is_local', true)
             ->whereNotNull('videos.vid_optimized')
             ->select('videos.*')
             ->cursorPaginate($limit)

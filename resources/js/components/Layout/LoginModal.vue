@@ -1,7 +1,5 @@
 <template>
-    <div
-        class="fixed flex items-center justify-center z-50 top-0 left-0 w-full h-full bg-black/80"
-    >
+    <div class="fixed flex items-center justify-center z-50 top-0 left-0 w-full h-full bg-black/80">
         <div
             class="relative bg-white dark:bg-slate-900 w-full overflow-y max-w-[470px] h-[70%] p-4 rounded-lg"
         >
@@ -36,9 +34,9 @@
 </template>
 
 <script setup>
-import { ref, inject } from "vue";
-import Login from "@/components/Login.vue";
-import Register from "@/components/Register.vue";
-const appStore = inject("appStore");
-const isRegister = ref(true);
+import { ref, inject } from 'vue'
+import Login from '@/components/Login.vue'
+import Register from '@/components/Register.vue'
+const appStore = inject('appStore')
+const isRegister = ref(true)
 </script>

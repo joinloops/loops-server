@@ -12,14 +12,10 @@
                 ></div>
             </div>
 
-            <div
-                class="flex min-h-[70vh] flex-col items-center justify-center text-center"
-            >
+            <div class="flex min-h-[70vh] flex-col items-center justify-center text-center">
                 <div class="mb-8 relative">
                     <div>
-                        <ExclamationTriangleIcon
-                            class="h-24 w-24 text-[#F02C56] mx-auto"
-                        />
+                        <ExclamationTriangleIcon class="h-24 w-24 text-[#F02C56] mx-auto" />
                     </div>
                 </div>
 
@@ -45,9 +41,8 @@
                 <p
                     class="text-pretty text-lg font-medium text-gray-600 dark:text-slate-400 sm:text-xl max-w-2xl leading-relaxed mb-10 animate-fade-in-delay"
                 >
-                    The page you're looking for seems to have wandered off into
-                    the digital void. Don't worry, even the best explorers
-                    sometimes take a wrong turn!
+                    The page you're looking for seems to have wandered off into the digital void.
+                    Don't worry, even the best explorers sometimes take a wrong turn!
                 </p>
 
                 <div
@@ -81,9 +76,7 @@
                     <p class="text-sm text-gray-500 dark:text-slate-400 mb-4">
                         Still lost? Here are some helpful links:
                     </p>
-                    <div
-                        class="flex flex-wrap items-center justify-center gap-6 text-sm"
-                    >
+                    <div class="flex flex-wrap items-center justify-center gap-6 text-sm">
                         <router-link
                             to="/about"
                             class="text-[#F02C56] hover:text-red-500 transition-colors duration-200 hover:underline"
@@ -107,23 +100,19 @@
 </template>
 
 <script setup>
-import MainLayout from "../layouts/MainLayout.vue";
-import {
-    ExclamationTriangleIcon,
-    HomeIcon,
-    ArrowLeftIcon,
-} from "@heroicons/vue/24/outline";
-import { useRouter } from "vue-router";
+import MainLayout from '../layouts/MainLayout.vue'
+import { ExclamationTriangleIcon, HomeIcon, ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const goBack = () => {
     if (window.history.length > 1) {
-        router.go(-1);
+        router.go(-1)
     } else {
-        router.push("/");
+        router.push('/')
     }
-};
+}
 </script>
 
 <style scoped>

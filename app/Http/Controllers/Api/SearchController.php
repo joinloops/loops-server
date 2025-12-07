@@ -12,6 +12,7 @@ use App\Models\Profile;
 use App\Models\UserFilter;
 use App\Models\Video;
 use App\Services\WebfingerService;
+use App\Support\CursorToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -32,14 +33,48 @@ class SearchController extends Controller
     {
         $validated = $request->validate([
             'query' => 'required|string|min:1|max:100',
-            'type' => 'sometimes|in:all,videos,users,hashtags',
+            'type' => 'sometimes|in:top,all,videos,users,hashtags',
             'limit' => 'sometimes|integer|min:1|max:20',
-            'cursor' => 'sometimes|string',
+            'cursor' => 'sometimes|string|max:2000',
         ]);
 
+        $maxPages = 5;
         $type = $validated['type'] ?? 'all';
+
+        $maxItems = match ($type) {
+            'top' => 12,
+            'all' => 12,
+            'users' => 12,
+            'videos' => 24,
+            'hashtags' => 30,
+            default => 12,
+        };
+
+        $curCursor = $request->input('cursor') ?? null;
         $limit = $validated['limit'] ?? 10;
         $query = trim($validated['query']);
+
+        $ctx = hash('sha256', implode('|', [
+            $request->user()->id ?? 'guest',
+            $type,
+            $limit,
+            mb_strtolower($query),
+        ]));
+
+        $decodedCursor = null;
+        $hops = 0;
+
+        if ($request->filled('cursor')) {
+            ['cursor' => $decodedCursor, 'hops' => $hops] = CursorToken::decode($request->input('cursor'), $ctx);
+
+            if ($hops >= $maxPages) {
+                return $this->defaultResponse($request, $limit);
+            }
+
+            if (($hops * $limit) >= $maxItems) {
+                return $this->defaultResponse($request, $limit);
+            }
+        }
 
         $authProfileId = $request->user()?->profile_id;
 
@@ -50,8 +85,10 @@ class SearchController extends Controller
         $usersData = collect();
         $videosData = collect();
         $pager = null;
+        $nextCursorToken = null;
+        $nextLaravelCursor = null;
 
-        if ($type === 'all') {
+        if (in_array($type, ['all', 'top'])) {
             $videos = Video::query()
                 ->select(['id', 'profile_id', 'caption', 'likes', 'status', 'visibility', 'created_at'])
                 ->where('status', 2)
@@ -63,12 +100,14 @@ class SearchController extends Controller
                     perPage: $limit,
                     columns: ['*'],
                     cursorName: 'cursor',
-                    cursor: $request->input('cursor')
+                    cursor: $decodedCursor
                 )
                 ->withQueryString();
 
             $videosData = $videos->getCollection();
             $pager = $videos;
+            $nextLaravelCursor = $pager->nextCursor()?->encode();
+            $nextCursorToken = CursorToken::encode($nextLaravelCursor, $ctx, $hops + 1);
 
             $usersData = Profile::query()
                 ->select(['profiles.id', 'profiles.username', 'profiles.name', 'profiles.followers', 'profiles.status'])
@@ -81,6 +120,16 @@ class SearchController extends Controller
                 ->orderByDesc('followers')
                 ->limit(2)
                 ->get();
+
+            $hashtags = Hashtag::query()
+                ->select(['id', 'name', 'name_normalized', 'count', 'can_search', 'created_at'])
+                ->where('can_search', true)
+                ->where('name', 'like', $like)
+                ->orderByDesc('count')
+                ->limit(6)
+                ->get();
+
+            $hashtagsData = $hashtags;
         }
 
         if ($type === 'videos') {
@@ -93,14 +142,16 @@ class SearchController extends Controller
                 ->orderByDesc('id')
                 ->cursorPaginate(
                     perPage: $limit,
-                    columns: ['*'],
+                    columns: ['id', 'profile_id', 'caption', 'likes', 'status', 'visibility', 'created_at'],
                     cursorName: 'cursor',
-                    cursor: $request->input('cursor')
+                    cursor: $decodedCursor
                 )
                 ->withQueryString();
 
             $videosData = $videos->getCollection();
             $pager = $videos;
+            $nextLaravelCursor = $pager->nextCursor()?->encode();
+            $nextCursorToken = CursorToken::encode($nextLaravelCursor, $ctx, $hops + 1);
         }
 
         if ($type === 'users') {
@@ -111,19 +162,21 @@ class SearchController extends Controller
                     $q->where('username', 'like', $like)
                         ->orWhere('name', 'like', $like);
                 })
-                ->where('status', 1)
-                ->orderByDesc('followers')
-                ->orderByDesc('id')
+                ->where('profiles.status', 1)
+                ->orderByDesc('profiles.followers')
+                ->orderByDesc('profiles.id')
                 ->cursorPaginate(
                     perPage: $limit,
                     columns: ['*'],
                     cursorName: 'cursor',
-                    cursor: $request->input('cursor')
+                    cursor: $decodedCursor
                 )
                 ->withQueryString();
 
             $usersData = $users->getCollection();
             $pager = $users;
+            $nextLaravelCursor = $pager->nextCursor()?->encode();
+            $nextCursorToken = CursorToken::encode($nextLaravelCursor, $ctx, $hops + 1);
         }
 
         if ($type === 'hashtags') {
@@ -136,19 +189,49 @@ class SearchController extends Controller
                     perPage: $limit,
                     columns: ['*'],
                     cursorName: 'cursor',
-                    cursor: $request->input('cursor')
+                    cursor: $decodedCursor
                 )
                 ->withQueryString();
 
             $hashtagsData = $hashtags->getCollection();
             $pager = $hashtags;
+            $nextLaravelCursor = $pager->nextCursor()?->encode();
+            $nextCursorToken = CursorToken::encode($nextLaravelCursor, $ctx, $hops + 1);
         }
 
         return new SearchResultResource([
             'hashtags' => $hashtagsData,
             'users' => $usersData,
             'videos' => $videosData,
-            'pager' => $pager,
+            'pager' => [
+                'limit' => $limit,
+                'prev_cursor' => $curCursor,
+                'next_cursor' => $nextCursorToken,
+                'has_more' => (bool) $nextLaravelCursor,
+            ],
+        ]);
+    }
+
+    public function defaultResponse($request, $limit)
+    {
+        return response()->json([
+            'data' => [
+                'hashtags' => [],
+                'users' => [],
+                'videos' => [],
+            ],
+            'links' => [
+                'first' => null,
+                'last' => null,
+                'prev' => null,
+                'next' => null,
+            ],
+            'meta' => [
+                'path' => $request->url(),
+                'per_page' => $limit,
+                'next_cursor' => null,
+                'prev_cursor' => null,
+            ],
         ]);
     }
 

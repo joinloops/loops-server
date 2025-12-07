@@ -70,6 +70,7 @@ class VideoService
                 'comments' => $video->comments,
                 'created_at' => $video->created_at->format('c'),
                 'media' => [
+                    'duration' => $video->duration,
                     'width' => 1280,
                     'height' => 720,
                     'thumbnail' => $thumb,

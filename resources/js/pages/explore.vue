@@ -10,10 +10,7 @@
             />
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div
-                    v-if="loading"
-                    class="flex justify-center items-center py-12"
-                >
+                <div v-if="loading" class="flex justify-center items-center py-12">
                     <Spinner />
                 </div>
 
@@ -25,7 +22,7 @@
                         @click="fetchHashtags"
                         class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                     >
-                        {{ $t("common.retry") }}
+                        {{ $t('common.retry') }}
                     </button>
                 </div>
 
@@ -66,16 +63,12 @@
                                     <span
                                         class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
                                     >
-                                        <ChatBubbleOvalLeftIcon
-                                            class="h-4 w-4"
-                                        />
+                                        <ChatBubbleOvalLeftIcon class="h-4 w-4" />
                                         {{ formatNumber(video.comments || 0) }}
                                     </span>
                                 </div>
 
-                                <div
-                                    class="absolute bottom-0 left-0 right-0 p-3"
-                                >
+                                <div class="absolute bottom-0 left-0 right-0 p-3">
                                     <div
                                         v-if="video.caption || video.title"
                                         class="text-white text-xs line-clamp-2 font-medium"
@@ -102,9 +95,7 @@
                             </div>
 
                             <div class="mt-2 px-1">
-                                <div
-                                    class="flex items-center gap-2 min-w-0 mb-1.5"
-                                >
+                                <div class="flex items-center gap-2 min-w-0 mb-1.5">
                                     <Avatar
                                         :src="video.account.avatar"
                                         :width="20"
@@ -130,39 +121,36 @@
                         v-if="!hasMore && !loadingMore"
                         class="text-center py-8 text-gray-500 dark:text-gray-400 text-sm"
                     >
-                        {{ $t("common.noMoreResults") || "No more videos" }}
+                        {{ $t('common.noMoreResults') || 'No more videos' }}
                     </div>
                 </div>
 
                 <div v-else class="text-center py-12">
                     <div class="text-gray-500 dark:text-gray-400 mb-4 text-sm">
-                        {{ $t("explore.noVideosFoundForThisHashtag") }}
+                        {{ $t('explore.noVideosFoundForThisHashtag') }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <GuestAuthPromptModal
-            :show="showGuestModal"
-            @close="showGuestModal = false"
-        />
+        <GuestAuthPromptModal :show="showGuestModal" @close="showGuestModal = false" />
     </MainLayout>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, inject, ref, watch, nextTick } from "vue";
-import { storeToRefs } from "pinia";
-import { HeartIcon, ChatBubbleOvalLeftIcon } from "@heroicons/vue/24/outline";
-import { useUtils } from "@/composables/useUtils";
-import GuestAuthPromptModal from "@/components/Tag/GuestAuthPromptModal.vue";
-import ExploreHeader from "@/components/Explore/ExploreHeader.vue";
+import { onMounted, onUnmounted, inject, ref, watch, nextTick } from 'vue'
+import { storeToRefs } from 'pinia'
+import { HeartIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline'
+import { useUtils } from '@/composables/useUtils'
+import GuestAuthPromptModal from '@/components/Tag/GuestAuthPromptModal.vue'
+import ExploreHeader from '@/components/Explore/ExploreHeader.vue'
 
-const exploreStore = inject("exploreStore");
-const authStore = inject("authStore");
-const loadMoreTrigger = ref(null);
-const showGuestModal = ref(false);
-let observer = null;
-const { formatNumber } = useUtils();
+const exploreStore = inject('exploreStore')
+const authStore = inject('authStore')
+const loadMoreTrigger = ref(null)
+const showGuestModal = ref(false)
+let observer = null
+const { formatNumber } = useUtils()
 
 const {
     hashtags,
@@ -172,76 +160,76 @@ const {
     loadingMore,
     error,
     hasMore,
-    totalResults,
-} = storeToRefs(exploreStore);
+    totalResults
+} = storeToRefs(exploreStore)
 
-const { fetchHashtags, setActiveHashtag, loadMore } = exploreStore;
+const { fetchHashtags, setActiveHashtag, loadMore } = exploreStore
 
 const handleLoadMore = () => {
     if (!authStore.authenticated) {
-        showGuestModal.value = true;
-        return;
+        showGuestModal.value = true
+        return
     }
 
     if (hasMore.value && !loadingMore.value && !loading.value) {
-        loadMore();
+        loadMore()
     }
-};
+}
 
 const cleanupObserver = () => {
     if (observer) {
-        observer.disconnect();
-        observer = null;
+        observer.disconnect()
+        observer = null
     }
-};
+}
 
 const setupIntersectionObserver = () => {
-    if (!loadMoreTrigger.value) return;
+    if (!loadMoreTrigger.value) return
 
-    cleanupObserver();
+    cleanupObserver()
 
     observer = new IntersectionObserver(
         (entries) => {
-            const [entry] = entries;
+            const [entry] = entries
             if (entry.isIntersecting) {
-                handleLoadMore();
+                handleLoadMore()
             }
         },
         {
             root: null,
-            rootMargin: "200px",
-            threshold: 0.1,
-        },
-    );
+            rootMargin: '200px',
+            threshold: 0.1
+        }
+    )
 
-    observer.observe(loadMoreTrigger.value);
-};
+    observer.observe(loadMoreTrigger.value)
+}
 
 // Watch for hashtag changes
 watch(activeHashtag, () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' })
 
-    cleanupObserver();
-});
+    cleanupObserver()
+})
 
 watch(loading, async (newLoading, oldLoading) => {
     if (oldLoading && !newLoading) {
-        await nextTick();
+        await nextTick()
         setTimeout(() => {
-            setupIntersectionObserver();
-        }, 100);
+            setupIntersectionObserver()
+        }, 100)
     }
-});
+})
 
 onMounted(() => {
-    fetchHashtags();
+    fetchHashtags()
 
     setTimeout(() => {
-        setupIntersectionObserver();
-    }, 100);
-});
+        setupIntersectionObserver()
+    }, 100)
+})
 
 onUnmounted(() => {
-    cleanupObserver();
-});
+    cleanupObserver()
+})
 </script>

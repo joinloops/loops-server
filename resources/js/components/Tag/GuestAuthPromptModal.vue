@@ -37,16 +37,13 @@
                             <div
                                 class="mx-auto w-16 h-16 bg-gradient-to-br from-red-500 to-pink-600 rounded-full flex items-center justify-center mb-6"
                             >
-                                <i
-                                    class="bx bx-user text-white"
-                                    style="font-size: 40px"
-                                />
+                                <i class="bx bx-user text-white" style="font-size: 40px" />
                             </div>
 
                             <h2
                                 class="text-2xl font-bold text-gray-900 dark:text-white mb-3 text-center"
                             >
-                                {{ $t("common.keepWatching") }}
+                                {{ $t('common.keepWatching') }}
                             </h2>
 
                             <p
@@ -54,10 +51,8 @@
                             >
                                 {{
                                     appConfig.registration
-                                        ? $t(
-                                              "common.createAFreeAccountToContinueExploring",
-                                          )
-                                        : $t("common.loginToContinueExploring")
+                                        ? $t('common.createAFreeAccountToContinueExploring')
+                                        : $t('common.loginToContinueExploring')
                                 }}
                             </p>
 
@@ -69,7 +64,7 @@
                                     variant="primary"
                                 >
                                     <div class="text-lg">
-                                        {{ $t("common.createAccount") }}
+                                        {{ $t('common.createAccount') }}
                                     </div>
                                 </AnimatedButton>
 
@@ -79,39 +74,31 @@
                                     variant="light"
                                 >
                                     <div class="text-lg">
-                                        {{ $t("nav.logIn") }}
+                                        {{ $t('nav.logIn') }}
                                     </div>
                                 </AnimatedButton>
                             </div>
 
-                            <div
-                                class="mt-6 text-xs text-gray-500 dark:text-gray-500"
-                            >
-                                {{ $t("common.byContinuingYouAgreeToOur") }}
+                            <div class="mt-6 text-xs text-gray-500 dark:text-gray-500">
+                                {{ $t('common.byContinuingYouAgreeToOur') }}
                                 <router-link
                                     to="/terms"
                                     class="text-red-600 dark:text-red-400 font-semibold"
                                     target="_blank"
-                                    >{{
-                                        $t("common.termsOfService")
-                                    }}</router-link
+                                    >{{ $t('common.termsOfService') }}</router-link
                                 >,
                                 <router-link
                                     to="/privacy"
                                     class="text-red-600 dark:text-red-400 font-semibold"
                                     target="_blank"
-                                    >{{
-                                        $t("common.privacyPolicy")
-                                    }}</router-link
+                                    >{{ $t('common.privacyPolicy') }}</router-link
                                 >
-                                {{ $t("common.and") }}
+                                {{ $t('common.and') }}
                                 <router-link
                                     to="/community-guidelines"
                                     class="text-red-600 dark:text-red-400 font-semibold"
                                     target="_blank"
-                                    >{{
-                                        $t("common.communityGuidelines")
-                                    }}</router-link
+                                    >{{ $t('common.communityGuidelines') }}</router-link
                                 >.
                             </div>
                         </div>
@@ -123,31 +110,31 @@
 </template>
 
 <script setup>
-import { inject } from "vue";
+import { inject } from 'vue'
 
 const props = defineProps({
     show: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close'])
 
-const authStore = inject("authStore");
-const appConfig = inject("appConfig");
+const authStore = inject('authStore')
+const appConfig = inject('appConfig')
 
 const handleClose = () => {
-    emit("close");
-};
+    emit('close')
+}
 
 const handleLogin = () => {
-    emit("close");
-    authStore.openAuthModal("login");
-};
+    emit('close')
+    authStore.openAuthModal('login')
+}
 
 const handleRegister = () => {
-    emit("close");
-    authStore.openAuthModal("register");
-};
+    emit('close')
+    authStore.openAuthModal('register')
+}
 </script>

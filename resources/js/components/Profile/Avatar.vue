@@ -1,40 +1,40 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed } from 'vue'
 
 interface Props {
-    src: string;
-    width?: number;
-    class?: string;
-    alt?: string;
-    fallbackSrc?: string;
-    shape?: "circle" | "square";
+    src: string
+    width?: number
+    class?: string
+    alt?: string
+    fallbackSrc?: string
+    shape?: 'circle' | 'square'
 }
 
 const props = withDefaults(defineProps<Props>(), {
     width: 40,
-    alt: "User avatar",
-    shape: "circle",
-    class: "",
-});
+    alt: 'User avatar',
+    shape: 'circle',
+    class: ''
+})
 
 const classes = computed(() => {
     const defaultClasses = [
-        "inline-block",
-        "object-cover",
-        props.shape === "circle" ? "rounded-full" : "rounded-lg",
-    ];
+        'inline-block',
+        'object-cover',
+        props.shape === 'circle' ? 'rounded-full' : 'rounded-lg'
+    ]
 
-    return [...defaultClasses, props.class].filter(Boolean).join(" ");
-});
+    return [...defaultClasses, props.class].filter(Boolean).join(' ')
+})
 
 const handleError = (e: Event) => {
-    const img = e.target as HTMLImageElement;
+    const img = e.target as HTMLImageElement
     if (props.fallbackSrc) {
-        img.src = props.fallbackSrc;
+        img.src = props.fallbackSrc
     } else {
-        img.src = "/storage/avatars/default.jpg";
+        img.src = '/storage/avatars/default.jpg'
     }
-};
+}
 </script>
 
 <template>
@@ -50,8 +50,8 @@ const handleError = (e: Event) => {
 
 <script lang="ts">
 export default {
-    name: "Avatar",
-};
+    name: 'Avatar'
+}
 </script>
 
 <style scoped>

@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\DuetController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\ReportController;
@@ -21,6 +22,7 @@ use App\Http\Controllers\InstanceActorController;
 use App\Http\Controllers\NodeInfoController;
 use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\PlaylistController;
 use App\Http\Controllers\SharedInboxController;
 use App\Http\Controllers\UserRegisterVerifyController;
 use App\Http\Controllers\WebfingerController;
@@ -82,7 +84,14 @@ Route::prefix('api')->group(function () {
 
     // Studio
     Route::get('/v1/studio/posts', [StudioController::class, 'getPosts'])->middleware('auth:web,api');
+    Route::get('/v1/studio/playlist-posts', [StudioController::class, 'getAvailableVideosForPlaylists'])->middleware('auth:web,api');
     Route::post('/v1/studio/upload', [VideoController::class, 'store'])->middleware('auth:web,api');
+    Route::post('/v1/studio/duet/upload', [DuetController::class, 'store'])->middleware('auth:web,api');
+    Route::apiResource('/v1/studio/playlists', PlaylistController::class)->middleware('auth:web,api');
+    Route::get('/v1/studio/playlists/{playlist}/videos', [PlaylistController::class, 'videos'])->middleware('auth:web,api');
+    Route::post('/v1/studio/playlists/{playlist}/videos', [PlaylistController::class, 'addVideo'])->middleware('auth:web,api');
+    Route::delete('/v1/studio/playlists/{playlist}/videos/{video}', [PlaylistController::class, 'removeVideo'])->middleware('auth:web,api');
+    Route::put('/v1/studio/playlists/{playlist}/reorder', [PlaylistController::class, 'reorder'])->middleware('auth:web,api');
 
     // Search
     Route::get('/v1/search', [SearchController::class, 'search'])->middleware(['auth:web,api', 'throttle:searchV1']);
@@ -139,7 +148,8 @@ Route::prefix('api')->group(function () {
     Route::post('/v1/account/settings/email/cancel', [EmailChangeController::class, 'cancelEmailChange'])->middleware(['auth:web,api']);
     Route::post('/v1/account/settings/email/verify', [EmailChangeController::class, 'verifyEmailChange'])->middleware(['auth:web,api']);
     Route::post('/v1/account/settings/email/resend', [EmailChangeController::class, 'resendEmailChange'])->middleware(['auth:web,api']);
-    // Route::post('/v1/account/settings/account/disable', [SettingsController::class, 'confirmDisableAccount'])->middleware(['auth:web']);
+    Route::post('/v1/account/settings/account/disable', [SettingsController::class, 'confirmDisableAccount'])->middleware(['auth:web']);
+    Route::post('/v1/account/settings/account/delete', [SettingsController::class, 'confirmDeleteAccount'])->middleware(['auth:web']);
 
     // Account Data
     Route::get('/v1/account/data/insights', [AccountDataController::class, 'getDataInsights'])->middleware(['auth:web,api']);
@@ -241,6 +251,8 @@ Route::prefix('api')->group(function () {
         Route::get('/profiles/{id}', [AdminController::class, 'profileShow'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/permissions', [AdminController::class, 'profilePermissionUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/admin_note', [AdminController::class, 'profileAdminNoteUpdate'])->middleware('auth:web,api');
+        Route::post('/profiles/{id}/suspend', [AdminController::class, 'profileSuspend'])->middleware('auth:web,api');
+        Route::post('/profiles/{id}/unsuspend', [AdminController::class, 'profileUnsuspend'])->middleware('auth:web,api');
         Route::get('/settings', [AdminSettingsController::class, 'index'])->middleware('auth:web,api');
         Route::put('/settings', [AdminSettingsController::class, 'update'])->middleware('auth:web,api');
         Route::post('/settings/update-logo', [AdminSettingsController::class, 'updateLogo'])->middleware('auth:web,api');

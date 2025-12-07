@@ -15,10 +15,7 @@
             @interaction="onUserInteraction"
         />
 
-        <div
-            v-else
-            class="flex flex-col items-center justify-center min-h-screen px-6 py-12"
-        >
+        <div v-else class="flex flex-col items-center justify-center min-h-screen px-6 py-12">
             <div class="text-center mb-8">
                 <div
                     class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center"
@@ -37,14 +34,12 @@
                         />
                     </svg>
                 </div>
-                <h3
-                    class="text-xl font-semibold text-gray-900 dark:text-white mb-2"
-                >
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                     No Posts Yet
                 </h3>
                 <p class="text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
-                    You're not following anyone yet. Follow some accounts to see
-                    their posts in your feed!
+                    You're not following anyone yet. Follow some accounts to see their posts in your
+                    feed!
                 </p>
 
                 <div v-if="showRefresh" class="mt-4 flex justify-center">
@@ -66,84 +61,74 @@
             />
         </div>
 
-        <div
-            v-if="isLoading"
-            class="flex items-center justify-center min-h-screen"
-        >
+        <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
             <Spinner />
         </div>
     </FeedLayout>
 </template>
 
 <script setup>
-import { inject, computed, ref } from "vue";
-import { useFollowingFeed } from "~/composables/useFollowingFeed";
-import FeedLayout from "~/layouts/FeedLayout.vue";
-import { useFeedInteraction } from "~/composables/useFeedInteraction";
-import SnapScrollFeed from "~/components/Feed/SnapScrollFeed.vue";
-import VideoPlayer from "~/components/Feed/VideoPlayer.vue";
-import SuggestedAccountsCarousel from "~/components/SuggestedAccountsCarousel.vue";
+import { inject, computed, ref } from 'vue'
+import { useFollowingFeed } from '~/composables/useFollowingFeed'
+import FeedLayout from '~/layouts/FeedLayout.vue'
+import { useFeedInteraction } from '~/composables/useFeedInteraction'
+import SnapScrollFeed from '~/components/Feed/SnapScrollFeed.vue'
+import VideoPlayer from '~/components/Feed/VideoPlayer.vue'
+import SuggestedAccountsCarousel from '~/components/SuggestedAccountsCarousel.vue'
 
-const authStore = inject("authStore");
+const authStore = inject('authStore')
 
-const showRefresh = ref(false);
-const accountsFollowed = ref(0);
+const showRefresh = ref(false)
+const accountsFollowed = ref(0)
 
-const { hasInteracted, handleFirstInteraction, globalMuted } =
-    useFeedInteraction();
+const { hasInteracted, handleFirstInteraction, globalMuted } = useFeedInteraction()
 
-const {
-    data: feedData,
-    allPosts,
-    isEmpty,
-    isLoading,
-    loadMore,
-    refetch,
-} = useFollowingFeed();
+const { data: feedData, allPosts, isEmpty, isLoading, loadMore, refetch } = useFollowingFeed()
 
-const authenticatedFeed = useFollowingFeed();
+const authenticatedFeed = useFollowingFeed()
 
 const getVideoProps = (post, index) => ({
-    "video-id": post.id,
-    "video-url": post.media.src_url,
-    "share-url": post.url,
-    "profile-id": post.account.id,
+    'video-id': post.id,
+    'video-url': post.media.src_url,
+    'share-url': post.url,
+    'profile-id': post.account.id,
     username: post.account.username,
-    "profile-image": post.account.avatar,
+    'profile-image': post.account.avatar,
     caption: post.caption,
-    hashtags: [],
+    hashtags: post.tags,
+    mentions: post.mentions,
     likes: post.likes,
     hasLiked: post.has_liked,
     bookmarks: 0,
     shares: 0,
     comments: [],
     canComment: post.permissions?.can_comment,
-    "comment-count": post.comments,
+    'comment-count': post.comments,
     index: index,
     isSensitive: post?.is_sensitive,
     altText: post?.media.alt_text,
     autoPlay: hasInteracted.value,
-    muted: globalMuted.value,
-});
+    muted: globalMuted.value
+})
 
-const getVideoKey = (post) => post.id;
+const getVideoKey = (post) => post.id
 
-const onVideoVisible = (index) => {};
+const onVideoVisible = (index) => {}
 
-const onVideoHidden = (index) => {};
+const onVideoHidden = (index) => {}
 
 const onUserInteraction = () => {
-    handleFirstInteraction();
-};
+    handleFirstInteraction()
+}
 
 const onAccountFollowed = (accountId) => {
-    accountsFollowed.value = accountsFollowed.value + 1;
-    showRefresh.value = true;
-};
+    accountsFollowed.value = accountsFollowed.value + 1
+    showRefresh.value = true
+}
 const onAccountUnfollowed = (accountId) => {
-    accountsFollowed.value = accountsFollowed.value - 1;
+    accountsFollowed.value = accountsFollowed.value - 1
     if (accountsFollowed.value == 0) {
-        showRefresh.value = false;
+        showRefresh.value = false
     }
-};
+}
 </script>

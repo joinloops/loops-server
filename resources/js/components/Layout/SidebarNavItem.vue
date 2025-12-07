@@ -3,13 +3,10 @@
         class="w-full flex items-center hover:bg-gray-100 dark:hover:bg-slate-800 p-2.5 rounded-lg mb-1 transition-colors"
         :class="{
             'justify-center lg:justify-start': !isMobile,
-            'justify-start': isMobile,
+            'justify-start': isMobile
         }"
     >
-        <div
-            class="flex items-center"
-            :class="{ 'lg:mx-0 mx-auto': !isMobile }"
-        >
+        <div class="flex items-center" :class="{ 'lg:mx-0 mx-auto': !isMobile }">
             <i :class="iconClass" :style="`font-size: ${sizeString}px;`"></i>
             <span
                 v-if="isMobile || isLargeScreen"
@@ -23,7 +20,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from 'vue'
 
 defineProps({
     iconString: String,
@@ -31,23 +28,23 @@ defineProps({
     iconClass: String,
     isMobile: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const windowWidth = ref(window.innerWidth);
+const windowWidth = ref(window.innerWidth)
 
-const isLargeScreen = computed(() => windowWidth.value >= 1024);
+const isLargeScreen = computed(() => windowWidth.value >= 1024)
 
 const handleResize = () => {
-    windowWidth.value = window.innerWidth;
-};
+    windowWidth.value = window.innerWidth
+}
 
 onMounted(() => {
-    window.addEventListener("resize", handleResize);
-});
+    window.addEventListener('resize', handleResize)
+})
 
 onUnmounted(() => {
-    window.removeEventListener("resize", handleResize);
-});
+    window.removeEventListener('resize', handleResize)
+})
 </script>

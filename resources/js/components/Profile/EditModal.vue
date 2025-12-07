@@ -9,7 +9,7 @@
                 class="sticky top-0 z-10 flex items-center justify-between w-full p-5 border-b border-b-gray-300 dark:border-b-slate-800 bg-white dark:bg-slate-900"
             >
                 <div class="text-[22px] font-medium dark:text-slate-400">
-                    {{ t("profile.editProfile") }}
+                    {{ t('profile.editProfile') }}
                 </div>
                 <button
                     @click="closeEditProfile"
@@ -38,24 +38,22 @@
                             <div
                                 class="font-semibold text-[15px] sm:mb-0 mb-1 text-gray-700 sm:w-[160px] sm:text-left dark:text-gray-400"
                             >
-                                {{ t("common.avatar") }}
+                                {{ t('common.avatar') }}
                             </div>
 
-                            <div
-                                class="flex items-center justify-center sm:-mt-6"
-                            >
+                            <div class="flex items-center justify-center sm:-mt-6">
                                 <div class="relative">
-                                    <label
-                                        for="image"
-                                        class="relative cursor-pointer"
-                                    >
+                                    <label for="image" class="relative cursor-pointer">
                                         <img
                                             class="rounded-full"
                                             width="95"
                                             height="95"
                                             :src="userImage"
                                             :alt="`${userName || 'User'}'s avatar`"
-                                            onerror="this.src='/storage/avatars/default.jpg';this.onerror=null;"
+                                            onerror="
+                                                this.src = '/storage/avatars/default.jpg'
+                                                this.onerror = null
+                                            "
                                         />
                                         <div
                                             class="absolute bottom-0 right-0 rounded-full bg-white shadow-xl border p-2 border-gray-300 inline-flex items-center justify-center"
@@ -91,12 +89,10 @@
                             <div
                                 class="font-semibold text-[15px] sm:mb-0 mb-1 text-gray-700 sm:w-[160px] sm:text-left text-center dark:text-gray-400"
                             >
-                                {{ t("profile.displayName") }}
+                                {{ t('profile.displayName') }}
                             </div>
 
-                            <div
-                                class="flex items-center justify-center sm:-mt-6"
-                            >
+                            <div class="flex items-center justify-center sm:-mt-6">
                                 <div class="sm:w-[60%] w-full max-w-md">
                                     <TextInput
                                         :placeholder="t('profile.displayName')"
@@ -107,7 +103,7 @@
                                     />
                                     <div class="flex justify-between mt-2">
                                         <div class="text-[11px] text-gray-500">
-                                            {{ t("profile.displayNameHelp") }}
+                                            {{ t('profile.displayNameHelp') }}
                                         </div>
                                         <div
                                             v-if="userName"
@@ -129,27 +125,23 @@
                             <div
                                 class="font-semibold text-sm sm:mb-0 mb-1 text-gray-700 sm:text-left dark:text-gray-400"
                             >
-                                {{ t("profile.bio") }}
+                                {{ t('profile.bio') }}
                             </div>
 
-                            <div
-                                class="flex items-center justify-center sm:-mt-6"
-                            >
+                            <div class="flex items-center justify-center sm:-mt-6">
                                 <div class="sm:w-[60%] w-full max-w-md">
                                     <textarea
                                         cols="30"
                                         rows="4"
                                         v-model="userBio"
                                         maxlength="80"
-                                        :placeholder="
-                                            t('profile.bioPlaceholder')
-                                        "
+                                        :placeholder="t('profile.bioPlaceholder')"
                                         :disabled="isSaving"
                                         class="resize-none w-full bg-[#F1F1F2] dark:bg-slate-900 dark:text-slate-50 text-gray-800 border dark:border-slate-800 border-gray-300 rounded-md py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-[#F02C56] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                                     ></textarea>
                                     <div class="flex justify-between mt-1">
                                         <div class="text-[11px] text-gray-500">
-                                            {{ t("profile.bioHelp") }}
+                                            {{ t('profile.bioHelp') }}
                                         </div>
                                         <div
                                             v-if="userBio"
@@ -192,10 +184,9 @@
                         :disabled="isSaving"
                         class="flex items-center border rounded-md px-3 py-[6px] hover:bg-gray-100 dark:border-slate-700 dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <span
-                            class="px-2 font-medium text-[15px] dark:text-slate-400"
-                            >{{ t("common.cancel") }}</span
-                        >
+                        <span class="px-2 font-medium text-[15px] dark:text-slate-400">{{
+                            t('common.cancel')
+                        }}</span>
                     </button>
 
                     <button
@@ -229,28 +220,23 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 ></path>
                             </svg>
-                            {{ t("common.savingDotDotDot") }}
+                            {{ t('common.savingDotDotDot') }}
                         </span>
                         <span v-else class="mx-4 font-medium text-[15px]">{{
-                            t("common.save")
+                            t('common.save')
                         }}</span>
                     </button>
                 </div>
 
-                <div
-                    id="CropperButtons"
-                    v-else
-                    class="flex items-center justify-end"
-                >
+                <div id="CropperButtons" v-else class="flex items-center justify-end">
                     <button
                         @click="cancelImageUpload"
                         :disabled="isSaving"
                         class="flex items-center border rounded-md px-3 py-[6px] hover:bg-gray-100 dark:border-slate-700 dark:hover:bg-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <span
-                            class="px-2 font-medium text-[15px] dark:text-slate-400"
-                            >{{ t("common.cancel") }}</span
-                        >
+                        <span class="px-2 font-medium text-[15px] dark:text-slate-400">{{
+                            t('common.cancel')
+                        }}</span>
                     </button>
 
                     <button
@@ -279,10 +265,10 @@
                                     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                 ></path>
                             </svg>
-                            {{ t("profile.applyingDotDotDot") }}
+                            {{ t('profile.applyingDotDotDot') }}
                         </span>
                         <span v-else class="mx-4 font-medium text-[15px]">{{
-                            t("common.apply")
+                            t('common.apply')
                         }}</span>
                     </button>
                 </div>
@@ -292,198 +278,191 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
-import { useRoute } from "vue-router";
-import { Cropper, CircleStencil } from "vue-advanced-cropper";
-import "vue-advanced-cropper/dist/style.css";
-import TextInput from "@/components/Form/TextInput.vue";
-import { useAuthStore } from "@/stores/auth";
-import { useProfileStore } from "@/stores/profile";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-import {
-    XMarkIcon,
-    PaintBrushIcon,
-    TrashIcon,
-} from "@heroicons/vue/24/outline";
-import { useI18n } from "vue-i18n";
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import { Cropper, CircleStencil } from 'vue-advanced-cropper'
+import 'vue-advanced-cropper/dist/style.css'
+import TextInput from '@/components/Form/TextInput.vue'
+import { useAuthStore } from '@/stores/auth'
+import { useProfileStore } from '@/stores/profile'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+import { XMarkIcon, PaintBrushIcon, TrashIcon } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 
-const emit = defineEmits(["updated", "close"]);
-const { alertModal, confirmModal } = useAlertModal();
+const emit = defineEmits(['updated', 'close'])
+const { alertModal, confirmModal } = useAlertModal()
 
-const authStore = useAuthStore();
-const profileStore = useProfileStore();
+const authStore = useAuthStore()
+const profileStore = useProfileStore()
 
-const route = useRoute();
+const route = useRoute()
 
-const { t } = useI18n();
-const file = ref(null);
-const cropper = ref(null);
-const uploadedImage = ref(null);
-const userImage = ref(null);
-const userName = ref(null);
-const userBio = ref(null);
-const isSaving = ref(false);
-const error = ref(null);
+const { t } = useI18n()
+const file = ref(null)
+const cropper = ref(null)
+const uploadedImage = ref(null)
+const userImage = ref(null)
+const userName = ref(null)
+const userBio = ref(null)
+const isSaving = ref(false)
+const error = ref(null)
 
-const originalName = ref(null);
-const originalBio = ref(null);
-const originalImage = ref(null);
+const originalName = ref(null)
+const originalBio = ref(null)
+const originalImage = ref(null)
 
 const isUpdated = computed(() => {
-    if (isSaving.value) return false;
+    if (isSaving.value) return false
 
-    const nameChanged = userName.value !== originalName.value;
-    const bioChanged = userBio.value !== originalBio.value;
+    const nameChanged = userName.value !== originalName.value
+    const bioChanged = userBio.value !== originalBio.value
 
-    return nameChanged || bioChanged;
-});
+    return nameChanged || bioChanged
+})
 
 const canDeleteAvatar = computed(() => {
-    return userImage.value && !userImage.value.endsWith("default.jpg");
-});
+    return userImage.value && !userImage.value.endsWith('default.jpg')
+})
 
 const getUploadedImage = (e) => {
-    const selectedFile = e.target.files[0];
-    if (!selectedFile) return;
+    const selectedFile = e.target.files[0]
+    if (!selectedFile) return
 
-    const allowedTypes = ["image/png", "image/jpeg", "image/jpg"];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
     if (!allowedTypes.includes(selectedFile.type)) {
-        error.value = t("profile.avatarFileTypeError");
-        return;
+        error.value = t('profile.avatarFileTypeError')
+        return
     }
 
-    const maxSize = 2 * 1024 * 1024;
+    const maxSize = 2 * 1024 * 1024
     if (selectedFile.size > maxSize) {
-        error.value = t("profile.avatarFileSizeError");
-        return;
+        error.value = t('profile.avatarFileSizeError')
+        return
     }
 
-    error.value = null;
-    file.value = selectedFile;
-    uploadedImage.value = URL.createObjectURL(selectedFile);
-};
+    error.value = null
+    file.value = selectedFile
+    uploadedImage.value = URL.createObjectURL(selectedFile)
+}
 
 const cropAndUpdateImage = async () => {
-    if (!cropper.value || isSaving.value) return;
+    if (!cropper.value || isSaving.value) return
 
-    isSaving.value = true;
-    error.value = null;
+    isSaving.value = true
+    error.value = null
 
     try {
-        const { coordinates } = cropper.value.getResult();
-        const data = new FormData();
-        data.append("avatar", file.value || "");
+        const { coordinates } = cropper.value.getResult()
+        const data = new FormData()
+        data.append('avatar', file.value || '')
 
-        await authStore.updateAvatar(data);
-        await authStore.checkAuth();
-        await profileStore.getProfileAndPosts(authStore.getUser.username);
+        await authStore.updateAvatar(data)
+        await authStore.checkAuth()
+        await profileStore.getProfileAndPosts(authStore.getUser.username)
 
-        userImage.value = authStore.getUser.avatar;
-        originalImage.value = authStore.getUser.avatar;
-        uploadedImage.value = null;
-        file.value = null;
+        userImage.value = authStore.getUser.avatar
+        originalImage.value = authStore.getUser.avatar
+        uploadedImage.value = null
+        file.value = null
 
-        const fileInput = document.getElementById("image");
-        if (fileInput) fileInput.value = "";
+        const fileInput = document.getElementById('image')
+        if (fileInput) fileInput.value = ''
     } catch (err) {
-        console.error("Error updating avatar:", err);
-        error.value = t("profile.avatarFailedToUploadError");
+        console.error('Error updating avatar:', err)
+        error.value = t('profile.avatarFailedToUploadError')
     } finally {
-        isSaving.value = false;
+        isSaving.value = false
     }
-};
+}
 
 const deleteAvatar = async () => {
-    if (!canDeleteAvatar.value || isSaving.value) return;
+    if (!canDeleteAvatar.value || isSaving.value) return
 
     const result = await confirmModal(
-        t("profile.deleteAvatar"),
-        t("profile.deleteAvatarConfirmMessage"),
-        t("profile.delete"),
-        t("common.cancel"),
-    );
+        t('profile.deleteAvatar'),
+        t('profile.deleteAvatarConfirmMessage'),
+        t('profile.delete'),
+        t('common.cancel')
+    )
 
-    if (!result) return;
+    if (!result) return
 
-    isSaving.value = true;
-    error.value = null;
+    isSaving.value = true
+    error.value = null
 
     try {
-        await authStore.deleteAvatar();
-        await authStore.checkAuth();
-        await profileStore.getProfileAndPosts(authStore.getUser.username);
+        await authStore.deleteAvatar()
+        await authStore.checkAuth()
+        await profileStore.getProfileAndPosts(authStore.getUser.username)
 
-        userImage.value = "/storage/avatars/default.jpg";
-        originalImage.value = "/storage/avatars/default.jpg";
+        userImage.value = '/storage/avatars/default.jpg'
+        originalImage.value = '/storage/avatars/default.jpg'
     } catch (err) {
-        console.error("Error deleting avatar:", err);
-        error.value = t("profile.deleteAvatarFailedMessage");
+        console.error('Error deleting avatar:', err)
+        error.value = t('profile.deleteAvatarFailedMessage')
     } finally {
-        isSaving.value = false;
+        isSaving.value = false
     }
-};
+}
 
 const updateUserInfo = async () => {
-    if (!isUpdated.value || isSaving.value) return;
+    if (!isUpdated.value || isSaving.value) return
 
-    isSaving.value = true;
-    error.value = null;
+    isSaving.value = true
+    error.value = null
 
     try {
-        await authStore.updateBio(
-            userName.value?.trim(),
-            userBio.value?.trim(),
-        );
-        await authStore.checkAuth();
-        await profileStore.getProfileAndPosts(authStore.getUser.username);
+        await authStore.updateBio(userName.value?.trim(), userBio.value?.trim())
+        await authStore.checkAuth()
+        await profileStore.getProfileAndPosts(authStore.getUser.username)
 
-        originalName.value = authStore.getUser.name;
-        originalBio.value = authStore.getUser.bio;
-        userName.value = authStore.getUser.name;
-        userBio.value = authStore.getUser.bio;
+        originalName.value = authStore.getUser.name
+        originalBio.value = authStore.getUser.bio
+        userName.value = authStore.getUser.name
+        userBio.value = authStore.getUser.bio
 
         setTimeout(() => {
-            closeEditProfile();
-        }, 300);
+            closeEditProfile()
+        }, 300)
     } catch (err) {
-        console.error("Error updating profile:", err);
-        error.value = t("profile.failedToUpdateProfileErrorMessage");
+        console.error('Error updating profile:', err)
+        error.value = t('profile.failedToUpdateProfileErrorMessage')
     } finally {
-        isSaving.value = false;
+        isSaving.value = false
     }
-};
+}
 
 const closeEditProfile = () => {
-    if (isSaving.value) return;
-    emit("updated", true);
-};
+    if (isSaving.value) return
+    emit('updated', true)
+}
 
 const cancelImageUpload = () => {
-    if (isSaving.value) return;
+    if (isSaving.value) return
 
-    uploadedImage.value = null;
-    file.value = null;
-    error.value = null;
+    uploadedImage.value = null
+    file.value = null
+    error.value = null
 
-    const fileInput = document.getElementById("image");
-    if (fileInput) fileInput.value = "";
-};
+    const fileInput = document.getElementById('image')
+    if (fileInput) fileInput.value = ''
+}
 
 watch([userName, userBio], () => {
     if (error.value) {
-        error.value = null;
+        error.value = null
     }
-});
+})
 
 onMounted(() => {
-    const user = authStore.getUser;
+    const user = authStore.getUser
 
-    userName.value = user.name;
-    userBio.value = user.bio;
-    userImage.value = user.avatar;
+    userName.value = user.name
+    userBio.value = user.bio
+    userImage.value = user.avatar
 
-    originalName.value = user.name;
-    originalBio.value = user.bio;
-    originalImage.value = user.avatar;
-});
+    originalName.value = user.name
+    originalBio.value = user.bio
+    originalImage.value = user.avatar
+})
 </script>

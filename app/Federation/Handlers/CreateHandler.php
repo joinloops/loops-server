@@ -3,6 +3,7 @@
 namespace App\Federation\Handlers;
 
 use App\Federation\Audience;
+use App\Jobs\Federation\ProcessRemoteVideoJob;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
@@ -19,7 +20,6 @@ class CreateHandler extends BaseHandler
     public function handle(array $activity, Profile $actor, Profile $target)
     {
         $object = $activity['object'];
-        $inReplyToUrl = $object['inReplyTo'];
 
         $targetIsBlocking = UserFilter::whereProfileId($target->id)->whereAccountId($actor->id)->exists();
 
@@ -37,7 +37,16 @@ class CreateHandler extends BaseHandler
         try {
             DB::beginTransaction();
 
-            $result = $this->createReply($object, $actor, $inReplyToUrl);
+            $hasInReplyTo = ! empty($object['inReplyTo']);
+            $hasVideoAttachment = $this->hasVideoAttachment($object);
+
+            if ($hasVideoAttachment && ! $hasInReplyTo) {
+                $result = $this->createVideoPost($object, $actor);
+            } elseif ($hasInReplyTo && ! $hasVideoAttachment) {
+                $result = $this->createReply($object, $actor, $object['inReplyTo']);
+            } else {
+                throw new \Exception('Invalid Create activity: must have either video attachment or inReplyTo, but not both.');
+            }
 
             DB::commit();
 
@@ -45,8 +54,8 @@ class CreateHandler extends BaseHandler
                 Log::info('Successfully handled Create activity', [
                     'actor' => $actor->username,
                     'object_id' => $object['id'] ?? 'unknown',
-                    'in_reply_to' => $inReplyToUrl,
-                    'created_type' => get_class($result),
+                    'type' => $hasVideoAttachment ? 'video_post' : 'reply',
+                    'created_type' => is_array($result) ? json_encode($result) : get_class($result),
                 ]);
             }
 
@@ -66,6 +75,103 @@ class CreateHandler extends BaseHandler
 
             throw $e;
         }
+    }
+
+    /**
+     * Check if the object has a valid video attachment
+     */
+    private function hasVideoAttachment(array $object): bool
+    {
+        if (empty($object['attachment']) || ! is_array($object['attachment'])) {
+            return false;
+        }
+
+        foreach ($object['attachment'] as $attachment) {
+            if (! is_array($attachment)) {
+                continue;
+            }
+
+            if ($this->isValidVideoAttachment($attachment)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if an attachment is a valid video
+     */
+    private function isValidVideoAttachment(array $attachment): bool
+    {
+        if (empty($attachment['type']) || ! in_array($attachment['type'], ['Document', 'Video'])) {
+            return false;
+        }
+
+        if (empty($attachment['mediaType']) || $attachment['mediaType'] !== 'video/mp4') {
+            return false;
+        }
+
+        if (empty($attachment['url']) || ! is_string($attachment['url'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Extract video attachment from object
+     */
+    private function extractVideoAttachment(array $object): ?array
+    {
+        if (empty($object['attachment']) || ! is_array($object['attachment'])) {
+            return null;
+        }
+
+        foreach ($object['attachment'] as $attachment) {
+            if (! is_array($attachment)) {
+                continue;
+            }
+
+            if ($this->isValidVideoAttachment($attachment)) {
+                return $attachment;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Create a video post from a remote Note with video attachment
+     */
+    private function createVideoPost(array $object, Profile $actor)
+    {
+        if (isset($object['id'])) {
+            $existing = Video::where('ap_id', $object['id'])->exists();
+            if ($existing) {
+                return $existing;
+            }
+        }
+
+        $videoAttachment = $this->extractVideoAttachment($object);
+        if (! $videoAttachment) {
+            throw new \Exception('No valid video attachment found in Create activity.');
+        }
+
+        ProcessRemoteVideoJob::dispatch($actor->id, $object, $videoAttachment)->onQueue('remote-video');
+
+        if (config('logging.dev_log')) {
+            Log::info('Dispatched remote video processing job', [
+                'actor' => $actor->username,
+                'object_id' => $object['id'] ?? 'unknown',
+                'remote_url' => $videoAttachment['url'],
+            ]);
+        }
+
+        return [
+            'status' => 'processing',
+            'message' => 'Video post accepted and queued for processing',
+        ];
     }
 
     private function createReply(array $object, Profile $actor, string $inReplyToUrl)

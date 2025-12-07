@@ -1,17 +1,10 @@
 <template>
     <MainLayout>
         <div class="min-h-screen dark:bg-gray-950">
-            <HashtagHeader
-                :id="id"
-                :totalResults="totalResults"
-                :nsfw="isNsfw || error"
-            />
+            <HashtagHeader :id="id" :totalResults="totalResults" :nsfw="isNsfw || error" />
 
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div
-                    v-if="loading"
-                    class="flex justify-center items-center py-12"
-                >
+                <div v-if="loading" class="flex justify-center items-center py-12">
                     <Spinner />
                 </div>
 
@@ -56,16 +49,12 @@
                                     <span
                                         class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
                                     >
-                                        <ChatBubbleOvalLeftIcon
-                                            class="h-4 w-4"
-                                        />
+                                        <ChatBubbleOvalLeftIcon class="h-4 w-4" />
                                         {{ formatNumber(video.comments) }}
                                     </span>
                                 </div>
 
-                                <div
-                                    class="absolute bottom-0 left-0 right-0 p-3"
-                                >
+                                <div class="absolute bottom-0 left-0 right-0 p-3">
                                     <div
                                         v-if="video.caption"
                                         class="mt-2 text-white text-xs line-clamp-2 font-medium"
@@ -92,9 +81,7 @@
                             </div>
 
                             <div class="mt-2 px-1">
-                                <div
-                                    class="flex items-center gap-2 min-w-0 mb-1.5"
-                                >
+                                <div class="flex items-center gap-2 min-w-0 mb-1.5">
                                     <Avatar
                                         :src="video.account.avatar"
                                         :width="20"
@@ -120,122 +107,110 @@
                         v-if="!hasMore && !loadingMore"
                         class="text-center py-8 text-gray-500 dark:text-gray-400 text-sm"
                     >
-                        {{ $t("common.noMoreResults") || "No more videos" }}
+                        {{ $t('common.noMoreResults') || 'No more videos' }}
                     </div>
                 </div>
 
                 <div v-else-if="!isNsfw" class="text-center py-12">
                     <div class="text-gray-500 dark:text-gray-400 mb-4">
-                        {{ $t("explore.noVideosFoundForThisHashtag") }}
+                        {{ $t('explore.noVideosFoundForThisHashtag') }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <GuestAuthPromptModal
-            :show="showGuestModal"
-            @close="showGuestModal = false"
-        />
+        <GuestAuthPromptModal :show="showGuestModal" @close="showGuestModal = false" />
     </MainLayout>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, inject, ref, watch } from "vue";
-import { storeToRefs } from "pinia";
-import { HeartIcon, ChatBubbleOvalLeftIcon } from "@heroicons/vue/24/outline";
-import { useRouter, useRoute } from "vue-router";
-import { useUtils } from "@/composables/useUtils";
-import GuestAuthPromptModal from "@/components/Tag/GuestAuthPromptModal.vue";
+import { onMounted, onUnmounted, inject, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { HeartIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline'
+import { useRouter, useRoute } from 'vue-router'
+import { useUtils } from '@/composables/useUtils'
+import GuestAuthPromptModal from '@/components/Tag/GuestAuthPromptModal.vue'
 
-const id = ref();
-const route = useRoute();
-const tagFeedStore = inject("tagFeedStore");
-const authStore = inject("authStore");
-const loadMoreTrigger = ref(null);
-const showGuestModal = ref(false);
-let observer = null;
-const { formatNumber, formatDate } = useUtils();
+const id = ref()
+const route = useRoute()
+const tagFeedStore = inject('tagFeedStore')
+const authStore = inject('authStore')
+const loadMoreTrigger = ref(null)
+const showGuestModal = ref(false)
+let observer = null
+const { formatNumber, formatDate } = useUtils()
 
-const {
-    tag,
-    feed,
-    cursor,
-    isNsfw,
-    totalResults,
-    loading,
-    loadingMore,
-    error,
-    hasMore,
-} = storeToRefs(tagFeedStore);
+const { tag, feed, cursor, isNsfw, totalResults, loading, loadingMore, error, hasMore } =
+    storeToRefs(tagFeedStore)
 
-const { fetchTagFeed, loadMore, reset } = tagFeedStore;
+const { fetchTagFeed, loadMore, reset } = tagFeedStore
 
 const handleFetch = () => {
-    fetchTagFeed(route.params.id);
-};
+    fetchTagFeed(route.params.id)
+}
 
 const handleLoadMore = () => {
     if (!authStore.authenticated) {
-        showGuestModal.value = true;
-        return;
+        showGuestModal.value = true
+        return
     }
 
     if (hasMore.value) {
-        loadMore();
+        loadMore()
     }
-};
+}
 
 const setupIntersectionObserver = () => {
-    if (!loadMoreTrigger.value) return;
+    if (!loadMoreTrigger.value) return
 
     observer = new IntersectionObserver(
         (entries) => {
-            const [entry] = entries;
+            const [entry] = entries
             if (entry.isIntersecting && !loadingMore.value && !loading.value) {
                 if (!authStore.authenticated) {
-                    showGuestModal.value = true;
-                    return;
+                    showGuestModal.value = true
+                    return
                 }
 
                 if (hasMore.value) {
-                    loadMore();
+                    loadMore()
                 }
             }
         },
         {
             root: null,
-            rootMargin: "200px",
-            threshold: 0.1,
-        },
-    );
+            rootMargin: '200px',
+            threshold: 0.1
+        }
+    )
 
-    observer.observe(loadMoreTrigger.value);
-};
+    observer.observe(loadMoreTrigger.value)
+}
 
 watch(
     () => route.params.id,
     (newId) => {
         if (newId && newId !== id.value) {
-            id.value = newId;
-            reset();
-            handleFetch();
+            id.value = newId
+            reset()
+            handleFetch()
         }
-    },
-);
+    }
+)
 
 onMounted(() => {
-    id.value = route.params.id;
-    handleFetch();
+    id.value = route.params.id
+    handleFetch()
 
     setTimeout(() => {
-        setupIntersectionObserver();
-    }, 100);
-});
+        setupIntersectionObserver()
+    }, 100)
+})
 
 onUnmounted(() => {
     if (observer) {
-        observer.disconnect();
+        observer.disconnect()
     }
-    reset();
-});
+    reset()
+})
 </script>

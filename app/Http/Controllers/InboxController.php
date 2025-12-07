@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Middleware\FederationEnabled;
-use App\Http\Middleware\VerifyHttpSignature;
+use App\Http\Middleware\VerifyUserHttpSignature;
 use App\Jobs\Federation\ProcessInboxActivity;
 use App\Models\Profile;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ class InboxController extends Controller
     public function __construct()
     {
         $this->middleware(FederationEnabled::class);
-        $this->middleware(VerifyHttpSignature::class);
+        $this->middleware(VerifyUserHttpSignature::class);
     }
 
     public function userInbox(Request $request, Profile $actor)

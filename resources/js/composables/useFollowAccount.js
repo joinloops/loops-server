@@ -1,20 +1,18 @@
-import { useMutation, useQueryClient } from "@tanstack/vue-query";
-import axios from "~/plugins/axios";
+import { useMutation, useQueryClient } from '@tanstack/vue-query'
+import axios from '~/plugins/axios'
 
 export function useFollowAccount() {
-    const queryClient = useQueryClient();
-    const axiosInstance = axios.getAxiosInstance();
+    const queryClient = useQueryClient()
+    const axiosInstance = axios.getAxiosInstance()
 
     const followMutation = useMutation({
         mutationFn: async (accountId) => {
-            const response = await axiosInstance.post(
-                `/api/v1/account/follow/${accountId}`,
-            );
-            return response.data;
+            const response = await axiosInstance.post(`/api/v1/account/follow/${accountId}`)
+            return response.data
         },
         onSuccess: (data, accountId) => {
-            queryClient.setQueryData(["suggested-accounts"], (oldData) => {
-                if (!oldData) return oldData;
+            queryClient.setQueryData(['suggested-accounts'], (oldData) => {
+                if (!oldData) return oldData
 
                 return {
                     ...oldData,
@@ -23,29 +21,26 @@ export function useFollowAccount() {
                             ? {
                                   ...account,
                                   is_following: true,
-                                  follower_count:
-                                      (account.follower_count || 0) + 1,
+                                  follower_count: (account.follower_count || 0) + 1
                               }
-                            : account,
-                    ),
-                };
-            });
+                            : account
+                    )
+                }
+            })
 
             // Optionally update user's following count
-            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-        },
-    });
+            queryClient.invalidateQueries({ queryKey: ['user-profile'] })
+        }
+    })
 
     const unfollowMutation = useMutation({
         mutationFn: async (accountId) => {
-            const response = await axiosInstance.post(
-                `/api/v1/account/unfollow/${accountId}`,
-            );
-            return response.data;
+            const response = await axiosInstance.post(`/api/v1/account/unfollow/${accountId}`)
+            return response.data
         },
         onSuccess: (data, accountId) => {
-            queryClient.setQueryData(["suggested-accounts"], (oldData) => {
-                if (!oldData) return oldData;
+            queryClient.setQueryData(['suggested-accounts'], (oldData) => {
+                if (!oldData) return oldData
 
                 return {
                     ...oldData,
@@ -54,28 +49,25 @@ export function useFollowAccount() {
                             ? {
                                   ...account,
                                   is_following: false,
-                                  followers_count: Math.max(
-                                      (account.followers_count || 1) - 1,
-                                      0,
-                                  ),
+                                  followers_count: Math.max((account.followers_count || 1) - 1, 0)
                               }
-                            : account,
-                    ),
-                };
-            });
+                            : account
+                    )
+                }
+            })
 
             // Optionally update user's following count
-            queryClient.invalidateQueries({ queryKey: ["user-profile"] });
-        },
-    });
+            queryClient.invalidateQueries({ queryKey: ['user-profile'] })
+        }
+    })
 
     const followAccount = async (accountId) => {
-        return followMutation.mutateAsync(accountId);
-    };
+        return followMutation.mutateAsync(accountId)
+    }
 
     const unfollowAccount = async (accountId) => {
-        return unfollowMutation.mutateAsync(accountId);
-    };
+        return unfollowMutation.mutateAsync(accountId)
+    }
 
     return {
         followAccount,
@@ -83,6 +75,6 @@ export function useFollowAccount() {
         isFollowLoading: followMutation.isPending,
         isUnfollowLoading: unfollowMutation.isPending,
         followError: followMutation.error,
-        unfollowError: unfollowMutation.error,
-    };
+        unfollowError: unfollowMutation.error
+    }
 }

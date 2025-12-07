@@ -10,20 +10,14 @@
                     >
                         <i class="bx bx-envelope text-blue-600 text-[24px]"></i>
                     </div>
-                    <h1
-                        class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
-                    >
-                        {{
-                            isEmailChange
-                                ? "Verify Email Change"
-                                : "Verify Your Email"
-                        }}
+                    <h1 class="text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                        {{ isEmailChange ? 'Verify Email Change' : 'Verify Your Email' }}
                     </h1>
                     <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">
                         {{
                             isEmailChange
-                                ? "Confirm your new email address to complete the change"
-                                : "Confirm your email address to activate your account"
+                                ? 'Confirm your new email address to complete the change'
+                                : 'Confirm your email address to activate your account'
                         }}
                     </p>
                 </div>
@@ -38,9 +32,7 @@
                         <i class="bx bx-check text-green-600 text-[32px]"></i>
                     </div>
 
-                    <h2
-                        class="text-xl font-semibold text-gray-900 dark:text-white mb-6"
-                    >
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">
                         {{ successMessage }}
                     </h2>
 
@@ -61,9 +53,7 @@
                     >
                         <i class="bx bx-x text-red-600 text-[32px]"></i>
                     </div>
-                    <h2
-                        class="text-xl font-semibold text-gray-900 dark:text-white mb-2"
-                    >
+                    <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                         Verification Failed
                     </h2>
                     <p class="text-gray-600 dark:text-gray-400 mb-6">
@@ -75,11 +65,7 @@
                             :disabled="isResending"
                             class="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors font-medium cursor-pointer"
                         >
-                            {{
-                                isResending
-                                    ? "Sending..."
-                                    : "Request New Verification Email"
-                            }}
+                            {{ isResending ? 'Sending...' : 'Request New Verification Email' }}
                         </button>
                         <button
                             @click="goToLogin"
@@ -102,27 +88,18 @@
                             class="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4 mb-6"
                         >
                             <div class="flex items-start gap-3">
-                                <i
-                                    class="bx bx-error text-orange-500 text-[20px] mt-0.5"
-                                ></i>
+                                <i class="bx bx-error text-orange-500 text-[20px] mt-0.5"></i>
                                 <div>
                                     <h4
                                         class="font-medium text-orange-800 dark:text-orange-200 mb-1"
                                     >
                                         Security Notice
                                     </h4>
-                                    <p
-                                        class="text-sm text-orange-700 dark:text-orange-300"
-                                    >
-                                        Only click "Verify Email" if you
-                                        initiated this
-                                        {{
-                                            isEmailChange
-                                                ? "email change"
-                                                : "account creation"
-                                        }}
-                                        yourself. If you didn't request this,
-                                        please close this page.
+                                    <p class="text-sm text-orange-700 dark:text-orange-300">
+                                        Only click "Verify Email" if you initiated this
+                                        {{ isEmailChange ? 'email change' : 'account creation' }}
+                                        yourself. If you didn't request this, please close this
+                                        page.
                                     </p>
                                 </div>
                             </div>
@@ -133,15 +110,8 @@
                             :disabled="!canSubmit || isVerifying"
                             class="w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400 cursor-pointer disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center gap-2"
                         >
-                            <i
-                                v-if="isVerifying"
-                                class="bx bx-loader-alt animate-spin"
-                            ></i>
-                            <span>{{
-                                isVerifying
-                                    ? "Verifying..."
-                                    : "Verify Email Address"
-                            }}</span>
+                            <i v-if="isVerifying" class="bx bx-loader-alt animate-spin"></i>
+                            <span>{{ isVerifying ? 'Verifying...' : 'Verify Email Address' }}</span>
                         </button>
 
                         <div class="mt-4 text-center">
@@ -163,13 +133,9 @@
                     </form>
                 </div>
 
-                <div
-                    v-if="verificationStatus === 'pending'"
-                    class="mt-6 text-center"
-                >
+                <div v-if="verificationStatus === 'pending'" class="mt-6 text-center">
                     <p class="text-xs text-gray-500 dark:text-gray-400">
-                        This verification link will expire in 24 hours from when
-                        it was sent.
+                        This verification link will expire in 24 hours from when it was sent.
                     </p>
                 </div>
             </div>
@@ -178,176 +144,157 @@
 </template>
 
 <script setup>
-import { inject, onMounted, ref, computed, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import FullLayout from "@/layouts/FullLayout.vue";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-const { alertModal, confirmModal } = useAlertModal();
-import axios from "~/plugins/axios";
-const axiosInstance = axios.getAxiosInstance();
+import { inject, onMounted, ref, computed, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import FullLayout from '@/layouts/FullLayout.vue'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+const { alertModal, confirmModal } = useAlertModal()
+import axios from '~/plugins/axios'
+const axiosInstance = axios.getAxiosInstance()
 
-const authStore = inject("authStore");
-const route = useRoute();
-const router = useRouter();
+const authStore = inject('authStore')
+const route = useRoute()
+const router = useRouter()
 
 // Form data
-const userId = ref("");
-const token = ref("");
-const isEmailChange = ref(false);
+const userId = ref('')
+const token = ref('')
+const isEmailChange = ref(false)
 
 // State management
-const verificationStatus = ref("pending");
-const isVerifying = ref(false);
-const isResending = ref(false);
-const errorMessage = ref("");
-const successMessage = ref("");
+const verificationStatus = ref('pending')
+const isVerifying = ref(false)
+const isResending = ref(false)
+const errorMessage = ref('')
+const successMessage = ref('')
 
-const showCaptcha = ref(false);
-const captchaCompleted = ref(false);
+const showCaptcha = ref(false)
+const captchaCompleted = ref(false)
 
 const canSubmit = computed(() => {
-    const hasRequiredData = userId.value && token.value;
-    const captchaReady = !showCaptcha.value || captchaCompleted.value;
-    return hasRequiredData && captchaReady && !isVerifying.value;
-});
+    const hasRequiredData = userId.value && token.value
+    const captchaReady = !showCaptcha.value || captchaCompleted.value
+    return hasRequiredData && captchaReady && !isVerifying.value
+})
 
 onMounted(() => {
-    extractRouteParameters();
-    determineVerificationType();
-});
+    extractRouteParameters()
+    determineVerificationType()
+})
 
 const extractRouteParameters = () => {
-    userId.value = route.params.userId || "";
-    token.value = route.params.token || "";
+    userId.value = route.params.userId || ''
+    token.value = route.params.token || ''
 
-    if (!userId.value) userId.value = route.query.user_id || "";
-    if (!token.value) token.value = route.query.token || "";
+    if (!userId.value) userId.value = route.query.user_id || ''
+    if (!token.value) token.value = route.query.token || ''
 
     if (!userId.value || !token.value) {
-        verificationStatus.value = "error";
-        errorMessage.value =
-            "Invalid verification link. Missing required parameters.";
+        verificationStatus.value = 'error'
+        errorMessage.value = 'Invalid verification link. Missing required parameters.'
     }
-};
+}
 
 const determineVerificationType = () => {
-    const path = route.path;
-    isEmailChange.value =
-        path.includes("change") || route.query.type === "change";
-};
+    const path = route.path
+    isEmailChange.value = path.includes('change') || route.query.type === 'change'
+}
 
 const submitVerification = async () => {
-    if (!canSubmit.value) return;
+    if (!canSubmit.value) return
 
-    isVerifying.value = true;
-    verificationStatus.value = "verifying";
+    isVerifying.value = true
+    verificationStatus.value = 'verifying'
 
     try {
-        const response = await axiosInstance.post(
-            "/api/v1/account/settings/email/verify",
-            {
-                user_id: userId.value,
-                token: token.value,
-            },
-        );
+        const response = await axiosInstance.post('/api/v1/account/settings/email/verify', {
+            user_id: userId.value,
+            token: token.value
+        })
 
-        console.log(response);
+        console.log(response)
 
         if (response.status === 200) {
-            verificationStatus.value = "success";
+            verificationStatus.value = 'success'
             successMessage.value =
                 response.data.data ||
                 (isEmailChange.value
-                    ? "Your email address has been successfully updated!"
-                    : "Your email has been verified and your account is now active!");
+                    ? 'Your email address has been successfully updated!'
+                    : 'Your email has been verified and your account is now active!')
         } else {
-            throw new Error(data.message || "Verification failed");
+            throw new Error(data.message || 'Verification failed')
         }
     } catch (error) {
-        verificationStatus.value = "error";
+        verificationStatus.value = 'error'
         if (error.response && error.response.data) {
-            const errorData = error.response.data;
+            const errorData = error.response.data
 
-            if (
-                errorData.error &&
-                errorData.error.message &&
-                errorData.error.message
-            ) {
-                errorMessage.value = errorData.error.message;
+            if (errorData.error && errorData.error.message && errorData.error.message) {
+                errorMessage.value = errorData.error.message
             }
         }
     } finally {
-        isVerifying.value = false;
+        isVerifying.value = false
     }
-};
+}
 
 const resendVerification = async () => {
     if (!userId.value) {
-        errorMessage.value =
-            "Cannot resend verification email. User ID is missing.";
-        return;
+        errorMessage.value = 'Cannot resend verification email. User ID is missing.'
+        return
     }
 
-    isResending.value = true;
+    isResending.value = true
 
     try {
-        const response = await axiosInstance.post(
-            "/api/v1/account/settings/email/resend",
-            {
-                user_id: userId.value,
-            },
-        );
+        const response = await axiosInstance.post('/api/v1/account/settings/email/resend', {
+            user_id: userId.value
+        })
 
         if (response.status === 200) {
             alertModal(
-                "Success!",
-                "A new verification email has been sent. Please check your inbox.",
-            );
+                'Success!',
+                'A new verification email has been sent. Please check your inbox.'
+            )
         } else {
-            const data = response.data;
-            throw new Error(
-                data.message || "Failed to resend verification email",
-            );
+            const data = response.data
+            throw new Error(data.message || 'Failed to resend verification email')
         }
     } catch (error) {
-        console.error("Resend failed:", error);
+        console.error('Resend failed:', error)
         if (error.response && error.response.data) {
-            const errorData = error.response.data;
+            const errorData = error.response.data
 
-            if (
-                errorData.error &&
-                errorData.error.message &&
-                errorData.error.message
-            ) {
-                errorMessage.value = errorData.error.message;
+            if (errorData.error && errorData.error.message && errorData.error.message) {
+                errorMessage.value = errorData.error.message
                 alertModal(
-                    "Oops!",
+                    'Oops!',
                     errorData.error.message ||
-                        "Failed to resend verification email. Please try again later.",
-                );
+                        'Failed to resend verification email. Please try again later.'
+                )
             }
         }
     } finally {
-        isResending.value = false;
+        isResending.value = false
     }
-};
+}
 
 const redirectToApp = () => {
-    window.location.href = "/dashboard";
-};
+    window.location.href = '/dashboard'
+}
 
 const goToLogin = () => {
-    router.push("/login");
-};
+    router.push('/login')
+}
 
 watch(
     () => route.params,
     () => {
-        if (verificationStatus.value === "pending") {
-            extractRouteParameters();
-            determineVerificationType();
+        if (verificationStatus.value === 'pending') {
+            extractRouteParameters()
+            determineVerificationType()
         }
     },
-    { deep: true },
-);
+    { deep: true }
+)
 </script>

@@ -8,18 +8,9 @@
             leave-from-class="opacity-100"
             leave-to-class="opacity-0"
         >
-            <div
-                v-if="isOpen"
-                class="fixed inset-0 z-[100] overflow-y-auto"
-                @click.self="close"
-            >
-                <div
-                    class="flex min-h-full items-center justify-center p-4 text-center sm:p-0"
-                >
-                    <div
-                        class="fixed inset-0 bg-black/90 transition-opacity"
-                        @click="close"
-                    ></div>
+            <div v-if="isOpen" class="fixed inset-0 z-[100] overflow-y-auto" @click.self="close">
+                <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+                    <div class="fixed inset-0 bg-black/90 transition-opacity" @click="close"></div>
 
                     <div
                         class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-slate-900 text-left shadow-xl transition-all w-full max-w-md"
@@ -67,9 +58,7 @@
                             </div>
 
                             <div
-                                v-else-if="
-                                    !initialLoading && users.length === 0
-                                "
+                                v-else-if="!initialLoading && users.length === 0"
                                 class="flex flex-col items-center justify-center py-12 px-6"
                             >
                                 <div
@@ -84,30 +73,19 @@
                                         class="h-8 w-8 text-gray-400 dark:text-gray-600"
                                     />
                                 </div>
-                                <p
-                                    class="text-gray-600 dark:text-gray-400 text-sm"
-                                >
-                                    {{
-                                        activeTab === "likes"
-                                            ? "No likes yet"
-                                            : "No shares yet"
-                                    }}
+                                <p class="text-gray-600 dark:text-gray-400 text-sm">
+                                    {{ activeTab === 'likes' ? 'No likes yet' : 'No shares yet' }}
                                 </p>
                             </div>
 
-                            <div
-                                v-else
-                                class="divide-y divide-gray-200 dark:divide-slate-800"
-                            >
+                            <div v-else class="divide-y divide-gray-200 dark:divide-slate-800">
                                 <TransitionGroup name="fade-in" tag="div">
                                     <div
                                         v-for="user in users"
                                         :key="user.id"
                                         class="px-6 py-4 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
                                     >
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
+                                        <div class="flex items-center justify-between">
                                             <router-link
                                                 :to="`/@${user.username}`"
                                                 class="flex items-center flex-1 min-w-0"
@@ -122,9 +100,7 @@
                                                             '/storage/avatars/default.jpg'
                                                     "
                                                 />
-                                                <div
-                                                    class="ml-3 min-w-0 flex-1"
-                                                >
+                                                <div class="ml-3 min-w-0 flex-1">
                                                     <div
                                                         class="font-semibold text-gray-900 dark:text-white truncate"
                                                     >
@@ -153,8 +129,8 @@
                                             >
                                                 {{
                                                     user.is_following
-                                                        ? $t("common.unfollow")
-                                                        : $t("common.follow")
+                                                        ? $t('common.unfollow')
+                                                        : $t('common.follow')
                                                 }}
                                             </button>
                                         </div>
@@ -179,201 +155,192 @@
 </template>
 
 <script setup>
-import {
-    ref,
-    watch,
-    computed,
-    onMounted,
-    onBeforeUnmount,
-    nextTick,
-} from "vue";
-import { useVideoStore } from "~/stores/video";
-import { useAuthStore } from "~/stores/auth";
-import { XMarkIcon, HeartIcon, ShareIcon } from "@heroicons/vue/24/outline";
-import Spinner from "@/components/Spinner.vue";
+import { ref, watch, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { useVideoStore } from '~/stores/video'
+import { useAuthStore } from '~/stores/auth'
+import { XMarkIcon, HeartIcon, ShareIcon } from '@heroicons/vue/24/outline'
+import Spinner from '@/components/Spinner.vue'
 
 const props = defineProps({
     isOpen: {
         type: Boolean,
-        required: true,
+        required: true
     },
     videoId: {
         type: [Number, String],
-        required: true,
+        required: true
     },
     initialTab: {
         type: String,
-        default: "likes",
-        validator: (value) => ["likes", "shares"].includes(value),
-    },
-});
+        default: 'likes',
+        validator: (value) => ['likes', 'shares'].includes(value)
+    }
+})
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close'])
 
-const videoStore = useVideoStore();
-const authStore = useAuthStore();
+const videoStore = useVideoStore()
+const authStore = useAuthStore()
 
-const activeTab = ref(props.initialTab);
-const initialLoading = ref(false);
-const loadingMore = ref(false);
-const users = ref([]);
-const loadMoreTrigger = ref(null);
-const scrollContainer = ref(null);
-let observer = null;
+const activeTab = ref(props.initialTab)
+const initialLoading = ref(false)
+const loadingMore = ref(false)
+const users = ref([])
+const loadMoreTrigger = ref(null)
+const scrollContainer = ref(null)
+let observer = null
 
 const tabs = [
-    { key: "likes", label: "Likes" },
-    { key: "shares", label: "Shares" },
-];
+    { key: 'likes', label: 'Likes' },
+    { key: 'shares', label: 'Shares' }
+]
 
 const hasMore = computed(() => {
-    return activeTab.value === "likes"
-        ? videoStore.likesHasMore
-        : videoStore.sharesHasMore;
-});
+    return activeTab.value === 'likes' ? videoStore.likesHasMore : videoStore.sharesHasMore
+})
 
 const close = () => {
-    emit("close");
-};
+    emit('close')
+}
 
 const loadUsers = async (isLoadMore = false) => {
     if (isLoadMore) {
-        loadingMore.value = true;
+        loadingMore.value = true
     } else {
-        initialLoading.value = true;
+        initialLoading.value = true
     }
 
     try {
         const response =
-            activeTab.value === "likes"
+            activeTab.value === 'likes'
                 ? await videoStore.getVideoLikes(props.videoId)
-                : await videoStore.getVideoShares(props.videoId);
+                : await videoStore.getVideoShares(props.videoId)
 
         if (isLoadMore) {
-            await nextTick();
-            users.value = [...users.value, ...response.data];
+            await nextTick()
+            users.value = [...users.value, ...response.data]
         } else {
-            users.value = response.data;
+            users.value = response.data
         }
     } catch (error) {
-        console.error("Error loading users:", error);
+        console.error('Error loading users:', error)
         if (!isLoadMore) {
-            users.value = [];
+            users.value = []
         }
     } finally {
         if (isLoadMore) {
-            loadingMore.value = false;
+            loadingMore.value = false
         } else {
-            initialLoading.value = false;
+            initialLoading.value = false
         }
     }
-};
+}
 
 const setupIntersectionObserver = () => {
     if (observer) {
-        observer.disconnect();
+        observer.disconnect()
     }
 
     observer = new IntersectionObserver(
         (entries) => {
-            const target = entries[0];
+            const target = entries[0]
             if (
                 target.isIntersecting &&
                 hasMore.value &&
                 !loadingMore.value &&
                 !initialLoading.value
             ) {
-                loadUsers(true);
+                loadUsers(true)
             }
         },
         {
             root: scrollContainer.value,
-            rootMargin: "100px",
-            threshold: 0.1,
-        },
-    );
+            rootMargin: '100px',
+            threshold: 0.1
+        }
+    )
 
     if (loadMoreTrigger.value) {
-        observer.observe(loadMoreTrigger.value);
+        observer.observe(loadMoreTrigger.value)
     }
-};
+}
 
 const switchTab = (tab) => {
-    if (activeTab.value === tab) return;
+    if (activeTab.value === tab) return
 
-    activeTab.value = tab;
-    users.value = [];
+    activeTab.value = tab
+    users.value = []
 
-    if (activeTab.value === "likes") {
-        videoStore.likesNextCursor = null;
-        videoStore.likesHasMore = false;
+    if (activeTab.value === 'likes') {
+        videoStore.likesNextCursor = null
+        videoStore.likesHasMore = false
     } else {
-        videoStore.sharesNextCursor = null;
-        videoStore.sharesHasMore = false;
+        videoStore.sharesNextCursor = null
+        videoStore.sharesHasMore = false
     }
 
     if (scrollContainer.value) {
-        scrollContainer.value.scrollTop = 0;
+        scrollContainer.value.scrollTop = 0
     }
 
-    loadUsers(false);
-};
+    loadUsers(false)
+}
 
 const toggleFollow = async (user) => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
 
     try {
         if (user.is_following) {
-            await videoStore.unfollowUser(user.id);
-            user.is_following = false;
+            await videoStore.unfollowUser(user.id)
+            user.is_following = false
         } else {
-            await videoStore.followUser(user.id);
-            user.is_following = true;
+            await videoStore.followUser(user.id)
+            user.is_following = true
         }
     } catch (error) {
-        console.error("Error toggling follow:", error);
+        console.error('Error toggling follow:', error)
     }
-};
+}
 
 watch(
     () => props.isOpen,
     async (newVal) => {
         if (newVal) {
-            activeTab.value = props.initialTab;
-            videoStore.likesNextCursor = null;
-            videoStore.sharesNextCursor = null;
-            videoStore.likesHasMore = false;
-            videoStore.sharesHasMore = false;
-            users.value = [];
-            await loadUsers(false);
+            activeTab.value = props.initialTab
+            videoStore.likesNextCursor = null
+            videoStore.sharesNextCursor = null
+            videoStore.likesHasMore = false
+            videoStore.sharesHasMore = false
+            users.value = []
+            await loadUsers(false)
 
-            await nextTick();
-            setupIntersectionObserver();
+            await nextTick()
+            setupIntersectionObserver()
         } else {
-            users.value = [];
+            users.value = []
             if (observer) {
-                observer.disconnect();
+                observer.disconnect()
             }
         }
-    },
-);
+    }
+)
 
 watch(loadMoreTrigger, (newVal) => {
     if (newVal && props.isOpen) {
         nextTick(() => {
-            setupIntersectionObserver();
-        });
+            setupIntersectionObserver()
+        })
     }
-});
+})
 
 onBeforeUnmount(() => {
     if (observer) {
-        observer.disconnect();
+        observer.disconnect()
     }
-});
+})
 </script>
 
 <style scoped>

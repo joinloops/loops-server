@@ -21,38 +21,38 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, inject } from "vue";
-import { storeToRefs } from "pinia";
-import StudioHeader from "~/components/Layout/StudioHeader.vue";
-import StudioSidebar from "~/components/Layout/StudioSidebar.vue";
+import { ref, computed, onMounted, onUnmounted, inject } from 'vue'
+import { storeToRefs } from 'pinia'
+import StudioHeader from '~/components/Layout/StudioHeader.vue'
+import StudioSidebar from '~/components/Layout/StudioSidebar.vue'
 
-const appStore = inject("appStore");
-const isMobileDrawerOpen = ref(false);
+const appStore = inject('appStore')
+const isMobileDrawerOpen = ref(false)
 
-const windowWidth = ref(window.innerWidth);
+const windowWidth = ref(window.innerWidth)
 
-const isMobile = computed(() => windowWidth.value < 1024);
+const isMobile = computed(() => windowWidth.value < 1024)
 
 const toggleMobileDrawer = () => {
-    isMobileDrawerOpen.value = !isMobileDrawerOpen.value;
-};
+    isMobileDrawerOpen.value = !isMobileDrawerOpen.value
+}
 
 const closeMobileDrawer = () => {
-    isMobileDrawerOpen.value = false;
-};
+    isMobileDrawerOpen.value = false
+}
 
 const handleResize = () => {
-    windowWidth.value = window.innerWidth;
+    windowWidth.value = window.innerWidth
     if (windowWidth.value >= 1024) {
-        isMobileDrawerOpen.value = false;
+        isMobileDrawerOpen.value = false
     }
-};
+}
 
 onMounted(() => {
-    window.addEventListener("resize", handleResize);
-});
+    window.addEventListener('resize', handleResize)
+})
 
 onUnmounted(() => {
-    window.removeEventListener("resize", handleResize);
-});
+    window.removeEventListener('resize', handleResize)
+})
 </script>

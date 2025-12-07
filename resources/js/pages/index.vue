@@ -17,64 +17,64 @@
 </template>
 
 <script setup>
-import { inject, computed, shallowRef, watch } from "vue";
-import { useFeed } from "~/composables/useFeed";
-import { usePublicFeed } from "~/composables/usePublicFeed";
-import { useFeedInteraction } from "~/composables/useFeedInteraction";
-import FeedLayout from "~/layouts/FeedLayout.vue";
-import SnapScrollFeed from "~/components/Feed/SnapScrollFeed.vue";
-import VideoPlayer from "~/components/Feed/VideoPlayer.vue";
+import { inject, computed, shallowRef, watch } from 'vue'
+import { useFeed } from '~/composables/useFeed'
+import { usePublicFeed } from '~/composables/usePublicFeed'
+import { useFeedInteraction } from '~/composables/useFeedInteraction'
+import FeedLayout from '~/layouts/FeedLayout.vue'
+import SnapScrollFeed from '~/components/Feed/SnapScrollFeed.vue'
+import VideoPlayer from '~/components/Feed/VideoPlayer.vue'
 
-const authStore = inject("authStore");
+const authStore = inject('authStore')
 
-const activeFeed = shallowRef(null);
+const activeFeed = shallowRef(null)
 
 // Get the global interaction state (shared with SnapScrollFeed)
-const { hasInteracted, handleFirstInteraction, globalMuted } =
-    useFeedInteraction();
+const { hasInteracted, handleFirstInteraction, globalMuted } = useFeedInteraction()
 
 watch(
     () => authStore.authenticated,
     (isAuthenticated, _, onCleanup) => {
-        activeFeed.value = isAuthenticated ? useFeed() : usePublicFeed();
+        activeFeed.value = isAuthenticated ? useFeed() : usePublicFeed()
     },
-    { immediate: true },
-);
+    { immediate: true }
+)
 
 const feedData = computed(() => {
-    return activeFeed.value;
-});
+    return activeFeed.value
+})
 
 const getVideoProps = (post, index) => ({
-    "video-id": post.id,
-    "video-url": post.media.src_url,
-    "share-url": post.url,
-    "profile-id": post.account.id,
+    'video-id': post.id,
+    'video-url': post.media.src_url,
+    'share-url': post.url,
+    'profile-id': post.account.id,
     username: post.account.username,
-    "profile-image": post.account.avatar,
+    'profile-image': post.account.avatar,
     caption: post.caption,
-    hashtags: [],
+    hashtags: post.tags,
+    mentions: post.mentions,
     likes: post.likes,
     hasLiked: post.has_liked,
     bookmarks: 0,
     shares: 0,
     comments: [],
     canComment: post.permissions?.can_comment,
-    "comment-count": post.comments,
+    'comment-count': post.comments,
     index: index,
     isSensitive: post?.is_sensitive,
     altText: post?.media.alt_text,
     autoPlay: hasInteracted.value,
-    muted: globalMuted.value,
-});
+    muted: globalMuted.value
+})
 
-const getVideoKey = (post) => post.id;
+const getVideoKey = (post) => post.id
 
-const onVideoVisible = (index) => {};
+const onVideoVisible = (index) => {}
 
-const onVideoHidden = (index) => {};
+const onVideoHidden = (index) => {}
 
 const onUserInteraction = () => {
-    handleFirstInteraction();
-};
+    handleFirstInteraction()
+}
 </script>

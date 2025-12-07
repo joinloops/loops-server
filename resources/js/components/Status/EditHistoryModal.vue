@@ -20,10 +20,8 @@
                     <div
                         class="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700"
                     >
-                        <h2
-                            class="text-xl font-semibold text-gray-900 dark:text-white"
-                        >
-                            {{ currentEntity?.title || "Edit History" }}
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                            {{ currentEntity?.title || 'Edit History' }}
                         </h2>
                         <button
                             @click="closeModal"
@@ -46,14 +44,8 @@
                         </button>
                     </div>
 
-                    <div
-                        ref="scrollContainer"
-                        class="flex-1 overflow-y-auto px-6 py-4"
-                    >
-                        <div
-                            v-if="isInitialLoad"
-                            class="flex items-center justify-center py-12"
-                        >
+                    <div ref="scrollContainer" class="flex-1 overflow-y-auto px-6 py-4">
+                        <div v-if="isInitialLoad" class="flex items-center justify-center py-12">
                             <Spinner />
                         </div>
 
@@ -152,15 +144,11 @@
                                             <div
                                                 v-if="
                                                     index === 0 ||
-                                                    (index ===
-                                                        history.length - 1 &&
-                                                        !hasMore)
+                                                    (index === history.length - 1 && !hasMore)
                                                 "
                                                 class="flex items-center justify-between mb-3"
                                             >
-                                                <div
-                                                    class="flex items-center gap-2"
-                                                >
+                                                <div class="flex items-center gap-2">
                                                     <span
                                                         v-if="index === 0"
                                                         class="px-2 py-1 text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded"
@@ -169,10 +157,7 @@
                                                     </span>
                                                     <span
                                                         v-else-if="
-                                                            index ===
-                                                                history.length -
-                                                                    1 &&
-                                                            !hasMore
+                                                            index === history.length - 1 && !hasMore
                                                         "
                                                         class="px-2 py-1 text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded"
                                                     >
@@ -189,7 +174,7 @@
                                                     entry.caption ||
                                                     entry.description ||
                                                     entry.title ||
-                                                    "(No content)"
+                                                    '(No content)'
                                                 }}
                                             </div>
                                         </div>
@@ -234,11 +219,7 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                         ></path>
                                     </svg>
-                                    <span>{{
-                                        isLoadingMore
-                                            ? "Loading..."
-                                            : "Load More"
-                                    }}</span>
+                                    <span>{{ isLoadingMore ? 'Loading...' : 'Load More' }}</span>
                                 </button>
                             </div>
                         </div>
@@ -261,81 +242,77 @@
 </template>
 
 <script setup>
-import { computed, ref, nextTick } from "vue";
-import { storeToRefs } from "pinia";
-import { useEditHistoryStore } from "@/stores/editHistory";
-import { ClockIcon } from "@heroicons/vue/24/outline";
+import { computed, ref, nextTick } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useEditHistoryStore } from '@/stores/editHistory'
+import { ClockIcon } from '@heroicons/vue/24/outline'
 
-const store = useEditHistoryStore();
-const { isModalOpen, currentEntity } = storeToRefs(store);
+const store = useEditHistoryStore()
+const { isModalOpen, currentEntity } = storeToRefs(store)
 
-const scrollContainer = ref(null);
-const loadMoreSection = ref(null);
-const isLoadingMore = ref(false);
+const scrollContainer = ref(null)
+const loadMoreSection = ref(null)
+const isLoadingMore = ref(false)
 
-const closeModal = () => store.closeModal();
+const closeModal = () => store.closeModal()
 
-const history = computed(() => store.getCurrentHistory);
-const loading = computed(() => store.isCurrentLoading);
-const error = computed(() => store.getCurrentError);
-const hasMore = computed(() => store.hasMoreCurrent);
+const history = computed(() => store.getCurrentHistory)
+const loading = computed(() => store.isCurrentLoading)
+const error = computed(() => store.getCurrentError)
+const hasMore = computed(() => store.hasMoreCurrent)
 
-const isInitialLoad = computed(
-    () => loading.value && history.value.length === 0,
-);
+const isInitialLoad = computed(() => loading.value && history.value.length === 0)
 
 const handleLoadMore = async () => {
-    if (isLoadingMore.value) return;
+    if (isLoadingMore.value) return
 
-    const currentScrollHeight = scrollContainer.value?.scrollHeight || 0;
-    const currentScrollTop = scrollContainer.value?.scrollTop || 0;
+    const currentScrollHeight = scrollContainer.value?.scrollHeight || 0
+    const currentScrollTop = scrollContainer.value?.scrollTop || 0
 
-    isLoadingMore.value = true;
+    isLoadingMore.value = true
 
     try {
-        await store.loadMore();
+        await store.loadMore()
 
-        await nextTick();
+        await nextTick()
 
         if (scrollContainer.value && loadMoreSection.value) {
-            const newScrollHeight = scrollContainer.value.scrollHeight;
-            const heightDifference = newScrollHeight - currentScrollHeight;
+            const newScrollHeight = scrollContainer.value.scrollHeight
+            const heightDifference = newScrollHeight - currentScrollHeight
 
             scrollContainer.value.scrollTo({
                 top: currentScrollTop + heightDifference,
-                behavior: "smooth",
-            });
+                behavior: 'smooth'
+            })
         }
     } catch (err) {
-        console.error("Failed to load more history:", err);
+        console.error('Failed to load more history:', err)
     } finally {
-        isLoadingMore.value = false;
+        isLoadingMore.value = false
     }
-};
+}
 
 const formatDate = (dateString) => {
-    if (!dateString) return "";
+    if (!dateString) return ''
 
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now - date;
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffMs = now - date
+    const diffMins = Math.floor(diffMs / 60000)
+    const diffHours = Math.floor(diffMs / 3600000)
+    const diffDays = Math.floor(diffMs / 86400000)
 
-    if (diffMins < 1) return "Just now";
-    if (diffMins < 60)
-        return `${diffMins} minute${diffMins > 1 ? "s" : ""} ago`;
-    if (diffHours < 24)
-        return `${diffHours} hour${diffHours > 1 ? "s" : ""} ago`;
-    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? "s" : ""} ago`;
+    if (diffMins < 1) return 'Just now'
+    if (diffMins < 60) return `${diffMins} minute${diffMins > 1 ? 's' : ''} ago`
+    if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`
+    if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`
 
-    return date.toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-    });
-};
+    return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    })
+}
 </script>

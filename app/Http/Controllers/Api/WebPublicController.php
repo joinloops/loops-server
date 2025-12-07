@@ -23,8 +23,9 @@ use App\Services\AccountService;
 use App\Services\FeedService;
 use App\Services\IntlService;
 use App\Services\ReportService;
-use Cache;
+use App\Support\CursorToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class WebPublicController extends Controller
@@ -289,6 +290,7 @@ class WebPublicController extends Controller
     {
         $tag = Hashtag::where('name', $id)->firstOrFail();
         abort_if((bool) $tag->is_banned, 404);
+
         $guest = $request->user() === null;
 
         if ($guest && $tag->is_nsfw) {
@@ -296,13 +298,102 @@ class WebPublicController extends Controller
         }
 
         if ($guest) {
-
             $tags = VideoHashtag::whereHashtagId($tag->id)->orderByDesc('id')->limit(30)->get();
-        } else {
-            $tags = VideoHashtag::whereHashtagId($tag->id)->orderByDesc('id')->cursorPaginate(10);
+
+            return VideoHashtagResource::collection($tags)->additional([
+                'meta' => [
+                    'total_results' => $tag->count,
+                    'limit' => 30,
+                    'next_cursor' => null,
+                    'has_more' => false,
+                    'is_guest' => true,
+                ],
+            ]);
         }
 
-        return VideoHashtagResource::collection($tags)->additional(['meta' => ['total_results' => $tag->count]]);
+        $validated = $request->validate([
+            'cursor' => 'sometimes|string|max:2000',
+            'limit' => 'sometimes|integer|min:1|max:30',
+        ]);
+
+        $preCursor = $validated['cursor'] ?? null;
+        $limit = $validated['limit'] ?? 10;
+
+        $maxPages = $request->user()->is_admin ? 100 : 5;
+        $maxItems = $request->user()->is_admin ? 1000 : 80;
+
+        $ctx = hash('sha256', implode('|', [
+            $request->user()->id,
+            'video-tags',
+            'hashtag:'.$tag->id,
+            'limit:'.$limit,
+            'order:id_desc',
+        ]));
+
+        $decodedCursor = null;
+        $hops = 0;
+
+        if ($request->filled('cursor')) {
+            ['cursor' => $decodedCursor, 'hops' => $hops] = CursorToken::decode($request->input('cursor'), $ctx);
+
+            if ($hops >= $maxPages) {
+                return $this->defaultTagResponse($request, $limit, $tag->count);
+            }
+
+            if (($hops * $limit) >= $maxItems) {
+                return $this->defaultTagResponse($request, $limit, $tag->count);
+            }
+        }
+
+        $pager = VideoHashtag::whereHashtagId($tag->id)
+            ->orderByDesc('id')
+            ->cursorPaginate(
+                perPage: $limit,
+                columns: ['*'],
+                cursorName: 'cursor',
+                cursor: $decodedCursor
+            );
+
+        $nextLaravelCursor = $pager->nextCursor()?->encode();
+        $nextCursorToken = CursorToken::encode($nextLaravelCursor, $ctx, $hops + 1);
+
+        $tags = $pager->getCollection();
+
+        return VideoHashtagResource::collection($tags)->additional([
+            'links' => [
+                'first' => null,
+                'last' => null,
+                'prev' => null,
+                'next' => null,
+            ],
+            'meta' => [
+                'path' => $request->url(),
+                'per_page' => $limit,
+                'next_cursor' => $nextCursorToken,
+                'prev_cursor' => $preCursor,
+                'total_results' => $tag->count,
+            ],
+        ]);
+    }
+
+    public function defaultTagResponse($request, $limit, $totalCount = 0)
+    {
+        return response()->json([
+            'data' => [],
+            'links' => [
+                'first' => null,
+                'last' => null,
+                'prev' => null,
+                'next' => null,
+            ],
+            'meta' => [
+                'total_results' => $totalCount,
+                'path' => $request->url(),
+                'per_page' => $limit,
+                'next_cursor' => null,
+                'prev_cursor' => null,
+            ],
+        ]);
     }
 
     public function authStartFallback(Request $request)

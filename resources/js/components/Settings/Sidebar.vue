@@ -2,12 +2,12 @@
     <aside class="w-64 bg-white dark:bg-gray-950">
         <nav class="flex flex-col h-full px-3">
             <div class="p-4">
-                <button
+                <router-link
                     class="flex items-center text-gray-500 hover:text-gray-400 cursor-pointer"
-                    @click="$router.back()"
+                    to="/"
                 >
-                    <span class="mr-2">←</span> {{ t("settings.back") }}
-                </button>
+                    <span class="mr-2">←</span> {{ t('settings.back') }}
+                </router-link>
             </div>
 
             <div class="flex-1">
@@ -24,24 +24,24 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import SidebarItem from "./SidebarItem.vue";
-import { useI18n } from "vue-i18n";
+import { ref } from 'vue'
+import SidebarItem from './SidebarItem.vue'
+import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n();
+const { t } = useI18n()
 
 const menuItems = ref([
     {
-        name: t("settings.manageAccount"),
-        icon: "bx bx-user",
-        path: "/dashboard/account",
-        highlight: true,
+        name: t('settings.manageAccount'),
+        icon: 'bx bx-user',
+        path: '/dashboard/account',
+        highlight: true
     },
     {
-        name: t("settings.safety"),
-        icon: "bx bx-lock",
-        path: "/dashboard/safety",
-    },
+        name: t('settings.safety'),
+        icon: 'bx bx-lock',
+        path: '/dashboard/safety'
+    }
     // {
     //   name: 'Federation',
     //   icon: 'bx bx-broadcast',
@@ -67,5 +67,5 @@ const menuItems = ref([
     //   icon: 'bx bx-poll',
     //   path: '/dashboard/preferences'
     // }
-]);
+])
 </script>

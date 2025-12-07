@@ -117,15 +117,21 @@ class ProcessSharedInboxActivity implements ShouldQueue
                 return;
             }
 
-            foreach ($localTargets as $target) {
-                ProcessInboxActivity::dispatch($this->activity, $this->actor, $target)->onQueue('activitypub-in');
-            }
+            $chunkSize = config('loops.federation.inbox_dispatch_chunk_size', 100);
+            $targetCount = $localTargets->count();
+
+            $localTargets->chunk($chunkSize)->each(function ($chunk) {
+                foreach ($chunk as $target) {
+                    ProcessInboxActivity::dispatch($this->activity, $this->actor, $target)
+                        ->onQueue('activitypub-in');
+                }
+            });
 
             if (config('logging.dev_log')) {
                 Log::info('Dispatched shared inbox activity to local targets', [
                     'activity_id' => $this->activity['id'] ?? null,
-                    'target_count' => $localTargets->count(),
-                    'targets' => $localTargets->pluck('username')->toArray(),
+                    'target_count' => $targetCount,
+                    'chunks' => ceil($targetCount / $chunkSize),
                 ]);
             }
 
@@ -161,9 +167,7 @@ class ProcessSharedInboxActivity implements ShouldQueue
 
         $recipients = array_unique($recipients);
         $recipients = array_filter($recipients, function ($recipient) {
-            return ! empty($recipient) &&
-                   app(SanitizeService::class)->isLocalObject($recipient) !== false &&
-                   ! str_contains($recipient, 'www.w3.org/ns/activitystreams');
+            return ! empty($recipient) && ! str_contains($recipient, 'www.w3.org/ns/activitystreams');
         });
 
         return array_values($recipients);
@@ -187,33 +191,66 @@ class ProcessSharedInboxActivity implements ShouldQueue
 
     /**
      * Find local profiles that match the recipient URIs
+     * Handles both direct local profile URLs and remote followers URLs
      */
     protected function findLocalTargets(array $recipients)
     {
-        $localTargets = collect();
+        $localTargetIds = collect();
 
         foreach ($recipients as $recipient) {
-            $profileMatch = app(SanitizeService::class)->matchUrlTemplate(
-                url: $recipient,
-                templates: [
-                    '/ap/users/{profileId}',
-                    '/ap/users/{profileId}/followers',
-                ],
-                useAppHost: true,
-                constraints: ['profileId' => '\d+']
-            );
+            if (app(SanitizeService::class)->isLocalObject($recipient)) {
+                $profileMatch = app(SanitizeService::class)->matchUrlTemplate(
+                    url: $recipient,
+                    templates: [
+                        '/ap/users/{profileId}',
+                        '/ap/users/{profileId}/followers',
+                    ],
+                    useAppHost: true,
+                    constraints: ['profileId' => '\d+']
+                );
 
-            if ($profileMatch) {
-                if (isset($profileMatch['profileId'])) {
-                    $res = Profile::whereLocal(true)->find($profileMatch['profileId']);
-                    if ($res) {
-                        $localTargets->push($res);
+                if ($profileMatch && isset($profileMatch['profileId'])) {
+                    if (Profile::whereLocal(true)->where('id', $profileMatch['profileId'])->exists()) {
+                        $localTargetIds->push($profileMatch['profileId']);
+                    }
+                }
+            } else {
+                $remoteProfile = Profile::where('followers_url', $recipient)
+                    ->select('id', 'username')
+                    ->first();
+
+                if ($remoteProfile) {
+                    $maxFollowers = config('loops.federation.inbox_max_followers', 5000);
+
+                    $followerQuery = $remoteProfile->followers()->where('profile_is_local', true)->limit($maxFollowers);
+
+                    $followerIds = $followerQuery->pluck('followers.profile_id');
+
+                    if ($followerIds->isNotEmpty()) {
+                        $localTargetIds = $localTargetIds->merge($followerIds);
+
+                        if (config('logging.dev_log')) {
+                            $totalFollowers = $remoteProfile->followers()->where('profile_is_local', true)->count();
+                            Log::info('Found local followers for remote profile', [
+                                'remote_profile' => $remoteProfile->username,
+                                'followers_url' => $recipient,
+                                'local_followers_count' => $followerIds->count(),
+                                'total_followers' => $totalFollowers,
+                                'limited' => $totalFollowers > $maxFollowers,
+                            ]);
+                        }
                     }
                 }
             }
         }
 
-        return $localTargets->unique('id');
+        $uniqueIds = $localTargetIds->unique()->values();
+
+        if ($uniqueIds->isEmpty()) {
+            return collect();
+        }
+
+        return Profile::whereIn('id', $uniqueIds)->whereLocal(true)->get();
     }
 
     /**
@@ -297,7 +334,6 @@ class ProcessSharedInboxActivity implements ShouldQueue
             }
         }
 
-        // Fallback: try to find by URI
         return Profile::where('uri', $url)->whereLocal(true)->first();
     }
 

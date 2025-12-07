@@ -2,14 +2,11 @@
     <div
         class="fixed lg:flex justify-between z-50 top-0 left-0 w-full h-full dark:bg-black lg:overflow-hidden overflow-auto"
     >
-        <div
-            v-if="isVideoLoading"
-            class="flex items-center justify-center w-full h-full bg-black"
-        >
+        <div v-if="isVideoLoading" class="flex items-center justify-center w-full h-full bg-black">
             <div class="text-center">
                 <Spinner class="h-12 w-12 mx-auto mb-4" />
                 <p class="text-white text-lg">
-                    {{ $t("post.loadingVideoDotDotDot") }}
+                    {{ $t('post.loadingVideoDotDotDot') }}
                 </p>
             </div>
         </div>
@@ -34,9 +31,7 @@
                     />
                 </div>
 
-                <h2
-                    class="text-2xl font-bold text-gray-900 dark:text-white mb-4"
-                >
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                     {{ error.title }}
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400 mb-8">
@@ -50,7 +45,7 @@
                         class="w-full bg-[#F02C56] hover:bg-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center cursor-pointer"
                     >
                         <ArrowPathIcon class="h-5 w-5 mr-2" />
-                        {{ $t("common.tryAgain") }}
+                        {{ $t('common.tryAgain') }}
                     </button>
 
                     <button
@@ -58,36 +53,27 @@
                         class="w-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center cursor-pointer"
                     >
                         <HomeIcon class="h-5 w-5 mr-2" />
-                        {{ $t("post.goHome") }}
+                        {{ $t('post.goHome') }}
                     </button>
                 </div>
             </div>
         </div>
 
         <div
-            v-else-if="
-                currentVideo &&
-                currentVideo.is_sensitive &&
-                !showSensitiveContent
-            "
+            v-else-if="currentVideo && currentVideo.is_sensitive && !showSensitiveContent"
             class="flex items-center justify-center w-full h-full bg-gray-100 dark:bg-gray-900"
         >
             <div class="text-center max-w-md px-6">
                 <div class="mx-auto mb-6">
-                    <ExclamationTriangleIcon
-                        class="h-16 w-16 text-orange-500 mx-auto"
-                    />
+                    <ExclamationTriangleIcon class="h-16 w-16 text-orange-500 mx-auto" />
                 </div>
 
-                <h2
-                    class="text-2xl font-bold text-gray-900 dark:text-white mb-4"
-                >
+                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">
                     Sensitive Content
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400 mb-8">
-                    This video may contain sensitive content that some viewers
-                    may find disturbing or inappropriate. Viewer discretion is
-                    advised.
+                    This video may contain sensitive content that some viewers may find disturbing
+                    or inappropriate. Viewer discretion is advised.
                 </p>
 
                 <div class="space-y-3">
@@ -110,10 +96,7 @@
             </div>
         </div>
 
-        <div
-            v-else-if="currentVideo"
-            class="lg:w-[calc(100%-540px)] h-full relative"
-        >
+        <div v-else-if="currentVideo" class="lg:w-[calc(100%-540px)] h-full relative">
             <button
                 class="absolute z-20 m-5 flex items-center rounded-full bg-gray-900 dark:bg-slate-950 p-1.5 hover:bg-gray-800"
                 @click="goBack"
@@ -140,7 +123,7 @@
                 <div class="text-center">
                     <Spinner class="h-12 w-12 text-white mx-auto mb-4" />
                     <p class="text-white">
-                        {{ $t("post.loadingVideoDotDotDot") }}
+                        {{ $t('post.loadingVideoDotDotDot') }}
                     </p>
                 </div>
             </div>
@@ -174,14 +157,10 @@
                         <div
                             class="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm w-30 h-30 flex justify-center items-center rounded-full p-6 shadow-2xl hover:scale-110 transition-transform duration-200"
                         >
-                            <PlayIcon
-                                class="h-16 w-16 text-[#F02C56] dark:text-white ml-2"
-                            />
+                            <PlayIcon class="h-16 w-16 text-[#F02C56] dark:text-white ml-2" />
                         </div>
-                        <p
-                            class="text-white text-lg font-semibold drop-shadow-lg"
-                        >
-                            {{ $t("common.tapToPlay") }}
+                        <p class="text-white text-lg font-semibold drop-shadow-lg">
+                            {{ $t('common.tapToPlay') }}
                         </p>
                     </div>
                 </div>
@@ -198,33 +177,22 @@
             class="lg:max-w-[550px] relative w-full h-full bg-white dark:bg-slate-950 flex flex-col"
         >
             <div class="flex-shrink-0">
-                <div
-                    class="p-3 sm:p-5 m-2 sm:m-8 mb-0 rounded-lg bg-gray-100 dark:bg-slate-900"
-                >
-                    <div
-                        class="flex items-start sm:items-center justify-between gap-3"
-                    >
+                <div class="p-3 sm:p-5 m-2 sm:m-8 mb-0 rounded-lg bg-gray-100 dark:bg-slate-900">
+                    <div class="flex items-start sm:items-center justify-between gap-3">
                         <div class="flex items-center flex-1 min-w-0">
-                            <router-link
-                                :to="`/@${currentVideo.account.username}`"
-                            >
+                            <router-link :to="`/@${currentVideo.account.username}`">
                                 <img
                                     class="rounded-full flex-shrink-0"
                                     :class="{
                                         'w-10 h-10': true,
-                                        'sm:w-12 sm:h-12': true,
+                                        'sm:w-12 sm:h-12': true
                                     }"
                                     :src="currentVideo.account.avatar"
                                     :alt="currentVideo.account.username"
-                                    @error="
-                                        $event.target.src =
-                                            '/storage/avatars/default.jpg'
-                                    "
+                                    @error="$event.target.src = '/storage/avatars/default.jpg'"
                                 />
                             </router-link>
-                            <div
-                                class="ml-3 pt-0.5 min-w-0 flex-1 items-center"
-                            >
+                            <div class="ml-3 pt-0.5 min-w-0 flex-1 items-center">
                                 <div
                                     class="text-base sm:text-[17px] font-semibold dark:text-slate-50 mt-2 -mb-1 truncate"
                                 >
@@ -236,19 +204,11 @@
                                     <div class="dark:text-slate-400 truncate">
                                         {{ currentVideo.account.name }}
                                     </div>
-                                    <div
-                                        class="text-slate-400 dark:text-slate-500 leading-none"
-                                    >
+                                    <div class="text-slate-400 dark:text-slate-500 leading-none">
                                         ·
                                     </div>
-                                    <div
-                                        class="dark:text-slate-400 whitespace-nowrap"
-                                    >
-                                        {{
-                                            formatRecentDate(
-                                                currentVideo.created_at,
-                                            )
-                                        }}
+                                    <div class="dark:text-slate-400 whitespace-nowrap">
+                                        {{ formatRecentDate(currentVideo.created_at) }}
                                     </div>
                                     <div
                                         v-if="currentVideo.is_edited"
@@ -258,9 +218,7 @@
                                     </div>
                                     <button
                                         v-if="currentVideo?.is_edited"
-                                        @click="
-                                            openVideoHistory(currentVideo?.id)
-                                        "
+                                        @click="openVideoHistory(currentVideo?.id)"
                                         class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
                                     >
                                         Edited
@@ -275,7 +233,7 @@
                                 @click="showEditModal = true"
                                 class="flex items-center bg-[#F02C56] text-white border dark:border-red-400 hover:bg-[#F02C56]/70 rounded-md px-4 sm:px-8 py-2 sm:py-[6px] text-sm sm:text-base font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
                             >
-                                {{ $t("post.edit") }}
+                                {{ $t('post.edit') }}
                             </button>
                             <template v-else>
                                 <button
@@ -283,14 +241,14 @@
                                     @click="profileStore.follow()"
                                     class="flex items-center bg-[#F02C56] text-white border dark:border-red-400 hover:bg-red-600 rounded-md px-4 sm:px-8 py-2 sm:py-[6px] text-sm sm:text-base font-medium whitespace-nowrap flex-shrink-0 cursor-pointer"
                                 >
-                                    {{ $t("common.follow") }}
+                                    {{ $t('common.follow') }}
                                 </button>
                                 <button
                                     v-else
                                     @click="profileStore.unfollow()"
                                     class="flex items-center border-[#F02C56] text-[#F02C56] border rounded-md px-4 sm:px-8 py-2 sm:py-[6px] text-sm sm:text-base font-medium whitespace-nowrap flex-shrink-0 cursor-pointer hover:opacity-60"
                                 >
-                                    {{ $t("common.unfollow") }}
+                                    {{ $t('common.unfollow') }}
                                 </button>
                             </template>
                         </template>
@@ -299,7 +257,7 @@
                                 @click="handleGuestFollow"
                                 class="flex items-center bg-[#F02C56] text-white border dark:border-red-400 hover:bg-red-600 rounded-md px-4 sm:px-8 py-2 sm:py-[6px] text-sm sm:text-base font-medium whitespace-nowrap flex-shrink-0"
                             >
-                                {{ $t("common.follow") }}
+                                {{ $t('common.follow') }}
                             </button>
                         </template>
                     </div>
@@ -324,13 +282,16 @@
                     <div
                         class="mt-3 text-xs sm:text-sm font-medium dark:text-slate-500 flex items-center"
                     >
-                        <MusicalNoteIcon
-                            class="inline h-4 w-4 mr-1 flex-shrink-0"
-                        />
+                        <MusicalNoteIcon class="inline h-4 w-4 mr-1 flex-shrink-0" />
                         <span class="truncate"
-                            >original sound -
-                            {{ currentVideo.account.name }}</span
+                            >original sound - {{ currentVideo.account.name }}</span
                         >
+                    </div>
+                    <div
+                        v-if="currentVideo?.meta.contains_ai"
+                        class="mt-3 text-xs bg-gray-200 dark:bg-gray-800 text-gray-500 dark:text-gray-400 rounded inline-flex px-3 py-1"
+                    >
+                        Creator labelled as AI-generated
                     </div>
                 </div>
             </div>
@@ -339,11 +300,7 @@
                 <div class="flex items-center px-8 mt-4 justify-between">
                     <div class="pb-4 text-center flex items-center">
                         <button
-                            @click="
-                                currentVideo.has_liked == true
-                                    ? unlikePost()
-                                    : likePost()
-                            "
+                            @click="currentVideo.has_liked == true ? unlikePost() : likePost()"
                             class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 dark:text-slate-50 cursor-pointer"
                         >
                             <span
@@ -367,9 +324,7 @@
                         <div
                             class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 dark:hover:bg-slate-700 dark:bg-slate-800 dark:text-slate-50 cursor-pointer"
                         >
-                            <ChatBubbleOvalLeftIcon
-                                class="h-4 w-4 text-gray-400"
-                            />
+                            <ChatBubbleOvalLeftIcon class="h-4 w-4 text-gray-400" />
                         </div>
                         <span
                             class="text-sm pl-2 pr-4 text-gray-800 dark:text-slate-500 font-semibold"
@@ -429,7 +384,7 @@
                                 >
                                     <FlagIcon class="h-4 w-4" />
                                     <span class="pl-2 font-semibold text-sm">{{
-                                        $t("common.report")
+                                        $t('common.report')
                                     }}</span>
                                 </div>
                             </div>
@@ -471,16 +426,16 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, watch, computed, inject } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import { useAppStore } from "~/stores/app";
-import { useAuthStore } from "~/stores/auth";
-import { useVideoStore } from "~/stores/video";
-import { useProfileStore } from "~/stores/profile";
-import { useHashids } from "@/composables/useHashids";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-import { useUtils } from "@/composables/useUtils";
-import { useEditHistory } from "@/composables/useEditHistory";
+import { ref, onMounted, onBeforeUnmount, watch, computed, inject } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useAppStore } from '~/stores/app'
+import { useAuthStore } from '~/stores/auth'
+import { useVideoStore } from '~/stores/video'
+import { useProfileStore } from '~/stores/profile'
+import { useHashids } from '@/composables/useHashids'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+import { useUtils } from '@/composables/useUtils'
+import { useEditHistory } from '@/composables/useEditHistory'
 import {
     ArrowPathIcon,
     VideoCameraSlashIcon,
@@ -497,85 +452,85 @@ import {
     FlagIcon,
     EyeIcon,
     ArrowLeftIcon,
-    PlayIcon,
-} from "@heroicons/vue/24/outline";
-import UrlCopyInput from "@/components/Form/UrlCopyInput.vue";
-import Comments from "@/components/Status/Comments.vue";
-import ReportModal from "@/components/ReportModal.vue";
-import EditHistoryModal from "@/components/Status/EditHistoryModal.vue";
-import InteractionModal from "@/components/Status/InteractionModal.vue";
-import { useReportModal } from "@/composables/useReportModal";
-const { openVideoHistory } = useEditHistory();
+    PlayIcon
+} from '@heroicons/vue/24/outline'
+import UrlCopyInput from '@/components/Form/UrlCopyInput.vue'
+import Comments from '@/components/Status/Comments.vue'
+import ReportModal from '@/components/ReportModal.vue'
+import EditHistoryModal from '@/components/Status/EditHistoryModal.vue'
+import InteractionModal from '@/components/Status/InteractionModal.vue'
+import { useReportModal } from '@/composables/useReportModal'
+const { openVideoHistory } = useEditHistory()
 
-const router = useRouter();
-const route = useRoute();
-const appStore = useAppStore();
-const authStore = useAuthStore();
-const profileStore = useProfileStore();
-const videoStore = useVideoStore();
-const { openReportModal } = useReportModal();
-const { formatNumber, formatRecentDate, goBack, formatCount } = useUtils();
-const { alertModal, confirmModal, persistentModal } = useAlertModal();
-const appConfig = inject("appConfig");
+const router = useRouter()
+const route = useRoute()
+const appStore = useAppStore()
+const authStore = useAuthStore()
+const profileStore = useProfileStore()
+const videoStore = useVideoStore()
+const { openReportModal } = useReportModal()
+const { formatNumber, formatRecentDate, goBack, formatCount } = useUtils()
+const { alertModal, confirmModal, persistentModal } = useAlertModal()
+const appConfig = inject('appConfig')
 
-const videoRef = ref(null);
-const isVideoLoaded = ref(false);
-const isVideoLoading = ref(true);
-const showEditModal = ref(false);
-const showMenu = ref(false);
-const showSensitiveContent = ref(false);
-const showInteractionModal = ref(false);
-const InteractionModalTab = ref("likes");
-const error = ref(null);
-const videoLoadTimeout = ref(null);
-const showPlayButton = ref(true);
-const isPlaying = ref(false);
-const showControls = ref(false);
-const controlsTimeout = ref(null);
+const videoRef = ref(null)
+const isVideoLoaded = ref(false)
+const isVideoLoading = ref(true)
+const showEditModal = ref(false)
+const showMenu = ref(false)
+const showSensitiveContent = ref(false)
+const showInteractionModal = ref(false)
+const InteractionModalTab = ref('likes')
+const error = ref(null)
+const videoLoadTimeout = ref(null)
+const showPlayButton = ref(true)
+const isPlaying = ref(false)
+const showControls = ref(false)
+const controlsTimeout = ref(null)
 
-const currentVideo = computed(() => videoStore.video);
-const userId = computed(() => authStore.id);
+const currentVideo = computed(() => videoStore.video)
+const userId = computed(() => authStore.id)
 
 const openInteractionModal = (tab) => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
-    InteractionModalTab.value = tab;
-    showInteractionModal.value = true;
-};
+    InteractionModalTab.value = tab
+    showInteractionModal.value = true
+}
 
 const closeInteractionModal = () => {
-    showInteractionModal.value = false;
-};
+    showInteractionModal.value = false
+}
 
 const setError = (type, title, message) => {
-    error.value = { type, title, message };
-    isVideoLoading.value = false;
-};
+    error.value = { type, title, message }
+    isVideoLoading.value = false
+}
 
 const retryLoad = async () => {
-    error.value = null;
-    isVideoLoading.value = true;
-    isVideoLoaded.value = false;
-    await loadPost();
-};
+    error.value = null
+    isVideoLoading.value = true
+    isVideoLoaded.value = false
+    await loadPost()
+}
 
 const goHome = () => {
-    router.push("/");
-};
+    router.push('/')
+}
 
 const handleViewSensitiveContent = () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
-    showSensitiveContent.value = true;
-};
+    showSensitiveContent.value = true
+}
 
 const handleGuestFollow = async () => {
-    const currentDomain = window.location.hostname;
-    const accountHandle = `@${currentVideo.value.account.username}@${currentDomain}`;
+    const currentDomain = window.location.hostname
+    const accountHandle = `@${currentVideo.value.account.username}@${currentDomain}`
 
     const modalBody = `
         <div class="space-y-6">
@@ -643,284 +598,261 @@ const handleGuestFollow = async () => {
                 </p>
             </div>
         </div>
-    `;
+    `
 
     if (!window.copyToClipboard) {
         window.copyToClipboard = async (text, buttonElement) => {
             try {
-                await navigator.clipboard.writeText(text);
+                await navigator.clipboard.writeText(text)
 
                 if (buttonElement) {
-                    const originalContent = buttonElement.innerHTML;
+                    const originalContent = buttonElement.innerHTML
                     buttonElement.innerHTML = `
                         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
-                    `;
-                    buttonElement.classList.add(
-                        "bg-green-500",
-                        "hover:bg-green-600",
-                    );
-                    buttonElement.classList.remove(
-                        "bg-[#F02C56]",
-                        "hover:bg-[#F02C56]/80",
-                    );
+                    `
+                    buttonElement.classList.add('bg-green-500', 'hover:bg-green-600')
+                    buttonElement.classList.remove('bg-[#F02C56]', 'hover:bg-[#F02C56]/80')
 
                     setTimeout(() => {
-                        buttonElement.innerHTML = originalContent;
-                        buttonElement.classList.remove(
-                            "bg-green-500",
-                            "hover:bg-green-600",
-                        );
-                        buttonElement.classList.add(
-                            "bg-[#F02C56]",
-                            "hover:bg-[#F02C56]/80",
-                        );
-                    }, 2000);
+                        buttonElement.innerHTML = originalContent
+                        buttonElement.classList.remove('bg-green-500', 'hover:bg-green-600')
+                        buttonElement.classList.add('bg-[#F02C56]', 'hover:bg-[#F02C56]/80')
+                    }, 2000)
                 }
             } catch (err) {
-                console.error("Failed to copy: ", err);
-                const textArea = document.createElement("textarea");
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand("copy");
-                document.body.removeChild(textArea);
+                console.error('Failed to copy: ', err)
+                const textArea = document.createElement('textarea')
+                textArea.value = text
+                document.body.appendChild(textArea)
+                textArea.select()
+                document.execCommand('copy')
+                document.body.removeChild(textArea)
             }
-        };
+        }
     }
 
     const ctaButtons = appConfig.registration
         ? [
               {
                   text: `<div class="tracking-tight">Join Loops</div>`,
-                  type: "danger",
+                  type: 'danger',
                   callback: () => {
-                      authStore.openAuthModal("register");
-                  },
+                      authStore.openAuthModal('register')
+                  }
               },
 
               {
-                  text: "Close",
-                  type: "button",
-                  callback: () => {},
-              },
+                  text: 'Close',
+                  type: 'button',
+                  callback: () => {}
+              }
           ]
         : [
               {
-                  text: "Close",
-                  type: "button",
-                  callback: () => {},
-              },
-          ];
+                  text: 'Close',
+                  type: 'button',
+                  callback: () => {}
+              }
+          ]
 
-    await alertModal(
-        "Follow @" + currentVideo.value.account.username,
-        modalBody,
-        ctaButtons,
-        {
-            persistModal: true,
-            closeOnBackdrop: true,
-            closeOnEscape: true,
-        },
-    );
-};
+    await alertModal('Follow @' + currentVideo.value.account.username, modalBody, ctaButtons, {
+        persistModal: true,
+        closeOnBackdrop: true,
+        closeOnEscape: true
+    })
+}
 
 const handleShare = () => {
     const shareData = {
-        title: "Loops",
+        title: 'Loops',
         text: `View ${currentVideo.value.account.username}'s video on Loops`,
-        url: currentVideo.value.url,
-    };
+        url: currentVideo.value.url
+    }
 
     if (!navigator.canShare) {
         // todo: handle error + fallback
-        return;
+        return
     }
 
     if (!navigator.canShare(shareData)) {
         // todo: handle error + fallback
-        return;
+        return
     }
 
-    navigator.share(shareData);
-};
+    navigator.share(shareData)
+}
 
 const loadPost = async () => {
-    const { decodeHashid } = useHashids();
-    const postId = decodeHashid(route.params.id);
+    const { decodeHashid } = useHashids()
+    const postId = decodeHashid(route.params.id)
 
     if (!postId) {
         setError(
-            "not-found",
-            "Video Not Found",
-            "This video link is broken or the video has been removed.",
-        );
-        return;
+            'not-found',
+            'Video Not Found',
+            'This video link is broken or the video has been removed.'
+        )
+        return
     }
 
-    videoStore.currentVideo = null;
+    videoStore.currentVideo = null
 
     try {
-        await videoStore.getVideoById(postId);
-        isVideoLoading.value = false;
+        await videoStore.getVideoById(postId)
+        isVideoLoading.value = false
 
         if (!videoStore.currentVideo) {
-            setError(
-                "not-found",
-                "Video Not Found",
-                "This video might have been deleted or moved.",
-            );
+            setError('not-found', 'Video Not Found', 'This video might have been deleted or moved.')
         } else {
             videoLoadTimeout.value = setTimeout(() => {
                 if (!isVideoLoaded.value) {
-                    console.log("Video load timeout - forcing display");
-                    isVideoLoaded.value = true;
+                    console.log('Video load timeout - forcing display')
+                    isVideoLoaded.value = true
 
-                    if (!("ontouchstart" in window)) {
-                        showControls.value = true;
+                    if (!('ontouchstart' in window)) {
+                        showControls.value = true
                     }
                 }
-            }, 3000);
+            }, 3000)
         }
     } catch (error) {
-        console.error("Error loading post:", error);
+        console.error('Error loading post:', error)
 
         if (error?.response?.status === 400) {
             setError(
-                "not-found",
-                "Video Not Found",
-                "This video link is broken or the video has been removed.",
-            );
+                'not-found',
+                'Video Not Found',
+                'This video link is broken or the video has been removed.'
+            )
         } else if (error?.response?.status === 403) {
             setError(
-                "private",
-                "Private Video",
-                "This video is private and only visible to the creator.",
-            );
+                'private',
+                'Private Video',
+                'This video is private and only visible to the creator.'
+            )
         } else if (error?.response?.status === 404) {
             setError(
-                "not-found",
-                "Video Not Found",
-                "This video might have been deleted or the link is incorrect.",
-            );
+                'not-found',
+                'Video Not Found',
+                'This video might have been deleted or the link is incorrect.'
+            )
         } else if (!navigator.onLine) {
             setError(
-                "network",
-                "No Internet Connection",
-                "Please check your internet connection and try again.",
-            );
+                'network',
+                'No Internet Connection',
+                'Please check your internet connection and try again.'
+            )
         } else {
             setError(
-                "network",
-                "Something Went Wrong",
-                "Unable to load the video. Please try again later.",
-            );
+                'network',
+                'Something Went Wrong',
+                'Unable to load the video. Please try again later.'
+            )
         }
     } finally {
         if (authStore.isAuthenticated && videoStore.currentVideo) {
-            await profileStore.getProfileState(
-                videoStore.currentVideo.account.id,
-            );
+            await profileStore.getProfileState(videoStore.currentVideo.account.id)
         }
     }
-};
+}
 
 const handleReport = async () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
-    showMenu.value = false;
-    openReportModal("video", currentVideo.value?.id, window.location.href);
-};
+    showMenu.value = false
+    openReportModal('video', currentVideo.value?.id, window.location.href)
+}
 
 const onVideoLoadStart = () => {
-    console.log("Video load started");
-};
+    console.log('Video load started')
+}
 
 const onVideoMetadataLoaded = (e) => {
-    console.log("Video metadata loaded");
+    console.log('Video metadata loaded')
     if (videoLoadTimeout.value) {
-        clearTimeout(videoLoadTimeout.value);
+        clearTimeout(videoLoadTimeout.value)
     }
-    isVideoLoaded.value = true;
+    isVideoLoaded.value = true
 
-    if (!("ontouchstart" in window)) {
-        showControls.value = true;
+    if (!('ontouchstart' in window)) {
+        showControls.value = true
     }
-};
+}
 
 const onVideoCanPlay = (e) => {
-    console.log("Video can play");
+    console.log('Video can play')
     if (videoLoadTimeout.value) {
-        clearTimeout(videoLoadTimeout.value);
+        clearTimeout(videoLoadTimeout.value)
     }
     if (!isVideoLoaded.value) {
-        isVideoLoaded.value = true;
+        isVideoLoaded.value = true
 
-        if (!("ontouchstart" in window)) {
-            showControls.value = true;
+        if (!('ontouchstart' in window)) {
+            showControls.value = true
         }
     }
-};
+}
 
 const onVideoError = (e) => {
-    console.error("Video error:", e);
+    console.error('Video error:', e)
     if (videoLoadTimeout.value) {
-        clearTimeout(videoLoadTimeout.value);
+        clearTimeout(videoLoadTimeout.value)
     }
     setError(
-        "network",
-        "Video Unavailable",
-        "This video cannot be played. It might be corrupted or temporarily unavailable.",
-    );
-};
+        'network',
+        'Video Unavailable',
+        'This video cannot be played. It might be corrupted or temporarily unavailable.'
+    )
+}
 
 const onVideoPlay = () => {
-    isPlaying.value = true;
-    showPlayButton.value = false;
+    isPlaying.value = true
+    showPlayButton.value = false
 
-    if ("ontouchstart" in window) {
+    if ('ontouchstart' in window) {
         if (controlsTimeout.value) {
-            clearTimeout(controlsTimeout.value);
+            clearTimeout(controlsTimeout.value)
         }
         controlsTimeout.value = setTimeout(() => {
-            showControls.value = true;
-        }, 800);
+            showControls.value = true
+        }, 800)
     }
-};
+}
 
 const onVideoPause = () => {
-    isPlaying.value = false;
-    if ("ontouchstart" in window) {
-        showPlayButton.value = true;
+    isPlaying.value = false
+    if ('ontouchstart' in window) {
+        showPlayButton.value = true
     }
-};
+}
 
 const handlePlayButtonClick = () => {
     if (videoRef.value) {
         videoRef.value.play().catch((err) => {
-            console.error("Play failed:", err);
-        });
+            console.error('Play failed:', err)
+        })
     }
-};
+}
 
-onMounted(loadPost);
+onMounted(loadPost)
 
 onBeforeUnmount(() => {
     if (videoLoadTimeout.value) {
-        clearTimeout(videoLoadTimeout.value);
+        clearTimeout(videoLoadTimeout.value)
     }
     if (controlsTimeout.value) {
-        clearTimeout(controlsTimeout.value);
+        clearTimeout(controlsTimeout.value)
     }
     if (videoRef.value) {
-        videoRef.value.pause();
-        videoRef.value.currentTime = 0;
-        videoRef.value.src = "";
+        videoRef.value.pause()
+        videoRef.value.currentTime = 0
+        videoRef.value.src = ''
     }
-});
+})
 
 watch(isVideoLoaded, (newVal) => {
     if (
@@ -929,38 +861,42 @@ watch(isVideoLoaded, (newVal) => {
         (!currentVideo.value?.is_sensitive || showSensitiveContent.value)
     ) {
     }
-});
+})
 
 const likePost = async () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
     try {
-        await videoStore.likeVideo(currentVideo.value?.id);
+        await videoStore.likeVideo(currentVideo.value?.id)
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
-};
+}
 
 const unlikePost = async () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
     try {
-        await videoStore.unlikeVideo(currentVideo.value?.id);
+        await videoStore.unlikeVideo(currentVideo.value?.id)
     } catch (error) {
-        console.log(error);
+        console.log(error)
     }
-};
+}
 
 const handleSaveVideo = async (data) => {
-    await videoStore.updateVideoStore(data);
-};
+    try {
+        await videoStore.updateVideoStore(data)
+    } catch (error) {
+        await alertModal('Error', error?.response?.data?.message)
+    }
+}
 
 const handleDeleteVideo = async (id) => {
-    await videoStore.deleteVideoById(id);
-    router.push(`/studio/posts`);
-};
+    await videoStore.deleteVideoById(id)
+    router.push(`/studio/posts`)
+}
 </script>

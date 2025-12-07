@@ -22,14 +22,10 @@
                 ></div>
             </div>
 
-            <div
-                class="flex min-h-[70vh] flex-col items-center justify-center text-center"
-            >
+            <div class="flex min-h-[70vh] flex-col items-center justify-center text-center">
                 <div class="mb-8 relative">
                     <div>
-                        <ExclamationTriangleIcon
-                            class="h-24 w-24 text-[#F02C56] mx-auto"
-                        />
+                        <ExclamationTriangleIcon class="h-24 w-24 text-[#F02C56] mx-auto" />
                     </div>
                 </div>
 
@@ -55,9 +51,8 @@
                 <p
                     class="text-pretty text-lg font-medium text-gray-600 dark:text-slate-400 sm:text-xl max-w-2xl leading-relaxed mb-10 animate-fade-in-delay"
                 >
-                    The page you're looking for seems to have wandered off into
-                    the digital void. Don't worry, even the best explorers
-                    sometimes take a wrong turn!
+                    The page you're looking for seems to have wandered off into the digital void.
+                    Don't worry, even the best explorers sometimes take a wrong turn!
                 </p>
 
                 <div
@@ -91,9 +86,7 @@
                     <p class="text-sm text-gray-500 dark:text-slate-400 mb-4">
                         Still lost? Here are some helpful links:
                     </p>
-                    <div
-                        class="flex flex-wrap items-center justify-center gap-6 text-sm"
-                    >
+                    <div class="flex flex-wrap items-center justify-center gap-6 text-sm">
                         <router-link
                             to="/about"
                             class="text-[#F02C56] hover:text-red-500 transition-colors duration-200 hover:underline"
@@ -121,13 +114,11 @@
             v-else
             class="container mx-auto min-h-screen bg-white dark:bg-gray-900 transition-colors"
         >
-            <header class="relative overflow-hidden py-20">
+            <header class="relative overflow-hidden pb-20">
                 <div class="absolute inset-0 bg-grid-pattern opacity-5"></div>
                 <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div class="text-center mt-16">
-                        <h1
-                            class="text-4xl font-bold text-gray-900 dark:text-white mb-6"
-                        >
+                        <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-6">
                             {{ pageTitle }}
                         </h1>
                         <div
@@ -148,10 +139,8 @@
                         v-if="pageData.updated_at"
                         class="mt-12 pt-8 border-t border-gray-200 dark:border-gray-700"
                     >
-                        <p
-                            class="text-sm text-gray-500 dark:text-gray-400 text-center"
-                        >
-                            {{ $t("common.lastUpdated") }}:
+                        <p class="text-sm text-gray-500 dark:text-gray-400 text-center">
+                            {{ $t('common.lastUpdated') }}:
                             {{ formatDate(pageData.updated_at) }}
                         </p>
                     </div>
@@ -162,98 +151,84 @@
 </template>
 
 <script setup>
-import { onMounted, watch, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import MainLayout from "@/layouts/FeedLayout.vue";
-import { useHead } from "@unhead/vue";
-import { useDynamicPage } from "@/composables/useDynamicPage";
-import {
-    ExclamationTriangleIcon,
-    HomeIcon,
-    ArrowLeftIcon,
-} from "@heroicons/vue/24/outline";
+import { onMounted, watch, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import MainLayout from '@/layouts/FeedLayout.vue'
+import { useHead } from '@unhead/vue'
+import { useDynamicPage } from '@/composables/useDynamicPage'
+import { ExclamationTriangleIcon, HomeIcon, ArrowLeftIcon } from '@heroicons/vue/24/outline'
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
-const {
-    loading,
-    error,
-    pageData,
-    pageTitle,
-    currentSlug,
-    loadPage,
-    retry,
-    formatDate,
-} = useDynamicPage();
+const { loading, error, pageData, pageTitle, currentSlug, loadPage, retry, formatDate } =
+    useDynamicPage()
 
 const pageDescription = computed(() => {
     if (pageData.value.meta_description) {
-        return pageData.value.meta_description;
+        return pageData.value.meta_description
     }
 
     if (!pageData.value.content) {
-        return `Learn more about ${pageTitle.value} on Loops`;
+        return `Learn more about ${pageTitle.value} on Loops`
     }
 
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = pageData.value.content;
+    const tempDiv = document.createElement('div')
+    tempDiv.innerHTML = pageData.value.content
 
-    const text = tempDiv.textContent || tempDiv.innerText || "";
+    const text = tempDiv.textContent || tempDiv.innerText || ''
 
-    const cleanText = text.replace(/\s+/g, " ").trim();
-    return cleanText.length > 160
-        ? cleanText.substring(0, 157) + "..."
-        : cleanText;
-});
+    const cleanText = text.replace(/\s+/g, ' ').trim()
+    return cleanText.length > 160 ? cleanText.substring(0, 157) + '...' : cleanText
+})
 
 const pageUrl = computed(() => {
-    return window.location.origin + route.fullPath;
-});
+    return window.location.origin + route.fullPath
+})
 
 useHead({
     title: computed(() => `${pageTitle.value} | Loops`),
     meta: computed(() => [
-        { name: "description", content: pageDescription.value },
-        { property: "og:title", content: pageTitle.value },
-        { property: "og:description", content: pageDescription.value },
-        { property: "og:type", content: "article" },
-        { property: "og:url", content: pageUrl.value },
-        { name: "twitter:card", content: "summary" },
-        { name: "twitter:title", content: pageTitle.value },
-        { name: "twitter:description", content: pageDescription.value },
-    ]),
-});
+        { name: 'description', content: pageDescription.value },
+        { property: 'og:title', content: pageTitle.value },
+        { property: 'og:description', content: pageDescription.value },
+        { property: 'og:type', content: 'article' },
+        { property: 'og:url', content: pageUrl.value },
+        { name: 'twitter:card', content: 'summary' },
+        { name: 'twitter:title', content: pageTitle.value },
+        { name: 'twitter:description', content: pageDescription.value }
+    ])
+})
 
 watch(
     () => currentSlug.value,
     (newSlug, oldSlug) => {
         if (newSlug !== oldSlug && newSlug) {
-            loadPage();
+            loadPage()
         }
     },
-    { immediate: false },
-);
+    { immediate: false }
+)
 
 watch(
     () => route.fullPath,
     () => {
         if (route.matched.some((record) => record.meta?.isDynamicPage)) {
-            loadPage();
+            loadPage()
         }
     },
-    { immediate: false },
-);
+    { immediate: false }
+)
 
 const goBack = () => {
     if (window.history.length > 1) {
-        router.go(-1);
+        router.go(-1)
     } else {
-        router.push("/");
+        router.push('/')
     }
-};
+}
 
 onMounted(() => {
-    loadPage();
-});
+    loadPage()
+})
 </script>

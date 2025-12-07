@@ -10,14 +10,10 @@
                         'px-6 py-4 text-[17px] font-semibold transition-colors duration-200 relative cursor-pointer',
                         activeTab === tab.key
                             ? 'text-black dark:text-white'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
+                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                     ]"
                 >
-                    <Icon
-                        v-if="tab.icon"
-                        :name="tab.icon"
-                        class="inline-block mr-2 text-sm"
-                    />
+                    <Icon v-if="tab.icon" :name="tab.icon" class="inline-block mr-2 text-sm" />
                     {{ $t(`profile.tabOptions.${tab.label}`) }}
 
                     <div
@@ -37,7 +33,7 @@
                             'px-3 py-1.5 text-[10px] lg:text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
                             activeFilter === filter
                                 ? 'bg-white dark:bg-slate-700 text-black dark:text-white shadow-sm'
-                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200',
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                         ]"
                     >
                         {{ $t(`profile.tabFilterOptions.${filter}`) }}
@@ -49,48 +45,48 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue'
 
 const props = defineProps({
     showPrivateTabs: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const activeTab = ref("videos");
-const activeFilter = ref("Latest");
+const activeTab = ref('videos')
+const activeFilter = ref('Latest')
 
-const filterOptions = ["Latest", "Popular", "Oldest"];
+const filterOptions = ['Latest', 'Popular', 'Oldest']
 
 const mainTabs = computed(() => {
     const baseTabs = [
-        { key: "videos", label: "Videos", icon: null },
+        { key: 'videos', label: 'Videos', icon: null }
         // { key: 'reposts', label: 'Reposts', icon: null },
-    ];
+    ]
 
     if (props.showPrivateTabs) {
         // baseTabs.push({ key: 'liked', label: 'Liked', icon: null })
         // baseTabs.push({ key: 'comments', label: 'Comments', icon: null })
     }
 
-    return baseTabs;
-});
+    return baseTabs
+})
 
-const emit = defineEmits(["tab-change", "filter-change"]);
+const emit = defineEmits(['tab-change', 'filter-change'])
 
-import { watch } from "vue";
+import { watch } from 'vue'
 
 watch(activeTab, (newTab) => {
-    emit("tab-change", newTab);
-});
+    emit('tab-change', newTab)
+})
 
 watch(activeFilter, (newFilter) => {
-    emit("filter-change", newFilter);
-});
+    emit('filter-change', newFilter)
+})
 
 defineExpose({
     activeTab,
-    activeFilter,
-});
+    activeFilter
+})
 </script>

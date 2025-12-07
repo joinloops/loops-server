@@ -48,6 +48,8 @@ return [
         'delivery' => [
             'timeout' => env('LOOPS_FED_DELIVERY_TIMEOUT', 10),
         ],
+        'inbox_dispatch_chunk_size' => env('LOOPS_FED_INBOX_DIS_CHUNKER', 100),
+        'inbox_max_followers' => env('LOOPS_FED_INBOX_MAX_FOLLOWERS', 5000),
     ],
 
     'registration' => [

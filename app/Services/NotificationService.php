@@ -135,6 +135,16 @@ class NotificationService
         ]);
     }
 
+    public static function newVideoDuet($pid, $uid, $vid)
+    {
+        return Notification::updateOrCreate([
+            'type' => Notification::DUET_YOUR_VIDEO,
+            'user_id' => $uid,
+            'profile_id' => $pid,
+            'video_id' => $vid,
+        ]);
+    }
+
     public static function deleteVideoComment($pid, $uid, $vid, $cid)
     {
         $res = Notification::where([

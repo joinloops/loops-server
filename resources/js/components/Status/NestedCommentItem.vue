@@ -3,8 +3,8 @@
         :class="[
             'flex space-x-3 pl-4 group/nested-comment',
             {
-                'highlighted-reply': isHighlighted,
-            },
+                'highlighted-reply': isHighlighted
+            }
         ]"
     >
         <router-link :to="`/@${comment.account.username}`">
@@ -21,10 +21,9 @@
                     :to="`/@${comment.account.username}`"
                     class="flex items-center space-x-1"
                 >
-                    <span
-                        class="text-sm font-medium text-gray-500 dark:text-gray-400"
-                        >{{ comment.account.name }}</span
-                    >
+                    <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{
+                        comment.account.name
+                    }}</span>
                     <span
                         v-if="comment.account.id == activePost.account.id"
                         class="text-sm font-medium text-[#fe2c55]"
@@ -33,7 +32,7 @@
                     <span
                         v-if="comment.account.id == activePost.account.id"
                         class="text-sm font-medium text-[#fe2c55]"
-                        >{{ $t("post.creator") }}</span
+                        >{{ $t('post.creator') }}</span
                     >
                 </router-link>
             </div>
@@ -59,7 +58,7 @@
                         :class="[
                             editedCaption.length > MAX_EDIT_CHAR_LIMIT
                                 ? 'text-red-500'
-                                : 'text-gray-400 dark:text-gray-500',
+                                : 'text-gray-400 dark:text-gray-500'
                         ]"
                     >
                         {{ editedCaption.length }} / {{ MAX_EDIT_CHAR_LIMIT }}
@@ -70,7 +69,7 @@
                             class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-colors cursor-pointer"
                             :disabled="isSavingEdit"
                         >
-                            {{ $t("common.cancel") }}
+                            {{ $t('common.cancel') }}
                         </button>
                         <button
                             @click="saveEdit"
@@ -82,15 +81,12 @@
                             "
                         >
                             <Spinner v-if="isSavingEdit" size="xs" />
-                            <span v-else>{{ $t("common.save") }}</span>
+                            <span v-else>{{ $t('common.save') }}</span>
                         </button>
                     </div>
                 </div>
-                <div
-                    v-if="isSavingEdit"
-                    class="text-xs text-gray-500 dark:text-gray-400 mt-1"
-                >
-                    {{ $t("common.savingDotDotDot") }}
+                <div v-if="isSavingEdit" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    {{ $t('common.savingDotDotDot') }}
                 </div>
             </div>
 
@@ -113,13 +109,7 @@
                     <button
                         v-if="comment.is_edited"
                         class="cursor-pointer text-gray-400 hover:text-gray-500 flex items-center gap-1"
-                        @click="
-                            openCommentReplyHistory(
-                                comment.v_id,
-                                comment.p_id,
-                                comment.id,
-                            )
-                        "
+                        @click="openCommentReplyHistory(comment.v_id, comment.p_id, comment.id)"
                     >
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -136,7 +126,7 @@
                             />
                         </svg>
 
-                        {{ $t("common.edited") }}*
+                        {{ $t('common.edited') }}*
                     </button>
                 </div>
             </div>
@@ -163,7 +153,7 @@
                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                         target="_blank"
                     >
-                        {{ $t("post.permalink") }}
+                        {{ $t('post.permalink') }}
                     </a>
 
                     <button
@@ -171,7 +161,7 @@
                         @click="startEdit"
                         class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
-                        {{ $t("common.edit") }}
+                        {{ $t('common.edit') }}
                     </button>
 
                     <button
@@ -180,35 +170,25 @@
                         class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
                         :disabled="isDeletingComment"
                     >
-                        {{
-                            isDeletingComment
-                                ? $t("post.deletingDotDotDot")
-                                : $t("post.delete")
-                        }}
+                        {{ isDeletingComment ? $t('post.deletingDotDotDot') : $t('post.delete') }}
                     </button>
                     <button
                         v-else
                         @click="handleReport"
                         class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
-                        {{ $t("common.report") }}
+                        {{ $t('common.report') }}
                     </button>
                 </div>
             </div>
 
-            <div
-                v-if="!isEditing"
-                class="relative flex justify-center items-center space-x-1"
-            >
+            <div v-if="!isEditing" class="relative flex justify-center items-center space-x-1">
                 <button
                     @click="handleLike"
                     class="flex flex-col justify-center items-center space-y-1 hover:text-red-500 transition-colors"
                     :disabled="isLikeLoading"
                 >
-                    <i
-                        :class="heartIconClass"
-                        class="text-lg transition-colors"
-                    ></i>
+                    <i :class="heartIconClass" class="text-lg transition-colors"></i>
                     <span class="text-gray-400 dark:text-gray-100 text-xs">{{
                         comment.likes || 0
                     }}</span>
@@ -219,260 +199,242 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, inject } from "vue";
-import { useAuthStore } from "@/stores/auth";
-import { useCommentStore } from "@/stores/comments";
-import { useUtils } from "@/composables/useUtils";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-import { useReportModal } from "@/composables/useReportModal";
-import { useEditHistory } from "@/composables/useEditHistory";
-import MentionHashtagInput from "@/components/Status/MentionHashtagInput.vue";
+import { ref, onMounted, onUnmounted, computed, inject } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useCommentStore } from '@/stores/comments'
+import { useUtils } from '@/composables/useUtils'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+import { useReportModal } from '@/composables/useReportModal'
+import { useEditHistory } from '@/composables/useEditHistory'
+import MentionHashtagInput from '@/components/Status/MentionHashtagInput.vue'
 
 const props = defineProps({
     comment: {
         type: Object,
-        required: true,
+        required: true
     },
     videoId: {
         type: String,
-        required: true,
+        required: true
     },
     parentCommentId: {
         type: String,
-        required: true,
+        required: true
     },
     isHighlighted: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const MAX_CHAR_LIMIT = 100;
-const MAX_EDIT_CHAR_LIMIT = 500;
+const MAX_CHAR_LIMIT = 100
+const MAX_EDIT_CHAR_LIMIT = 500
 
-const authStore = useAuthStore();
-const commentStore = useCommentStore();
-const appStore = inject("appStore");
-const videoStore = inject("videoStore");
-const { formatContentDate } = useUtils();
-const { alertModal, confirmModal } = useAlertModal();
-const { openReportModal } = useReportModal();
-const { openCommentReplyHistory } = useEditHistory();
+const authStore = useAuthStore()
+const commentStore = useCommentStore()
+const appStore = inject('appStore')
+const videoStore = inject('videoStore')
+const { formatContentDate } = useUtils()
+const { alertModal, confirmModal } = useAlertModal()
+const { openReportModal } = useReportModal()
+const { openCommentReplyHistory } = useEditHistory()
 
-const showDropdown = ref(false);
-const isDeletingComment = ref(false);
+const showDropdown = ref(false)
+const isDeletingComment = ref(false)
 
-const isEditing = ref(false);
-const editedCaption = ref("");
-const isSavingEdit = ref(false);
-const initialValidatedMentions = ref([]);
-const initialValidatedHashtags = ref([]);
+const isEditing = ref(false)
+const editedCaption = ref('')
+const isSavingEdit = ref(false)
+const initialValidatedMentions = ref([])
+const initialValidatedHashtags = ref([])
 
 const activePost = computed(() => {
-    return videoStore.currentVideo;
-});
+    return videoStore.currentVideo
+})
 
 const isLikeLoading = computed(() => {
-    return commentStore.isLikeLoading(props.videoId, props.comment.id);
-});
+    return commentStore.isLikeLoading(props.videoId, props.comment.id)
+})
 
 const heartIconClass = computed(() => {
     if (isLikeLoading.value) {
-        return "bx bx-loader-alt bx-spin text-gray-400";
+        return 'bx bx-loader-alt bx-spin text-gray-400'
     }
 
     return props.comment.liked
-        ? "bx bxs-heart text-red-500"
-        : "bx bx-heart text-gray-400 hover:text-red-500";
-});
+        ? 'bx bxs-heart text-red-500'
+        : 'bx bx-heart text-gray-400 hover:text-red-500'
+})
 
 const toggleDropdown = () => {
-    showDropdown.value = !showDropdown.value;
-};
+    showDropdown.value = !showDropdown.value
+}
 
 const handleClickOutside = (event) => {
     if (showDropdown.value) {
-        showDropdown.value = false;
+        showDropdown.value = false
     }
-};
+}
 
 onMounted(() => {
-    document.addEventListener("click", handleClickOutside);
-});
+    document.addEventListener('click', handleClickOutside)
+})
 
 onUnmounted(() => {
-    document.removeEventListener("click", handleClickOutside);
-});
+    document.removeEventListener('click', handleClickOutside)
+})
 
 const startEdit = () => {
-    isEditing.value = true;
-    editedCaption.value = props.comment.caption || "";
-    showDropdown.value = false;
-    const mentionRegex = /@([\w._-]+(?:@[\w.-]+\.\w+)?)/g;
-    const mentions = [...props.comment.caption.matchAll(mentionRegex)].map(
-        (m) => m[1],
-    );
-    initialValidatedMentions.value = mentions;
+    isEditing.value = true
+    editedCaption.value = props.comment.caption || ''
+    showDropdown.value = false
+    const mentionRegex = /@([\w._-]+(?:@[\w.-]+\.\w+)?)/g
+    const mentions = [...props.comment.caption.matchAll(mentionRegex)].map((m) => m[1])
+    initialValidatedMentions.value = mentions
 
-    const hashtagRegex = /#([\w_]+)/g;
-    const hashtags = [...props.comment.caption.matchAll(hashtagRegex)].map(
-        (m) => m[1],
-    );
-    initialValidatedHashtags.value = hashtags;
-};
+    const hashtagRegex = /#([\w_]+)/g
+    const hashtags = [...props.comment.caption.matchAll(hashtagRegex)].map((m) => m[1])
+    initialValidatedHashtags.value = hashtags
+}
 
 const cancelEdit = async () => {
     const result = await confirmModal(
-        "Confirm Cancel",
+        'Confirm Cancel',
         `Are you sure you want to cancel editing this comment?`,
-        "Yes",
-        "No",
-    );
+        'Yes',
+        'No'
+    )
 
     if (!result) {
-        return;
+        return
     }
 
-    isEditing.value = false;
-    editedCaption.value = "";
-};
+    isEditing.value = false
+    editedCaption.value = ''
+}
 
 const saveEdit = async () => {
-    if (!editedCaption.value.trim() || isSavingEdit.value) return;
-    if (editedCaption.value.length > MAX_EDIT_CHAR_LIMIT) return;
+    if (!editedCaption.value.trim() || isSavingEdit.value) return
+    if (editedCaption.value.length > MAX_EDIT_CHAR_LIMIT) return
 
     try {
-        isSavingEdit.value = true;
+        isSavingEdit.value = true
 
         await handleCaptionUpdate(
             props.videoId,
             props.parentCommentId,
             props.comment.id,
-            editedCaption.value,
-        );
+            editedCaption.value
+        )
 
-        isEditing.value = false;
+        isEditing.value = false
     } catch (error) {
         await alertModal(
-            "⚠️ " + t("common.somethingWentWrong"),
-            error || `An unexpected error occured, please try again later.`,
-        );
-        console.error("Failed to update reply:", error);
+            '⚠️ ' + t('common.somethingWentWrong'),
+            error || `An unexpected error occured, please try again later.`
+        )
+        console.error('Failed to update reply:', error)
     } finally {
-        isSavingEdit.value = false;
+        isSavingEdit.value = false
     }
-};
+}
 
-const handleCaptionUpdate = async (
-    videoId,
-    parentCommentId,
-    commentId,
-    newCaption,
-) => {
-    await commentStore.updateCommentReply(
+const handleCaptionUpdate = async (videoId, parentCommentId, commentId, newCaption) => {
+    await commentStore.updateCommentReply(videoId, parentCommentId, commentId, newCaption)
+    console.log('Update reply:', {
         videoId,
         parentCommentId,
         commentId,
-        newCaption,
-    );
-    console.log("Update reply:", {
-        videoId,
-        parentCommentId,
-        commentId,
-        newCaption,
-    });
-};
+        newCaption
+    })
+}
 
 const handleDelete = async () => {
-    if (isDeletingComment.value) return;
+    if (isDeletingComment.value) return
 
     const result = await confirmModal(
-        "Confirm",
+        'Confirm',
         `Are you sure you want to delete this comment?`,
-        "Delete",
-        "Cancel",
-    );
+        'Delete',
+        'Cancel'
+    )
 
     if (!result) {
-        showDropdown.value = false;
-        return;
+        showDropdown.value = false
+        return
     }
 
     try {
-        isDeletingComment.value = true;
-        showDropdown.value = false;
+        isDeletingComment.value = true
+        showDropdown.value = false
 
         await commentStore.deleteCommentReply(
             props.videoId,
             props.parentCommentId,
-            props.comment.id,
-        );
-        await videoStore.decrementCommentCount();
+            props.comment.id
+        )
+        await videoStore.decrementCommentCount()
     } catch (error) {
-        console.error("Failed to delete reply:", error);
+        console.error('Failed to delete reply:', error)
     } finally {
-        isDeletingComment.value = false;
+        isDeletingComment.value = false
     }
-};
+}
 
 const handleReport = () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
-    openReportModal("reply", props.comment.id, window.location.href);
-    showDropdown.value = false;
-};
+    openReportModal('reply', props.comment.id, window.location.href)
+    showDropdown.value = false
+}
 
 const handleLike = async () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
-    if (isLikeLoading.value) return;
+    if (isLikeLoading.value) return
 
     try {
         if (props.comment.liked) {
             await commentStore.unlikeNestedComment(
                 props.videoId,
                 props.parentCommentId,
-                props.comment.id,
-            );
+                props.comment.id
+            )
         } else {
             await commentStore.likeNestedComment(
                 props.videoId,
                 props.parentCommentId,
-                props.comment.id,
-            );
+                props.comment.id
+            )
         }
     } catch (error) {
-        console.error("Failed to toggle like on nested comment:", error);
+        console.error('Failed to toggle like on nested comment:', error)
     }
-};
+}
 
 const fetchMentions = async (query) => {
     try {
-        const response = await videoStore.autocompleteAccount(
-            encodeURIComponent(query),
-        );
-        return response.data;
+        const response = await videoStore.autocompleteAccount(encodeURIComponent(query))
+        return response.data
     } catch (error) {
-        console.error("Error fetching mentions:", error);
-        return [];
+        console.error('Error fetching mentions:', error)
+        return []
     }
-};
+}
 
 const fetchHashtags = async (query) => {
     try {
-        const response = await videoStore.autocompleteHashtag(
-            encodeURIComponent(query),
-        );
-        return response.data;
+        const response = await videoStore.autocompleteHashtag(encodeURIComponent(query))
+        return response.data
     } catch (error) {
-        console.error("Error fetching hashtags:", error);
-        return [];
+        console.error('Error fetching hashtags:', error)
+        return []
     }
-};
+}
 </script>
 
 <style scoped>

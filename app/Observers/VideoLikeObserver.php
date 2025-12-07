@@ -14,7 +14,8 @@ class VideoLikeObserver implements ShouldHandleEventsAfterCommit
     public function created(VideoLike $videoLike): void
     {
         $video = $videoLike->video;
-        if ($video->is_local) {
+
+        if ($video->is_local && (int) $video->profile_id !== (int) $videoLike->profile_id) {
             NotificationService::newVideoLike(
                 $video->profile_id,
                 $video->id,
@@ -37,7 +38,8 @@ class VideoLikeObserver implements ShouldHandleEventsAfterCommit
     public function deleted(VideoLike $videoLike): void
     {
         $video = $videoLike->video;
-        if ($video->is_local) {
+
+        if ($video->is_local && (int) $video->profile_id !== (int) $videoLike->profile_id) {
             NotificationService::deleteVideoLike(
                 $video->profile_id,
                 $video->id,
@@ -60,7 +62,8 @@ class VideoLikeObserver implements ShouldHandleEventsAfterCommit
     public function forceDeleted(VideoLike $videoLike): void
     {
         $video = $videoLike->video;
-        if ($video->is_local) {
+
+        if ($video->is_local && (int) $video->profile_id !== (int) $videoLike->profile_id) {
             NotificationService::deleteVideoLike(
                 $video->profile_id,
                 $video->id,

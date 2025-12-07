@@ -56,6 +56,8 @@ class Notification extends Model
      * 21 = Video Like
      * 22 = Comment Like
      * 23 = Comment Reply Like
+     * 24 - 30 = Reserved
+     * 31 - Duet your video
      **/
     public const NEW_FOLLOWER = 11;
 
@@ -70,6 +72,8 @@ class Notification extends Model
     public const VIDEO_COMMENT_LIKE = 22;
 
     public const VIDEO_COMMENT_REPLY_LIKE = 23;
+
+    public const DUET_YOUR_VIDEO = 31;
 
     protected $fillable = ['user_id', 'type', 'video_id', 'read_at', 'profile_id', 'comment_id', 'comment_reply_id'];
 

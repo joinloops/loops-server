@@ -70,7 +70,7 @@ class VideoOptimizeJob implements ShouldQueue
         }
 
         $width = 720;
-        $crf = 26;
+        $crf = 23;
 
         $ext = pathinfo($video->vid, PATHINFO_EXTENSION);
         $name = str_replace('.'.$ext, '.720p.mp4', $video->vid);

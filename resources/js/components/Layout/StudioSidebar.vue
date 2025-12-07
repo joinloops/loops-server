@@ -10,30 +10,21 @@
             'bg-white dark:bg-slate-950 border-r px-2 border-gray-200 dark:border-slate-800 overflow-auto flex flex-col',
             isMobile
                 ? `fixed top-0 left-0 h-screen w-[280px] transition-transform duration-300 ease-in-out z-[60] ${isOpen ? 'translate-x-0' : '-translate-x-full'}`
-                : 'h-full w-[280px] hidden lg:flex',
+                : 'h-full w-[280px] hidden lg:flex'
         ]"
     >
         <div
             class="flex items-center justify-between px-4 border-b border-gray-100 dark:border-slate-800 h-[70px]"
         >
             <div class="flex items-center gap-2">
-                <img
-                    width="32"
-                    src="/nav-logo.png"
-                    alt="Loops Logo"
-                    class="rounded-full"
-                />
-                <span class="text-lg font-bold text-black dark:text-white"
-                    >Loops</span
-                >
-                <span class="text-lg font-light text-black dark:text-white"
-                    >Studio</span
-                >
+                <img width="32" src="/nav-logo.png" alt="Loops Logo" class="rounded-full" />
+                <span class="text-lg font-bold text-black dark:text-white">Loops</span>
+                <span class="text-lg font-light text-black dark:text-white">Studio</span>
             </div>
             <button
                 v-if="isMobile && isOpen"
-                @click="closeMobileDrawer"
-                class="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800"
+                @click="closeMobile"
+                class="rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800"
             >
                 <i class="bx bx-x text-xl dark:text-slate-400"></i>
             </button>
@@ -48,9 +39,7 @@
         </button>
 
         <template v-for="section in sections" :key="section.title">
-            <h3
-                class="mt-8 px-4 text-xs font-semibold text-gray-400 dark:text-slate-600 uppercase"
-            >
+            <h3 class="mt-8 px-4 text-xs font-semibold text-gray-400 dark:text-slate-600 uppercase">
                 {{ section.title }}
             </h3>
             <ul class="mt-2 space-y-1">
@@ -61,12 +50,7 @@
                         active-class="bg-gray-100 dark:bg-slate-800"
                         @click="closeMobile"
                     >
-                        <i
-                            :class="[
-                                link.icon,
-                                'mr-3 text-xl text-gray-600 dark:text-slate-400',
-                            ]"
-                        />
+                        <i :class="[link.icon, 'mr-3 text-xl text-gray-600 dark:text-slate-400']" />
                         {{ link.name }}
                     </router-link>
                 </li>
@@ -86,72 +70,74 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter, useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
 
-const router = useRouter();
-const route = useRoute();
+const authStore = useAuthStore()
+const router = useRouter()
+const route = useRoute()
+const { t } = useI18n()
 
 const props = defineProps({
     isOpen: {
         type: Boolean,
-        default: false,
-    },
-});
-const emit = defineEmits(["close"]);
+        default: false
+    }
+})
+const emit = defineEmits(['close'])
 
-const windowWidth = ref(window.innerWidth);
-const isMobile = computed(() => windowWidth.value < 1024);
+const windowWidth = ref(window.innerWidth)
+const isMobile = computed(() => windowWidth.value < 1024)
 
-const sections = [
-    {
-        title: "Manage",
-        links: [
-            { name: "Home", path: "/studio/", icon: "bx bx-home" },
-            { name: "Posts", path: "/studio/posts", icon: "bx bx-video" },
-            // { name: 'View analytics', path: '/studio/analytics', icon: 'bx bx-line-chart' },
-            // { name: 'Comments',  path: '/studio/comments', icon: 'bx bx-chat' },
-        ],
-    },
-    // {
-    //   title: 'Tools',
-    //   links: [
-    //     { name: 'Sound Library', path: '/', icon: 'bx bx-music' }
-    //   ]
-    // },
-    // {
-    //   title: 'Others',
-    //   links: [
-    //     { name: 'Share feedback', path: '/', icon: 'bx bx-envelope' }
-    //   ]
-    // }
-];
+const sections = computed(() => {
+    const manageLinks = [
+        { name: t('nav.home'), path: '/studio/', icon: 'bx bx-home' },
+        { name: t('studio.posts'), path: '/studio/posts', icon: 'bx bx-video' }
+    ]
+
+    if (authStore.getUser?.follower_count > 100 && authStore.getUser?.post_count > 20) {
+        manageLinks.push({
+            name: t('studio.playlists'),
+            path: '/studio/playlists',
+            icon: 'bx bx-list-ul'
+        })
+    }
+
+    return [
+        {
+            title: 'Manage',
+            links: manageLinks
+        }
+    ]
+})
 
 const goUpload = () => {
-    router.push("/studio/upload");
-    closeMobile();
-};
+    router.push('/studio/upload')
+    closeMobile()
+}
 
 const goBack = () => {
-    router.push("/");
-    closeMobile();
-};
+    router.push('/')
+    closeMobile()
+}
 
 const closeMobile = () => {
     if (isMobile.value) {
-        emit("close");
+        emit('close')
     }
-};
+}
 
 const onResize = () => {
-    windowWidth.value = window.innerWidth;
-};
+    windowWidth.value = window.innerWidth
+}
 
 onMounted(() => {
-    window.addEventListener("resize", onResize);
-});
+    window.addEventListener('resize', onResize)
+})
 
 onUnmounted(() => {
-    window.removeEventListener("resize", onResize);
-});
+    window.removeEventListener('resize', onResize)
+})
 </script>

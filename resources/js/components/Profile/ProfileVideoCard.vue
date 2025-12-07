@@ -23,11 +23,7 @@
                     stroke="currentColor"
                     stroke-width="4"
                 ></circle>
-                <path
-                    class="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8v8H4z"
-                ></path>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
             </svg>
         </div>
 
@@ -37,10 +33,10 @@
         >
             <EyeSlashIcon class="w-12 h-12 text-white mb-2" />
             <span class="text-white text-sm font-medium mb-1">
-                {{ $t("post.sensitiveContent") }}
+                {{ $t('post.sensitiveContent') }}
             </span>
             <span class="text-white/70 text-xs text-center px-4">
-                {{ $t("common.clickToReveal") }}
+                {{ $t('common.clickToReveal') }}
             </span>
         </div>
 
@@ -53,8 +49,8 @@
                     'aspect-[3/4] object-cover transition-all duration-300',
                     {
                         'blur-lg': post.is_sensitive && !isSensitiveRevealed,
-                        'blur-none': !post.is_sensitive || isSensitiveRevealed,
-                    },
+                        'blur-none': !post.is_sensitive || isSensitiveRevealed
+                    }
                 ]"
                 :src="post.media.src_url"
             />
@@ -63,6 +59,13 @@
                 <div
                     class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"
                 ></div>
+
+                <div
+                    v-if="post.pinned"
+                    class="absolute top-2 left-2 flex items-center gap-1 text-white bg-red-500 px-3 py-1 text-xs rounded font-bold"
+                >
+                    <span>{{ $t('post.pinned') }}</span>
+                </div>
 
                 <div
                     class="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm font-bold drop-shadow"
@@ -83,73 +86,69 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useHashids } from "@/composables/useHashids";
-import { useUtils } from "@/composables/useUtils";
+import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useHashids } from '@/composables/useHashids'
+import { useUtils } from '@/composables/useUtils'
 
-const { formatCount } = useUtils();
-import {
-    HeartIcon,
-    ChatBubbleOvalLeftIcon,
-    EyeSlashIcon,
-} from "@heroicons/vue/24/outline";
+const { formatCount } = useUtils()
+import { HeartIcon, ChatBubbleOvalLeftIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     post: {
         type: Object,
-        required: true,
-    },
-});
+        required: true
+    }
+})
 
-const route = useRoute();
-const router = useRouter();
-const videoRef = ref(null);
-const isLoaded = ref(false);
-const isSensitiveRevealed = ref(false);
+const route = useRoute()
+const router = useRouter()
+const videoRef = ref(null)
+const isLoaded = ref(false)
+const isSensitiveRevealed = ref(false)
 
 const displayPost = (post) => {
-    const { encodeHashid } = useHashids();
-    const postId = encodeHashid(post.id);
-    setTimeout(() => router.push(`/v/${postId}`), 300);
-};
+    const { encodeHashid } = useHashids()
+    const postId = encodeHashid(post.id)
+    setTimeout(() => router.push(`/v/${postId}`), 300)
+}
 
 const handleClick = (event) => {
     if (props.post.is_sensitive && !isSensitiveRevealed.value) {
-        event.stopPropagation();
-        isSensitiveRevealed.value = true;
-        return;
+        event.stopPropagation()
+        isSensitiveRevealed.value = true
+        return
     }
 
-    displayPost(props.post);
-};
+    displayPost(props.post)
+}
 
 const isHover = (bool) => {
-    if (!videoRef.value) return;
+    if (!videoRef.value) return
 
-    if (props.post.is_sensitive && !isSensitiveRevealed.value) return;
+    if (props.post.is_sensitive && !isSensitiveRevealed.value) return
 
-    if (bool) videoRef.value.play();
-    else videoRef.value.pause();
-};
+    if (bool) videoRef.value.play()
+    else videoRef.value.pause()
+}
 
 onMounted(() => {
     if (videoRef.value) {
-        videoRef.value.addEventListener("loadeddata", (e) => {
+        videoRef.value.addEventListener('loadeddata', (e) => {
             if (e.target) {
                 setTimeout(() => {
-                    isLoaded.value = true;
-                }, 200);
+                    isLoaded.value = true
+                }, 200)
             }
-        });
+        })
     }
-});
+})
 
 onBeforeUnmount(() => {
     if (videoRef.value) {
-        videoRef.value.pause();
-        videoRef.value.currentTime = 0;
-        videoRef.value.src = "";
+        videoRef.value.pause()
+        videoRef.value.currentTime = 0
+        videoRef.value.src = ''
     }
-});
+})
 </script>

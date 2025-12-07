@@ -5,9 +5,7 @@
             style="min-height: calc(100vh - 70px)"
         >
             <div class="w-full max-w-md">
-                <div
-                    class="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8"
-                >
+                <div class="bg-white dark:bg-slate-900 rounded-xl shadow-lg p-8">
                     <div v-if="emailSent" class="text-center">
                         <div
                             class="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-6"
@@ -26,25 +24,19 @@
                                 ></path>
                             </svg>
                         </div>
-                        <div
-                            class="text-[24px] mb-4 font-bold dark:text-slate-300"
-                        >
+                        <div class="text-[24px] mb-4 font-bold dark:text-slate-300">
                             Check your email
                         </div>
                         <p
                             class="text-[15px] text-gray-600 dark:text-slate-400 mb-6 leading-relaxed"
                         >
                             We've sent a password reset link to
-                            <span
-                                class="font-medium text-gray-900 dark:text-slate-300"
-                                >{{ email }}</span
-                            >
+                            <span class="font-medium text-gray-900 dark:text-slate-300">{{
+                                email
+                            }}</span>
                         </p>
-                        <p
-                            class="text-[13px] text-gray-500 dark:text-slate-500 mb-8"
-                        >
-                            Didn't receive the email? Check your spam folder or
-                            try again.
+                        <p class="text-[13px] text-gray-500 dark:text-slate-500 mb-8">
+                            Didn't receive the email? Check your spam folder or try again.
                         </p>
                         <div class="space-y-3">
                             <button
@@ -55,7 +47,7 @@
                                 {{
                                     resendCooldown > 0
                                         ? `Resend in ${resendCooldown}s`
-                                        : "Resend email"
+                                        : 'Resend email'
                                 }}
                             </button>
                             <button
@@ -69,24 +61,20 @@
 
                     <div v-else>
                         <div class="text-center mb-8">
-                            <div
-                                class="text-[28px] mb-3 font-bold dark:text-slate-300"
-                            >
+                            <div class="text-[28px] mb-3 font-bold dark:text-slate-300">
                                 Reset your password
                             </div>
                             <p
                                 class="text-[15px] text-gray-600 dark:text-slate-400 leading-relaxed"
                             >
-                                Enter your email address and we'll send you a
-                                link to reset your password.
+                                Enter your email address and we'll send you a link to reset your
+                                password.
                             </p>
                         </div>
 
                         <div class="space-y-6">
                             <div>
-                                <div
-                                    class="pb-1.5 text-[15px] dark:text-slate-500"
-                                >
+                                <div class="pb-1.5 text-[15px] dark:text-slate-500">
                                     Email address
                                 </div>
                                 <TextInput
@@ -130,11 +118,7 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                         ></path>
                                     </svg>
-                                    {{
-                                        loading
-                                            ? "Sending..."
-                                            : "Send reset link"
-                                    }}
+                                    {{ loading ? 'Sending...' : 'Send reset link' }}
                                 </button>
 
                                 <button
@@ -153,69 +137,69 @@
 </template>
 
 <script setup>
-import { onMounted, ref, inject } from "vue";
-import { storeToRefs } from "pinia";
-import FullLayout from "@/layouts/FullLayout.vue";
+import { onMounted, ref, inject } from 'vue'
+import { storeToRefs } from 'pinia'
+import FullLayout from '@/layouts/FullLayout.vue'
 
-const authStore = inject("authStore");
-const appStore = inject("appStore");
+const authStore = inject('authStore')
+const appStore = inject('appStore')
 
-const email = ref("");
-const errors = ref(null);
-const loading = ref(false);
-const emailSent = ref(false);
-const resendCooldown = ref(0);
+const email = ref('')
+const errors = ref(null)
+const loading = ref(false)
+const emailSent = ref(false)
+const resendCooldown = ref(0)
 
 const sendResetEmail = async () => {
-    errors.value = null;
-    loading.value = true;
+    errors.value = null
+    loading.value = true
 
     try {
-        await authStore.sendPasswordReset({ email: email.value });
-        emailSent.value = true;
-        startResendCooldown();
+        await authStore.sendPasswordReset({ email: email.value })
+        emailSent.value = true
+        startResendCooldown()
     } catch (error) {
         errors.value = error.response?.data?.errors || {
-            email: ["Something went wrong. Please try again."],
-        };
+            email: ['Something went wrong. Please try again.']
+        }
     } finally {
-        loading.value = false;
+        loading.value = false
     }
-};
+}
 
 const resendEmail = async () => {
-    if (resendCooldown.value > 0) return;
+    if (resendCooldown.value > 0) return
 
-    loading.value = true;
+    loading.value = true
     try {
-        await authStore.sendPasswordReset({ email: email.value });
-        startResendCooldown();
+        await authStore.sendPasswordReset({ email: email.value })
+        startResendCooldown()
     } catch (error) {
-        console.error("Failed to resend email:", error);
+        console.error('Failed to resend email:', error)
     } finally {
-        loading.value = false;
+        loading.value = false
     }
-};
+}
 
 const startResendCooldown = () => {
-    resendCooldown.value = 60;
+    resendCooldown.value = 60
     const interval = setInterval(() => {
-        resendCooldown.value--;
+        resendCooldown.value--
         if (resendCooldown.value <= 0) {
-            clearInterval(interval);
+            clearInterval(interval)
         }
-    }, 1000);
-};
+    }, 1000)
+}
 
 const goBackToLogin = () => {
-    appStore.isLoginOpen = true;
-    appStore.isForgotPasswordOpen = false;
-};
+    appStore.isLoginOpen = true
+    appStore.isForgotPasswordOpen = false
+}
 
 onMounted(() => {
     // Reset any existing state
-    emailSent.value = false;
-    errors.value = null;
-    resendCooldown.value = 0;
-});
+    emailSent.value = false
+    errors.value = null
+    resendCooldown.value = 0
+})
 </script>

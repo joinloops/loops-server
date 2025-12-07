@@ -123,6 +123,7 @@ class User extends Authenticatable implements OAuthenticatable
         'can_like',
         'last_active_at',
         'birth_date',
+        'delete_after',
         'status',
     ];
 

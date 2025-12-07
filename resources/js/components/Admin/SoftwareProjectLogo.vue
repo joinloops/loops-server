@@ -20,13 +20,13 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { ServerStackIcon } from "@heroicons/vue/24/outline";
+import { ref, onMounted, onUnmounted } from 'vue'
+import { ServerStackIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     software: {
         type: String,
-        required: true,
-    },
-});
+        required: true
+    }
+})
 </script>

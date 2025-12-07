@@ -1,19 +1,17 @@
 <template>
     <MainLayout>
-        <div
-            class="isolate bg-white dark:bg-slate-950 px-6 py-24 sm:py-32 lg:px-8"
-        >
+        <div class="isolate bg-white dark:bg-slate-950 px-6 py-24 sm:py-32 lg:px-8">
             <div class="mx-auto max-w-4xl">
                 <div class="text-center mb-16">
                     <h1
                         class="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-5xl lg:text-6xl"
                     >
-                        {{ $t("contact.getInTouch") }}
+                        {{ $t('contact.getInTouch') }}
                     </h1>
                     <p
                         class="mt-6 text-lg leading-8 text-gray-600 dark:text-slate-400 max-w-2xl mx-auto"
                     >
-                        {{ $t("contact.bodyMessage") }}
+                        {{ $t('contact.bodyMessage') }}
                     </p>
                 </div>
 
@@ -22,7 +20,7 @@
                         class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400"
                     ></div>
                     <p class="mt-4 text-gray-600 dark:text-slate-400">
-                        {{ $t("contact.loadingContactInformationDotDotDot") }}
+                        {{ $t('contact.loadingContactInformationDotDotDot') }}
                     </p>
                 </div>
 
@@ -45,21 +43,17 @@
                                 <div
                                     class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 group-hover:scale-110 transition-transform duration-300"
                                 >
-                                    <UserCircleIcon
-                                        class="h-6 w-6 text-white"
-                                    />
+                                    <UserCircleIcon class="h-6 w-6 text-white" />
                                 </div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
                                 >
-                                    {{ $t("contact.adminContact") }}
+                                    {{ $t('contact.adminContact') }}
                                 </h3>
-                                <p
-                                    class="text-gray-600 dark:text-slate-400 mb-4"
-                                >
-                                    {{ $t("contact.adminContactMessage") }}
+                                <p class="text-gray-600 dark:text-slate-400 mb-4">
+                                    {{ $t('contact.adminContactMessage') }}
                                 </p>
                             </div>
                         </div>
@@ -70,9 +64,7 @@
                                 class="inline-flex items-center text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-500 dark:hover:text-indigo-300 transition-colors"
                             >
                                 {{ contactInfo.admin_email }}
-                                <ArrowTopRightOnSquareIcon
-                                    class="ml-2 h-4 w-4"
-                                />
+                                <ArrowTopRightOnSquareIcon class="ml-2 h-4 w-4" />
                             </a>
                         </div>
                     </div>
@@ -92,12 +84,10 @@
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
                                 >
-                                    {{ $t("contact.technicalSupport") }}
+                                    {{ $t('contact.technicalSupport') }}
                                 </h3>
-                                <p
-                                    class="text-gray-600 dark:text-slate-400 mb-4"
-                                >
-                                    {{ $t("contact.technicalSupportMessage") }}
+                                <p class="text-gray-600 dark:text-slate-400 mb-4">
+                                    {{ $t('contact.technicalSupportMessage') }}
                                 </p>
                             </div>
                         </div>
@@ -108,9 +98,7 @@
                                 class="inline-flex items-center text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300 transition-colors"
                             >
                                 {{ contactInfo.support_email }}
-                                <ArrowTopRightOnSquareIcon
-                                    class="ml-2 h-4 w-4"
-                                />
+                                <ArrowTopRightOnSquareIcon class="ml-2 h-4 w-4" />
                             </a>
                         </div>
                     </div>
@@ -124,21 +112,17 @@
                                 <div
                                     class="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-cyan-600 group-hover:scale-110 transition-transform duration-300"
                                 >
-                                    <ChatBubbleLeftRightIcon
-                                        class="h-6 w-6 text-white"
-                                    />
+                                    <ChatBubbleLeftRightIcon class="h-6 w-6 text-white" />
                                 </div>
                             </div>
                             <div class="flex-1 min-w-0">
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
                                 >
-                                    {{ $t("contact.communityForum") }}
+                                    {{ $t('contact.communityForum') }}
                                 </h3>
-                                <p
-                                    class="text-gray-600 dark:text-slate-400 mb-4"
-                                >
-                                    {{ $t("contact.communityForumMessage") }}
+                                <p class="text-gray-600 dark:text-slate-400 mb-4">
+                                    {{ $t('contact.communityForumMessage') }}
                                 </p>
                             </div>
                         </div>
@@ -150,10 +134,8 @@
                                 rel="noopener noreferrer"
                                 class="inline-flex items-center text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 transition-colors"
                             >
-                                {{ $t("contact.visitForum") }}
-                                <ArrowTopRightOnSquareIcon
-                                    class="ml-2 h-4 w-4"
-                                />
+                                {{ $t('contact.visitForum') }}
+                                <ArrowTopRightOnSquareIcon class="ml-2 h-4 w-4" />
                             </a>
                         </div>
                     </div>
@@ -174,12 +156,10 @@
                                 <h3
                                     class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
                                 >
-                                    {{ $t("contact.socialConnect") }}
+                                    {{ $t('contact.socialConnect') }}
                                 </h3>
-                                <p
-                                    class="text-gray-600 dark:text-slate-400 mb-4"
-                                >
-                                    {{ $t("contact.socialConnectMessage") }}
+                                <p class="text-gray-600 dark:text-slate-400 mb-4">
+                                    {{ $t('contact.socialConnectMessage') }}
                                 </p>
                             </div>
                         </div>
@@ -191,14 +171,8 @@
                                 rel="noopener noreferrer"
                                 class="inline-flex items-center text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-500 dark:hover:text-purple-300 transition-colors"
                             >
-                                {{
-                                    formatFediverseHandle(
-                                        contactInfo.fediverse_account,
-                                    )
-                                }}
-                                <ArrowTopRightOnSquareIcon
-                                    class="ml-2 h-4 w-4"
-                                />
+                                {{ formatFediverseHandle(contactInfo.fediverse_account) }}
+                                <ArrowTopRightOnSquareIcon class="ml-2 h-4 w-4" />
                             </a>
                         </div>
                     </div>
@@ -208,13 +182,11 @@
                     <div
                         class="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-8"
                     >
-                        <h3
-                            class="text-lg font-semibold text-gray-900 dark:text-white mb-2"
-                        >
-                            {{ $t("contact.responseTime") }}
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                            {{ $t('contact.responseTime') }}
                         </h3>
                         <p class="text-gray-600 dark:text-slate-400">
-                            {{ $t("contact.responseTimeMessage") }}
+                            {{ $t('contact.responseTimeMessage') }}
                         </p>
                     </div>
                 </div>
@@ -224,68 +196,65 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import MainLayout from "@/layouts/MainLayout.vue";
+import { ref, onMounted } from 'vue'
+import MainLayout from '@/layouts/MainLayout.vue'
 import {
     UserCircleIcon,
     LifebuoyIcon,
     ChatBubbleLeftRightIcon,
     AtSymbolIcon,
-    ArrowTopRightOnSquareIcon,
-} from "@heroicons/vue/24/outline";
-import { useI18n } from "vue-i18n";
+    ArrowTopRightOnSquareIcon
+} from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 
-const contactInfo = ref({});
-const loading = ref(true);
-const error = ref(null);
-const { t } = useI18n();
+const contactInfo = ref({})
+const loading = ref(true)
+const error = ref(null)
+const { t } = useI18n()
 
 const fetchContactInfo = async () => {
     try {
-        loading.value = true;
-        error.value = null;
+        loading.value = true
+        error.value = null
 
-        const response = await fetch("/api/v1/platform/contact");
+        const response = await fetch('/api/v1/platform/contact')
 
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP error! status: ${response.status}`)
         }
 
-        const data = await response.json();
-        contactInfo.value = data;
+        const data = await response.json()
+        contactInfo.value = data
     } catch (err) {
-        error.value = t("contact.failedToLoadContactInformation");
-        console.error("Error fetching contact info:", err);
+        error.value = t('contact.failedToLoadContactInformation')
+        console.error('Error fetching contact info:', err)
     } finally {
-        loading.value = false;
+        loading.value = false
     }
-};
+}
 
 const formatFediverseHandle = (url) => {
-    if (!url) return "";
+    if (!url) return ''
 
     try {
-        const urlObj = new URL(url);
-        const pathname = urlObj.pathname;
+        const urlObj = new URL(url)
+        const pathname = urlObj.pathname
 
-        if (pathname.includes("@")) {
-            const username = pathname.split("/").pop();
-            return `${username}@${urlObj.hostname}`;
-        } else if (
-            pathname.startsWith("/users/") ||
-            pathname.startsWith("/@")
-        ) {
-            const username = pathname.split("/").pop();
-            return `@${username}@${urlObj.hostname}`;
+        if (pathname.includes('@')) {
+            const username = pathname.split('/').pop()
+            return `${username}@${urlObj.hostname}`
+        } else if (pathname.startsWith('/users/') || pathname.startsWith('/@')) {
+            const username = pathname.split('/').pop()
+            return `@${username}@${urlObj.hostname}`
         }
 
-        return urlObj.hostname;
+        return urlObj.hostname
     } catch {
-        return url;
+        return url
     }
-};
+}
 
 onMounted(() => {
-    fetchContactInfo();
-});
+    fetchContactInfo()
+})
 </script>

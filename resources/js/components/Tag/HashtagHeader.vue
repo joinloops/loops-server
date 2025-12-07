@@ -24,7 +24,7 @@
                             class="mt-1 text-sm text-gray-500 dark:text-gray-400"
                         >
                             {{ compactCount }}
-                            {{ totalResults === 1 ? "video" : "videos" }}
+                            {{ totalResults === 1 ? 'video' : 'videos' }}
                         </p>
                     </div>
                 </div>
@@ -36,9 +36,7 @@
                         aria-label="Share"
                         @click="onShare"
                     >
-                        <ShareIcon
-                            class="w-6 h-6 text-gray-600 dark:text-gray-500"
-                        />
+                        <ShareIcon class="w-6 h-6 text-gray-600 dark:text-gray-500" />
                     </button>
 
                     <div class="relative" ref="menuRef">
@@ -76,7 +74,7 @@
                                     class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
                                 >
                                     <FlagIcon class="w-4 h-4 mr-3" />
-                                    {{ $t("common.report") }}
+                                    {{ $t('common.report') }}
                                 </button>
                             </div>
                         </transition>
@@ -90,70 +88,64 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onBeforeUnmount, ref, inject } from "vue";
-import {
-    ShareIcon,
-    EllipsisHorizontalIcon,
-    FlagIcon,
-} from "@heroicons/vue/24/outline";
-import { useUtils } from "@/composables/useUtils";
-import { useReportModal } from "@/composables/useReportModal";
+import { computed, onMounted, onBeforeUnmount, ref, inject } from 'vue'
+import { ShareIcon, EllipsisHorizontalIcon, FlagIcon } from '@heroicons/vue/24/outline'
+import { useUtils } from '@/composables/useUtils'
+import { useReportModal } from '@/composables/useReportModal'
 
 interface Props {
-    id: string | number;
-    totalResults: number;
-    nsfw: boolean;
+    id: string | number
+    totalResults: number
+    nsfw: boolean
 }
 
 interface AuthStore {
-    isAuthenticated: boolean;
-    openAuthModal: (mode: string) => void;
+    isAuthenticated: boolean
+    openAuthModal: (mode: string) => void
 }
 
-const props = defineProps<Props>();
-const { formatNumber } = useUtils();
-const { openReportModal } = useReportModal();
+const props = defineProps<Props>()
+const { formatNumber } = useUtils()
+const { openReportModal } = useReportModal()
 
-const authStore = inject<AuthStore>("authStore")!;
+const authStore = inject<AuthStore>('authStore')!
 
-const compactCount = computed(() => formatNumber(props.totalResults));
+const compactCount = computed(() => formatNumber(props.totalResults))
 
-const menuOpen = ref(false);
-const menuRef = ref<HTMLElement | null>(null);
+const menuOpen = ref(false)
+const menuRef = ref<HTMLElement | null>(null)
 
 function toggleMenu() {
-    menuOpen.value = !menuOpen.value;
+    menuOpen.value = !menuOpen.value
 }
 function openMenu() {
-    menuOpen.value = true;
+    menuOpen.value = true
 }
 function closeMenu() {
-    menuOpen.value = false;
+    menuOpen.value = false
 }
 
 function handleClickOutside(e: MouseEvent) {
-    if (!menuRef.value) return;
+    if (!menuRef.value) return
     if (!menuRef.value.contains(e.target as Node)) {
-        closeMenu();
+        closeMenu()
     }
 }
-onMounted(() => document.addEventListener("click", handleClickOutside));
-onBeforeUnmount(() =>
-    document.removeEventListener("click", handleClickOutside),
-);
+onMounted(() => document.addEventListener('click', handleClickOutside))
+onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 
 function onShare() {
     try {
-        navigator.share?.({ title: `#${props.id}`, url: location.href });
+        navigator.share?.({ title: `#${props.id}`, url: location.href })
     } catch {}
 }
 
 const handleReport = async () => {
     if (authStore.isAuthenticated) {
-        await openReportModal("hashtag", props.id, window.location.href);
+        await openReportModal('hashtag', props.id, window.location.href)
     } else {
-        authStore.openAuthModal("login");
+        authStore.openAuthModal('login')
     }
-    closeMenu();
-};
+    closeMenu()
+}
 </script>

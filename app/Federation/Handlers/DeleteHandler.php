@@ -5,8 +5,10 @@ namespace App\Federation\Handlers;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
+use App\Models\Video;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class DeleteHandler extends BaseHandler
 {
@@ -122,6 +124,32 @@ class DeleteHandler extends BaseHandler
 
             if (config('logging.dev_log')) {
                 Log::info('Successfully handled Delete comment activity', [
+                    'object_url' => $objectUrl,
+                    'activity_id' => $activity['id'] ?? 'unknown',
+                ]);
+            }
+
+            return true;
+        }
+
+        $video = Video::where('ap_id', $objectUrl)->first();
+        if ($video && ! $video->is_local) {
+            if ($actor && $video->profile_id !== $actor->id) {
+                if (config('logging.dev_log')) {
+                    Log::warning('Rejecting video delete by non-owner', ['actor' => $actor->id, 'target' => $video->profile_id]);
+                }
+
+                return true;
+            }
+
+            $s3Path = 'videos/'.$video->profile_id.'/'.$video->id.'/';
+            if (Storage::disk('s3')->exists($s3Path)) {
+                Storage::disk('s3')->deleteDirectory($s3Path);
+            }
+            $video->delete();
+
+            if (config('logging.dev_log')) {
+                Log::info('Successfully handled Delete video activity', [
                     'object_url' => $objectUrl,
                     'activity_id' => $activity['id'] ?? 'unknown',
                 ]);

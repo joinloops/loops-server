@@ -10,20 +10,13 @@
             :class="[sidebarOpen ? 'translate-x-0' : '-translate-x-full']"
             class="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-800 shadow-lg transform transition-transform lg:translate-x-0 lg:relative lg:flex lg:flex-col"
         >
-            <div
-                class="flex items-center justify-between h-16 px-6 bg-sky-500 flex-shrink-0"
-            >
+            <div class="flex items-center justify-between h-16 px-6 bg-sky-500 flex-shrink-0">
                 <h1 class="text-xl font-bold text-white">Loops Admin</h1>
                 <button
                     @click="sidebarOpen = false"
                     class="lg:hidden text-white hover:text-gray-200"
                 >
-                    <svg
-                        class="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                    >
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                             stroke-linecap="round"
                             stroke-linejoin="round"
@@ -44,21 +37,16 @@
                         'group flex items-center px-2 py-2 text-sm font-medium rounded-md transition-colors',
                         isRouteActive(item.href)
                             ? 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-200'
-                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white',
+                            : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-white'
                     ]"
                 >
-                    <component
-                        :is="item.icon"
-                        class="mr-3 h-5 w-5 flex-shrink-0"
-                    />
+                    <component :is="item.icon" class="mr-3 h-5 w-5 flex-shrink-0" />
                     <span class="truncate">
                         {{ item.name }}
                     </span>
 
                     <span
-                        v-if="
-                            item.href === '/admin/reports' && reportsCount > 0
-                        "
+                        v-if="item.href === '/admin/reports' && reportsCount > 0"
                         class="ml-auto inline-flex items-center justify-center w-6 h-6 rounded-full text-[11px] font-semibold leading-none bg-red-500 text-white shadow-sm"
                     >
                         {{ displayReportsCount }}
@@ -71,18 +59,13 @@
                 </router-link>
             </nav>
 
-            <div
-                class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700"
-            >
+            <div class="flex-shrink-0 p-4 border-t border-gray-200 dark:border-gray-700">
                 <button
                     @click="handleToggleDarkMode"
                     class="w-full flex items-center px-2 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-md transition-colors"
                 >
-                    <component
-                        :is="isDark ? SunIcon : MoonIcon"
-                        class="mr-3 h-5 w-5"
-                    />
-                    {{ isDark ? "Light Mode" : "Dark Mode" }}
+                    <component :is="isDark ? SunIcon : MoonIcon" class="mr-3 h-5 w-5" />
+                    {{ isDark ? 'Light Mode' : 'Dark Mode' }}
                 </button>
             </div>
         </div>
@@ -91,19 +74,12 @@
             <header
                 class="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 flex-shrink-0"
             >
-                <div
-                    class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8"
-                >
+                <div class="flex items-center justify-between h-16 px-4 sm:px-6 lg:px-8">
                     <button
                         @click="sidebarOpen = true"
                         class="lg:hidden text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     >
-                        <svg
-                            class="w-6 h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                                 stroke-linecap="round"
                                 stroke-linejoin="round"
@@ -114,9 +90,7 @@
                     </button>
 
                     <div class="flex items-center space-x-4">
-                        <span class="text-sm text-gray-500 dark:text-gray-400"
-                            >Hello Admin!</span
-                        >
+                        <span class="text-sm text-gray-500 dark:text-gray-400">Hello Admin!</span>
                     </div>
                 </div>
             </header>
@@ -131,9 +105,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from "vue";
-import { useRoute } from "vue-router";
-import { storeToRefs } from "pinia";
+import { ref, onMounted, inject } from 'vue'
+import { useRoute } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import {
     ChartBarSquareIcon,
     Cog6ToothIcon,
@@ -146,43 +120,42 @@ import {
     ServerStackIcon,
     HomeIcon,
     SunIcon,
-    MoonIcon,
-} from "@heroicons/vue/24/outline";
-import { useAdminStore } from "~/stores/admin";
+    MoonIcon
+} from '@heroicons/vue/24/outline'
+import { useAdminStore } from '~/stores/admin'
 
-const route = useRoute();
-const sidebarOpen = ref(false);
+const route = useRoute()
+const sidebarOpen = ref(false)
 
 const navigation = [
-    { name: "Dashboard", href: "/admin/dashboard", icon: ChartBarSquareIcon },
-    { name: "Comments", href: "/admin/comments", icon: ChatBubbleOvalLeftIcon },
-    { name: "Replies", href: "/admin/replies", icon: ChatBubbleLeftRightIcon },
-    { name: "Hashtags", href: "/admin/hashtags", icon: HashtagIcon },
-    { name: "Instances", href: "/admin/instances", icon: ServerStackIcon },
-    { name: "Reports", href: "/admin/reports", icon: ExclamationTriangleIcon },
-    { name: "Profiles", href: "/admin/profiles", icon: UserGroupIcon },
-    { name: "Videos", href: "/admin/videos", icon: VideoCameraIcon },
-    { name: "Settings", href: "/admin/settings", icon: Cog6ToothIcon },
-    { name: "Go back home", href: "/", icon: HomeIcon },
-];
+    { name: 'Dashboard', href: '/admin/dashboard', icon: ChartBarSquareIcon },
+    { name: 'Comments', href: '/admin/comments', icon: ChatBubbleOvalLeftIcon },
+    { name: 'Replies', href: '/admin/replies', icon: ChatBubbleLeftRightIcon },
+    { name: 'Hashtags', href: '/admin/hashtags', icon: HashtagIcon },
+    { name: 'Instances', href: '/admin/instances', icon: ServerStackIcon },
+    { name: 'Reports', href: '/admin/reports', icon: ExclamationTriangleIcon },
+    { name: 'Profiles', href: '/admin/profiles', icon: UserGroupIcon },
+    { name: 'Videos', href: '/admin/videos', icon: VideoCameraIcon },
+    { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon },
+    { name: 'Go back home', href: '/', icon: HomeIcon }
+]
 
 const isRouteActive = (navPath) => {
-    const currentPath = route.path;
-    if (currentPath === navPath) return true;
-    if (currentPath.startsWith(navPath + "/")) return true;
-    return false;
-};
+    const currentPath = route.path
+    if (currentPath === navPath) return true
+    if (currentPath.startsWith(navPath + '/')) return true
+    return false
+}
 
-const adminStore = useAdminStore();
-const { isDarkMode, reportsCount, isLoading, displayReportsCount } =
-    storeToRefs(adminStore);
+const adminStore = useAdminStore()
+const { isDarkMode, reportsCount, isLoading, displayReportsCount } = storeToRefs(adminStore)
 
 const handleToggleDarkMode = () => {
-    adminStore.toggleDarkMode();
-};
+    adminStore.toggleDarkMode()
+}
 
 onMounted(() => {
-    adminStore.initTheme();
-    adminStore.fetchReportsCount();
-});
+    adminStore.initTheme()
+    adminStore.fetchReportsCount()
+})
 </script>

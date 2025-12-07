@@ -33,6 +33,7 @@ class NotificationResource extends JsonResource
             Notification::NEW_VIDCOMMENTREPLY => $this->newVideoCommentReply(),
             Notification::VIDEO_COMMENT_LIKE => $this->newVideoCommentLike(),
             Notification::VIDEO_COMMENT_REPLY_LIKE => $this->newVideoCommentReplyLike(),
+            Notification::DUET_YOUR_VIDEO => $this->newVideoDuet(),
             default => [
                 'id' => (string) $this->id,
                 'type' => 'internal',
@@ -40,6 +41,27 @@ class NotificationResource extends JsonResource
                 'created_at' => $this->created_at,
             ],
         };
+    }
+
+    protected function newVideoDuet()
+    {
+        $video = VideoService::getMediaData($this->video_id);
+        $thumb = data_get($video, 'media.thumbnail', null);
+        $videoPid = data_get($video, 'account.id', null);
+        $vhid = HashidService::encode($this->video_id);
+        $link = '/v/'.$vhid;
+
+        return [
+            'id' => (string) $this->id,
+            'type' => 'video.duet',
+            'actor' => AccountService::compact($this->profile_id),
+            'video_pid' => $videoPid,
+            'video_id' => (string) $this->video_id,
+            'video_thumbnail' => $thumb,
+            'url' => $link,
+            'read_at' => $this->read_at,
+            'created_at' => $this->created_at,
+        ];
     }
 
     protected function newVideoCommentReply()

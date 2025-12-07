@@ -5,8 +5,8 @@
             'comment-item',
             {
                 'highlighted-comment': isHighlighted && !highlightedReplyId,
-                'highlighted-parent': isHighlighted && highlightedReplyId,
-            },
+                'highlighted-parent': isHighlighted && highlightedReplyId
+            }
         ]"
     >
         <div class="flex space-x-3 px-4 pt-3">
@@ -28,10 +28,9 @@
             <div class="flex-1 min-w-0">
                 <div v-if="comment.tombstone" class="mb-1">
                     <div class="flex items-center space-x-1">
-                        <span
-                            class="text-sm font-medium text-gray-500 dark:text-gray-400"
-                            >{{ comment.account.name }}</span
-                        >
+                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{
+                            comment.account.name
+                        }}</span>
                     </div>
                 </div>
                 <div v-else class="mb-1">
@@ -39,10 +38,9 @@
                         :to="`/@${comment.account.username}`"
                         class="flex items-center space-x-1"
                     >
-                        <span
-                            class="text-sm font-medium text-gray-500 dark:text-gray-400"
-                            >{{ comment.account.name }}</span
-                        >
+                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{
+                            comment.account.name
+                        }}</span>
                         <span
                             v-if="comment.account.id == activePost.account.id"
                             class="text-sm font-medium text-[#fe2c55]"
@@ -51,7 +49,7 @@
                         <span
                             v-if="comment.account.id == activePost.account.id"
                             class="text-sm font-medium text-[#fe2c55]"
-                            >{{ $t("post.creator") }}</span
+                            >{{ $t('post.creator') }}</span
                         >
                     </router-link>
                 </div>
@@ -77,7 +75,7 @@
                             :class="[
                                 editedCaption.length > MAX_EDIT_CHAR_LIMIT
                                     ? 'text-red-500'
-                                    : 'text-gray-400 dark:text-gray-500',
+                                    : 'text-gray-400 dark:text-gray-500'
                             ]"
                         >
                             {{ editedCaption.length }} /
@@ -89,7 +87,7 @@
                                 class="px-4 py-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm font-medium rounded-lg transition-colors cursor-pointer"
                                 :disabled="isSavingEdit"
                             >
-                                {{ $t("common.cancel") }}
+                                {{ $t('common.cancel') }}
                             </button>
                             <button
                                 @click="saveEdit"
@@ -100,20 +98,13 @@
                                     editedCaption.length > MAX_EDIT_CHAR_LIMIT
                                 "
                             >
-                                <Spinner
-                                    v-if="isSavingEdit"
-                                    size="xs"
-                                    theme="brand"
-                                />
-                                <span v-else>{{ $t("common.save") }}</span>
+                                <Spinner v-if="isSavingEdit" size="xs" theme="brand" />
+                                <span v-else>{{ $t('common.save') }}</span>
                             </button>
                         </div>
                     </div>
-                    <div
-                        v-if="isSavingEdit"
-                        class="text-xs text-gray-500 dark:text-gray-400 mt-1"
-                    >
-                        {{ $t("common.savingDotDotDot") }}
+                    <div v-if="isSavingEdit" class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        {{ $t('common.savingDotDotDot') }}
                     </div>
                 </div>
 
@@ -123,7 +114,7 @@
                         :class="[
                             comment.tombstone
                                 ? 'italic text-gray-500 dark:text-gray-500'
-                                : 'text-[#161823] dark:text-gray-100',
+                                : 'text-[#161823] dark:text-gray-100'
                         ]"
                     >
                         <AutolinkedText
@@ -145,16 +136,12 @@
                     v-if="!comment.tombstone && !isEditing"
                     class="flex items-center justify-between"
                 >
-                    <div
-                        class="flex items-center space-x-4 text-gray-400 text-sm"
-                    >
+                    <div class="flex items-center space-x-4 text-gray-400 text-sm">
                         <span>{{ formatContentDate(comment.created_at) }}</span>
                         <button
                             v-if="comment.is_edited"
                             class="cursor-pointer text-gray-400 hover:text-gray-500 flex items-center gap-1"
-                            @click="
-                                openCommentHistory(comment.v_id, comment.id)
-                            "
+                            @click="openCommentHistory(comment.v_id, comment.id)"
                         >
                             <svg
                                 xmlns="http://www.w3.org/2000/svg"
@@ -171,7 +158,7 @@
                                 />
                             </svg>
 
-                            {{ $t("common.edited") }}
+                            {{ $t('common.edited') }}
                         </button>
                         <button
                             v-if="authStore.isAuthenticated"
@@ -193,24 +180,18 @@
                                 />
                             </svg>
 
-                            {{ $t("post.reply") }}
+                            {{ $t('post.reply') }}
                         </button>
                     </div>
                 </div>
 
-                <div
-                    v-if="showReplyInput && authStore.isAuthenticated"
-                    class="mt-3"
-                >
+                <div v-if="showReplyInput && authStore.isAuthenticated" class="mt-3">
                     <div class="flex space-x-3">
                         <img
                             :src="authStore.user?.avatar"
                             :alt="authStore.user?.username"
                             class="w-8 h-8 rounded-full flex-shrink-0"
-                            @error="
-                                $event.target.src =
-                                    '/storage/avatars/default.jpg'
-                            "
+                            @error="$event.target.src = '/storage/avatars/default.jpg'"
                         />
                         <div class="flex-1">
                             <MentionHashtagInput
@@ -222,12 +203,8 @@
                                 :fetch-hashtags="fetchHashtags"
                                 :validate-mentions="true"
                                 :validate-hashtags="true"
-                                :initial-validated-mentions="
-                                    initialValidatedMentions
-                                "
-                                :initial-validated-hashtags="
-                                    initialValidatedHashtags
-                                "
+                                :initial-validated-mentions="initialValidatedMentions"
+                                :initial-validated-hashtags="initialValidatedHashtags"
                                 min-height="80px"
                                 max-height="400px"
                             />
@@ -236,14 +213,12 @@
                                 <button
                                     @click="handleReply"
                                     class="px-4 py-1.5 bg-[#F02C56] hover:bg-[#F02C56]/70 text-white text-sm font-medium rounded-lg disabled:opacity-50 transition-colors cursor-pointer"
-                                    :disabled="
-                                        isSubmittingReply || !replyText.trim()
-                                    "
+                                    :disabled="isSubmittingReply || !replyText.trim()"
                                 >
                                     {{
                                         isSubmittingReply
-                                            ? $t("post.postingDotDotDot")
-                                            : $t("post.reply")
+                                            ? $t('post.postingDotDotDot')
+                                            : $t('post.reply')
                                     }}
                                 </button>
                             </div>
@@ -260,15 +235,9 @@
                         @click="loadReplies"
                         class="text-sm text-gray-400 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 font-medium transition-colors flex items-center space-x-2 cursor-pointer"
                     >
-                        <div
-                            class="flex w-8 bg-gray-300 dark:bg-gray-700 h-[1px]"
-                        ></div>
-                        {{ $t("post.view") }} {{ totalRepliesCount }}
-                        {{
-                            totalRepliesCount === 1
-                                ? $t("post.reply")
-                                : $t("post.replies")
-                        }}
+                        <div class="flex w-8 bg-gray-300 dark:bg-gray-700 h-[1px]"></div>
+                        {{ $t('post.view') }} {{ totalRepliesCount }}
+                        {{ totalRepliesCount === 1 ? $t('post.reply') : $t('post.replies') }}
                         <i class="bx bx-chevron-down text-lg" />
                     </button>
 
@@ -290,9 +259,7 @@
                         @click.stop="toggleDropdown"
                         class="p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded"
                     >
-                        <i
-                            class="bx bx-dots-horizontal text-gray-400 text-lg"
-                        ></i>
+                        <i class="bx bx-dots-horizontal text-gray-400 text-lg"></i>
                     </button>
 
                     <div
@@ -304,7 +271,7 @@
                             :href="comment.url"
                             class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
-                            {{ $t("post.permalink") }}
+                            {{ $t('post.permalink') }}
                         </a>
 
                         <button
@@ -312,7 +279,7 @@
                             @click="startEdit"
                             class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
-                            {{ $t("common.edit") }}
+                            {{ $t('common.edit') }}
                         </button>
 
                         <button
@@ -322,9 +289,7 @@
                             :disabled="isDeletingComment"
                         >
                             {{
-                                isDeletingComment
-                                    ? $t("post.deletingDotDotDot")
-                                    : $t("post.delete")
+                                isDeletingComment ? $t('post.deletingDotDotDot') : $t('post.delete')
                             }}
                         </button>
                         <button
@@ -332,7 +297,7 @@
                             @click="handleReport"
                             class="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                         >
-                            {{ $t("common.report") }}
+                            {{ $t('common.report') }}
                         </button>
                     </div>
                 </div>
@@ -346,10 +311,7 @@
                         class="flex flex-col justify-center items-center space-y-1 hover:text-red-500 transition-colors"
                         :disabled="isLikeLoading"
                     >
-                        <i
-                            :class="heartIconClass"
-                            class="text-xl transition-colors"
-                        ></i>
+                        <i :class="heartIconClass" class="text-xl transition-colors"></i>
                         <span class="text-gray-400 dark:text-gray-100">{{
                             comment.likes || 0
                         }}</span>
@@ -365,24 +327,16 @@
             >
                 <template v-if="showReplies">
                     <div class="flex mb-3 items-center space-x-2">
-                        <div
-                            class="flex w-8 bg-gray-300 dark:bg-gray-700 h-[1px]"
-                        ></div>
-                        {{ $t("post.hide") }}
+                        <div class="flex w-8 bg-gray-300 dark:bg-gray-700 h-[1px]"></div>
+                        {{ $t('post.hide') }}
                         <i class="bx bx-chevron-up text-lg" />
                     </div>
                 </template>
 
                 <template v-else>
-                    <div
-                        class="flex w-8 bg-gray-300 dark:bg-gray-700 h-[1px]"
-                    ></div>
-                    {{ $t("post.view") }} {{ comment.children?.length || 0 }}
-                    {{
-                        comment.children?.length === 1
-                            ? $t("post.reply")
-                            : $t("post.replies")
-                    }}
+                    <div class="flex w-8 bg-gray-300 dark:bg-gray-700 h-[1px]"></div>
+                    {{ $t('post.view') }} {{ comment.children?.length || 0 }}
+                    {{ comment.children?.length === 1 ? $t('post.reply') : $t('post.replies') }}
                     <i class="bx bx-chevron-down text-lg" />
                 </template>
             </button>
@@ -407,11 +361,7 @@
                     class="text-sm text-[#F02C56] hover:text-[#F02C56]/70 font-medium cursor-pointer"
                     :disabled="isLoadingMoreReplies"
                 >
-                    {{
-                        isLoadingMoreReplies
-                            ? $t("common.loading")
-                            : $t("post.loadMoreReplies")
-                    }}
+                    {{ isLoadingMoreReplies ? $t('common.loading') : $t('post.loadMoreReplies') }}
                 </button>
             </div>
         </div>
@@ -419,419 +369,394 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed, inject, nextTick } from "vue";
-import { useAuthStore } from "@/stores/auth";
-import { useCommentStore } from "@/stores/comments";
-import { useReportModal } from "@/composables/useReportModal";
-import NestedCommentItem from "./NestedCommentItem.vue";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-import { useUtils } from "@/composables/useUtils";
-import { useI18n } from "vue-i18n";
-import { useEditHistory } from "@/composables/useEditHistory";
-import MentionHashtagInput from "@/components/Status/MentionHashtagInput.vue";
+import { ref, onMounted, onUnmounted, computed, inject, nextTick } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useCommentStore } from '@/stores/comments'
+import { useReportModal } from '@/composables/useReportModal'
+import NestedCommentItem from './NestedCommentItem.vue'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+import { useUtils } from '@/composables/useUtils'
+import { useI18n } from 'vue-i18n'
+import { useEditHistory } from '@/composables/useEditHistory'
+import MentionHashtagInput from '@/components/Status/MentionHashtagInput.vue'
 
 const props = defineProps({
     comment: {
         type: Object,
-        required: true,
+        required: true
     },
     videoId: {
         type: String,
-        required: true,
+        required: true
     },
     parentCommentId: {
         type: String,
-        default: null,
+        default: null
     },
     isHighlighted: {
         type: Boolean,
-        default: false,
+        default: false
     },
     highlightedReplyId: {
         type: [String, Number],
-        default: null,
-    },
-});
+        default: null
+    }
+})
 
-const MAX_CHAR_LIMIT = 150;
-const MAX_EDIT_CHAR_LIMIT = 500;
+const MAX_CHAR_LIMIT = 150
+const MAX_EDIT_CHAR_LIMIT = 500
 
-const appStore = inject("appStore");
-const authStore = useAuthStore();
-const videoStore = inject("videoStore");
-const commentStore = useCommentStore();
-const { formatContentDate } = useUtils();
-const { alertModal, confirmModal } = useAlertModal();
-const { openReportModal } = useReportModal();
-const { t } = useI18n();
-const { openCommentHistory } = useEditHistory();
+const appStore = inject('appStore')
+const authStore = useAuthStore()
+const videoStore = inject('videoStore')
+const commentStore = useCommentStore()
+const { formatContentDate } = useUtils()
+const { alertModal, confirmModal } = useAlertModal()
+const { openReportModal } = useReportModal()
+const { t } = useI18n()
+const { openCommentHistory } = useEditHistory()
 
-const showReplyInput = ref(false);
-const replyText = ref("");
-const showDropdown = ref(false);
-const isSubmittingReply = ref(false);
-const isDeletingComment = ref(false);
-const replyInputRef = ref();
-const replyEditInputRef = ref();
+const showReplyInput = ref(false)
+const replyText = ref('')
+const showDropdown = ref(false)
+const isSubmittingReply = ref(false)
+const isDeletingComment = ref(false)
+const replyInputRef = ref()
+const replyEditInputRef = ref()
 
 // Edit state
-const isEditing = ref(false);
-const editedCaption = ref("");
-const isSavingEdit = ref(false);
-const initialValidatedMentions = ref([]);
-const initialValidatedHashtags = ref([]);
-const showReplies = ref(false);
+const isEditing = ref(false)
+const editedCaption = ref('')
+const isSavingEdit = ref(false)
+const initialValidatedMentions = ref([])
+const initialValidatedHashtags = ref([])
+const showReplies = ref(false)
 
 const activePost = computed(() => {
-    return videoStore.currentVideo;
-});
+    return videoStore.currentVideo
+})
 
 const isLoadingReplies = computed(() => {
-    return commentStore.isLoadingReplies(props.videoId, props.comment.id);
-});
+    return commentStore.isLoadingReplies(props.videoId, props.comment.id)
+})
 
 const isLoadingMoreReplies = computed(() => {
-    return commentStore.isLoadingReplies(props.videoId, props.comment.id);
-});
+    return commentStore.isLoadingReplies(props.videoId, props.comment.id)
+})
 
 const hasMoreReplies = computed(() => {
-    return commentStore.hasMoreReplies(props.videoId, props.comment.id);
-});
+    return commentStore.hasMoreReplies(props.videoId, props.comment.id)
+})
 
 const repliesLoaded = computed(() => {
-    return commentStore.areRepliesLoaded(props.videoId, props.comment.id);
-});
+    return commentStore.areRepliesLoaded(props.videoId, props.comment.id)
+})
 
 const totalRepliesCount = computed(() => {
-    return props.comment.replies || props.comment.children?.length || 0;
-});
+    return props.comment.replies || props.comment.children?.length || 0
+})
 
 const isLikeLoading = computed(() => {
-    return commentStore.isLikeLoading(props.videoId, props.comment.id);
-});
+    return commentStore.isLikeLoading(props.videoId, props.comment.id)
+})
 
 const heartIconClass = computed(() => {
     if (isLikeLoading.value) {
-        return "bx bx-loader-alt bx-spin text-gray-400";
+        return 'bx bx-loader-alt bx-spin text-gray-400'
     }
 
     return props.comment.liked
-        ? "bx bxs-heart text-red-500"
-        : "bx bx-heart text-gray-400 hover:text-red-500";
-});
+        ? 'bx bxs-heart text-red-500'
+        : 'bx bx-heart text-gray-400 hover:text-red-500'
+})
 
 const startReply = async () => {
     if (showReplyInput.value) {
-        showReplyInput.value = false;
-        return;
+        showReplyInput.value = false
+        return
     }
-    showReplyInput.value = true;
+    showReplyInput.value = true
 
-    const username = props.comment.account.username;
-    replyText.value = `@${username} `;
+    const username = props.comment.account.username
+    replyText.value = `@${username} `
 
-    await nextTick();
+    await nextTick()
 
     setTimeout(() => {
         if (replyInputRef.value) {
-            console.log("Focusing input...", replyInputRef.value);
-            replyInputRef.value.focus();
-            replyInputRef.value.moveCursorToEnd();
+            console.log('Focusing input...', replyInputRef.value)
+            replyInputRef.value.focus()
+            replyInputRef.value.moveCursorToEnd()
         } else {
-            console.log("replyInputRef is null");
+            console.log('replyInputRef is null')
         }
-    }, 50);
-};
+    }, 50)
+}
 
 const shouldShowInitialLoadButton = computed(() => {
     // Don't show if we're highlighting a specific reply
     if (props.highlightedReplyId) {
-        return false;
+        return false
     }
 
     // Show only if there are replies and they haven't been loaded yet
-    return (
-        totalRepliesCount.value > 0 &&
-        !repliesLoaded.value &&
-        !isLoadingReplies.value
-    );
-});
+    return totalRepliesCount.value > 0 && !repliesLoaded.value && !isLoadingReplies.value
+})
 
 const shouldShowToggleButton = computed(() => {
     if (props.highlightedReplyId) {
-        return false;
+        return false
     }
 
     // Show if replies have been loaded and there are children
-    return (
-        repliesLoaded.value &&
-        props.comment.children &&
-        props.comment.children.length > 0
-    );
-});
+    return repliesLoaded.value && props.comment.children && props.comment.children.length > 0
+})
 
 const shouldShowReplies = computed(() => {
     // Always show if we're highlighting a specific reply
     if (props.highlightedReplyId) {
-        return true;
+        return true
     }
 
     // Otherwise show based on toggle state
-    return showReplies.value;
-});
+    return showReplies.value
+})
 
 const visibleReplies = computed(() => {
     if (!props.comment.children || props.comment.children.length === 0) {
-        return [];
+        return []
     }
 
     // If highlighting a specific reply, only show that reply
     if (props.highlightedReplyId) {
         return props.comment.children.filter(
-            (reply) =>
-                reply.id.toString() === props.highlightedReplyId.toString(),
-        );
+            (reply) => reply.id.toString() === props.highlightedReplyId.toString()
+        )
     }
 
     // Otherwise show all loaded replies
-    return props.comment.children;
-});
+    return props.comment.children
+})
 
 const toggleReplies = () => {
-    showReplies.value = !showReplies.value;
-};
+    showReplies.value = !showReplies.value
+}
 
 const toggleDropdown = () => {
-    showDropdown.value = !showDropdown.value;
-};
+    showDropdown.value = !showDropdown.value
+}
 
 const handleClickOutside = (event) => {
     if (showDropdown.value) {
-        showDropdown.value = false;
+        showDropdown.value = false
     }
-};
+}
 
 onMounted(() => {
-    document.addEventListener("click", handleClickOutside);
-});
+    document.addEventListener('click', handleClickOutside)
+})
 
 onUnmounted(() => {
-    document.removeEventListener("click", handleClickOutside);
-});
+    document.removeEventListener('click', handleClickOutside)
+})
 
 const startEdit = async () => {
-    isEditing.value = true;
-    editedCaption.value = props.comment.caption || "";
-    showDropdown.value = false;
-    showReplyInput.value = false;
+    isEditing.value = true
+    editedCaption.value = props.comment.caption || ''
+    showDropdown.value = false
+    showReplyInput.value = false
 
-    const mentionRegex = /@([\w._-]+(?:@[\w.-]+\.\w+)?)/g;
-    const mentions = [...props.comment.caption.matchAll(mentionRegex)].map(
-        (m) => m[1],
-    );
-    initialValidatedMentions.value = mentions;
+    const mentionRegex = /@([\w._-]+(?:@[\w.-]+\.\w+)?)/g
+    const mentions = [...props.comment.caption.matchAll(mentionRegex)].map((m) => m[1])
+    initialValidatedMentions.value = mentions
 
-    const hashtagRegex = /#([\w_]+)/g;
-    const hashtags = [...props.comment.caption.matchAll(hashtagRegex)].map(
-        (m) => m[1],
-    );
-    initialValidatedHashtags.value = hashtags;
+    const hashtagRegex = /#([\w_]+)/g
+    const hashtags = [...props.comment.caption.matchAll(hashtagRegex)].map((m) => m[1])
+    initialValidatedHashtags.value = hashtags
 
-    await nextTick();
+    await nextTick()
 
     setTimeout(() => {
         if (replyEditInputRef.value) {
-            console.log("Focusing input...", replyEditInputRef.value);
-            replyEditInputRef.value.focus();
-            replyEditInputRef.value.moveCursorToEnd();
+            console.log('Focusing input...', replyEditInputRef.value)
+            replyEditInputRef.value.focus()
+            replyEditInputRef.value.moveCursorToEnd()
         } else {
-            console.log("replyInputRef is null");
+            console.log('replyInputRef is null')
         }
-    }, 50);
-};
+    }, 50)
+}
 
 const cancelEdit = async () => {
     const result = await confirmModal(
-        t("common.confirmCancel"),
-        t("post.confirmCancelEdit"),
-        t("common.yes"),
-        t("common.no"),
-    );
+        t('common.confirmCancel'),
+        t('post.confirmCancelEdit'),
+        t('common.yes'),
+        t('common.no')
+    )
 
     if (!result) {
-        return;
+        return
     }
 
-    isEditing.value = false;
-    editedCaption.value = "";
-};
+    isEditing.value = false
+    editedCaption.value = ''
+}
 
 const saveEdit = async () => {
-    if (!editedCaption.value.trim() || isSavingEdit.value) return;
-    if (editedCaption.value.length > MAX_EDIT_CHAR_LIMIT) return;
+    if (!editedCaption.value.trim() || isSavingEdit.value) return
+    if (editedCaption.value.length > MAX_EDIT_CHAR_LIMIT) return
 
     try {
-        isSavingEdit.value = true;
+        isSavingEdit.value = true
 
-        await handleCaptionUpdate(
-            props.videoId,
-            props.comment.id,
-            editedCaption.value,
-        );
+        await handleCaptionUpdate(props.videoId, props.comment.id, editedCaption.value)
 
-        isEditing.value = false;
+        isEditing.value = false
     } catch (error) {
         await alertModal(
-            "⚠️ " + t("common.somethingWentWrong"),
-            error || t("common.unexpectedError"),
-        );
-        console.error("Failed to update comment:", error);
+            '⚠️ ' + t('common.somethingWentWrong'),
+            error || t('common.unexpectedError')
+        )
+        console.error('Failed to update comment:', error)
     } finally {
-        isSavingEdit.value = false;
+        isSavingEdit.value = false
     }
-};
+}
 
 const handleCaptionUpdate = async (videoId, commentId, newCaption) => {
-    await commentStore.updateComment(videoId, commentId, newCaption);
-};
+    await commentStore.updateComment(videoId, commentId, newCaption)
+}
 
 const handleReply = async () => {
-    if (!replyText.value.trim() || isSubmittingReply.value) return;
+    if (!replyText.value.trim() || isSubmittingReply.value) return
 
     try {
-        isSubmittingReply.value = true;
+        isSubmittingReply.value = true
 
-        await commentStore.addCommentReply(
-            props.videoId,
-            props.comment.id,
-            replyText.value,
-        );
+        await commentStore.addCommentReply(props.videoId, props.comment.id, replyText.value)
 
-        await videoStore.incrementCommentCount();
+        await videoStore.incrementCommentCount()
 
-        replyText.value = "";
-        showReplyInput.value = false;
+        replyText.value = ''
+        showReplyInput.value = false
     } catch (error) {
         await alertModal(
-            t("common.error"),
-            error?.response?.data?.message || t("common.unexpectedError"),
-        );
-        console.error("Failed to add reply:", error);
+            t('common.error'),
+            error?.response?.data?.message || t('common.unexpectedError')
+        )
+        console.error('Failed to add reply:', error)
     } finally {
-        isSubmittingReply.value = false;
+        isSubmittingReply.value = false
     }
-};
+}
 
 const loadReplies = async () => {
-    if (isLoadingReplies.value) return;
+    if (isLoadingReplies.value) return
 
-    showReplies.value = true;
+    showReplies.value = true
 
     try {
-        await commentStore.fetchReplies(props.videoId, props.comment.id, true);
+        await commentStore.fetchReplies(props.videoId, props.comment.id, true)
     } catch (error) {
-        console.error("Failed to load replies:", error);
+        console.error('Failed to load replies:', error)
     }
-};
+}
 
 const loadMoreReplies = async () => {
-    if (isLoadingReplies.value || !hasMoreReplies.value) return;
+    if (isLoadingReplies.value || !hasMoreReplies.value) return
 
     try {
-        await commentStore.fetchReplies(props.videoId, props.comment.id, false);
+        await commentStore.fetchReplies(props.videoId, props.comment.id, false)
     } catch (error) {
-        console.error("Failed to load more replies:", error);
+        console.error('Failed to load more replies:', error)
     }
-};
+}
 
 const handleDelete = async () => {
-    if (isDeletingComment.value) return;
+    if (isDeletingComment.value) return
 
     const result = await confirmModal(
-        t("common.confirm"),
-        t("post.confirmDeleteComment"),
-        t("post.delete"),
-        t("common.cancel"),
-    );
+        t('common.confirm'),
+        t('post.confirmDeleteComment'),
+        t('post.delete'),
+        t('common.cancel')
+    )
 
     if (!result) {
-        showDropdown.value = false;
-        return;
+        showDropdown.value = false
+        return
     }
 
     try {
-        isDeletingComment.value = true;
-        showDropdown.value = false;
+        isDeletingComment.value = true
+        showDropdown.value = false
 
         if (props.parentCommentId) {
             await commentStore.deleteCommentReply(
                 props.videoId,
                 props.parentCommentId,
-                props.comment.id,
-            );
+                props.comment.id
+            )
         } else {
-            await commentStore.deleteComment(props.videoId, props.comment.id);
+            await commentStore.deleteComment(props.videoId, props.comment.id)
         }
 
-        await videoStore.decrementCommentCount();
+        await videoStore.decrementCommentCount()
     } catch (error) {
-        console.error("Failed to delete comment:", error);
+        console.error('Failed to delete comment:', error)
     } finally {
-        isDeletingComment.value = false;
+        isDeletingComment.value = false
     }
-};
+}
 
 const handleReport = () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
-    openReportModal("comment", props.comment.id, window.location.href);
-    showDropdown.value = false;
-};
+    openReportModal('comment', props.comment.id, window.location.href)
+    showDropdown.value = false
+}
 
 const handleLike = async () => {
     if (!authStore.isAuthenticated) {
-        authStore.openAuthModal("login");
-        return;
+        authStore.openAuthModal('login')
+        return
     }
 
-    if (isLikeLoading.value) return;
+    if (isLikeLoading.value) return
 
     try {
         if (props.comment.liked) {
-            await commentStore.unlikeComment(props.videoId, props.comment.id);
+            await commentStore.unlikeComment(props.videoId, props.comment.id)
         } else {
-            await commentStore.likeComment(props.videoId, props.comment.id);
+            await commentStore.likeComment(props.videoId, props.comment.id)
         }
     } catch (error) {
-        console.error("Failed to toggle like:", error);
+        console.error('Failed to toggle like:', error)
     }
-};
+}
 
 const fetchMentions = async (query) => {
     try {
-        const response = await videoStore.autocompleteAccount(
-            encodeURIComponent(query),
-        );
-        return response.data;
+        const response = await videoStore.autocompleteAccount(encodeURIComponent(query))
+        return response.data
     } catch (error) {
-        console.error("Error fetching mentions:", error);
-        return [];
+        console.error('Error fetching mentions:', error)
+        return []
     }
-};
+}
 
 const fetchHashtags = async (query) => {
     try {
-        const response = await videoStore.autocompleteHashtag(
-            encodeURIComponent(query),
-        );
-        return response.data;
+        const response = await videoStore.autocompleteHashtag(encodeURIComponent(query))
+        return response.data
     } catch (error) {
-        console.error("Error fetching hashtags:", error);
-        return [];
+        console.error('Error fetching hashtags:', error)
+        return []
     }
-};
+}
 </script>
 
 <style scoped>

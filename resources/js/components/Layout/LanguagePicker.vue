@@ -30,13 +30,8 @@
                             @click.stop
                         >
                             <div class="flex items-center justify-between mb-4">
-                                <h3
-                                    class="text-lg font-semibold text-gray-900 dark:text-white"
-                                >
-                                    {{
-                                        t("language.picker.title") ||
-                                        "Choose Language"
-                                    }}
+                                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                                    {{ t('language.picker.title') || 'Choose Language' }}
                                 </h3>
                                 <button
                                     @click="closeModal"
@@ -59,39 +54,29 @@
                                 </button>
                             </div>
 
-                            <div
-                                class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-md"
-                            >
-                                <p
-                                    class="text-sm text-gray-600 dark:text-gray-300 mb-1"
-                                >
-                                    {{ t("language.picker.current") }}
+                            <div class="mb-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mb-1">
+                                    {{ t('language.picker.current') }}
                                 </p>
                                 <div class="flex items-center space-x-2">
-                                    <span
-                                        class="font-medium text-gray-900 dark:text-white"
-                                    >
+                                    <span class="font-medium text-gray-900 dark:text-white">
                                         {{ currentLanguage.nativeName }}
                                     </span>
-                                    <span
-                                        class="text-sm text-gray-500 dark:text-gray-400"
-                                    >
+                                    <span class="text-sm text-gray-500 dark:text-gray-400">
                                         ({{ currentLanguage.name }})
                                     </span>
                                 </div>
                             </div>
 
-                            <p
-                                class="text-sm text-gray-600 dark:text-gray-300 mb-6"
-                            >
-                                {{ t("language.picker.description") }}
+                            <p class="text-sm text-gray-600 dark:text-gray-300 mb-6">
+                                {{ t('language.picker.description') }}
                             </p>
 
                             <div class="mb-6">
                                 <label
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                                 >
-                                    {{ t("language.picker.select") }}
+                                    {{ t('language.picker.select') }}
                                 </label>
                                 <select
                                     v-model="selectedLocale"
@@ -103,9 +88,7 @@
                                         :value="language.code"
                                         class="flex items-center"
                                     >
-                                        {{ language.nativeName }} ({{
-                                            language.name
-                                        }})
+                                        {{ language.nativeName }} ({{ language.name }})
                                     </option>
                                 </select>
                             </div>
@@ -116,20 +99,18 @@
                                     :disabled="selectedLocale === $i18n.locale"
                                     class="flex-1 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors dark:focus:ring-offset-gray-800"
                                 >
-                                    {{ t("language.picker.applyChanges") }}
+                                    {{ t('language.picker.applyChanges') }}
                                 </button>
                                 <button
                                     @click="closeModal"
                                     class="flex-1 rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 transition-colors dark:focus:ring-offset-gray-800"
                                 >
-                                    {{ t("common.cancel") }}
+                                    {{ t('common.cancel') }}
                                 </button>
                             </div>
 
-                            <p
-                                class="mt-4 text-xs text-center text-gray-500 dark:text-gray-400"
-                            >
-                                {{ t("language.picker.note") }}
+                            <p class="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
+                                {{ t('language.picker.note') }}
                             </p>
                         </div>
                     </Transition>
@@ -140,101 +121,101 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
-import { useI18n } from "vue-i18n";
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
     isOpen: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(['close'])
 
-const { locale, availableLocales, t } = useI18n();
+const { locale, availableLocales, t } = useI18n()
 
-const selectedLocale = ref(locale.value);
+const selectedLocale = ref(locale.value)
 
 const languageInfo = {
-    en: { name: "English", nativeName: "English" },
-    es: { name: "Spanish", nativeName: "Español" },
-    fr: { name: "French", nativeName: "Français" },
-    de: { name: "German", nativeName: "Deutsch" },
-    it: { name: "Italian", nativeName: "Italiano" },
-    pt: { name: "Portuguese", nativeName: "Português" },
-    ja: { name: "Japanese", nativeName: "日本語" },
-    ko: { name: "Korean", nativeName: "한국어" },
-    zh: { name: "Chinese", nativeName: "中文" },
-    ar: { name: "Arabic", nativeName: "العربية" },
-    ru: { name: "Russian", nativeName: "Русский" },
-    hi: { name: "Hindi", nativeName: "हिन्दी" },
-};
+    en: { name: 'English', nativeName: 'English' },
+    es: { name: 'Spanish', nativeName: 'Español' },
+    fr: { name: 'French', nativeName: 'Français' },
+    de: { name: 'German', nativeName: 'Deutsch' },
+    it: { name: 'Italian', nativeName: 'Italiano' },
+    pt: { name: 'Portuguese', nativeName: 'Português' },
+    ja: { name: 'Japanese', nativeName: '日本語' },
+    ko: { name: 'Korean', nativeName: '한국어' },
+    zh: { name: 'Chinese', nativeName: '中文' },
+    ar: { name: 'Arabic', nativeName: 'العربية' },
+    ru: { name: 'Russian', nativeName: 'Русский' },
+    hi: { name: 'Hindi', nativeName: 'हिन्दी' }
+}
 
 const availableLanguages = computed(() => {
     return availableLocales
         .filter((locale) => languageInfo[locale])
         .map((locale) => ({
             code: locale,
-            ...languageInfo[locale],
-        }));
-});
+            ...languageInfo[locale]
+        }))
+})
 
 const currentLanguage = computed(() => {
     return (
         languageInfo[locale.value] || {
             name: locale.value,
-            flag: "🌐",
-            nativeName: locale.value,
+            flag: '🌐',
+            nativeName: locale.value
         }
-    );
-});
+    )
+})
 
 const closeModal = () => {
-    emit("close");
-};
+    emit('close')
+}
 
 const changeLanguage = () => {
     if (selectedLocale.value !== locale.value) {
-        locale.value = selectedLocale.value;
+        locale.value = selectedLocale.value
 
-        localStorage.setItem("preferred-language", selectedLocale.value);
+        localStorage.setItem('preferred-language', selectedLocale.value)
 
-        document.documentElement.lang = selectedLocale.value;
+        document.documentElement.lang = selectedLocale.value
 
         window.dispatchEvent(
-            new CustomEvent("language-changed", {
-                detail: { locale: selectedLocale.value },
-            }),
-        );
+            new CustomEvent('language-changed', {
+                detail: { locale: selectedLocale.value }
+            })
+        )
     }
-    closeModal();
-};
+    closeModal()
+}
 
 const handleEscape = (e) => {
-    if (e.key === "Escape" && props.isOpen) {
-        closeModal();
+    if (e.key === 'Escape' && props.isOpen) {
+        closeModal()
     }
-};
+}
 
 const handleBackdropClick = (e) => {
     if (e.target === e.currentTarget) {
-        closeModal();
+        closeModal()
     }
-};
+}
 
 onMounted(() => {
-    const savedLanguage = localStorage.getItem("preferred-language");
+    const savedLanguage = localStorage.getItem('preferred-language')
     if (savedLanguage && availableLocales.includes(savedLanguage)) {
-        locale.value = savedLanguage;
-        selectedLocale.value = savedLanguage;
-        document.documentElement.lang = savedLanguage;
+        locale.value = savedLanguage
+        selectedLocale.value = savedLanguage
+        document.documentElement.lang = savedLanguage
     }
 
-    document.addEventListener("keydown", handleEscape);
-});
+    document.addEventListener('keydown', handleEscape)
+})
 
 onUnmounted(() => {
-    document.removeEventListener("keydown", handleEscape);
-});
+    document.removeEventListener('keydown', handleEscape)
+})
 </script>

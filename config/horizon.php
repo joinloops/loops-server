@@ -182,7 +182,7 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'redis',
-            'queue' => ['default', 'activitypub-out', 'activitypub-in', 'actor-update'],
+            'queue' => ['default', 'activitypub-out', 'activitypub-in', 'actor-update', 'remote-video'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,

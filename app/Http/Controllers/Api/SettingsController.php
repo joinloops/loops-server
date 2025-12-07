@@ -318,4 +318,23 @@ class SettingsController extends Controller
 
         return $this->success();
     }
+
+    public function confirmDeleteAccount(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|current_password',
+        ]);
+
+        $request->user()->update(['status' => 8, 'delete_after' => now()->addMonth()]);
+        $request->user()->profile->update(['status' => 8]);
+
+        Auth::logoutOtherDevices($request->input('password'));
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        return $this->success();
+    }
 }

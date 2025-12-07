@@ -11,7 +11,7 @@
                 class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-slate-700"
             >
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
-                    {{ $t("post.editVideo") }}
+                    {{ $t('post.editVideo') }}
                 </h2>
                 <button
                     @click="closeModal"
@@ -23,10 +23,8 @@
 
             <div class="p-6 space-y-6">
                 <div>
-                    <label
-                        class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                    >
-                        {{ $t("post.caption") }}
+                    <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        {{ $t('post.caption') }}
                     </label>
                     <textarea
                         v-model="formData.caption"
@@ -35,9 +33,7 @@
                         :placeholder="$t('post.writeYourCaptionDotDotDot')"
                         maxlength="500"
                     />
-                    <div
-                        class="text-right text-sm text-gray-500 dark:text-gray-400 mt-1"
-                    >
+                    <div class="text-right text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {{ formData.caption.length }}/240
                     </div>
                 </div>
@@ -49,9 +45,7 @@
                         variant="light"
                         class="flex w-full"
                     >
-                        <div
-                            class="flex items-center gap-2 text-sm font-medium"
-                        >
+                        <div class="flex items-center gap-2 text-sm font-medium">
                             <div>
                                 <svg
                                     :class="{ 'rotate-90': showAltText }"
@@ -69,32 +63,26 @@
                                 </svg>
                             </div>
                             <div>
-                                {{ $t("studio.editAltText") }}
+                                {{ $t('studio.editAltText') }}
                             </div>
                         </div>
                     </AnimatedButton>
 
                     <div v-if="showAltText" class="mt-3 space-y-2">
-                        <label
-                            class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-                        >
-                            {{ $t("studio.altText") }}
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                            {{ $t('studio.altText') }}
                         </label>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                            {{ $t("studio.altTextHelp") }}
+                            {{ $t('studio.altTextHelp') }}
                         </p>
                         <textarea
                             v-model="formData.altText"
                             class="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-[#F02C56] focus:border-[#F02C56] dark:bg-slate-800 dark:text-white resize-none"
                             rows="3"
-                            :placeholder="
-                                $t('studio.describeYourVideoDotDotDotAltText')
-                            "
+                            :placeholder="$t('studio.describeYourVideoDotDotDotAltText')"
                             maxlength="2000"
                         />
-                        <div
-                            class="text-right text-sm text-gray-500 dark:text-gray-400"
-                        >
+                        <div class="text-right text-sm text-gray-500 dark:text-gray-400">
                             {{ formData.altText.length }}/2000
                         </div>
                     </div>
@@ -103,17 +91,11 @@
                 <div class="space-y-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("post.pinToProfile") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('post.pinToProfile') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{
-                                    $t(
-                                        "post.showThisVideoAtTheTopOfYourProfile",
-                                    )
-                                }}
+                                {{ $t('post.showThisVideoAtTheTopOfYourProfile') }}
                             </p>
                         </div>
                         <ToggleSwitch v-model="formData.pinToProfile" />
@@ -121,13 +103,11 @@
 
                     <div class="flex items-center justify-between">
                         <div>
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("post.commentsEnabled") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('post.commentsEnabled') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("post.allowPeopleToCommentOnThisVideo") }}
+                                {{ $t('post.allowPeopleToCommentOnThisVideo') }}
                             </p>
                         </div>
                         <ToggleSwitch v-model="formData.commentsEnabled" />
@@ -135,13 +115,11 @@
 
                     <div class="flex items-center justify-between">
                         <div>
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("post.downloadsEnabled") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('post.downloadsEnabled') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("post.allowPeopleToDownloadThisVideo") }}
+                                {{ $t('post.allowPeopleToDownloadThisVideo') }}
                             </p>
                         </div>
                         <ToggleSwitch v-model="formData.downloadsEnabled" />
@@ -149,13 +127,11 @@
 
                     <div class="flex items-center justify-between">
                         <div>
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("studio.duet") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('studio.duet') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("studio.duetMessage") }}
+                                {{ $t('studio.duetMessage') }}
                             </p>
                         </div>
                         <ToggleSwitch v-model="formData.allowDuets" />
@@ -163,13 +139,11 @@
 
                     <div class="flex items-center justify-between">
                         <div>
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("studio.stitch") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('studio.stitch') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("studio.stitchMessage") }}
+                                {{ $t('studio.stitchMessage') }}
                             </p>
                         </div>
                         <ToggleSwitch v-model="formData.allowStitches" />
@@ -178,7 +152,7 @@
 
                 <div class="mb-6">
                     <label class="block text-sm font-medium text-gray-700 mb-2">
-                        {{ $t("studio.language") }}
+                        {{ $t('studio.language') }}
                     </label>
                     <div class="relative">
                         <select
@@ -186,14 +160,10 @@
                             class="block w-full px-4 py-2 pr-8 text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                         >
                             <option value="" disabled selected>
-                                {{ $t("studio.selectLanguage") }}
+                                {{ $t('studio.selectLanguage') }}
                             </option>
 
-                            <option
-                                v-for="lang in languages"
-                                :key="lang.code"
-                                :value="lang.code"
-                            >
+                            <option v-for="lang in languages" :key="lang.code" :value="lang.code">
                                 {{ lang.name }}
                             </option>
                         </select>
@@ -216,39 +186,30 @@
                         </div>
                     </div>
                     <p class="mt-2 text-sm text-gray-500">
-                        {{ $t("studio.selectLanguageHelp") }}
+                        {{ $t('studio.selectLanguageHelp') }}
                     </p>
                 </div>
 
-                <div
-                    class="space-y-4 pt-4 border-t border-gray-200 dark:border-slate-700"
-                >
+                <div class="space-y-4 pt-4 border-t border-gray-200 dark:border-slate-700">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("studio.containsNSFW") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('studio.containsNSFW') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("studio.containsNSFWMessage") }}
+                                {{ $t('studio.containsNSFWMessage') }}
                             </p>
                         </div>
-                        <ToggleSwitch
-                            v-model="formData.isNsfw"
-                            :disabled="formData.isNsfw"
-                        />
+                        <ToggleSwitch v-model="formData.isNsfw" :disabled="formData.isNsfw" />
                     </div>
 
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("studio.disclosePostContent") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('studio.disclosePostContent') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("studio.disclosePostContentHelp") }}
+                                {{ $t('studio.disclosePostContentHelp') }}
                             </p>
                         </div>
                         <ToggleSwitch
@@ -259,13 +220,11 @@
 
                     <div class="flex items-start justify-between gap-5">
                         <div class="flex-1">
-                            <label
-                                class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                            >
-                                {{ $t("studio.containsAlteredContent") }}
+                            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                {{ $t('studio.containsAlteredContent') }}
                             </label>
                             <p class="text-xs text-gray-500 dark:text-gray-400">
-                                {{ $t("studio.containsAlteredContentHelp") }}
+                                {{ $t('studio.containsAlteredContentHelp') }}
                             </p>
                         </div>
                         <ToggleSwitch
@@ -275,30 +234,22 @@
                     </div>
                 </div>
 
-                <div
-                    class="border-t border-gray-200 dark:border-slate-700 pt-6"
-                >
+                <div class="border-t border-gray-200 dark:border-slate-700 pt-6">
                     <div class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4">
                         <div class="flex items-start">
-                            <ExclamationTriangleIcon
-                                class="h-5 w-5 text-red-400 mt-0.5 mr-3"
-                            />
+                            <ExclamationTriangleIcon class="h-5 w-5 text-red-400 mt-0.5 mr-3" />
                             <div class="flex-1">
-                                <h3
-                                    class="text-sm font-medium text-red-800 dark:text-red-400"
-                                >
-                                    {{ $t("post.deleteVideo") }}
+                                <h3 class="text-sm font-medium text-red-800 dark:text-red-400">
+                                    {{ $t('post.deleteVideo') }}
                                 </h3>
-                                <p
-                                    class="text-sm text-red-700 dark:text-red-300 mt-1"
-                                >
-                                    {{ $t("post.thisActionCannotBeUndone") }}
+                                <p class="text-sm text-red-700 dark:text-red-300 mt-1">
+                                    {{ $t('post.thisActionCannotBeUndone') }}
                                 </p>
                                 <button
                                     @click="confirmDelete"
                                     class="mt-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium py-2 px-4 rounded-md transition-colors duration-200"
                                 >
-                                    {{ $t("post.deleteVideo") }}
+                                    {{ $t('post.deleteVideo') }}
                                 </button>
                             </div>
                         </div>
@@ -313,19 +264,15 @@
                     @click="closeModal"
                     class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 transition-colors duration-200 cursor-pointer"
                 >
-                    {{ $t("common.cancel") }}
+                    {{ $t('common.cancel') }}
                 </button>
                 <button
                     @click="saveChanges"
                     :disabled="isSaving"
                     class="px-4 py-2 text-sm font-medium text-white bg-[#F02C56] hover:bg-red-600 disabled:bg-red-300 disabled:cursor-not-allowed rounded-md transition-colors duration-200 flex items-center cursor-pointer"
                 >
-                    <Spinner v-if="isSaving" class="h-4 w-4 mr-2" />
-                    {{
-                        isSaving
-                            ? $t("common.savingDotDotDot")
-                            : $t("post.saveChanges")
-                    }}
+                    <Spinner v-if="isSaving" size="sm" class="mr-2" />
+                    {{ isSaving ? $t('common.savingDotDotDot') : $t('post.saveChanges') }}
                 </button>
             </div>
         </div>
@@ -333,34 +280,34 @@
 </template>
 
 <script setup>
-import { ref, watch, computed, onMounted, inject } from "vue";
-import { storeToRefs } from "pinia";
-import { XMarkIcon, ExclamationTriangleIcon } from "@heroicons/vue/24/outline";
-import { useAlertModal } from "@/composables/useAlertModal.js";
-const appStore = inject("appStore");
-const { languages } = storeToRefs(appStore);
+import { ref, watch, computed, onMounted, inject } from 'vue'
+import { storeToRefs } from 'pinia'
+import { XMarkIcon, ExclamationTriangleIcon } from '@heroicons/vue/24/outline'
+import { useAlertModal } from '@/composables/useAlertModal.js'
+const appStore = inject('appStore')
+const { languages } = storeToRefs(appStore)
 
 const props = defineProps({
     isOpen: {
         type: Boolean,
-        default: false,
+        default: false
     },
     video: {
         type: Object,
-        default: null,
-    },
-});
+        default: null
+    }
+})
 
-const emit = defineEmits(["close", "save", "delete"]);
-const { alertModal, confirmModal } = useAlertModal();
+const emit = defineEmits(['close', 'save', 'delete'])
+const { alertModal, confirmModal } = useAlertModal()
 
-const isSaving = ref(false);
-const showAltText = ref(false);
+const isSaving = ref(false)
+const showAltText = ref(false)
 
 const formData = ref({
-    caption: "",
-    altText: "",
-    lang: "",
+    caption: '',
+    altText: '',
+    lang: '',
     pinToProfile: false,
     commentsEnabled: true,
     downloadsEnabled: true,
@@ -368,47 +315,47 @@ const formData = ref({
     allowStitches: true,
     isNsfw: false,
     containsAds: false,
-    containsAiContent: false,
-});
+    containsAiContent: false
+})
 
 onMounted(async () => {
-    await appStore.ensureLanguages();
-});
+    await appStore.ensureLanguages()
+})
 
 watch(
     () => [props.isOpen, props.video],
     ([isOpen, video]) => {
         if (isOpen && video) {
             formData.value = {
-                caption: video.caption || "",
-                altText: video.media.alt_text || "",
-                pinToProfile: video.is_pinned || false,
-                lang: video.lang || "",
+                caption: video.caption || '',
+                altText: video.media.alt_text || '',
+                pinToProfile: video.pinned || false,
+                lang: video.lang || '',
                 downloadsEnabled: video.permissions.can_download || false,
                 commentsEnabled: video.permissions.can_comment !== false,
                 allowDuets: video.permissions.can_duet !== false,
                 allowStitches: video.permissions.can_stitch !== false,
                 isNsfw: video.is_sensitive || false,
                 containsAds: video.meta.contains_ad || false,
-                containsAiContent: video.meta.contains_ai || false,
-            };
-            showAltText.value = !!video.alt_text;
+                containsAiContent: video.meta.contains_ai || false
+            }
+            showAltText.value = !!video.alt_text
         }
     },
-    { immediate: true },
-);
+    { immediate: true }
+)
 
 const closeModal = () => {
-    emit("close");
-};
+    emit('close')
+}
 
 const saveChanges = async () => {
-    if (!props.video) return;
+    if (!props.video) return
 
-    isSaving.value = true;
+    isSaving.value = true
 
     try {
-        await emit("save", {
+        await emit('save', {
             id: props.video.id,
             caption: formData.value.caption,
             alt_text: formData.value.altText,
@@ -420,28 +367,28 @@ const saveChanges = async () => {
             can_stitch: formData.value.allowStitches,
             is_sensitive: formData.value.isNsfw,
             contains_ad: formData.value.containsAds,
-            contains_ai: formData.value.containsAiContent,
-        });
-        closeModal();
+            contains_ai: formData.value.containsAiContent
+        })
     } catch (error) {
-        console.error("Error saving video:", error);
+        console.error('Error saving video:', error)
     } finally {
-        isSaving.value = false;
+        isSaving.value = false
+        closeModal()
     }
-};
+}
 
 const confirmDelete = async () => {
     const confirmed = await confirmModal(
-        "Confirm Delete",
+        'Confirm Delete',
         `Are you sure you want to delete this video? All likes, comments and other interactions will be lost forever.<br /><br /><strong class="text-red-500">This action cannot be undone.</strong>`,
-        "Delete",
-        "Cancel",
-    );
+        'Delete',
+        'Cancel'
+    )
     if (confirmed) {
-        emit("delete", props.video.id);
-        closeModal();
+        emit('delete', props.video.id)
+        closeModal()
     } else {
-        closeModal();
+        closeModal()
     }
-};
+}
 </script>

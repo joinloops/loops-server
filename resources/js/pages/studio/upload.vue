@@ -5,37 +5,29 @@
                 v-if="showWarning"
                 class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4"
             >
-                <div
-                    class="flex items-center justify-between max-w-7xl mx-auto"
-                >
-                    <div
-                        class="flex items-center text-orange-600 dark:text-orange-400"
-                    >
-                        <svg
-                            class="w-5 h-5 mr-2"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                        >
+                <div class="flex items-center justify-between max-w-7xl mx-auto">
+                    <div class="flex items-center text-orange-600 dark:text-orange-400">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
                             <path
                                 fill-rule="evenodd"
                                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
                                 clip-rule="evenodd"
                             />
                         </svg>
-                        {{ $t("studio.unsavedWarning") }}
+                        {{ $t('studio.unsavedWarning') }}
                     </div>
                     <div class="flex space-x-3">
                         <button
                             @click="showWarning = false"
                             class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
                         >
-                            {{ $t("common.discard") }}
+                            {{ $t('common.discard') }}
                         </button>
                         <button
                             @click="showWarning = false"
                             class="text-gray-900 dark:text-gray-100 font-medium hover:text-gray-700 dark:hover:text-gray-300"
                         >
-                            {{ $t("common.continue") }}
+                            {{ $t('common.continue') }}
                         </button>
                     </div>
                 </div>
@@ -50,7 +42,7 @@
                         class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center hover:border-gray-400 dark:hover:border-gray-600 transition-colors bg-white dark:bg-gray-800"
                         :class="{
                             'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/30':
-                                isDragging,
+                                isDragging
                         }"
                         @dragenter="isDragging = true"
                         @dragleave="isDragging = false"
@@ -71,20 +63,18 @@
                             </svg>
                         </div>
 
-                        <h3
-                            class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2"
-                        >
-                            {{ $t("studio.selectVideoToUpload") }}
+                        <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                            {{ $t('studio.selectVideoToUpload') }}
                         </h3>
                         <p class="text-gray-600 dark:text-gray-400 mb-6">
-                            {{ $t("studio.orDragAndDropItHere") }}
+                            {{ $t('studio.orDragAndDropItHere') }}
                         </p>
 
                         <button
                             @click="$refs.fileInput.click()"
                             class="bg-[#F02C56] hover:bg-[#F02C56]/80 text-white px-8 py-3 rounded-md font-medium transition-colors"
                         >
-                            {{ $t("studio.selectVideo") }}
+                            {{ $t('studio.selectVideo') }}
                         </button>
 
                         <input
@@ -113,17 +103,15 @@
                                     />
                                 </svg>
                             </div>
-                            <h4
-                                class="font-medium text-gray-900 dark:text-gray-100 mb-2"
-                            >
-                                {{ $t("studio.sizeAndDuration") }}
+                            <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                                {{ $t('studio.sizeAndDuration') }}
                             </h4>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
-                                {{ $t("studio.maximumSize") }}
+                                {{ $t('studio.maximumSize') }}
                                 {{ appConfig.media.max_video_size }}
-                                {{ $t("studio.mbVideoDuration") }}
+                                {{ $t('studio.mbVideoDuration') }}
                                 {{ appConfig.media.max_video_duration / 60 }}
-                                {{ $t("studio.minutes") }}
+                                {{ $t('studio.minutes') }}
                             </p>
                         </div>
 
@@ -143,19 +131,13 @@
                                     />
                                 </svg>
                             </div>
-                            <h4
-                                class="font-medium text-gray-900 dark:text-gray-100 mb-2"
-                            >
-                                {{ $t("studio.fileFormats") }}
+                            <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                                {{ $t('studio.fileFormats') }}
                             </h4>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
-                                {{ $t("studio.recommended") }}
-                                ".{{
-                                    appConfig.media.allowed_video_formats.join(
-                                        ", .",
-                                    )
-                                }}"{{
-                                    $t("studio.otherMajorFormatsAreSupported")
+                                {{ $t('studio.recommended') }}
+                                ".{{ appConfig.media.allowed_video_formats.join(', .') }}"{{
+                                    $t('studio.otherMajorFormatsAreSupported')
                                 }}
                             </p>
                         </div>
@@ -176,13 +158,11 @@
                                     />
                                 </svg>
                             </div>
-                            <h4
-                                class="font-medium text-gray-900 dark:text-gray-100 mb-2"
-                            >
-                                {{ $t("studio.videoResolutions") }}
+                            <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                                {{ $t('studio.videoResolutions') }}
                             </h4>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
-                                {{ $t("studio.videoResolutionsMessage") }}
+                                {{ $t('studio.videoResolutionsMessage') }}
                             </p>
                         </div>
 
@@ -202,13 +182,11 @@
                                     />
                                 </svg>
                             </div>
-                            <h4
-                                class="font-medium text-gray-900 dark:text-gray-100 mb-2"
-                            >
-                                {{ $t("studio.aspectRatios") }}
+                            <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
+                                {{ $t('studio.aspectRatios') }}
                             </h4>
                             <p class="text-sm text-gray-600 dark:text-gray-400">
-                                {{ $t("studio.aspectRatiosMessage") }}
+                                {{ $t('studio.aspectRatiosMessage') }}
                             </p>
                         </div>
                     </div>
@@ -221,26 +199,18 @@
                         >
                             <div class="flex items-center">
                                 <div class="flex items-center">
-                                    <div
-                                        class="w-3 h-3 bg-green-500 rounded-full mr-3"
-                                    ></div>
-                                    <span
-                                        class="font-medium text-gray-900 dark:text-gray-100"
-                                        >{{ uploadedFile.name }}</span
-                                    >
-                                    <span
-                                        class="text-sm text-gray-500 dark:text-gray-400 ml-2"
-                                        >({{
-                                            formatFileSize(uploadedFile.size)
-                                        }})</span
+                                    <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                                    <span class="font-medium text-gray-900 dark:text-gray-100">{{
+                                        uploadedFile.name
+                                    }}</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400 ml-2"
+                                        >({{ formatFileSize(uploadedFile.size) }})</span
                                     >
                                 </div>
                                 <button
                                     class="ml-auto text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
                                 >
-                                    <span class="text-sm">{{
-                                        $t("studio.replace")
-                                    }}</span>
+                                    <span class="text-sm">{{ $t('studio.replace') }}</span>
                                 </button>
                             </div>
                             <div
@@ -255,16 +225,14 @@
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
                         >
-                            <h3
-                                class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6"
-                            >
-                                {{ $t("studio.details") }}
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">
+                                {{ $t('studio.details') }}
                             </h3>
 
                             <div class="mb-6">
                                 <label
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                    >{{ $t("studio.caption") }}</label
+                                    >{{ $t('studio.caption') }}</label
                                 >
                                 <div class="relative">
                                     <textarea
@@ -272,11 +240,7 @@
                                         v-model="description"
                                         @input="handleDescriptionInput"
                                         @keydown="handleKeydown"
-                                        :placeholder="
-                                            $t(
-                                                'studio.describeYourVideoDotDotDot',
-                                            )
-                                        "
+                                        :placeholder="$t('studio.describeYourVideoDotDotDot')"
                                         rows="4"
                                         class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                                         maxlength="2200"
@@ -312,50 +276,38 @@
                                                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                                     ></path>
                                                 </svg>
-                                                {{
-                                                    $t(
-                                                        "studio.searchingDotDotDot",
-                                                    )
-                                                }}
+                                                {{ $t('studio.searchingDotDotDot') }}
                                             </div>
 
                                             <div
                                                 v-else-if="
                                                     !isLoadingSuggestions &&
-                                                    filteredSuggestions.length ===
-                                                        0 &&
+                                                    filteredSuggestions.length === 0 &&
                                                     autocompleteQuery
                                                 "
                                                 class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm"
                                             >
-                                                {{ $t("studio.no") }}
+                                                {{ $t('studio.no') }}
                                                 {{
-                                                    autocompleteType ===
-                                                    "hashtag"
-                                                        ? $t("studio.hashtags")
-                                                        : $t("studio.users")
+                                                    autocompleteType === 'hashtag'
+                                                        ? $t('studio.hashtags')
+                                                        : $t('studio.users')
                                                 }}
-                                                {{ $t("studio.found") }}
+                                                {{ $t('studio.found') }}
                                             </div>
 
                                             <div
-                                                v-for="(
-                                                    item, index
-                                                ) in filteredSuggestions"
+                                                v-for="(item, index) in filteredSuggestions"
                                                 :key="index"
                                                 @click="selectSuggestion(item)"
                                                 class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center"
                                                 :class="{
                                                     'bg-blue-50 dark:bg-blue-950/50':
-                                                        index ===
-                                                        selectedSuggestionIndex,
+                                                        index === selectedSuggestionIndex
                                                 }"
                                             >
                                                 <div
-                                                    v-if="
-                                                        autocompleteType ===
-                                                        'mention'
-                                                    "
+                                                    v-if="autocompleteType === 'mention'"
                                                     class="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mr-3 flex items-center justify-center overflow-hidden"
                                                 >
                                                     <img
@@ -372,9 +324,7 @@
                                                         v-else
                                                         class="text-xs font-medium text-gray-700 dark:text-gray-300"
                                                         >{{
-                                                            item.username
-                                                                .charAt(0)
-                                                                .toUpperCase()
+                                                            item.username.charAt(0).toUpperCase()
                                                         }}</span
                                                     >
                                                 </div>
@@ -382,8 +332,7 @@
                                                     v-else
                                                     class="w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-full mr-3 flex items-center justify-center"
                                                 >
-                                                    <span
-                                                        class="text-blue-600 dark:text-blue-400"
+                                                    <span class="text-blue-600 dark:text-blue-400"
                                                         >#</span
                                                     >
                                                 </div>
@@ -392,10 +341,9 @@
                                                         class="font-medium text-gray-900 dark:text-gray-100"
                                                     >
                                                         {{
-                                                            autocompleteType ===
-                                                            "hashtag"
-                                                                ? "#"
-                                                                : "@"
+                                                            autocompleteType === 'hashtag'
+                                                                ? '#'
+                                                                : '@'
                                                         }}{{ item.name }}
                                                     </div>
                                                     <div class="flex gap-3">
@@ -407,25 +355,17 @@
                                                             posts
                                                         </div>
                                                         <div
-                                                            v-if="
-                                                                item.post_count
-                                                            "
+                                                            v-if="item.post_count"
                                                             class="text-xs text-gray-500 dark:text-gray-400"
                                                         >
-                                                            {{
-                                                                item.post_count
-                                                            }}
+                                                            {{ item.post_count }}
                                                             posts
                                                         </div>
                                                         <div
-                                                            v-if="
-                                                                item.follower_count
-                                                            "
+                                                            v-if="item.follower_count"
                                                             class="text-xs text-gray-500 dark:text-gray-400"
                                                         >
-                                                            {{
-                                                                item.follower_count
-                                                            }}
+                                                            {{ item.follower_count }}
                                                             followers
                                                         </div>
                                                     </div>
@@ -445,13 +385,13 @@
                                         @click="insertHashtag"
                                         class="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-bold text-xs cursor-pointer"
                                     >
-                                        # {{ $t("studio.hashtag") }}
+                                        # {{ $t('studio.hashtag') }}
                                     </button>
                                     <button
                                         @click="insertMention"
                                         class="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-bold text-xs cursor-pointer"
                                     >
-                                        @ {{ $t("studio.mention") }}
+                                        @ {{ $t('studio.mention') }}
                                     </button>
                                 </div>
                             </div>
@@ -459,15 +399,13 @@
                             <div class="mb-6">
                                 <label
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                    >{{ $t("studio.altText") }}</label
+                                    >{{ $t('studio.altText') }}</label
                                 >
                                 <div class="relative">
                                     <textarea
                                         v-model="altText"
                                         :placeholder="
-                                            $t(
-                                                'studio.describeYourVideoDotDotDotAltText',
-                                            )
+                                            $t('studio.describeYourVideoDotDotDotAltText')
                                         "
                                         rows="2"
                                         class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
@@ -496,7 +434,7 @@
                                             d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                                         />
                                     </svg>
-                                    <span>{{ $t("studio.altTextHelp") }}</span>
+                                    <span>{{ $t('studio.altTextHelp') }}</span>
                                 </p>
                             </div>
 
@@ -504,7 +442,7 @@
                                 <label
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                                 >
-                                    {{ $t("studio.language") }}
+                                    {{ $t('studio.language') }}
                                 </label>
                                 <div class="relative">
                                     <select
@@ -537,17 +475,15 @@
                                         </svg>
                                     </div>
                                 </div>
-                                <p
-                                    class="mt-2 text-sm text-gray-500 dark:text-gray-400"
-                                >
-                                    {{ $t("studio.selectLanguageHelp") }}
+                                <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                                    {{ $t('studio.selectLanguageHelp') }}
                                 </p>
                             </div>
 
                             <div class="hidden mb-6">
                                 <label
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                    >{{ $t("studio.customCover") }}</label
+                                    >{{ $t('studio.customCover') }}</label
                                 >
                                 <div class="flex items-center space-x-4">
                                     <div
@@ -596,11 +532,7 @@
                                             @click="$refs.coverInput.click()"
                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm"
                                         >
-                                            {{
-                                                coverImage
-                                                    ? "Change cover"
-                                                    : "Upload cover"
-                                            }}
+                                            {{ coverImage ? 'Change cover' : 'Upload cover' }}
                                         </button>
                                     </div>
                                     <input
@@ -617,120 +549,78 @@
                         <div
                             class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6"
                         >
-                            <h3
-                                class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6"
-                            >
-                                {{ $t("studio.settings") }}
+                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">
+                                {{ $t('studio.settings') }}
                             </h3>
 
                             <div>
                                 <label
                                     class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"
-                                    >{{ $t("studio.allowOthersTo") }}:</label
+                                    >{{ $t('studio.allowOthersTo') }}:</label
                                 >
                                 <div class="space-y-4">
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
+                                    <div class="flex items-center justify-between">
                                         <div>
                                             <span
                                                 class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{
-                                                    $t("common.comment")
-                                                }}</span
+                                                >{{ $t('common.comment') }}</span
                                             >
-                                            <p
-                                                class="text-xs text-gray-500 dark:text-gray-400"
-                                            >
-                                                {{
-                                                    $t("studio.commentMessage")
-                                                }}
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $t('studio.commentMessage') }}
                                             </p>
                                         </div>
-                                        <ToggleSwitch
-                                            v-model="settings.allowComments"
-                                        />
+                                        <ToggleSwitch v-model="settings.allowComments" />
                                     </div>
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
+                                    <div class="flex items-center justify-between">
                                         <div>
                                             <span
                                                 class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{
-                                                    $t("studio.download")
-                                                }}</span
+                                                >{{ $t('studio.download') }}</span
                                             >
-                                            <p
-                                                class="text-xs text-gray-500 dark:text-gray-400"
-                                            >
-                                                {{
-                                                    $t("studio.downloadMessage")
-                                                }}
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $t('studio.downloadMessage') }}
                                             </p>
                                         </div>
-                                        <ToggleSwitch
-                                            v-model="settings.allowDownloads"
-                                        />
+                                        <ToggleSwitch v-model="settings.allowDownloads" />
                                     </div>
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
+                                    <div class="flex items-center justify-between">
                                         <div>
                                             <span
                                                 class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{ $t("studio.duet") }}</span
+                                                >{{ $t('studio.duet') }}</span
                                             >
-                                            <p
-                                                class="text-xs text-gray-500 dark:text-gray-400"
-                                            >
-                                                {{ $t("studio.duetMessage") }}
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $t('studio.duetMessage') }}
                                             </p>
                                         </div>
-                                        <ToggleSwitch
-                                            v-model="settings.allowDuets"
-                                        />
+                                        <ToggleSwitch v-model="settings.allowDuets" />
                                     </div>
-                                    <div
-                                        class="flex items-center justify-between"
-                                    >
+                                    <div class="flex items-center justify-between">
                                         <div>
                                             <span
                                                 class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{ $t("studio.stitch") }}</span
+                                                >{{ $t('studio.stitch') }}</span
                                             >
-                                            <p
-                                                class="text-xs text-gray-500 dark:text-gray-400"
-                                            >
-                                                {{ $t("studio.stitchMessage") }}
+                                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                                {{ $t('studio.stitchMessage') }}
                                             </p>
                                         </div>
-                                        <ToggleSwitch
-                                            v-model="settings.allowStitch"
-                                        />
+                                        <ToggleSwitch v-model="settings.allowStitch" />
                                     </div>
                                 </div>
                             </div>
 
-                            <div
-                                class="w-full h-[1px] bg-gray-100 dark:bg-gray-700 my-6"
-                            ></div>
+                            <div class="w-full h-[1px] bg-gray-100 dark:bg-gray-700 my-6"></div>
 
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <div>
                                         <span
                                             class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >{{
-                                                $t("studio.containsNSFW")
-                                            }}</span
+                                            >{{ $t('studio.containsNSFW') }}</span
                                         >
-                                        <p
-                                            class="text-xs text-gray-500 dark:text-gray-400"
-                                        >
-                                            {{
-                                                $t("studio.containsNSFWMessage")
-                                            }}
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $t('studio.containsNSFWMessage') }}
                                         </p>
                                     </div>
                                     <ToggleSwitch v-model="settings.nsfw" />
@@ -739,48 +629,26 @@
                                     <div>
                                         <span
                                             class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >{{
-                                                $t("studio.disclosePostContent")
-                                            }}</span
+                                            >{{ $t('studio.disclosePostContent') }}</span
                                         >
-                                        <p
-                                            class="text-xs text-gray-500 dark:text-gray-400"
-                                        >
-                                            {{
-                                                $t(
-                                                    "studio.disclosePostContentHelp",
-                                                )
-                                            }}
+                                        <p class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $t('studio.disclosePostContentHelp') }}
                                         </p>
                                     </div>
-                                    <ToggleSwitch
-                                        v-model="settings.containsAd"
-                                    />
+                                    <ToggleSwitch v-model="settings.containsAd" />
                                 </div>
 
                                 <div class="flex items-center justify-between">
                                     <div class="max-w-[70%]">
                                         <span
                                             class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >{{
-                                                $t(
-                                                    "studio.containsAlteredContent",
-                                                )
-                                            }}</span
+                                            >{{ $t('studio.containsAlteredContent') }}</span
                                         >
-                                        <div
-                                            class="text-xs text-gray-500 dark:text-gray-400"
-                                        >
-                                            {{
-                                                $t(
-                                                    "studio.containsAlteredContentHelp",
-                                                )
-                                            }}
+                                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                                            {{ $t('studio.containsAlteredContentHelp') }}
                                         </div>
                                     </div>
-                                    <ToggleSwitch
-                                        v-model="settings.containsAi"
-                                    />
+                                    <ToggleSwitch v-model="settings.containsAi" />
                                 </div>
                             </div>
                         </div>
@@ -791,44 +659,36 @@
                             <div
                                 class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4"
                             >
-                                <div
-                                    class="flex justify-center space-x-4 mb-4 text-sm"
-                                >
-                                    <div
-                                        class="flex bg-gray-100 dark:bg-gray-900 rounded-lg p-1"
-                                    >
+                                <div class="flex justify-center space-x-4 mb-4 text-sm">
+                                    <div class="flex bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
                                         <button
                                             :class="[
                                                 'px-3 py-1.5 text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
                                                 previewMode === 'feed'
                                                     ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
-                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200',
+                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                                             ]"
                                             @click="previewMode = 'feed'"
                                         >
-                                            {{ $t("studio.feed") }}
+                                            {{ $t('studio.feed') }}
                                         </button>
                                         <button
                                             :class="[
                                                 'px-3 py-1.5 text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
                                                 previewMode === 'profile'
                                                     ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
-                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200',
+                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
                                             ]"
                                             @click="previewMode = 'profile'"
                                         >
-                                            {{ $t("common.profile") }}
+                                            {{ $t('common.profile') }}
                                         </button>
                                     </div>
                                 </div>
 
                                 <div
                                     class="bg-black rounded-2xl p-2"
-                                    style="
-                                        width: 250px;
-                                        height: 500px;
-                                        margin: 0 auto;
-                                    "
+                                    style="width: 250px; height: 500px; margin: 0 auto"
                                 >
                                     <div
                                         class="relative w-full h-full rounded-xl overflow-hidden bg-black"
@@ -847,28 +707,20 @@
                                             v-else
                                             class="w-full h-full flex flex-col items-center justify-center text-white/70 text-xs bg-gray-800"
                                         >
-                                            <span class="text-lg mb-1"
-                                                >No preview</span
-                                            >
-                                            <span
-                                                >Upload a video to see it
-                                                here</span
-                                            >
+                                            <span class="text-lg mb-1">No preview</span>
+                                            <span>Upload a video to see it here</span>
                                         </div>
 
                                         <div
                                             v-if="videoPreviewUrl"
                                             class="pointer-events-none absolute inset-x-0 px-3 pb-2 bg-gradient-to-t from-black/80 via-black/10 to-transparent pt-10"
                                             :class="[
-                                                videoPreviewUrl &&
-                                                previewMode === 'feed'
+                                                videoPreviewUrl && previewMode === 'feed'
                                                     ? 'bottom-[46px]'
-                                                    : 'bottom-0',
+                                                    : 'bottom-0'
                                             ]"
                                         >
-                                            <p
-                                                class="text-white font-semibold text-sm mb-1"
-                                            >
+                                            <p class="text-white font-semibold text-sm mb-1">
                                                 {{ previewUsername }}
                                             </p>
                                             <p
@@ -879,10 +731,7 @@
                                         </div>
 
                                         <MockUIIcons
-                                            v-if="
-                                                videoPreviewUrl &&
-                                                previewMode === 'feed'
-                                            "
+                                            v-if="videoPreviewUrl && previewMode === 'feed'"
                                         />
                                     </div>
                                 </div>
@@ -920,14 +769,14 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                         ></path>
                                     </svg>
-                                    {{ isSubmitting ? "Posting..." : "Post" }}
+                                    {{ isSubmitting ? 'Posting...' : 'Post' }}
                                 </button>
                                 <button
                                     @click="handleDiscard"
                                     class="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                                     :disabled="isSubmitting"
                                 >
-                                    {{ $t("common.discard") }}
+                                    {{ $t('common.discard') }}
                                 </button>
                             </div>
                         </div>
@@ -956,25 +805,17 @@
                     </div>
 
                     <div class="space-y-3">
-                        <h2 class="text-2xl font-semibold text-white">
-                            Uploading Your Loop
-                        </h2>
-                        <p class="text-gray-300 text-lg">
-                            Please don't close this window...
-                        </p>
+                        <h2 class="text-2xl font-semibold text-white">Uploading Your Loop</h2>
+                        <p class="text-gray-300 text-lg">Please don't close this window...</p>
 
                         <div class="w-80 mx-auto">
-                            <div
-                                class="bg-gray-700 rounded-full h-3 overflow-hidden"
-                            >
+                            <div class="bg-gray-700 rounded-full h-3 overflow-hidden">
                                 <div
                                     class="bg-gradient-to-r from-[#ed5b7bff] to-[#F02C56] h-full transition-all duration-300 ease-out"
                                     :style="{ width: `${uploadProgress}%` }"
                                 ></div>
                             </div>
-                            <p class="text-white text-sm mt-2 font-medium">
-                                {{ uploadProgress }}%
-                            </p>
+                            <p class="text-white text-sm mt-2 font-medium">{{ uploadProgress }}%</p>
                         </div>
                     </div>
                 </div>
@@ -1001,17 +842,11 @@
                     </div>
 
                     <div class="space-y-3">
-                        <h2 class="text-2xl font-semibold text-white">
-                            Optimizing your Loop
-                        </h2>
-                        <p class="text-gray-300 text-lg">
-                            Please don't close this window...
-                        </p>
+                        <h2 class="text-2xl font-semibold text-white">Optimizing your Loop</h2>
+                        <p class="text-gray-300 text-lg">Please don't close this window...</p>
 
                         <div class="w-80 mx-auto">
-                            <div
-                                class="bg-gray-700 rounded-full h-3 overflow-hidden"
-                            >
+                            <div class="bg-gray-700 rounded-full h-3 overflow-hidden">
                                 <div
                                     class="bg-gradient-to-r from-[#ed5b7bff] to-[#F02C56] h-full transition-all duration-300 ease-out"
                                     :style="{ width: `${transcodeProgress}%` }"
@@ -1028,19 +863,10 @@
     </Teleport>
 </template>
 <script setup>
-import {
-    ref,
-    reactive,
-    computed,
-    nextTick,
-    watch,
-    inject,
-    onMounted,
-    onBeforeUnmount,
-} from "vue";
-import { storeToRefs } from "pinia";
-import { useRouter, onBeforeRouteLeave } from "vue-router";
-import { useAlertModal } from "@/composables/useAlertModal.js";
+import { ref, reactive, computed, nextTick, watch, inject, onMounted, onBeforeUnmount } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useRouter, onBeforeRouteLeave } from 'vue-router'
+import { useAlertModal } from '@/composables/useAlertModal.js'
 import {
     Input,
     ALL_FORMATS,
@@ -1051,495 +877,478 @@ import {
     Mp4OutputFormat,
     Conversion,
     QUALITY_VERY_HIGH,
-    QUALITY_HIGH,
-} from "mediabunny";
+    QUALITY_HIGH
+} from 'mediabunny'
 
-const router = useRouter();
-const axios = inject("axios");
-const showWarning = ref(false);
-const uploadedFile = ref(null);
-const isDragging = ref(false);
-const description = ref("");
-const coverImage = ref(null);
-const privacy = ref("everyone");
-const previewMode = ref("feed");
-const isSubmitting = ref(false);
-const uploadProgress = ref(0);
-const appConfig = inject("appConfig");
-const authStore = inject("authStore");
-const appStore = inject("appStore");
-const { languages } = storeToRefs(appStore);
-const { alertModal, confirmModal } = useAlertModal();
+const router = useRouter()
+const axios = inject('axios')
+const showWarning = ref(false)
+const uploadedFile = ref(null)
+const isDragging = ref(false)
+const description = ref('')
+const coverImage = ref(null)
+const privacy = ref('everyone')
+const previewMode = ref('feed')
+const isSubmitting = ref(false)
+const uploadProgress = ref(0)
+const appConfig = inject('appConfig')
+const authStore = inject('authStore')
+const appStore = inject('appStore')
+const { languages } = storeToRefs(appStore)
+const { alertModal, confirmModal } = useAlertModal()
 
-const showAutocomplete = ref(false);
-const autocompleteType = ref("");
-const autocompleteQuery = ref("");
-const selectedSuggestionIndex = ref(0);
-const textareaRef = ref(null);
-const autocompletePosition = ref({ top: "100%", left: "0" });
-const isLoadingSuggestions = ref(false);
-const apiSuggestions = ref([]);
-const searchTimeout = ref(null);
-const videoPreviewUrl = ref("");
-const videoPreviewEl = ref(null);
+const showAutocomplete = ref(false)
+const autocompleteType = ref('')
+const autocompleteQuery = ref('')
+const selectedSuggestionIndex = ref(0)
+const textareaRef = ref(null)
+const autocompletePosition = ref({ top: '100%', left: '0' })
+const isLoadingSuggestions = ref(false)
+const apiSuggestions = ref([])
+const searchTimeout = ref(null)
+const videoPreviewUrl = ref('')
+const videoPreviewEl = ref(null)
 
-const videoPreview = ref(null);
-const fileDisplay = ref(null);
-const errorType = ref(null);
-const caption = ref("");
-const altText = ref("");
-const fileData = ref(null);
-const errors = ref(null);
-const isUploading = ref(false);
-const isConverting = ref(false);
-const progress = ref(0);
-const needsConversion = ref(true);
-const convertedFile = ref(null);
-const transcodeProgress = ref(0);
+const videoPreview = ref(null)
+const fileDisplay = ref(null)
+const errorType = ref(null)
+const caption = ref('')
+const altText = ref('')
+const fileData = ref(null)
+const errors = ref(null)
+const isUploading = ref(false)
+const isConverting = ref(false)
+const progress = ref(0)
+const needsConversion = ref(true)
+const convertedFile = ref(null)
+const transcodeProgress = ref(0)
 
-const ffmpegInstance = ref(null);
-const isFFmpegLoaded = ref(false);
+const ffmpegInstance = ref(null)
+const isFFmpegLoaded = ref(false)
 
-let currentConversion = null;
-let currentIntervalId = null;
+let currentConversion = null
+let currentIntervalId = null
 
 const suggestionCache = reactive({
     hashtags: new Map(),
-    mentions: new Map(),
-});
+    mentions: new Map()
+})
 
 const settings = reactive({
-    lang: "en",
+    lang: 'en',
     nsfw: false,
     allowComments: true,
     allowDownloads: true,
     allowDuets: true,
     allowStitch: true,
     containsAd: false,
-    containsAi: false,
-});
+    containsAi: false
+})
 
 onBeforeRouteLeave((to, from, next) => {
     if (isSubmitting.value) {
         confirmModal(
-            "Upload in Progress",
+            'Upload in Progress',
             '<p class="text-gray-700">Your video is still uploading. If you leave now, the upload will be cancelled.</p><p class="text-gray-700 mt-2">Are you sure you want to leave?</p>',
-            "Leave Anyway",
-            "Stay on Page",
+            'Leave Anyway',
+            'Stay on Page'
         ).then((confirmed) => {
             if (confirmed) {
-                next();
+                next()
             } else {
-                next(false);
+                next(false)
             }
-        });
+        })
     } else {
-        next();
+        next()
     }
-});
+})
 
 const handleBeforeUnload = (e) => {
     if (isSubmitting.value) {
-        e.preventDefault();
-        e.returnValue = "";
-        return "";
+        e.preventDefault()
+        e.returnValue = ''
+        return ''
     }
-};
+}
 
 onMounted(async () => {
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    await appStore.ensureLanguages();
-});
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    await appStore.ensureLanguages()
+})
 
 onBeforeUnmount(() => {
-    window.removeEventListener("beforeunload", handleBeforeUnload);
-});
+    window.removeEventListener('beforeunload', handleBeforeUnload)
+})
 
 const previewUsername = computed(() => {
     if (authStore?.user?.username) {
-        return "@" + authStore.user?.username;
+        return '@' + authStore.user?.username
     }
 
     if (authStore?.user?.name) {
-        return "@" + authStore.user?.name;
+        return '@' + authStore.user?.name
     }
 
-    return "@username";
-});
+    return '@username'
+})
 
 const previewCaption = computed(() => {
     return description.value?.trim()
         ? description.value.trim()
-        : "Add a caption to tell people what this loop is about ✨";
-});
+        : 'Add a caption to tell people what this loop is about ✨'
+})
 
 const canSubmit = computed(() => {
-    return uploadedFile.value;
-});
+    return uploadedFile.value
+})
 
 const filteredSuggestions = computed(() => {
-    return apiSuggestions.value;
-});
+    return apiSuggestions.value
+})
 
 const searchHashtags = async (query) => {
     try {
-        const cacheKey = query.toLowerCase();
+        const cacheKey = query.toLowerCase()
         if (suggestionCache.hashtags.has(cacheKey)) {
-            return suggestionCache.hashtags.get(cacheKey);
+            return suggestionCache.hashtags.get(cacheKey)
         }
 
-        const response = await axios.get("/api/v1/autocomplete/tags", {
-            params: { q: query, limit: 6 },
-        });
+        const response = await axios.get('/api/v1/autocomplete/tags', {
+            params: { q: query, limit: 6 }
+        })
 
-        const results = response.data.data || [];
-        suggestionCache.hashtags.set(cacheKey, results);
+        const results = response.data.data || []
+        suggestionCache.hashtags.set(cacheKey, results)
 
-        return results;
+        return results
     } catch (error) {
-        console.error("Error searching hashtags:", error);
-        return [];
+        console.error('Error searching hashtags:', error)
+        return []
     }
-};
+}
 
 const searchMentions = async (query) => {
     try {
-        const cacheKey = query.toLowerCase();
+        const cacheKey = query.toLowerCase()
         if (suggestionCache.mentions.has(cacheKey)) {
-            return suggestionCache.mentions.get(cacheKey);
+            return suggestionCache.mentions.get(cacheKey)
         }
 
-        const response = await axios.get("/api/v1/autocomplete/accounts", {
-            params: { q: query, limit: 6 },
-        });
+        const response = await axios.get('/api/v1/autocomplete/accounts', {
+            params: { q: query, limit: 6 }
+        })
 
-        const results = response.data.data || [];
+        const results = response.data.data || []
 
-        suggestionCache.mentions.set(cacheKey, results);
+        suggestionCache.mentions.set(cacheKey, results)
 
-        return results;
+        return results
     } catch (error) {
-        console.error("Error searching mentions:", error);
-        return [];
+        console.error('Error searching mentions:', error)
+        return []
     }
-};
+}
 
 const debouncedSearch = async (query, type) => {
     if (searchTimeout.value) {
-        clearTimeout(searchTimeout.value);
+        clearTimeout(searchTimeout.value)
     }
 
     if (query.length < 1) {
-        apiSuggestions.value = [];
-        isLoadingSuggestions.value = false;
-        return;
+        apiSuggestions.value = []
+        isLoadingSuggestions.value = false
+        return
     }
 
-    isLoadingSuggestions.value = true;
+    isLoadingSuggestions.value = true
 
     searchTimeout.value = setTimeout(async () => {
         try {
-            let results = [];
+            let results = []
 
-            if (type === "hashtag") {
-                results = await searchHashtags(query);
-            } else if (type === "mention") {
-                results = await searchMentions(query);
+            if (type === 'hashtag') {
+                results = await searchHashtags(query)
+            } else if (type === 'mention') {
+                results = await searchMentions(query)
             }
 
-            apiSuggestions.value = results;
+            apiSuggestions.value = results
         } catch (error) {
-            console.error("Search error:", error);
-            apiSuggestions.value = [];
+            console.error('Search error:', error)
+            apiSuggestions.value = []
         } finally {
-            isLoadingSuggestions.value = false;
+            isLoadingSuggestions.value = false
         }
-    }, 300);
-};
+    }, 300)
+}
 
 const handleFileSelect = async (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith("video/")) {
+    const file = event.target.files[0]
+    if (file && file.type.startsWith('video/')) {
         if (videoPreviewUrl.value) {
-            URL.revokeObjectURL(videoPreviewUrl.value);
+            URL.revokeObjectURL(videoPreviewUrl.value)
         }
 
-        uploadedFile.value = file;
-        videoPreviewUrl.value = URL.createObjectURL(file);
+        uploadedFile.value = file
+        videoPreviewUrl.value = URL.createObjectURL(file)
 
-        await checkVideoResolution(file);
+        await checkVideoResolution(file)
 
         nextTick(() => {
             if (videoPreviewEl.value) {
-                videoPreviewEl.value.pause();
-                videoPreviewEl.value.currentTime = 0;
+                videoPreviewEl.value.pause()
+                videoPreviewEl.value.currentTime = 0
             }
-        });
+        })
     }
-};
+}
 
 const handleDrop = async (event) => {
-    event.preventDefault();
-    isDragging.value = false;
+    event.preventDefault()
+    isDragging.value = false
 
-    const file = event.dataTransfer.files[0];
-    if (file && file.type.startsWith("video/")) {
+    const file = event.dataTransfer.files[0]
+    if (file && file.type.startsWith('video/')) {
         if (videoPreviewUrl.value) {
-            URL.revokeObjectURL(videoPreviewUrl.value);
+            URL.revokeObjectURL(videoPreviewUrl.value)
         }
 
-        uploadedFile.value = file;
-        videoPreviewUrl.value = URL.createObjectURL(file);
+        uploadedFile.value = file
+        videoPreviewUrl.value = URL.createObjectURL(file)
 
-        await checkVideoResolution(file);
+        await checkVideoResolution(file)
 
         nextTick(() => {
             if (videoPreviewEl.value) {
-                videoPreviewEl.value.pause();
-                videoPreviewEl.value.currentTime = 0;
+                videoPreviewEl.value.pause()
+                videoPreviewEl.value.currentTime = 0
             }
-        });
+        })
     }
-};
+}
 
 const handleCoverUpload = (event) => {
-    const file = event.target.files[0];
-    if (file && file.type.startsWith("image/")) {
-        const reader = new FileReader();
+    const file = event.target.files[0]
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader()
         reader.onload = (e) => {
-            coverImage.value = e.target.result;
-        };
-        reader.readAsDataURL(file);
+            coverImage.value = e.target.result
+        }
+        reader.readAsDataURL(file)
     }
-};
+}
 
 const removeCoverImage = () => {
-    coverImage.value = null;
-};
+    coverImage.value = null
+}
 
 const handleDescriptionInput = async (event) => {
-    const textarea = event.target;
-    const cursorPos = textarea.selectionStart;
-    const textBeforeCursor = description.value.substring(0, cursorPos);
+    const textarea = event.target
+    const cursorPos = textarea.selectionStart
+    const textBeforeCursor = description.value.substring(0, cursorPos)
 
-    const hashtagMatch = textBeforeCursor.match(/#(\w*)$/);
-    const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+    const hashtagMatch = textBeforeCursor.match(/#(\w*)$/)
+    const mentionMatch = textBeforeCursor.match(/@(\w*)$/)
 
     if (hashtagMatch) {
-        autocompleteType.value = "hashtag";
-        autocompleteQuery.value = hashtagMatch[1];
-        showAutocomplete.value = true;
-        selectedSuggestionIndex.value = 0;
+        autocompleteType.value = 'hashtag'
+        autocompleteQuery.value = hashtagMatch[1]
+        showAutocomplete.value = true
+        selectedSuggestionIndex.value = 0
 
-        await debouncedSearch(hashtagMatch[1], "hashtag");
+        await debouncedSearch(hashtagMatch[1], 'hashtag')
     } else if (mentionMatch) {
-        autocompleteType.value = "mention";
-        autocompleteQuery.value = mentionMatch[1];
-        showAutocomplete.value = true;
-        selectedSuggestionIndex.value = 0;
+        autocompleteType.value = 'mention'
+        autocompleteQuery.value = mentionMatch[1]
+        showAutocomplete.value = true
+        selectedSuggestionIndex.value = 0
 
-        await debouncedSearch(mentionMatch[1], "mention");
+        await debouncedSearch(mentionMatch[1], 'mention')
     } else {
-        showAutocomplete.value = false;
-        apiSuggestions.value = [];
-        isLoadingSuggestions.value = false;
+        showAutocomplete.value = false
+        apiSuggestions.value = []
+        isLoadingSuggestions.value = false
 
         if (searchTimeout.value) {
-            clearTimeout(searchTimeout.value);
+            clearTimeout(searchTimeout.value)
         }
     }
-};
+}
 
 const handleKeydown = (event) => {
-    if (!showAutocomplete.value) return;
+    if (!showAutocomplete.value) return
 
-    if (event.key === "ArrowDown") {
-        event.preventDefault();
+    if (event.key === 'ArrowDown') {
+        event.preventDefault()
         selectedSuggestionIndex.value = Math.min(
             selectedSuggestionIndex.value + 1,
-            filteredSuggestions.value.length - 1,
-        );
-    } else if (event.key === "ArrowUp") {
-        event.preventDefault();
-        selectedSuggestionIndex.value = Math.max(
-            selectedSuggestionIndex.value - 1,
-            0,
-        );
-    } else if (event.key === "Enter" || event.key === "Tab") {
-        event.preventDefault();
+            filteredSuggestions.value.length - 1
+        )
+    } else if (event.key === 'ArrowUp') {
+        event.preventDefault()
+        selectedSuggestionIndex.value = Math.max(selectedSuggestionIndex.value - 1, 0)
+    } else if (event.key === 'Enter' || event.key === 'Tab') {
+        event.preventDefault()
         if (filteredSuggestions.value[selectedSuggestionIndex.value]) {
-            selectSuggestion(
-                filteredSuggestions.value[selectedSuggestionIndex.value],
-            );
+            selectSuggestion(filteredSuggestions.value[selectedSuggestionIndex.value])
         }
-    } else if (event.key === "Escape") {
-        showAutocomplete.value = false;
+    } else if (event.key === 'Escape') {
+        showAutocomplete.value = false
     }
-};
+}
 
 const selectSuggestion = (suggestion) => {
-    const textarea = textareaRef.value;
-    const cursorPos = textarea.selectionStart;
-    const textBeforeCursor = description.value.substring(0, cursorPos);
-    const textAfterCursor = description.value.substring(cursorPos);
+    const textarea = textareaRef.value
+    const cursorPos = textarea.selectionStart
+    const textBeforeCursor = description.value.substring(0, cursorPos)
+    const textAfterCursor = description.value.substring(cursorPos)
 
-    let newText;
-    if (autocompleteType.value === "hashtag") {
-        const beforeHash = textBeforeCursor.replace(/#\w*$/, "");
-        newText = beforeHash + "#" + suggestion.name + " " + textAfterCursor;
+    let newText
+    if (autocompleteType.value === 'hashtag') {
+        const beforeHash = textBeforeCursor.replace(/#\w*$/, '')
+        newText = beforeHash + '#' + suggestion.name + ' ' + textAfterCursor
     } else {
-        const beforeMention = textBeforeCursor.replace(/@\w*$/, "");
-        newText =
-            beforeMention + "@" + suggestion.username + " " + textAfterCursor;
+        const beforeMention = textBeforeCursor.replace(/@\w*$/, '')
+        newText = beforeMention + '@' + suggestion.username + ' ' + textAfterCursor
     }
 
-    description.value = newText;
-    showAutocomplete.value = false;
+    description.value = newText
+    showAutocomplete.value = false
 
     nextTick(() => {
         const newCursorPos = (
-            autocompleteType.value === "hashtag"
-                ? textBeforeCursor.replace(/#\w*$/, "") +
-                  "#" +
-                  suggestion.name +
-                  " "
-                : textBeforeCursor.replace(/@\w*$/, "") +
-                  "@" +
-                  suggestion.name +
-                  " "
-        ).length;
-        textarea.setSelectionRange(newCursorPos, newCursorPos);
-        textarea.focus();
-    });
-};
+            autocompleteType.value === 'hashtag'
+                ? textBeforeCursor.replace(/#\w*$/, '') + '#' + suggestion.name + ' '
+                : textBeforeCursor.replace(/@\w*$/, '') + '@' + suggestion.name + ' '
+        ).length
+        textarea.setSelectionRange(newCursorPos, newCursorPos)
+        textarea.focus()
+    })
+}
 
 const insertHashtag = () => {
-    const textarea = textareaRef.value;
-    const cursorPos = textarea.selectionStart;
-    const beforeText = description.value.substring(0, cursorPos);
-    const afterText = description.value.substring(cursorPos);
+    const textarea = textareaRef.value
+    const cursorPos = textarea.selectionStart
+    const beforeText = description.value.substring(0, cursorPos)
+    const afterText = description.value.substring(cursorPos)
 
-    description.value = beforeText + "#" + afterText;
+    description.value = beforeText + '#' + afterText
 
     nextTick(() => {
-        textarea.setSelectionRange(cursorPos + 1, cursorPos + 1);
-        textarea.focus();
-    });
-};
+        textarea.setSelectionRange(cursorPos + 1, cursorPos + 1)
+        textarea.focus()
+    })
+}
 
 const insertMention = () => {
-    const textarea = textareaRef.value;
-    const cursorPos = textarea.selectionStart;
-    const beforeText = description.value.substring(0, cursorPos);
-    const afterText = description.value.substring(cursorPos);
+    const textarea = textareaRef.value
+    const cursorPos = textarea.selectionStart
+    const beforeText = description.value.substring(0, cursorPos)
+    const afterText = description.value.substring(cursorPos)
 
-    description.value = beforeText + "@" + afterText;
+    description.value = beforeText + '@' + afterText
 
     nextTick(() => {
-        textarea.setSelectionRange(cursorPos + 1, cursorPos + 1);
-        textarea.focus();
-    });
-};
+        textarea.setSelectionRange(cursorPos + 1, cursorPos + 1)
+        textarea.focus()
+    })
+}
 
 const handleDiscard = () => {
-    if (
-        confirm(
-            "Are you sure you want to discard this video? All changes will be lost.",
-        )
-    ) {
-        resetForm();
+    if (confirm('Are you sure you want to discard this video? All changes will be lost.')) {
+        resetForm()
     }
-};
+}
 
 const resetForm = () => {
-    uploadedFile.value = null;
-    description.value = "";
-    altText.value = "";
-    coverImage.value = null;
-    privacy.value = "everyone";
-    settings.allowComments = true;
-    settings.allowDuet = true;
-    settings.allowStitch = true;
-    settings.containsAd = false;
-    settings.containsAi = false;
-    showAutocomplete.value = false;
-    apiSuggestions.value = [];
-    isLoadingSuggestions.value = false;
+    uploadedFile.value = null
+    description.value = ''
+    altText.value = ''
+    coverImage.value = null
+    privacy.value = 'everyone'
+    settings.allowComments = true
+    settings.allowDuet = true
+    settings.allowStitch = true
+    settings.containsAd = false
+    settings.containsAi = false
+    showAutocomplete.value = false
+    apiSuggestions.value = []
+    isLoadingSuggestions.value = false
 
     if (searchTimeout.value) {
-        clearTimeout(searchTimeout.value);
-        searchTimeout.value = null;
+        clearTimeout(searchTimeout.value)
+        searchTimeout.value = null
     }
 
-    suggestionCache.hashtags.clear();
-    suggestionCache.mentions.clear();
-};
+    suggestionCache.hashtags.clear()
+    suggestionCache.mentions.clear()
+}
 
 const checkVideoResolution = async (file) => {
     return new Promise((resolve) => {
-        const video = document.createElement("video");
-        video.preload = "metadata";
+        const video = document.createElement('video')
+        video.preload = 'metadata'
 
         video.onloadedmetadata = function () {
-            console.log(video);
-            URL.revokeObjectURL(video.src);
-            const width = video.videoWidth;
-            const height = video.videoHeight;
-            const duration = video.duration;
+            console.log(video)
+            URL.revokeObjectURL(video.src)
+            const width = video.videoWidth
+            const height = video.videoHeight
+            const duration = video.duration
 
-            needsConversion.value = true;
+            needsConversion.value = true
 
             console.log(
-                `Video dimensions: ${width}x${height}, duration: ${duration}s, needs conversion: ${needsConversion.value}`,
-            );
-            resolve({ width, height, duration });
-        };
+                `Video dimensions: ${width}x${height}, duration: ${duration}s, needs conversion: ${needsConversion.value}`
+            )
+            resolve({ width, height, duration })
+        }
 
         video.onerror = function () {
-            console.error("Error loading video metadata");
-            resolve({ width: 0, height: 0, duration: 0 });
-        };
+            console.error('Error loading video metadata')
+            resolve({ width: 0, height: 0, duration: 0 })
+        }
 
-        video.src = URL.createObjectURL(file);
-    });
-};
+        video.src = URL.createObjectURL(file)
+    })
+}
 
 const isSafari = (() => {
-    if (typeof navigator === "undefined") {
-        return false;
+    if (typeof navigator === 'undefined') {
+        return false
     }
-    const ua = navigator.userAgent;
-    const isSafariLike =
-        /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua);
-    return isSafariLike;
-})();
+    const ua = navigator.userAgent
+    const isSafariLike = /Safari/.test(ua) && !/Chrome|Chromium|Edg|OPR/.test(ua)
+    return isSafariLike
+})()
 
 const handleTranscode = async () => {
     if (isConverting.value) {
-        return null;
+        return null
     }
 
     if (isSafari) {
-        return uploadedFile.value;
+        return uploadedFile.value
     }
 
-    isConverting.value = true;
+    isConverting.value = true
 
-    const source = new BlobSource(uploadedFile.value);
+    const source = new BlobSource(uploadedFile.value)
     const input = new Input({
         source,
-        formats: ALL_FORMATS,
-    });
+        formats: ALL_FORMATS
+    })
 
     try {
-        const fileSize = await source.getSize();
+        const fileSize = await source.getSize()
 
         const output = new Output({
             target: new BufferTarget(),
-            format: new Mp4OutputFormat(),
-        });
+            format: new Mp4OutputFormat()
+        })
 
-        const quality = fileSize > 50000000 ? QUALITY_HIGH : 1500000;
+        const quality = fileSize > 50000000 ? QUALITY_HIGH : 1500000
 
         currentConversion = await Conversion.init({
             input,
@@ -1547,253 +1356,236 @@ const handleTranscode = async () => {
             video: {
                 width: 1080,
                 height: 1920,
-                fit: "contain",
+                fit: 'contain',
                 bitrate: quality,
-                frameRate: 30,
+                frameRate: 30
             },
             trim: {
                 start: 0,
-                end: 60,
-            },
-        });
+                end: 60
+            }
+        })
 
         currentConversion.onProgress = (newProgress) =>
-            (transcodeProgress.value = Math.floor(newProgress * 100));
+            (transcodeProgress.value = Math.floor(newProgress * 100))
 
-        const fileDuration = await input.computeDuration();
-        const startTime = performance.now();
+        const fileDuration = await input.computeDuration()
+        const startTime = performance.now()
 
         const updateProgress = () => {
-            const now = performance.now();
-            const elapsedSeconds = (now - startTime) / 1000;
-            const factor =
-                fileDuration / (elapsedSeconds / transcodeProgress.value);
-        };
-
-        currentIntervalId = window.setInterval(updateProgress, 1000 / 60);
-
-        await currentConversion.execute();
-
-        if (currentIntervalId) {
-            clearInterval(currentIntervalId);
+            const now = performance.now()
+            const elapsedSeconds = (now - startTime) / 1000
+            const factor = fileDuration / (elapsedSeconds / transcodeProgress.value)
         }
 
-        const buffer = output.target.buffer;
+        currentIntervalId = window.setInterval(updateProgress, 1000 / 60)
+
+        await currentConversion.execute()
+
+        if (currentIntervalId) {
+            clearInterval(currentIntervalId)
+        }
+
+        const buffer = output.target.buffer
 
         if (buffer) {
-            const blob = new Blob([buffer], { type: output.format.mimeType });
+            const blob = new Blob([buffer], { type: output.format.mimeType })
 
-            console.log(`Original size: ${fileSize}`);
-            console.log(`Transcoded size: ${buffer.byteLength}`);
+            console.log(`Original size: ${fileSize}`)
+            console.log(`Transcoded size: ${buffer.byteLength}`)
             console.log(
-                `${((buffer.byteLength / fileSize) * 100).toPrecision(3)}% of original size`,
-            );
+                `${((buffer.byteLength / fileSize) * 100).toPrecision(3)}% of original size`
+            )
 
-            return blob;
+            return blob
         }
 
-        return null;
+        return null
     } finally {
-        isConverting.value = false;
+        isConverting.value = false
         if (currentIntervalId) {
-            clearInterval(currentIntervalId);
+            clearInterval(currentIntervalId)
         }
     }
-};
+}
 
 const handleSubmit = async () => {
-    if (!canSubmit.value || isSubmitting.value) return;
+    if (!canSubmit.value || isSubmitting.value) return
 
-    const transcodedVideo = await handleTranscode();
+    const transcodedVideo = await handleTranscode()
 
     if (!transcodedVideo) {
-        await alertModal(
-            "Transcoding Failed",
-            "Failed to transcode video. Please try again.",
-        );
-        return;
+        await alertModal('Transcoding Failed', 'Failed to transcode video. Please try again.')
+        return
     }
 
-    isSubmitting.value = true;
-    uploadProgress.value = 0;
+    isSubmitting.value = true
+    uploadProgress.value = 0
 
-    let progressInterval = null;
-    let hasReceivedResponse = false;
+    let progressInterval = null
+    let hasReceivedResponse = false
 
     const startSimulatedProgress = () => {
-        let progress = 0;
-        const startTime = Date.now();
+        let progress = 0
+        const startTime = Date.now()
 
         progressInterval = setInterval(() => {
-            const elapsedSeconds = (Date.now() - startTime) / 1000;
+            const elapsedSeconds = (Date.now() - startTime) / 1000
 
             if (elapsedSeconds < 10) {
-                progress = (elapsedSeconds / 10) * 50;
+                progress = (elapsedSeconds / 10) * 50
             } else if (elapsedSeconds < 20) {
-                progress = 50 + ((elapsedSeconds - 10) / 10) * 30;
+                progress = 50 + ((elapsedSeconds - 10) / 10) * 30
             } else if (elapsedSeconds < 40) {
-                progress = 80 + ((elapsedSeconds - 20) / 20) * 10;
+                progress = 80 + ((elapsedSeconds - 20) / 20) * 10
             } else {
-                progress = 90;
+                progress = 90
             }
 
             if (!hasReceivedResponse) {
-                uploadProgress.value = Math.min(Math.round(progress), 90);
+                uploadProgress.value = Math.min(Math.round(progress), 90)
             }
-        }, 100);
-    };
+        }, 100)
+    }
 
-    startSimulatedProgress();
+    startSimulatedProgress()
 
     try {
-        const formData = new FormData();
-        formData.append("video", transcodedVideo, "transcoded-video.mp4");
-        formData.append("description", description.value);
-        formData.append("alt_text", altText.value);
-        formData.append("lang", settings.lang);
-        formData.append("comment_state", settings.allowComments ? 4 : 0);
-        formData.append("can_download", settings.allowDownloads);
-        formData.append("is_sensitive", settings.nsfw ? 1 : 0);
-        formData.append("contains_ad", settings.containsAd ? 1 : 0);
-        formData.append("contains_ai", settings.containsAi ? 1 : 0);
+        const formData = new FormData()
+        formData.append('video', transcodedVideo, 'transcoded-video.mp4')
+        formData.append('description', description.value)
+        formData.append('alt_text', altText.value)
+        formData.append('lang', settings.lang)
+        formData.append('comment_state', settings.allowComments ? 4 : 0)
+        formData.append('can_download', settings.allowDownloads)
+        formData.append('is_sensitive', settings.nsfw ? 1 : 0)
+        formData.append('contains_ad', settings.containsAd ? 1 : 0)
+        formData.append('contains_ai', settings.containsAi ? 1 : 0)
 
         if (coverImage.value) {
-            formData.append("cover_image", coverImage.value);
+            formData.append('cover_image', coverImage.value)
         }
 
-        const response = await axios.post("/api/v1/studio/upload", formData, {
+        const response = await axios.post('/api/v1/studio/upload', formData, {
             headers: {
-                "Content-Type": "multipart/form-data",
+                'Content-Type': 'multipart/form-data'
             },
             timeout: 120000,
             validateStatus: function (status) {
-                return status >= 200 && status < 300;
-            },
-        });
+                return status >= 200 && status < 300
+            }
+        })
 
-        hasReceivedResponse = true;
+        hasReceivedResponse = true
         if (progressInterval) {
-            clearInterval(progressInterval);
+            clearInterval(progressInterval)
         }
 
-        if (!response || !response.data || typeof response.data !== "object") {
-            throw new Error("Invalid response from server");
+        if (!response || !response.data || typeof response.data !== 'object') {
+            throw new Error('Invalid response from server')
         }
 
         const isSuccess =
             response.data.success === true ||
-            response.data.status === "success" ||
-            response.status === 200;
+            response.data.status === 'success' ||
+            response.status === 200
 
         if (!isSuccess) {
-            throw new Error(
-                response.data.message || "Upload failed - invalid response",
-            );
+            throw new Error(response.data.message || 'Upload failed - invalid response')
         }
 
-        uploadProgress.value = 95;
-        await new Promise((resolve) => setTimeout(resolve, 200));
-        uploadProgress.value = 100;
-        await new Promise((resolve) => setTimeout(resolve, 300));
+        uploadProgress.value = 95
+        await new Promise((resolve) => setTimeout(resolve, 200))
+        uploadProgress.value = 100
+        await new Promise((resolve) => setTimeout(resolve, 300))
 
-        resetForm();
-        router.push("/studio/posts");
+        resetForm()
+        router.push('/studio/posts')
     } catch (error) {
-        hasReceivedResponse = true;
+        hasReceivedResponse = true
         if (progressInterval) {
-            clearInterval(progressInterval);
+            clearInterval(progressInterval)
         }
 
-        console.error("Error posting video:", error);
+        console.error('Error posting video:', error)
 
-        let errorMessage = "Error posting video. Please try again.";
-        let errorTitle = "Upload Failed";
-        let errorDetails = null;
+        let errorMessage = 'Error posting video. Please try again.'
+        let errorTitle = 'Upload Failed'
+        let errorDetails = null
 
-        const status = error.response?.status;
-        const responseData = error.response?.data;
-        const errorCode = error.code;
-        const errorMsg = error.message;
+        const status = error.response?.status
+        const responseData = error.response?.data
+        const errorCode = error.code
+        const errorMsg = error.message
 
-        if (errorCode === "ECONNABORTED" || errorMsg?.includes("timeout")) {
-            errorTitle = "Upload Timeout";
+        if (errorCode === 'ECONNABORTED' || errorMsg?.includes('timeout')) {
+            errorTitle = 'Upload Timeout'
             errorMessage =
-                "The upload took too long and timed out. This usually happens with larger videos. Please try uploading a smaller video or check your internet connection.";
+                'The upload took too long and timed out. This usually happens with larger videos. Please try uploading a smaller video or check your internet connection.'
         } else if (status === 500) {
-            errorTitle = "Server Error";
+            errorTitle = 'Server Error'
 
             const hasTimeoutError =
-                responseData?.message
-                    ?.toLowerCase()
-                    .includes("maximum execution time") ||
-                responseData?.message
-                    ?.toLowerCase()
-                    .includes("execution time") ||
-                responseData?.exception
-                    ?.toLowerCase()
-                    .includes("maximum execution time");
+                responseData?.message?.toLowerCase().includes('maximum execution time') ||
+                responseData?.message?.toLowerCase().includes('execution time') ||
+                responseData?.exception?.toLowerCase().includes('maximum execution time')
 
             if (hasTimeoutError) {
                 errorMessage =
-                    "The server took too long to process your video. This usually happens with large files. Please try again with a smaller video or contact support if the issue persists.";
-                errorDetails = "Server timeout error";
+                    'The server took too long to process your video. This usually happens with large files. Please try again with a smaller video or contact support if the issue persists.'
+                errorDetails = 'Server timeout error'
             } else if (responseData?.message) {
-                errorMessage = responseData.message;
+                errorMessage = responseData.message
             } else {
                 errorMessage =
-                    "A server error occurred while uploading your video. Please try again later.";
+                    'A server error occurred while uploading your video. Please try again later.'
             }
         } else if (status >= 400 && status < 500) {
-            if (
-                responseData?.errors &&
-                typeof responseData.errors === "object"
-            ) {
-                errors.value = responseData.errors;
-                const firstErrorArray = Object.values(responseData.errors)[0];
-                errorMessage = Array.isArray(firstErrorArray)
-                    ? firstErrorArray[0]
-                    : firstErrorArray;
+            if (responseData?.errors && typeof responseData.errors === 'object') {
+                errors.value = responseData.errors
+                const firstErrorArray = Object.values(responseData.errors)[0]
+                errorMessage = Array.isArray(firstErrorArray) ? firstErrorArray[0] : firstErrorArray
             } else if (responseData?.message) {
-                errorMessage = responseData.message;
+                errorMessage = responseData.message
             } else if (responseData?.error) {
-                errorMessage = responseData.error;
+                errorMessage = responseData.error
             }
-        } else if (errorMsg === "Network Error") {
-            errorTitle = "Network Error";
+        } else if (errorMsg === 'Network Error') {
+            errorTitle = 'Network Error'
             errorMessage =
-                "Unable to connect to the server. Please check your internet connection and try again.";
+                'Unable to connect to the server. Please check your internet connection and try again.'
         } else if (errorMsg) {
-            errorMessage = errorMsg;
+            errorMessage = errorMsg
         }
 
         let errorHtml = `<div class="space-y-3">
-            <p class="text-gray-700">${errorMessage}</p>`;
+            <p class="text-gray-700">${errorMessage}</p>`
 
         if (status) {
-            errorHtml += `<p class="text-sm text-gray-500">Error code: ${status}</p>`;
+            errorHtml += `<p class="text-sm text-gray-500">Error code: ${status}</p>`
         }
 
         if (errorDetails) {
-            errorHtml += `<p class="text-xs text-gray-400 mt-2">${errorDetails}</p>`;
+            errorHtml += `<p class="text-xs text-gray-400 mt-2">${errorDetails}</p>`
         }
 
-        errorHtml += `</div>`;
+        errorHtml += `</div>`
 
-        await alertModal(errorTitle, errorHtml);
+        await alertModal(errorTitle, errorHtml)
     } finally {
         if (progressInterval) {
-            clearInterval(progressInterval);
+            clearInterval(progressInterval)
         }
-        isSubmitting.value = false;
-        uploadProgress.value = 0;
+        isSubmitting.value = false
+        uploadProgress.value = 0
     }
-};
+}
 
 const formatFileSize = (bytes) => {
-    if (bytes === 0) return "0 Bytes";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-};
+    if (bytes === 0) return '0 Bytes'
+    const k = 1024
+    const sizes = ['Bytes', 'KB', 'MB', 'GB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
+}
 </script>

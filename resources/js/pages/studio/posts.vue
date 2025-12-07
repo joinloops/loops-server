@@ -5,5 +5,5 @@
 </template>
 
 <script setup>
-import StudioPosts from "@/components/Studio/StudioPosts.vue";
+import StudioPosts from '@/components/Studio/StudioPosts.vue'
 </script>

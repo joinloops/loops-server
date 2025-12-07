@@ -50,6 +50,32 @@ class UpdateVideoRequest extends FormRequest
     }
 
     /**
+     * Configure the validator instance.
+     */
+    public function withValidator($validator): void
+    {
+        $validator->after(function ($validator) {
+            if ($this->input('is_pinned') === true) {
+                $video = Video::find($this->route('id'));
+
+                if ($video && ! $video->is_pinned) {
+                    $pinnedCount = Video::where('profile_id', $this->user()->profile_id)
+                        ->where('status', 2)
+                        ->where('is_pinned', true)
+                        ->count();
+
+                    if ($pinnedCount >= 3) {
+                        $validator->errors()->add(
+                            'is_pinned',
+                            'You can only pin up to 3 videos. Please unpin another video first.'
+                        );
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation(): void

@@ -1,14 +1,10 @@
 <template>
     <div class="w-full">
         <div class="mb-4">
-            <h4
-                class="text-lg font-semibold text-gray-900 dark:text-gray-300 mb-1"
-            >
+            <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-300 mb-1">
                 Suggested for you
             </h4>
-            <p class="text-sm text-gray-600 dark:text-gray-400">
-                Discover accounts you might like
-            </p>
+            <p class="text-sm text-gray-600 dark:text-gray-400">Discover accounts you might like</p>
         </div>
 
         <div v-if="isLoading" class="flex justify-center py-8">
@@ -81,124 +77,117 @@
             </button>
         </div>
 
-        <div v-else class="text-center py-8 text-gray-500">
-            No suggestions available
-        </div>
+        <div v-else class="text-center py-8 text-gray-500">No suggestions available</div>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from "vue";
-import { useSuggestedAccounts } from "~/composables/useSuggestedAccounts";
-import { useFollowAccount } from "~/composables/useFollowAccount";
-import AccountCard from "./AccountCard.vue";
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
+import { useSuggestedAccounts } from '~/composables/useSuggestedAccounts'
+import { useFollowAccount } from '~/composables/useFollowAccount'
+import AccountCard from './AccountCard.vue'
 
-const emit = defineEmits(["account-followed", "account-unfollowed"]);
+const emit = defineEmits(['account-followed', 'account-unfollowed'])
 
 // Composables
-const {
-    data: suggestedData,
-    isLoading,
-    error,
-    refetch,
-} = useSuggestedAccounts();
-const { followAccount, unfollowAccount } = useFollowAccount();
+const { data: suggestedData, isLoading, error, refetch } = useSuggestedAccounts()
+const { followAccount, unfollowAccount } = useFollowAccount()
 
 // Reactive data
-const carouselRef = ref(null);
-const followingStates = reactive({});
-const loadingStates = reactive({});
-const canScrollLeft = ref(false);
-const canScrollRight = ref(false);
-const showNavigation = ref(false);
+const carouselRef = ref(null)
+const followingStates = reactive({})
+const loadingStates = reactive({})
+const canScrollLeft = ref(false)
+const canScrollRight = ref(false)
+const showNavigation = ref(false)
 
 // Computed
-const accounts = computed(() => suggestedData.value?.data || []);
+const accounts = computed(() => suggestedData.value?.data || [])
 
 const handleFollow = async (account) => {
-    if (loadingStates[account.id]) return;
+    if (loadingStates[account.id]) return
 
-    loadingStates[account.id] = true;
+    loadingStates[account.id] = true
 
     try {
-        await followAccount(account.id);
-        followingStates[account.id] = true;
-        emit("account-followed", account.id);
+        await followAccount(account.id)
+        followingStates[account.id] = true
+        emit('account-followed', account.id)
     } catch (error) {
-        console.error("Failed to follow account:", error);
+        console.error('Failed to follow account:', error)
     } finally {
-        loadingStates[account.id] = false;
+        loadingStates[account.id] = false
     }
-};
+}
 
 const handleUnfollow = async (account) => {
-    if (loadingStates[account.id]) return;
+    if (loadingStates[account.id]) return
 
-    loadingStates[account.id] = true;
+    loadingStates[account.id] = true
 
     try {
-        await unfollowAccount(account.id);
-        followingStates[account.id] = false;
-        emit("account-unfollowed", account.id);
+        await unfollowAccount(account.id)
+        followingStates[account.id] = false
+        emit('account-unfollowed', account.id)
     } catch (error) {
-        console.error("Failed to unfollow account:", error);
+        console.error('Failed to unfollow account:', error)
     } finally {
-        loadingStates[account.id] = false;
+        loadingStates[account.id] = false
     }
-};
+}
 
 const scrollLeft = () => {
     if (carouselRef.value) {
-        carouselRef.value.scrollBy({ left: -300, behavior: "smooth" });
+        carouselRef.value.scrollBy({ left: -300, behavior: 'smooth' })
     }
-};
+}
 
 const scrollRight = () => {
     if (carouselRef.value) {
-        carouselRef.value.scrollBy({ left: 300, behavior: "smooth" });
+        carouselRef.value.scrollBy({ left: 300, behavior: 'smooth' })
     }
-};
+}
 
 const updateScrollButtons = () => {
-    if (!carouselRef.value) return;
+    if (!carouselRef.value) return
 
-    const { scrollLeft, scrollWidth, clientWidth } = carouselRef.value;
-    canScrollLeft.value = scrollLeft > 0;
-    canScrollRight.value = scrollLeft < scrollWidth - clientWidth - 1;
-};
+    const { scrollLeft, scrollWidth, clientWidth } = carouselRef.value
+    canScrollLeft.value = scrollLeft > 0
+    canScrollRight.value = scrollLeft < scrollWidth - clientWidth - 1
+}
 
 const handleResize = () => {
-    if (!carouselRef.value) return;
+    if (!carouselRef.value) return
 
-    const { scrollWidth, clientWidth } = carouselRef.value;
-    showNavigation.value = scrollWidth > clientWidth;
-    updateScrollButtons();
-};
+    const { scrollWidth, clientWidth } = carouselRef.value
+    showNavigation.value = scrollWidth > clientWidth
+    updateScrollButtons()
+}
 
 // Lifecycle
 onMounted(() => {
     // Initialize following states
     accounts.value.forEach((account) => {
-        followingStates[account.id] = account.is_following || false;
-        loadingStates[account.id] = false;
-    });
+        followingStates[account.id] = account.is_following || false
+        loadingStates[account.id] = false
+    })
 
     // Setup scroll event listener
     if (carouselRef.value) {
-        carouselRef.value.addEventListener("scroll", updateScrollButtons);
-        window.addEventListener("resize", handleResize);
+        carouselRef.value.addEventListener('scroll', updateScrollButtons)
+        window.addEventListener('resize', handleResize)
 
         // Initial check
-        setTimeout(handleResize, 100);
+        setTimeout(handleResize, 100)
     }
-});
+})
 
 onUnmounted(() => {
     if (carouselRef.value) {
-        carouselRef.value.removeEventListener("scroll", updateScrollButtons);
+        carouselRef.value.removeEventListener('scroll', updateScrollButtons)
     }
-    window.removeEventListener("resize", handleResize);
-});
+    window.removeEventListener('resize', handleResize)
+})
 </script>
 
 <style scoped>

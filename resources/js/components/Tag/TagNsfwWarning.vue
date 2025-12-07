@@ -6,15 +6,13 @@
             <AlertTriangleIcon />
 
             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                {{ $t("common.ageRestrictedContent") }}
+                {{ $t('common.ageRestrictedContent') }}
             </h3>
             <p class="text-gray-600 dark:text-gray-400 mb-6">
-                {{ $t("common.hashtagContainsAgeRestrictedContent") }}
+                {{ $t('common.hashtagContainsAgeRestrictedContent') }}
             </p>
             <AnimatedButton @click="handleLogin" class="w-full">
-                <div
-                    class="flex justify-center text-center text-lg gap-2 items-center flex-row"
-                >
+                <div class="flex justify-center text-center text-lg gap-2 items-center flex-row">
                     <svg
                         class="inline-flex w-5 h-5"
                         fill="none"
@@ -28,7 +26,7 @@
                             d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
                         />
                     </svg>
-                    {{ $t("common.loginToContinue") }}
+                    {{ $t('common.loginToContinue') }}
                 </div>
             </AnimatedButton>
         </div>
@@ -36,11 +34,11 @@
 </template>
 
 <script setup>
-import { useRouter } from "vue-router";
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const handleLogin = () => {
-    router.push("/login");
-};
+    router.push('/login')
+}
 </script>

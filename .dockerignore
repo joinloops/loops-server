@@ -1,0 +1,22 @@
+# Folders
+.git/
+#!storage/app/public/m/
+#storage/app/public/m/*
+mysqldb-9-data/
+redis-data/
+tests/
+node_modules/
+vendor/
+.ddev/
+
+#Files
+.gitignore
+.env
+.env.*
+.env.example
+.env.docker.example
+docker-compose.yml
+Dockerfile
+README.md
+.editorconfig
+.phpunit.result.cache

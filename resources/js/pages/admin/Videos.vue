@@ -1,12 +1,8 @@
 <template>
     <div>
         <div class="mb-6">
-            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">
-                Videos Management
-            </h1>
-            <p class="mt-2 text-gray-600 dark:text-gray-400">
-                Monitor and moderate video content
-            </p>
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Videos Management</h1>
+            <p class="mt-2 text-gray-600 dark:text-gray-400">Monitor and moderate video content</p>
         </div>
 
         <DataTable
@@ -59,10 +55,7 @@
                             :src="item.account.avatar"
                             :alt="item.account.username"
                             class="w-8 h-8 rounded-full mr-2"
-                            @error="
-                                $event.target.src =
-                                    '/storage/avatars/default.jpg'
-                            "
+                            @error="$event.target.src = '/storage/avatars/default.jpg'"
                         />
                         <span>{{ item.account.username }}</span>
                     </div>
@@ -71,12 +64,8 @@
 
             <template #cell-stats="{ item }">
                 <div class="space-y-1">
-                    <div class="text-sm">
-                        Likes: {{ formatNumber(item.likes) }}
-                    </div>
-                    <div class="text-sm">
-                        Comments: {{ formatNumber(item.comments) }}
-                    </div>
+                    <div class="text-sm">Likes: {{ formatNumber(item.likes) }}</div>
+                    <div class="text-sm">Comments: {{ formatNumber(item.comments) }}</div>
                 </div>
             </template>
 
@@ -88,131 +77,131 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from "vue";
-import { useRouter, useRoute } from "vue-router";
-import DataTable from "@/components/DataTable.vue";
-import { videosApi } from "@/services/adminApi";
-import { useUtils } from "@/composables/useUtils";
-const { truncateMiddle, formatNumber, formatDate } = useUtils();
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import DataTable from '@/components/DataTable.vue'
+import { videosApi } from '@/services/adminApi'
+import { useUtils } from '@/composables/useUtils'
+const { truncateMiddle, formatNumber, formatDate } = useUtils()
 
-const router = useRouter();
-const route = useRoute();
-const videos = ref([]);
-const loading = ref(false);
+const router = useRouter()
+const route = useRoute()
+const videos = ref([])
+const loading = ref(false)
 const pagination = ref({
     cursor: null,
     hasPrevious: false,
-    hasNext: false,
-});
+    hasNext: false
+})
 
 const columns = [
-    { key: "id", label: "ID" },
-    { key: "video", label: "Video" },
-    { key: "account", label: "Account" },
-    { key: "stats", label: "Engagement" },
-    { key: "created_at", label: "Uploaded" },
-];
+    { key: 'id', label: 'ID' },
+    { key: 'video', label: 'Video' },
+    { key: 'account', label: 'Account' },
+    { key: 'stats', label: 'Engagement' },
+    { key: 'created_at', label: 'Uploaded' }
+]
 
-const searchQuery = ref(route.query.q || "");
-const sortBy = ref("");
-const DEBOUNCE_DELAY = 300;
-let searchTimeout = null;
+const searchQuery = ref(route.query.q || '')
+const sortBy = ref('')
+const DEBOUNCE_DELAY = 300
+let searchTimeout = null
 
 const sortOptions = [
-    { name: "Most Likes", value: "likes_desc" },
-    { name: "Most Comments", value: "comments_desc" },
-    { name: "Newest", value: "created_at_desc" },
-    { name: "Oldest", value: "created_at_asc" },
-    { name: "Last Updated", value: "updated_at_desc" },
-];
+    { name: 'Most Likes', value: 'likes_desc' },
+    { name: 'Most Comments', value: 'comments_desc' },
+    { name: 'Newest', value: 'created_at_desc' },
+    { name: 'Oldest', value: 'created_at_asc' },
+    { name: 'Last Updated', value: 'updated_at_desc' }
+]
 
-const fetchVideos = async (cursor = null, direction = "next") => {
-    loading.value = true;
+const fetchVideos = async (cursor = null, direction = 'next') => {
+    loading.value = true
     try {
-        const params = { cursor, direction };
+        const params = { cursor, direction }
 
         if (searchQuery.value) {
-            params.search = searchQuery.value;
+            params.search = searchQuery.value
         }
 
         if (sortBy.value) {
-            params.sort = sortBy.value;
+            params.sort = sortBy.value
         }
 
-        const response = await videosApi.getVideos(params);
-        videos.value = response.data;
-        pagination.value = response.meta;
+        const response = await videosApi.getVideos(params)
+        videos.value = response.data
+        pagination.value = response.meta
     } catch (error) {
-        console.error("Error fetching videos:", error);
+        console.error('Error fetching videos:', error)
     } finally {
-        loading.value = false;
+        loading.value = false
     }
-};
+}
 
 const watchVideo = (video) => {
-    router.push(`/admin/videos/${video.id}`);
-};
+    router.push(`/admin/videos/${video.id}`)
+}
 
 // Watch for URL query parameter changes
 watch(
     () => route.query.q,
     (newQuery) => {
-        searchQuery.value = newQuery || "";
-    },
-);
+        searchQuery.value = newQuery || ''
+    }
+)
 
 watch(searchQuery, (newQuery) => {
     if (searchTimeout) {
-        clearTimeout(searchTimeout);
+        clearTimeout(searchTimeout)
     }
 
     searchTimeout = setTimeout(() => {
-        const query = { ...route.query };
+        const query = { ...route.query }
         if (newQuery) {
-            query.q = newQuery;
+            query.q = newQuery
         } else {
-            delete query.q;
+            delete query.q
         }
 
         if (route.query.q !== newQuery) {
-            router.replace({ query });
+            router.replace({ query })
         }
 
-        fetchVideos();
-    }, DEBOUNCE_DELAY);
-});
+        fetchVideos()
+    }, DEBOUNCE_DELAY)
+})
 
 watch(sortBy, (newQuery) => {
     if (searchTimeout) {
-        clearTimeout(searchTimeout);
+        clearTimeout(searchTimeout)
     }
 
     searchTimeout = setTimeout(() => {
-        fetchVideos();
-    }, DEBOUNCE_DELAY);
-});
+        fetchVideos()
+    }, DEBOUNCE_DELAY)
+})
 
 const handleSort = (sortValue) => {
-    sortBy.value = sortValue;
-};
+    sortBy.value = sortValue
+}
 
 const handleSearch = (query) => {
-    searchQuery.value = query;
-};
+    searchQuery.value = query
+}
 
 const nextPage = () => {
     if (pagination.value.next_cursor) {
-        fetchVideos(pagination.value.next_cursor, "next");
+        fetchVideos(pagination.value.next_cursor, 'next')
     }
-};
+}
 
 const previousPage = () => {
     if (pagination.value.prev_cursor) {
-        fetchVideos(pagination.value.prev_cursor, "previous");
+        fetchVideos(pagination.value.prev_cursor, 'previous')
     }
-};
+}
 
 onMounted(() => {
-    fetchVideos();
-});
+    fetchVideos()
+})
 </script>

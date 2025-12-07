@@ -45,6 +45,7 @@ class AdminInstanceResource extends JsonResource
             'reply_count' => $this->reply_count ?? 0,
             'comment_count' => $this->comment_count ?? 0,
             'follower_count' => $this->follower_count ?? 0,
+            'following_count' => $this->following_count ?? 0,
             'report_count' => $this->report_count ?? 0,
             'federation_state' => (int) $this->federation_state,
             'admin_notes' => $this->admin_notes,

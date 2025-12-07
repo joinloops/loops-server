@@ -13,9 +13,7 @@
                 class="fixed inset-0 z-70 flex items-center justify-center p-4"
                 @click="handleBackdropClick"
             >
-                <div
-                    class="absolute inset-0 bg-black/50 dark:bg-black/70"
-                ></div>
+                <div class="absolute inset-0 bg-black/50 dark:bg-black/70"></div>
 
                 <Transition
                     enter-active-class="transition duration-300 ease-out transform"
@@ -40,11 +38,7 @@
                             class="absolute top-4 right-4 z-10 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors"
                             aria-label="Close modal"
                         >
-                            <svg
-                                class="h-5 w-5"
-                                viewBox="0 0 20 20"
-                                fill="currentColor"
-                            >
+                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                 <path
                                     fill-rule="evenodd"
                                     d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
@@ -91,108 +85,95 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from "vue";
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 
 const props = defineProps({
     title: {
         type: String,
-        default: "",
+        default: ''
     },
     body: {
         type: String,
-        default: "",
+        default: ''
     },
     actions: {
         type: Array,
-        default: () => [],
+        default: () => []
     },
     modelValue: {
         type: Boolean,
-        default: false,
+        default: false
     },
     closeOnBackdrop: {
         type: Boolean,
-        default: true,
+        default: true
     },
     persistModal: {
         type: Boolean,
-        default: false,
+        default: false
     },
     closeOnEscape: {
         type: Boolean,
-        default: true,
-    },
-});
+        default: true
+    }
+})
 
-const emit = defineEmits(["update:modelValue", "close"]);
+const emit = defineEmits(['update:modelValue', 'close'])
 
 const isVisible = computed({
     get: () => props.modelValue,
-    set: (value) => emit("update:modelValue", value),
-});
+    set: (value) => emit('update:modelValue', value)
+})
 
-const titleId = computed(
-    () => `alert-modal-title-${Math.random().toString(36).substr(2, 9)}`,
-);
-const bodyId = computed(
-    () => `alert-modal-body-${Math.random().toString(36).substr(2, 9)}`,
-);
+const titleId = computed(() => `alert-modal-title-${Math.random().toString(36).substr(2, 9)}`)
+const bodyId = computed(() => `alert-modal-body-${Math.random().toString(36).substr(2, 9)}`)
 
 const getButtonClasses = (type) => {
     const baseClasses =
-        "px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800";
+        'px-4 py-2 text-sm font-medium rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800'
 
     switch (type) {
-        case "danger":
-            return `${baseClasses} bg-[#F02C56] hover:bg-[#F02C56]/80 text-white focus:ring-red-500`;
-        case "primary":
-            return `${baseClasses} bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500`;
-        case "link":
-            return `${baseClasses} text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 focus:ring-blue-500`;
-        case "cancel":
+        case 'danger':
+            return `${baseClasses} bg-[#F02C56] hover:bg-[#F02C56]/80 text-white focus:ring-red-500`
+        case 'primary':
+            return `${baseClasses} bg-blue-600 hover:bg-blue-700 text-white focus:ring-blue-500`
+        case 'link':
+            return `${baseClasses} text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 focus:ring-blue-500`
+        case 'cancel':
         default:
-            return `${baseClasses} bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-500 focus:ring-blue-500`;
+            return `${baseClasses} bg-white dark:bg-gray-600 border border-gray-300 dark:border-gray-500 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-500 focus:ring-blue-500`
     }
-};
+}
 
 const handleAction = (action) => {
-    if (action.callback && typeof action.callback === "function") {
-        action.callback();
+    if (action.callback && typeof action.callback === 'function') {
+        action.callback()
     }
-    close();
-};
+    close()
+}
 
 const handleBackdropClick = (event) => {
-    if (
-        props.closeOnBackdrop &&
-        !props.persistModal &&
-        event.target === event.currentTarget
-    ) {
-        close();
+    if (props.closeOnBackdrop && !props.persistModal && event.target === event.currentTarget) {
+        close()
     }
-};
+}
 
 const close = () => {
-    isVisible.value = false;
-    emit("close");
-};
+    isVisible.value = false
+    emit('close')
+}
 
 const handleEscape = (e) => {
-    if (
-        e.key === "Escape" &&
-        isVisible.value &&
-        props.closeOnEscape &&
-        !props.persistModal
-    ) {
-        close();
+    if (e.key === 'Escape' && isVisible.value && props.closeOnEscape && !props.persistModal) {
+        close()
     }
-};
+}
 
 onMounted(() => {
-    document.addEventListener("keydown", handleEscape);
-});
+    document.addEventListener('keydown', handleEscape)
+})
 
 onUnmounted(() => {
-    document.removeEventListener("keydown", handleEscape);
-});
+    document.removeEventListener('keydown', handleEscape)
+})
 </script>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Traits\ApiHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AdminHashtagResource;
 use App\Http\Resources\AdminInstanceResource;
+use App\Http\Resources\AdminProfileResource;
 use App\Http\Resources\CommentReplyResource;
 use App\Http\Resources\CommentResource;
 use App\Http\Resources\ProfileResource;
@@ -191,6 +192,10 @@ class AdminController extends Controller
             $query->where('local', true);
         }
 
+        if (! in_array($sort, ['disabled', 'suspended', 'deleted'])) {
+            $query->where('status', 1);
+        }
+
         if (! empty($search)) {
             if (str_starts_with($search, 'bio:')) {
                 $bio = trim(substr($search, 4));
@@ -216,7 +221,7 @@ class AdminController extends Controller
 
         $profiles = $query->cursorPaginate(10)->withQueryString();
 
-        return ProfileResource::collection($profiles);
+        return AdminProfileResource::collection($profiles);
     }
 
     public function profileShow(Request $request, $id)
@@ -230,6 +235,7 @@ class AdminController extends Controller
             $res['is_admin'] = (bool) $user->is_admin;
             $res['email'] = $user->email;
             $res['email_verified'] = (bool) $user->email_verified_at;
+            $res['delete_after'] = $user->delete_after;
         }
         $res['comments_count'] = Comment::whereProfileId($profile->id)->count();
         $res['comment_replies_count'] = CommentReply::whereProfileId($profile->id)->count();
@@ -264,20 +270,21 @@ class AdminController extends Controller
         ]);
 
         $profile = Profile::find($id);
-        $user = User::whereProfileId($id)->firstOrFail();
 
         if (! $profile) {
             return $this->error('Ooops!');
         }
 
-        if ($profile->user && $profile->user->is_admin) {
-            return $this->success();
-        }
-
         $oldValues = $profile->only(['can_upload', 'can_follow', 'can_comment', 'can_like', 'can_share']);
 
         $profile->update($validated);
-        $user->update($userValidated);
+        if ($profile->local) {
+            if ($profile->user && $profile->user->is_admin) {
+                return $this->success();
+            }
+            $user = User::whereProfileId($id)->firstOrFail();
+            $user->update($userValidated);
+        }
 
         app(AdminAuditLogService::class)->logProfileAdminPermissionUpdate($request->user(), $profile, ['old' => $oldValues, 'new' => $validated]);
 
@@ -295,6 +302,9 @@ class AdminController extends Controller
         $profile->update(['status' => 6]);
 
         if ($profile->local) {
+            DB::table('oauth_access_tokens')->where('user_id', $profile->user_id)->delete();
+            DB::table('oauth_auth_codes')->where('user_id', $profile->user_id)->delete();
+            DB::table('sessions')->where('user_id', $profile->user_id)->delete();
             $profile->user->update(['status' => 6]);
         }
 
@@ -635,7 +645,7 @@ class AdminController extends Controller
         $search = $request->query('q');
         $sort = $request->query('sort', 'active');
 
-        $query = Instance::whereNotNull('software')->when($sort == 'is_blocked', function ($query, $sort) {
+        $query = Instance::when($sort == 'is_blocked', function ($query, $sort) {
             $query->whereFederationState(2);
         }, function ($query, $sort) {
             $query->whereFederationState(5);
@@ -1063,7 +1073,19 @@ class AdminController extends Controller
             'count_desc' => ['count', 'desc'],
         ];
 
-        if ($sort && isset($sortOptions[$sort])) {
+        if ($sort && $sort == 'suspended') {
+            $query->where('status', 6);
+
+            return $query;
+        } elseif ($sort && $sort == 'disabled') {
+            $query->where('status', 7);
+
+            return $query;
+        } elseif ($sort && $sort == 'deleted') {
+            $query->where('status', 8);
+
+            return $query;
+        } elseif ($sort && isset($sortOptions[$sort])) {
             [$column, $direction] = $sortOptions[$sort];
 
             $tablePrefix = $columnTableMap[$column].'.';

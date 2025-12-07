@@ -1,10 +1,10 @@
-import { storeToRefs } from "pinia";
-import { computed } from "vue";
-import { useEditHistoryStore } from "@/stores/editHistory";
+import { storeToRefs } from 'pinia'
+import { computed } from 'vue'
+import { useEditHistoryStore } from '@/stores/editHistory'
 
 export function useEditHistory() {
-    const store = useEditHistoryStore();
-    const { isModalOpen, currentEntity } = storeToRefs(store);
+    const store = useEditHistoryStore()
+    const { isModalOpen, currentEntity } = storeToRefs(store)
 
     return {
         isModalOpen,
@@ -17,6 +17,6 @@ export function useEditHistory() {
         getHistory: () => store.getCurrentHistory,
         isLoading: () => store.isCurrentLoading,
         hasError: () => store.getCurrentError,
-        hasMore: () => store.hasMoreCurrent,
-    };
+        hasMore: () => store.hasMoreCurrent
+    }
 }

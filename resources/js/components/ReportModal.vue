@@ -49,10 +49,8 @@
                                         />
                                     </svg>
                                 </button>
-                                <h2
-                                    class="text-xl font-semibold text-gray-900 dark:text-white"
-                                >
-                                    {{ t("common.report") }}
+                                <h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                    {{ t('common.report') }}
                                 </h2>
                             </div>
                             <button
@@ -65,10 +63,8 @@
 
                         <div class="p-6">
                             <div v-if="currentStep === 1">
-                                <p
-                                    class="text-xs text-gray-600 dark:text-gray-500 mb-2"
-                                >
-                                    {{ t("post.pleaseSelectAScenario") }}
+                                <p class="text-xs text-gray-600 dark:text-gray-500 mb-2">
+                                    {{ t('post.pleaseSelectAScenario') }}
                                 </p>
 
                                 <div
@@ -81,13 +77,10 @@
                                         class="w-full flex items-center justify-between p-3 text-sm text-left text-gray-900 dark:text-gray-300 dark:hover:text-white transition-colors group cursor-pointer"
                                         :class="{
                                             'bg-red-100 text-red-500 dark:bg-gray-900':
-                                                selectedCategory?.key ===
-                                                category.key,
+                                                selectedCategory?.key === category.key
                                         }"
                                     >
-                                        <span class="font-medium">{{
-                                            category.message
-                                        }}</span>
+                                        <span class="font-medium">{{ category.message }}</span>
                                         <svg
                                             class="w-5 h-5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors"
                                             fill="none"
@@ -110,7 +103,7 @@
                                         :disabled="!canProceedToNextStep"
                                         class="px-6 py-3 bg-[#F02C56] text-white font-medium rounded-lg hover:bg-[#F02C56]/80 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors cursor-pointer"
                                     >
-                                        {{ t("common.next") }}
+                                        {{ t('common.next') }}
                                     </button>
                                 </div>
                             </div>
@@ -122,14 +115,11 @@
                                     >
                                         {{ selectedCategory?.message }}
                                     </h3>
-                                    <p
-                                        class="text-sm text-gray-600 dark:text-gray-400"
-                                    >
+                                    <p class="text-sm text-gray-600 dark:text-gray-400">
                                         {{
-                                            t("post.yourReportingThis", {
+                                            t('post.yourReportingThis', {
                                                 type: reportType,
-                                                message:
-                                                    selectedCategory?.message,
+                                                message: selectedCategory?.message
                                             })
                                         }}
                                     </p>
@@ -140,11 +130,9 @@
                                         for="additional-details"
                                         class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                                     >
-                                        {{ t("post.additionalDetails") }}
+                                        {{ t('post.additionalDetails') }}
                                         <span
-                                            v-if="
-                                                selectedCategory?.key === '1026'
-                                            "
+                                            v-if="selectedCategory?.key === '1026'"
                                             class="text-red-500"
                                             >*</span
                                         >
@@ -157,11 +145,9 @@
                                         maxlength="500"
                                         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 resize-none"
                                     ></textarea>
-                                    <p
-                                        class="text-xs text-gray-500 dark:text-gray-400 mt-1"
-                                    >
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                         {{ additionalText.length }}/500
-                                        {{ t("post.characters") }}
+                                        {{ t('post.characters') }}
                                     </p>
                                 </div>
 
@@ -171,21 +157,18 @@
                                         @click="closeReportModal"
                                         class="px-6 py-3 text-gray-700 dark:text-gray-500 font-medium rounded-lg hover:text-gray-600 dark:hover:text-gray-300 transition-colors cursor-pointer"
                                     >
-                                        {{ t("common.cancel") }}
+                                        {{ t('common.cancel') }}
                                     </button>
                                     <button
                                         v-if="!isSubmitting"
                                         @click="goToPreviousReportStep"
                                         class="px-6 py-3 text-gray-700 border dark:border-gray-700/50 dark:text-gray-500 font-medium rounded-lg hover:bg-gray-100 dark:hover:text-gray-100 dark:hover:bg-gray-900/20 transition-colors cursor-pointer"
                                     >
-                                        {{ t("post.goBack") }}
+                                        {{ t('post.goBack') }}
                                     </button>
                                     <button
                                         @click="submitReport"
-                                        :disabled="
-                                            !canProceedToNextStep ||
-                                            isSubmitting
-                                        "
+                                        :disabled="!canProceedToNextStep || isSubmitting"
                                         class="px-6 py-3 bg-[#F02C56] text-white font-medium rounded-lg hover:bg-[#F02C56]/80 disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed transition-colors flex items-center cursor-pointer space-x-2"
                                     >
                                         <span v-if="isSubmitting">
@@ -195,8 +178,8 @@
                                         </span>
                                         <span>{{
                                             isSubmitting
-                                                ? t("post.submittingDotDotDot")
-                                                : t("post.submit")
+                                                ? t('post.submittingDotDotDot')
+                                                : t('post.submit')
                                         }}</span>
                                     </button>
                                 </div>
@@ -210,9 +193,9 @@
 </template>
 
 <script setup>
-import { useReportModal } from "@/composables/useReportModal";
-import { useI18n } from "vue-i18n";
-const { t } = useI18n();
+import { useReportModal } from '@/composables/useReportModal'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const {
     isOpen,
@@ -228,23 +211,23 @@ const {
     goToNextReportStep,
     goToPreviousReportStep,
     selectCategory,
-    submitReport,
-} = useReportModal();
+    submitReport
+} = useReportModal()
 
 function getTextareaPlaceholder() {
-    if (!selectedCategory.value) return "";
+    if (!selectedCategory.value) return ''
 
     switch (selectedCategory.value.key) {
-        case "1018":
-            return t("post.reportTextPlaceholder1018");
-        case "1021":
-            return t("post.reportTextPlaceholder1021");
-        case "1023":
-            return t("post.reportTextPlaceholder1023");
-        case "1026":
-            return t("post.reportTextPlaceholder1026");
+        case '1018':
+            return t('post.reportTextPlaceholder1018')
+        case '1021':
+            return t('post.reportTextPlaceholder1021')
+        case '1023':
+            return t('post.reportTextPlaceholder1023')
+        case '1026':
+            return t('post.reportTextPlaceholder1026')
         default:
-            return t("post.reportTextPlaceholderDefault");
+            return t('post.reportTextPlaceholderDefault')
     }
 }
 </script>

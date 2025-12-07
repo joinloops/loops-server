@@ -13,48 +13,33 @@
             </div>
 
             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                {{ $t("common.hashtagNotFound") }}
+                {{ $t('common.hashtagNotFound') }}
             </h3>
 
             <p class="text-gray-600 dark:text-gray-400 mb-4 leading-relaxed">
-                {{ $t("common.hashtagWeCouldntFind") }}
+                {{ $t('common.hashtagWeCouldntFind') }}
                 <span class="font-semibold">#{{ id }}</span
-                >. {{ $t("common.hashtagMayNotExist") }}
+                >. {{ $t('common.hashtagMayNotExist') }}
             </p>
 
             <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 mb-6">
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                     <strong class="text-gray-900 dark:text-gray-200"
-                        >{{ $t("common.suggestions") }}:</strong
+                        >{{ $t('common.suggestions') }}:</strong
                     >
                 </p>
-                <ul
-                    class="text-sm text-left text-gray-600 dark:text-gray-400 mt-2 space-y-1"
-                >
-                    <li
-                        v-for="(tip, i) in suggestions"
-                        :key="i"
-                        class="flex items-start gap-2"
-                    >
-                        <span class="text-blue-600 dark:text-blue-400 mt-0.5"
-                            >•</span
-                        >
+                <ul class="text-sm text-left text-gray-600 dark:text-gray-400 mt-2 space-y-1">
+                    <li v-for="(tip, i) in suggestions" :key="i" class="flex items-start gap-2">
+                        <span class="text-blue-600 dark:text-blue-400 mt-0.5">•</span>
                         <span>{{ tip }}</span>
                     </li>
                 </ul>
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
-                <AnimatedButton
-                    class="w-full"
-                    variant="primary"
-                    @click="gotoExplore"
-                >
+                <AnimatedButton class="w-full" variant="primary" @click="gotoExplore">
                     <div class="flex justify-center items-center text-lg gap-1">
-                        <i
-                            class="bx bx-compass m-0 p-0"
-                            style="font-size: 25px"
-                        ></i>
+                        <i class="bx bx-compass m-0 p-0" style="font-size: 25px"></i>
                         {{ exploreLabel }}
                     </div>
                 </AnimatedButton>
@@ -64,30 +49,30 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
-    id: string;
-    exploreTo?: string | { name: string; params?: Record<string, any> };
-    exploreLabel?: string;
-    suggestions?: string[];
-}>();
+    id: string
+    exploreTo?: string | { name: string; params?: Record<string, any> }
+    exploreLabel?: string
+    suggestions?: string[]
+}>()
 
-const router = useRouter();
-const { t } = useI18n();
+const router = useRouter()
+const { t } = useI18n()
 
 const gotoExplore = () => {
-    router.push(exploreTo);
-};
+    router.push(exploreTo)
+}
 
 const {
-    exploreTo = "/explore",
-    exploreLabel = t("common.exploreTags"),
+    exploreTo = '/explore',
+    exploreLabel = t('common.exploreTags'),
     suggestions = [
-        t("common.doubleCheckSpelling"),
-        t("common.tryARelatedOrSimilarHashtag"),
-        t("common.browseTrendingTagsInstead"),
-    ],
-} = props;
+        t('common.doubleCheckSpelling'),
+        t('common.tryARelatedOrSimilarHashtag'),
+        t('common.browseTrendingTagsInstead')
+    ]
+} = props
 </script>

@@ -18,15 +18,10 @@
                             class="w-4 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                             @change="handleLocalChange"
                         />
-                        <span class="text-sm text-gray-700 dark:text-gray-300">
-                            Local Only
-                        </span>
+                        <span class="text-sm text-gray-700 dark:text-gray-300"> Local Only </span>
                     </label>
 
-                    <div
-                        v-if="sortOptions && sortOptions.length > 0"
-                        class="relative"
-                    >
+                    <div v-if="sortOptions && sortOptions.length > 0" class="relative">
                         <select
                             v-model="selectedSort"
                             class="pl-3 pr-8 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none"
@@ -70,9 +65,7 @@
         </div>
 
         <div class="overflow-x-auto">
-            <table
-                class="min-w-full divide-y divide-gray-200 dark:divide-gray-700"
-            >
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                     <tr>
                         <th
@@ -95,11 +88,7 @@
                 >
                     <template v-if="loading">
                         <tr v-for="i in 5" :key="i">
-                            <td
-                                v-for="column in columns"
-                                :key="column.key"
-                                class="px-6 py-4"
-                            >
+                            <td v-for="column in columns" :key="column.key" class="px-6 py-4">
                                 <div
                                     class="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse"
                                 ></div>
@@ -164,7 +153,7 @@
                             'px-3 py-1 text-sm border rounded',
                             hasPrevious
                                 ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                                : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed',
+                                : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                         ]"
                         @click="$emit('previous')"
                     >
@@ -176,7 +165,7 @@
                             'px-3 py-1 text-sm border rounded',
                             hasNext
                                 ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                                : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed',
+                                : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
                         ]"
                         @click="$emit('next')"
                     >
@@ -189,12 +178,8 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
-import {
-    MagnifyingGlassIcon,
-    ArrowPathIcon,
-    ChevronDownIcon,
-} from "@heroicons/vue/24/outline";
+import { ref, watch } from 'vue'
+import { MagnifyingGlassIcon, ArrowPathIcon, ChevronDownIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
     title: String,
@@ -205,47 +190,40 @@ const props = defineProps({
     hasNext: Boolean,
     hasActions: {
         type: Boolean,
-        default: true,
+        default: true
     },
     sortOptions: {
         type: Array,
-        default: () => [],
+        default: () => []
     },
     initialSearchQuery: {
         type: String,
-        default: "",
+        default: ''
     },
     showLocalFilter: {
         type: Boolean,
-        default: false,
-    },
-});
+        default: false
+    }
+})
 
-const emit = defineEmits([
-    "search",
-    "refresh",
-    "previous",
-    "next",
-    "sort",
-    "localChange",
-]);
+const emit = defineEmits(['search', 'refresh', 'previous', 'next', 'sort', 'localChange'])
 
-const searchQuery = ref(props.initialSearchQuery);
-const selectedSort = ref("");
-const localFilter = ref(false);
+const searchQuery = ref(props.initialSearchQuery)
+const selectedSort = ref('')
+const localFilter = ref(false)
 
 watch(
     () => props.initialSearchQuery,
     (newValue) => {
-        searchQuery.value = newValue || "";
-    },
-);
+        searchQuery.value = newValue || ''
+    }
+)
 
 const handleSortChange = () => {
-    emit("sort", selectedSort.value);
-};
+    emit('sort', selectedSort.value)
+}
 
 const handleLocalChange = () => {
-    emit("localChange", localFilter.value);
-};
+    emit('localChange', localFilter.value)
+}
 </script>

@@ -15,21 +15,21 @@
 </template>
 
 <script setup>
-import { onMounted, watch, inject, ref } from "vue";
-import { storeToRefs } from "pinia";
-import { useRoute, useRouter } from "vue-router";
-import FullLayout from "@/layouts/FullLayout.vue";
+import { onMounted, watch, inject, ref } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useRoute, useRouter } from 'vue-router'
+import FullLayout from '@/layouts/FullLayout.vue'
 
-const authStore = inject("authStore");
+const authStore = inject('authStore')
 
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 
 onMounted(() => {
     if (authStore.authenticated) {
-        router.push("/");
+        router.push('/')
     } else {
-        authStore.openAuthModal("login");
+        authStore.openAuthModal('login')
     }
-});
+})
 </script>

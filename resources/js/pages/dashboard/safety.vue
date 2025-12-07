@@ -1,11 +1,7 @@
 <template>
     <SettingsLayout>
         <div class="p-6">
-            <h1
-                class="text-2xl font-semibold tracking-tight mb-6 dark:text-gray-100"
-            >
-                Safety
-            </h1>
+            <h1 class="text-2xl font-semibold tracking-tight mb-6 dark:text-gray-100">Safety</h1>
             <hr class="border-gray-300 dark:border-gray-700" />
 
             <section class="my-8">
@@ -22,9 +18,7 @@
                                 <h3 class="font-medium mb-0 dark:text-gray-300">
                                     Blocked accounts
                                 </h3>
-                                <p
-                                    class="text-xs text-gray-500 -mb-1 font-light"
-                                >
+                                <p class="text-xs text-gray-500 -mb-1 font-light">
                                     Manage users you've blocked.
                                 </p>
                             </div>
@@ -32,9 +26,7 @@
                                 <span class="mr-2 text-gray-700 text-sm"
                                     >{{ blockedAccountsCount }} blocked</span
                                 >
-                                <i
-                                    class="bx bx-chevron-right text-[20px] text-gray-400"
-                                ></i>
+                                <i class="bx bx-chevron-right text-[20px] text-gray-400"></i>
                             </div>
                         </div>
                     </router-link>
@@ -83,27 +75,25 @@
 </template>
 
 <script setup>
-import { onMounted, ref, nextTick } from "vue";
-import SettingsLayout from "~/layouts/SettingsLayout.vue";
-import ToggleSwitch from "@/components/Form/ToggleSwitch.vue";
-import axios from "~/plugins/axios";
-const axiosInstance = axios.getAxiosInstance();
-const hideSensitiveContent = ref(true);
-const filterExplicitLanguage = ref(false);
-const blockedAccountsCount = ref(3);
+import { onMounted, ref, nextTick } from 'vue'
+import SettingsLayout from '~/layouts/SettingsLayout.vue'
+import ToggleSwitch from '@/components/Form/ToggleSwitch.vue'
+import axios from '~/plugins/axios'
+const axiosInstance = axios.getAxiosInstance()
+const hideSensitiveContent = ref(true)
+const filterExplicitLanguage = ref(false)
+const blockedAccountsCount = ref(3)
 
 const fetchTotalBlocked = async () => {
     try {
-        await axiosInstance
-            .get("/api/v1/account/settings/total-blocked-accounts")
-            .then((res) => {
-                blockedAccountsCount.value = res.data.data.count;
-            });
+        await axiosInstance.get('/api/v1/account/settings/total-blocked-accounts').then((res) => {
+            blockedAccountsCount.value = res.data.data.count
+        })
     } catch {}
-};
+}
 
 onMounted(async () => {
-    await fetchTotalBlocked();
-    await nextTick();
-});
+    await fetchTotalBlocked()
+    await nextTick()
+})
 </script>

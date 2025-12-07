@@ -1,111 +1,103 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted } from 'vue'
 
 const props = defineProps({
     videoId: {
         type: String,
-        required: true,
+        required: true
     },
     menuModelValue: {
         type: Boolean,
-        default: undefined,
-    },
-});
+        default: undefined
+    }
+})
 
-const emit = defineEmits(["update:menuModelValue"]);
+const emit = defineEmits(['update:menuModelValue'])
 
-const isOpen = ref(false);
-const currentStep = ref("main");
-const selectedOption = ref(null);
-const reportOptions = ref([]);
-const isLoading = ref(true);
-const error = ref(null);
+const isOpen = ref(false)
+const currentStep = ref('main')
+const selectedOption = ref(null)
+const reportOptions = ref([])
+const isLoading = ref(true)
+const error = ref(null)
 
 const fetchReportRules = async () => {
     try {
-        isLoading.value = true;
-        error.value = null;
-        const response = await fetch("/api/v0/client/report-rules");
+        isLoading.value = true
+        error.value = null
+        const response = await fetch('/api/v0/client/report-rules')
         if (!response.ok) {
-            throw new Error("Failed to fetch report rules");
+            throw new Error('Failed to fetch report rules')
         }
-        reportOptions.value = await response.json();
+        reportOptions.value = await response.json()
     } catch (err) {
-        error.value = err.message;
-        console.error("Error fetching report rules:", err);
+        error.value = err.message
+        console.error('Error fetching report rules:', err)
     } finally {
-        isLoading.value = false;
+        isLoading.value = false
     }
-};
+}
 
 onMounted(() => {
-    fetchReportRules();
-});
+    fetchReportRules()
+})
 
 const openModal = () => {
-    isOpen.value = true;
-    currentStep.value = "main";
-    selectedOption.value = null;
-};
+    isOpen.value = true
+    currentStep.value = 'main'
+    selectedOption.value = null
+}
 
 const closeModal = () => {
     if (props.menuModelValue !== undefined) {
-        emit("update:menuModelValue", false);
+        emit('update:menuModelValue', false)
     }
-    isOpen.value = false;
-};
+    isOpen.value = false
+}
 
 const goToDetail = (option) => {
-    selectedOption.value = option;
-    currentStep.value = "detail";
-};
+    selectedOption.value = option
+    currentStep.value = 'detail'
+}
 
 const goBack = () => {
-    currentStep.value = "main";
-    selectedOption.value = null;
-};
+    currentStep.value = 'main'
+    selectedOption.value = null
+}
 
 const handleSubmit = () => {
-    console.log("Submitted report:", {
+    console.log('Submitted report:', {
         videoId: props.videoId,
         reasonKey: selectedOption.value.key,
-        reasonMessage: selectedOption.value.message,
-    });
+        reasonMessage: selectedOption.value.message
+    })
     if (props.menuModelValue !== undefined) {
-        emit("update:menuModelValue", false);
+        emit('update:menuModelValue', false)
     }
-    closeModal();
-};
+    closeModal()
+}
 
 defineExpose({
     openModal,
-    closeModal,
-});
+    closeModal
+})
 </script>
 
 <template>
     <slot name="trigger" :open="openModal">
-        <button
-            @click="openModal"
-            class="px-4 py-2 bg-blue-500 text-white rounded"
-        >
+        <button @click="openModal" class="px-4 py-2 bg-blue-500 text-white rounded">
             Open Report Modal
         </button>
     </slot>
 
     <Teleport to="body">
         <template v-if="isOpen">
-            <div
-                class="fixed inset-0 z-10 bg-black bg-opacity-50"
-                @click="closeModal"
-            ></div>
+            <div class="fixed inset-0 z-10 bg-black bg-opacity-50" @click="closeModal"></div>
 
             <div
                 class="fixed inset-x-0 z-30 top-10 mx-auto max-w-lg max-h-[50dvh] bg-white dark:bg-slate-800 rounded-lg shadow-xl flex flex-col"
             >
-                <div
-                    class="flex items-center justify-between p-4 border-b dark:border-slate-700"
-                >
+                <div class="flex items-center justify-between p-4 border-b dark:border-slate-700">
                     <div class="flex items-center gap-2">
                         <button
                             v-if="currentStep === 'detail'"
@@ -125,9 +117,7 @@ defineExpose({
                                 />
                             </svg>
                         </button>
-                        <h2 class="text-lg font-semibold dark:text-slate-50">
-                            Report
-                        </h2>
+                        <h2 class="text-lg font-semibold dark:text-slate-50">Report</h2>
                     </div>
                     <button
                         @click="closeModal"
@@ -181,10 +171,9 @@ defineExpose({
                                 @click="goToDetail(option)"
                                 class="w-full p-3 text-left bg-gray-50 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg flex items-center justify-between group"
                             >
-                                <span
-                                    class="text-gray-800 dark:text-slate-300"
-                                    >{{ option.message }}</span
-                                >
+                                <span class="text-gray-800 dark:text-slate-300">{{
+                                    option.message
+                                }}</span>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     class="h-5 w-5 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-slate-500"
@@ -203,24 +192,17 @@ defineExpose({
 
                     <div v-else-if="currentStep === 'detail'">
                         <div class="bg-gray-100 dark:bg-slate-700 p-4">
-                            <h3
-                                class="font-light tracking-tight text-gray-500 dark:text-slate-400"
-                            >
+                            <h3 class="font-light tracking-tight text-gray-500 dark:text-slate-400">
                                 {{ selectedOption?.message }}
                             </h3>
                         </div>
                         <div class="px-4 py-10">
-                            <div
-                                class="space-y-4 font-light text-gray-600 dark:text-slate-300"
-                            >
+                            <div class="space-y-4 font-light text-gray-600 dark:text-slate-300">
                                 <p>We don't allow the following:</p>
                                 <ul class="list-disc ml-6">
                                     <li>
-                                        Content that violates our community
-                                        guidelines regarding
-                                        {{
-                                            selectedOption?.message.toLowerCase()
-                                        }}
+                                        Content that violates our community guidelines regarding
+                                        {{ selectedOption?.message.toLowerCase() }}
                                     </li>
                                 </ul>
                             </div>
