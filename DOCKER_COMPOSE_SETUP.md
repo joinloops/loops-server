@@ -23,11 +23,19 @@ This setup uses `serversideup/php:8.4-fpm-nginx` as the base image and is design
    cp .env.docker.example .env
    ```
 
-2. **Update `.env` with your configuration:**
-   - Set `APP_KEY` ( generate with https://laravel-encryption-key-generator.vercel.app/ )
+2a. **Generate secure `.env` secrets and passwords:**
+
+   ```bash
+   sed -i "s|^APP_KEY=.*|APP_KEY=$(php -r 'echo \"base64:\".base64_encode(random_bytes(32));')|" .env
+   sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)\"|" .env
+   sed -i "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)\"|" .env
+   ```
+
+2b. **Update `.env` with your configuration:**
    - Update `APP_URL`, `APP_DOMAIN`, `ADMIN_DOMAIN`, `SESSION_DOMAIN` with your domain
-   - Set secure database passwords for `DB_PASSWORD` and `DB_ROOT_PASSWORD`
    - Configure mail settings
+   - Configure S3 (object storage)
+   - Configure CAPTCHA
 
 3. **Build container**
    ```bash
