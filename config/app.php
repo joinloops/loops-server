@@ -68,18 +68,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Asset CDN URL (Performance Improvement for end users)
-    |--------------------------------------------------------------------------
-    |
-    | This URL is used to send client traffic to a CDN for static assets.
-    | If set, all Vite-compiled assets will use this CDN URL.
-    |
-    */
-
-    'assetcdn_url' => env('ASSETCDN_URL'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |
