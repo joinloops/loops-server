@@ -1,12 +1,17 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import laravel from 'laravel-vite-plugin';
 import vue from '@vitejs/plugin-vue';
 import tailwindcss from "@tailwindcss/vite";
 import { resolve } from 'path'
 import { ensureDir, copy } from 'fs-extra'
 
-export default defineConfig({
-    plugins: [
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, process.cwd(), '');
+    const assetCDNUrl = env.ASSETCDN_URL ? new URL(env.ASSETCDN_URL).origin : '';
+
+    return {
+        base: assetCDNUrl ? `${assetCDNUrl}/` : '/',
+        plugins: [
         laravel({
             input: [
                 'resources/js/app.js',
@@ -33,4 +38,5 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
     }
+    };
 });
