@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'accountBlocked' => 'Account Blocked',
+    'accountUnavailable' => 'Account Unavailable',
     'applyingDotDotDot' => 'Εφαρμογή...',
     'avatarFailedToUploadError' => 'Απέτυχε η ενημέρωση του άβαταρ. Παρακαλώ προσπάθησε ξανά.',
     'avatarFileSizeError' => 'Το μέγεθος του αρχείου εικόνας πρέπει να είναι μικρότερο από 5MB.',
@@ -37,10 +39,12 @@ return [
     'tabOptions' => [
         'Videos' => 'Βίντεο',
     ],
+    'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Άρση αποκλεισμού',
     'userHasntPostedAnyVideosYet' => ':username δεν έχει δημοσιεύσει κανένα βίντεο ακόμα',
     'whenPeopleFollowThisAccount' => 'Όταν κάποιος ακολουθεί αυτόν τον λογαριασμό, θα εμφανίζεται εδώ.',
     'whenThisAccountFollowsSomeone' => 'Όταν αυτός ο λογαριασμός ακολουθεί κάποιον, θα εμφανιστεί εδώ.',
+    'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Δεν έχεις δημοσιεύσει κανένα βίντεο ακόμα',
     'youveReachedTheEndOfThisList' => 'Έφτασες στο τέλος αυτής της λίστας',
 ];
