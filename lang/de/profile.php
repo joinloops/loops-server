@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'accountBlocked' => 'Account Blocked',
+    'accountUnavailable' => 'Account Unavailable',
     'applyingDotDotDot' => 'Wird angewendet...',
     'avatarFailedToUploadError' => 'Fehler Aktualisieren ihres Avatars. Bitte erneut versuchen.',
     'avatarFileSizeError' => 'Bilder müssen kleiner als 5MB sein.',
@@ -37,10 +39,12 @@ return [
     'tabOptions' => [
         'Videos' => 'Videos',
     ],
+    'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Entblocken',
     'userHasntPostedAnyVideosYet' => ':username hat noch keine Videos veröffentlicht',
     'whenPeopleFollowThisAccount' => 'Wenn jemand diesem Konto folgt, werden sie hier erscheinen.',
     'whenThisAccountFollowsSomeone' => 'Wenn dieses Konto jemandem folgt, werden sie hier erscheinen.',
+    'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Du hast noch keine Videos veröffentlicht',
     'youveReachedTheEndOfThisList' => 'Sie haben das Ende der Liste erreicht',
 ];
