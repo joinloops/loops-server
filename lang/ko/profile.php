@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'accountBlocked' => 'Account Blocked',
+    'accountUnavailable' => 'Account Unavailable',
     'applyingDotDotDot' => '적용 중...',
     'avatarFailedToUploadError' => '아바타 업데이트에 실패했습니다. 다시 시도하세요.',
     'avatarFileSizeError' => '이미지 파일 크기는 5MB 이하이어야 합니다.',
@@ -37,10 +39,12 @@ return [
     'tabOptions' => [
         'Videos' => 'Videos',
     ],
+    'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Unblock',
     'userHasntPostedAnyVideosYet' => ':username hasn\'t posted any videos yet',
     'whenPeopleFollowThisAccount' => 'When people follow this account, they\'ll appear here.',
     'whenThisAccountFollowsSomeone' => 'When this account follows someone, they\'ll appear here.',
+    'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'You haven\'t posted any videos yet',
     'youveReachedTheEndOfThisList' => 'You\'ve reached the end of this list',
 ];
