@@ -30,6 +30,11 @@ Welcome! Please verify your email address to complete your account setup on [Loo
     </div>
 </div>
 
+<!-- Hidden plan text version for Apple AutoFill -->
+<p style="font-size: 1px; line-height: 1px; color:transparent; mso-hide: all;" aria-hidden="true">
+    {{ implode('', $digits) }}
+</p>
+
 **Having trouble?**
 - Make sure you're using the latest verification code
 - Check your spam folder if you don't see this email
