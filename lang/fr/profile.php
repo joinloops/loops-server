@@ -19,6 +19,7 @@ return [
     'displayNameHelp' => 'Jusqu\'à 30 caractères maximum.',
     'editProfile' => 'Modifier le profil',
     'failedToUpdateProfileErrorMessage' => 'Échec de la mise à jour du profil. Réessayez.',
+    'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Demande de suivi en attente',
     'likes' => 'J\'aime',
     'loadingProfileDotDotDot' => 'Chargement du profil...',
@@ -38,6 +39,7 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Vidéos',
+        'Favourites' => 'Favourites',
     ],
     'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Débloquer',
@@ -46,5 +48,6 @@ return [
     'whenThisAccountFollowsSomeone' => 'Quand ce compte suit quelqu\'un, il apparaîtra ici.',
     'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Vous n\'avez pas encore posté de vidéos',
+    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
     'youveReachedTheEndOfThisList' => 'Vous êtes arrivé au bout de la liste',
 ];
