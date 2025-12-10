@@ -40,6 +40,9 @@ class SearchController extends Controller
 
         $maxPages = 5;
         $type = $validated['type'] ?? 'all';
+        if (Str::startsWith($query, '@')) {
+            $type = 'users';
+        }
 
         $maxItems = match ($type) {
             'top' => 12,
@@ -174,6 +177,12 @@ class SearchController extends Controller
                 ->withQueryString();
 
             $usersData = $users->getCollection();
+            if ($usersData->isEmpty()) {
+                $usersData = $this->getUsers(new SearchRequest([
+                                                               'q' => $query, 
+                                                               'user' => $request->user(),
+                ]))->collection;
+            }
             $pager = $users;
             $nextLaravelCursor = $pager->nextCursor()?->encode();
             $nextCursorToken = CursorToken::encode($nextLaravelCursor, $ctx, $hops + 1);
