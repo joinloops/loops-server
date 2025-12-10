@@ -19,6 +19,7 @@ return [
     'displayNameHelp' => 'Els noms visibles poden tenir fins a 30 caràcters.',
     'editProfile' => 'Edita el perfil',
     'failedToUpdateProfileErrorMessage' => 'No s\'ha pogut actualitzar el perfil. Torna-ho a provar.',
+    'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Follow Request Pending',
     'likes' => 'M\'agrada',
     'loadingProfileDotDotDot' => 'Carregant el perfil...',
@@ -38,6 +39,7 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Vídeos',
+        'Favourites' => 'Favourites',
     ],
     'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Desbloca',
@@ -46,5 +48,6 @@ return [
     'whenThisAccountFollowsSomeone' => 'Quan aquest compte segueixi algú, apareixerà aquí.',
     'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Encara no has publicat cap vídeo',
+    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
     'youveReachedTheEndOfThisList' => 'Has arribat al final d\'aquesta llista',
 ];
