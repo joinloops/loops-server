@@ -19,6 +19,7 @@ return [
     'displayNameHelp' => '표시 이름은 최대 30자까지 가능합니다.',
     'editProfile' => '프로필 수정',
     'failedToUpdateProfileErrorMessage' => '프로필 업데이트에 실패했습니다. 다시 시도하세요.',
+    'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Follow Request Pending',
     'likes' => '좋아요',
     'loadingProfileDotDotDot' => '프로필 불러오는 중...',
@@ -38,6 +39,7 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Videos',
+        'Favourites' => 'Favourites',
     ],
     'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Unblock',
@@ -46,5 +48,6 @@ return [
     'whenThisAccountFollowsSomeone' => 'When this account follows someone, they\'ll appear here.',
     'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'You haven\'t posted any videos yet',
+    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
     'youveReachedTheEndOfThisList' => 'You\'ve reached the end of this list',
 ];
