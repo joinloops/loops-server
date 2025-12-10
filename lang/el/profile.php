@@ -19,6 +19,7 @@ return [
     'displayNameHelp' => 'Εμφανιζόμενα ονόματα μπορεί να είναι έως και 30 χαρακτήρες.',
     'editProfile' => 'Επεξεργασία Προφίλ',
     'failedToUpdateProfileErrorMessage' => 'Απέτυχε η ενημέρωση του προφίλ. Παρακαλώ προσπάθησε ξανά.',
+    'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Εκκρεμεί Αίτημα Ακολούθησης',
     'likes' => 'Μου αρέσει',
     'loadingProfileDotDotDot' => 'Φόρτωση προφίλ...',
@@ -38,6 +39,7 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Βίντεο',
+        'Favourites' => 'Favourites',
     ],
     'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Άρση αποκλεισμού',
@@ -46,5 +48,6 @@ return [
     'whenThisAccountFollowsSomeone' => 'Όταν αυτός ο λογαριασμός ακολουθεί κάποιον, θα εμφανιστεί εδώ.',
     'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Δεν έχεις δημοσιεύσει κανένα βίντεο ακόμα',
+    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
     'youveReachedTheEndOfThisList' => 'Έφτασες στο τέλος αυτής της λίστας',
 ];
