@@ -19,6 +19,7 @@ return [
     'displayNameHelp' => 'Anzeigename kann bis zu 30 Zeichen lang sein.',
     'editProfile' => 'Profil bearbeiten',
     'failedToUpdateProfileErrorMessage' => 'Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut.',
+    'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Follow-Anfrage ausstehend',
     'likes' => '"Gefällt mir"-Angaben',
     'loadingProfileDotDotDot' => 'Lade Profil...',
@@ -38,6 +39,7 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Videos',
+        'Favourites' => 'Favourites',
     ],
     'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Entblocken',
@@ -46,5 +48,6 @@ return [
     'whenThisAccountFollowsSomeone' => 'Wenn dieses Konto jemandem folgt, werden sie hier erscheinen.',
     'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Du hast noch keine Videos veröffentlicht',
+    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
     'youveReachedTheEndOfThisList' => 'Sie haben das Ende der Liste erreicht',
 ];
