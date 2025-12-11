@@ -2,7 +2,7 @@
 
 return [
     'accountBlocked' => 'Account Blocked',
-    'accountUnavailable' => 'Account Unavailable',
+    'accountUnavailable' => 'Konto nicht verfügbar',
     'applyingDotDotDot' => 'Wird angewendet...',
     'avatarFailedToUploadError' => 'Fehler Aktualisieren ihres Avatars. Bitte erneut versuchen.',
     'avatarFileSizeError' => 'Bilder müssen kleiner als 5MB sein.',
@@ -39,15 +39,15 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Videos',
-        'Favourites' => 'Favourites',
+        'Favourites' => 'Favoriten',
     ],
-    'thisAccountIsNotAvailable' => 'This account is not available',
+    'thisAccountIsNotAvailable' => 'Dieses Konto ist nicht verfügbar',
     'unblock' => 'Entblocken',
     'userHasntPostedAnyVideosYet' => ':username hat noch keine Videos veröffentlicht',
     'whenPeopleFollowThisAccount' => 'Wenn jemand diesem Konto folgt, werden sie hier erscheinen.',
     'whenThisAccountFollowsSomeone' => 'Wenn dieses Konto jemandem folgt, werden sie hier erscheinen.',
-    'youHaveBlockedThisAccount' => 'You have blocked this account',
+    'youHaveBlockedThisAccount' => 'Du hast dieses Konto blockiert',
     'youHaventPostedAnyVideosYet' => 'Du hast noch keine Videos veröffentlicht',
-    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
+    'yourFavouritePostsWillAppearHere' => 'Deine Lieblingsbeiträge werden hier erscheinen.',
     'youveReachedTheEndOfThisList' => 'Sie haben das Ende der Liste erreicht',
 ];
