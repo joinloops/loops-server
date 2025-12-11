@@ -12,7 +12,7 @@ return [
     'responseTime' => 'Reaktionszeit',
     'responseTimeMessage' => 'Wir beantworten in der Regel alle Anfragen innerhalb von 24 Stunden an Werktagen. Für dringende technische Probleme bitte "URGENT" in Ihrer Betreffzeile angeben.',
     'socialConnect' => 'Soziale Verbindung',
-    'socialConnectMessage' => 'Folgen Sie uns im "Fediverse", für Aktualisierungen und schnelle Fragen über direkte Nachrichten.',
+    'socialConnectMessage' => 'Folgen Sie uns im "Fediverse" für Aktualisierungen und schnelle Fragen über Direktnachrichten.',
     'technicalSupport' => 'Technischer Support',
     'technicalSupportMessage' => 'Brauchen Sie Hilfe beim Umgang mit unserer Plattform? Erhalten Sie Hilfe bei Fehlerfindung und technischen Problemen.',
     'visitForum' => 'Besuche das Forum',
