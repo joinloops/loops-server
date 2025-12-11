@@ -4,7 +4,7 @@ return [
     'about' => 'Über uns',
     'activity' => 'Aktivitäten',
     'admin' => 'Administrator:innen',
-    'clearAll' => 'Alle Entfernen',
+    'clearAll' => 'Alle entfernen',
     'community' => 'Community',
     'contact' => 'Kontakt',
     'developers' => 'Entwickler:innen',
@@ -25,7 +25,7 @@ return [
     'recentSearches' => 'Letzte Suchen',
     'search' => 'Suche',
     'settings' => 'Einstellungen',
-    'terms' => 'Bedingungen',
+    'terms' => 'Nutzungsbedingungen',
     'upload' => 'Hochladen',
     'uploadLoop' => 'Loop hochladen',
 ];
