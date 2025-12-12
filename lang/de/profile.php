@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'accountBlocked' => 'Account Blocked',
+    'accountBlocked' => 'Account blockiert',
     'accountUnavailable' => 'Konto nicht verfügbar',
     'applyingDotDotDot' => 'Wird angewendet...',
     'avatarFailedToUploadError' => 'Fehler beim Aktualisieren Ihres Avatars. Bitte erneut versuchen.',
@@ -19,7 +19,7 @@ return [
     'displayNameHelp' => 'Anzeigename kann bis zu 30 Zeichen lang sein.',
     'editProfile' => 'Profil bearbeiten',
     'failedToUpdateProfileErrorMessage' => 'Fehler beim Aktualisieren des Profils. Bitte versuchen Sie es erneut.',
-    'favouritePosts' => 'Favourite posts',
+    'favouritePosts' => 'Favoriten',
     'followRequestPending' => 'Folge-Anfrage ausstehend',
     'likes' => '„Gefällt mir“-Angaben',
     'loadingProfileDotDotDot' => 'Lade Profil...',
