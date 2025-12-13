@@ -13,6 +13,7 @@ return [
     'help' => 'Βοήθεια',
     'home' => 'Αρχική',
     'join' => 'Συμμετοχή',
+    'local' => 'Local',
     'logIn' => 'Σύνδεση',
     'logOut' => 'Αποσύνδεση',
     'loginOrRegister' => 'Είσοδος ή Εγγραφή',
