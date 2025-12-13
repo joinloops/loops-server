@@ -13,6 +13,7 @@ return [
     'help' => 'Ayuda',
     'home' => 'Inicio',
     'join' => 'Unirse',
+    'local' => 'Local',
     'logIn' => 'Iniciar sesión',
     'logOut' => 'Cerrar sesión',
     'loginOrRegister' => 'Iniciar sesión o registrarse',
