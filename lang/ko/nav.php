@@ -13,6 +13,7 @@ return [
     'help' => '도움말',
     'home' => '홈',
     'join' => '가입',
+    'local' => 'Local',
     'logIn' => '로그인',
     'logOut' => '로그아웃',
     'loginOrRegister' => '로그인 또는 회원가입',
