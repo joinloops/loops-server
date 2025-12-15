@@ -4,7 +4,7 @@ return [
     'allCaughtUp' => '¡Estás al día!',
     'errorLoadingNotifications' => 'Error al cargar las notificaciones',
     'messageTypes' => [
-        'videoLike' => 'le ha gustado tu video',
+        'videoLike' => 'marcó que le ha gustado tu video',
         'newFollower' => 'ha comenzado a seguirte',
         'videoComment' => 'ha comentado en tu video',
         'videoCommentReply' => 'respondió a un comentario en tu vídeo',
