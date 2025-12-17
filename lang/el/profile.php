@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'accountBlocked' => 'Account Blocked',
-    'accountUnavailable' => 'Account Unavailable',
+    'accountBlocked' => 'Ο Λογαριασμός Αποκλείστηκε',
+    'accountUnavailable' => 'Μη Διαθέσιμος Λογαριασμός',
     'applyingDotDotDot' => 'Εφαρμογή...',
     'avatarFailedToUploadError' => 'Απέτυχε η ενημέρωση του άβαταρ. Παρακαλώ προσπάθησε ξανά.',
     'avatarFileSizeError' => 'Το μέγεθος του αρχείου εικόνας πρέπει να είναι μικρότερο από 5MB.',
@@ -19,7 +19,7 @@ return [
     'displayNameHelp' => 'Εμφανιζόμενα ονόματα μπορεί να είναι έως και 30 χαρακτήρες.',
     'editProfile' => 'Επεξεργασία Προφίλ',
     'failedToUpdateProfileErrorMessage' => 'Απέτυχε η ενημέρωση του προφίλ. Παρακαλώ προσπάθησε ξανά.',
-    'favouritePosts' => 'Favourite posts',
+    'favouritePosts' => 'Αγαπημένες αναρτήσεις',
     'followRequestPending' => 'Εκκρεμεί Αίτημα Ακολούθησης',
     'likes' => 'Μου αρέσει',
     'loadingProfileDotDotDot' => 'Φόρτωση προφίλ...',
@@ -39,15 +39,15 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Βίντεο',
-        'Favourites' => 'Favourites',
+        'Favourites' => 'Αγαπημένα',
     ],
-    'thisAccountIsNotAvailable' => 'This account is not available',
+    'thisAccountIsNotAvailable' => 'Αυτός ο λογαριασμός δεν είναι διαθέσιμος',
     'unblock' => 'Άρση αποκλεισμού',
     'userHasntPostedAnyVideosYet' => ':username δεν έχει δημοσιεύσει κανένα βίντεο ακόμα',
     'whenPeopleFollowThisAccount' => 'Όταν κάποιος ακολουθεί αυτόν τον λογαριασμό, θα εμφανίζεται εδώ.',
     'whenThisAccountFollowsSomeone' => 'Όταν αυτός ο λογαριασμός ακολουθεί κάποιον, θα εμφανιστεί εδώ.',
-    'youHaveBlockedThisAccount' => 'You have blocked this account',
+    'youHaveBlockedThisAccount' => 'Έχεις αποκλείσει αυτόν τον λογαριασμό',
     'youHaventPostedAnyVideosYet' => 'Δεν έχεις δημοσιεύσει κανένα βίντεο ακόμα',
-    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
+    'yourFavouritePostsWillAppearHere' => 'Οι αγαπημένες σου αναρτήσεις θα εμφανιστούν εδώ.',
     'youveReachedTheEndOfThisList' => 'Έφτασες στο τέλος αυτής της λίστας',
 ];
