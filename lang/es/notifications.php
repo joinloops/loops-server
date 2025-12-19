@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'activity' => 'Activity',
     'allCaughtUp' => '¡Estás al día!',
     'errorLoadingNotifications' => 'Error al cargar las notificaciones',
     'messageTypes' => [
@@ -15,5 +16,14 @@ return [
         'videoShare' => 'ha compartido tu video',
         'default' => 'ha interactuado con tu contenido',
     ],
+    'messages' => 'Messages',
+    'messagesWillAppearHere' => 'Messages will appear here',
+    'newFollowers' => 'New Followers',
+    'newFollowersWillAppearHere' => 'New followers will appear here',
+    'noMessages' => 'No Messages',
+    'noNewFollowers' => 'No new followers',
     'noNotifications' => 'Sin notificaciones',
+    'noSystemNotifications' => 'No System Notifications',
+    'system' => 'System',
+    'systemNotificationsWillAppearHere' => 'System notifications will appear here',
 ];
