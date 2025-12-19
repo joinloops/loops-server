@@ -161,6 +161,7 @@ return [
     'username' => 'Όνομα χρήστη',
     'verificationCode' => 'Κωδικός Επαλήθευσης',
     'verificationCodeExpiredPleaseRequestNew' => 'Verification code has expired. Please request a new one.',
+    'verificationCodeRecentlySentPleaseCheckYourEmail' => 'Verification code was recently sent. Please check your email.',
     'verificationCodeSentToYourEmail' => 'Ο κωδικός επιβεβαίωσης στάλθηκε στο email σου!',
     'verificationRecordNotFoundPleaseStartAgain' => 'Verification session not found. Please start registration again.',
     'verify' => 'Επαλήθευση',
