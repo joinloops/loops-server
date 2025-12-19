@@ -161,6 +161,7 @@ return [
     'username' => 'Nome Utente',
     'verificationCode' => 'Codice di Verifica',
     'verificationCodeExpiredPleaseRequestNew' => 'Verification code has expired. Please request a new one.',
+    'verificationCodeRecentlySentPleaseCheckYourEmail' => 'Verification code was recently sent. Please check your email.',
     'verificationCodeSentToYourEmail' => 'Codice di verifica inviato al tuo indirizzo email!',
     'verificationRecordNotFoundPleaseStartAgain' => 'Verification session not found. Please start registration again.',
     'verify' => 'Verifica',
