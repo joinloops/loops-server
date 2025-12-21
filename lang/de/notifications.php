@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activity' => 'Activity',
+    'activity' => 'Aktivität',
     'allCaughtUp' => 'Du bist auf dem neusten Stand!',
     'errorLoadingNotifications' => 'Fehler beim Laden der Benachrichtigungen',
     'messageTypes' => [
@@ -16,14 +16,14 @@ return [
         'videoShare' => 'teilte dein Video',
         'default' => 'hat mit deinen Inhalten interagiert',
     ],
-    'messages' => 'Messages',
-    'messagesWillAppearHere' => 'Messages will appear here',
-    'newFollowers' => 'New Followers',
-    'newFollowersWillAppearHere' => 'New followers will appear here',
-    'noMessages' => 'No Messages',
-    'noNewFollowers' => 'No new followers',
+    'messages' => 'Nachrichten',
+    'messagesWillAppearHere' => 'Nachrichten werden hier angezeigt',
+    'newFollowers' => 'Neue Follower',
+    'newFollowersWillAppearHere' => 'Neue Follower werden hier angezeigt',
+    'noMessages' => 'Keine Nachrichten',
+    'noNewFollowers' => 'Keine neuen Follower',
     'noNotifications' => 'Keine Benachrichtigungen',
-    'noSystemNotifications' => 'No System Notifications',
+    'noSystemNotifications' => 'Keine Systembenachrichtigungen',
     'system' => 'System',
-    'systemNotificationsWillAppearHere' => 'System notifications will appear here',
+    'systemNotificationsWillAppearHere' => 'Systembenachrichtigungen werden hier erscheinen',
 ];
