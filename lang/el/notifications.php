@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activity' => 'Activity',
+    'activity' => 'Δραστηριότητα',
     'allCaughtUp' => 'Έχεις καλύψει τα πάντα!',
     'errorLoadingNotifications' => 'Σφάλμα φόρτωσης ειδοποιήσεων',
     'messageTypes' => [
@@ -16,14 +16,14 @@ return [
         'videoShare' => 'κοινοποίησε το βίντεό σου',
         'default' => 'αλληλεπίδρασε με το περιεχόμενό σου',
     ],
-    'messages' => 'Messages',
-    'messagesWillAppearHere' => 'Messages will appear here',
-    'newFollowers' => 'New Followers',
-    'newFollowersWillAppearHere' => 'New followers will appear here',
-    'noMessages' => 'No Messages',
-    'noNewFollowers' => 'No new followers',
+    'messages' => 'Μηνύματα',
+    'messagesWillAppearHere' => 'Τα μηνύματα θα εμφανίζονται εδώ',
+    'newFollowers' => 'Νέοι Ακόλουθοι',
+    'newFollowersWillAppearHere' => 'Οι νέοι ακόλουθοι θα εμφανιστούν εδώ',
+    'noMessages' => 'Κανένα Μήνυμα',
+    'noNewFollowers' => 'Δεν υπάρχουν νέοι ακόλουθοι',
     'noNotifications' => 'Καμία ειδοποίηση',
-    'noSystemNotifications' => 'No System Notifications',
-    'system' => 'System',
-    'systemNotificationsWillAppearHere' => 'System notifications will appear here',
+    'noSystemNotifications' => 'Καμία Ειδοποίηση Συστήματος',
+    'system' => 'Σύστημα',
+    'systemNotificationsWillAppearHere' => 'Οι ειδοποιήσεις συστήματος θα εμφανίζονται εδώ',
 ];
