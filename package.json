@@ -32,7 +32,7 @@
         "highlight.js": "^11.11.1",
         "laravel-vite-plugin": "^2.0",
         "lodash": "^4.17.21",
-        "md-editor-v3": "^6.2.1",
+        "md-editor-v3": "^6.3.0",
         "mediabunny": "^1.27.2",
         "pinia": "^3.0.4",
         "postcss": "^8.5.6",
