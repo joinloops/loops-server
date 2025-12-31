@@ -6,6 +6,8 @@
 /storage/*.key
 /storage/pail
 /vendor
+/mysqldb-9-data
+/redis-data
 .env
 .env.backup
 .env.production
