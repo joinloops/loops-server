@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'accountBlocked' => 'Account Blocked',
+    'accountUnavailable' => 'Account Unavailable',
     'applyingDotDotDot' => 'Aplicant...',
     'avatarFailedToUploadError' => 'No s\'ha pogut actualitzar l\'àvatar. Torna-ho a provar.',
     'avatarFileSizeError' => 'La mida del fitxer de la imatge ha de ser inferior a 5 MB.',
@@ -17,6 +19,8 @@ return [
     'displayNameHelp' => 'Els noms visibles poden tenir fins a 30 caràcters.',
     'editProfile' => 'Edita el perfil',
     'failedToUpdateProfileErrorMessage' => 'No s\'ha pogut actualitzar el perfil. Torna-ho a provar.',
+    'favouritePosts' => 'Favourite posts',
+    'followRequestPending' => 'Follow Request Pending',
     'likes' => 'M\'agrada',
     'loadingProfileDotDotDot' => 'Carregant el perfil...',
     'noFollowersYet' => 'Encara no tens seguidors',
@@ -35,11 +39,15 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Vídeos',
+        'Favourites' => 'Favourites',
     ],
+    'thisAccountIsNotAvailable' => 'This account is not available',
     'unblock' => 'Desbloca',
     'userHasntPostedAnyVideosYet' => ':username encara no ha publicat cap vídeo',
     'whenPeopleFollowThisAccount' => 'Quan la gent segueixi aquest compte, apareixerà aquí.',
     'whenThisAccountFollowsSomeone' => 'Quan aquest compte segueixi algú, apareixerà aquí.',
+    'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'Encara no has publicat cap vídeo',
+    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
     'youveReachedTheEndOfThisList' => 'Has arribat al final d\'aquesta llista',
 ];
