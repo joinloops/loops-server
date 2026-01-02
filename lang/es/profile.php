@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'accountBlocked' => 'Cuenta bloqueada',
+    'accountUnavailable' => 'Cuenta no disponible',
     'applyingDotDotDot' => 'Aplicando...',
     'avatarFailedToUploadError' => 'Error al actualizar el avatar. Por favor, inténtalo de nuevo.',
     'avatarFileSizeError' => 'El tamaño del archivo de imagen debe ser menor a 5MB.',
@@ -17,6 +19,8 @@ return [
     'displayNameHelp' => 'Los nombres a mostrar pueden tener hasta 30 caracteres.',
     'editProfile' => 'Editar perfil',
     'failedToUpdateProfileErrorMessage' => 'Error al actualizar el perfil. Por favor, inténtalo de nuevo.',
+    'favouritePosts' => 'Publicaciones favoritas',
+    'followRequestPending' => 'Solicitudes pendientes para seguirte',
     'likes' => 'Me gusta',
     'loadingProfileDotDotDot' => 'Cargando perfil...',
     'noFollowersYet' => 'Aún no tienes seguidores',
@@ -34,12 +38,16 @@ return [
         'Oldest' => 'Más antiguos',
     ],
     'tabOptions' => [
-        'Videos' => 'Videos',
+        'Videos' => 'Vídeos',
+        'Favourites' => 'Favoritas',
     ],
+    'thisAccountIsNotAvailable' => 'Esta cuenta no está disponible',
     'unblock' => 'Desbloquear',
     'userHasntPostedAnyVideosYet' => ':username aún no ha publicado ningún video',
     'whenPeopleFollowThisAccount' => 'Cuando las personas sigan esta cuenta, aparecerán aquí.',
     'whenThisAccountFollowsSomeone' => 'Cuando esta cuenta siga a alguien, aparecerán aquí.',
+    'youHaveBlockedThisAccount' => 'Has bloqueado esta cuenta',
     'youHaventPostedAnyVideosYet' => 'Aún no has publicado ningún video',
+    'yourFavouritePostsWillAppearHere' => 'Tus publicaciones favoritas aparecerán aquí.',
     'youveReachedTheEndOfThisList' => 'Has llegado al final de esta lista',
 ];
