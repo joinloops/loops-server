@@ -4,6 +4,7 @@ return [
     'about' => 'Quant a',
     'activity' => 'Activity',
     'admin' => 'Administració',
+    'appearance' => 'Appearance',
     'clearAll' => 'Neteja-ho tot',
     'community' => 'Comunitat',
     'contact' => 'Contacte',
@@ -27,6 +28,7 @@ return [
     'search' => 'Cerca',
     'settings' => 'Configuració',
     'terms' => 'Condicions',
+    'toggleTheme' => 'Toggle Theme',
     'upload' => 'Carrega',
     'uploadLoop' => 'Carrega Loop',
 ];
