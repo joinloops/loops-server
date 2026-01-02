@@ -2,9 +2,9 @@
 
 return [
     'about' => 'À propos',
-    'activity' => 'Activity',
+    'activity' => 'Activité',
     'admin' => 'Admin',
-    'appearance' => 'Appearance',
+    'appearance' => 'Apparence',
     'clearAll' => 'Tout effacer',
     'community' => 'Communauté',
     'contact' => 'Contact',
@@ -28,7 +28,7 @@ return [
     'search' => 'Rechercher',
     'settings' => 'Paramètres',
     'terms' => 'Conditions',
-    'toggleTheme' => 'Toggle Theme',
+    'toggleTheme' => 'Changer de Thème',
     'upload' => 'Ajouter',
     'uploadLoop' => 'Ajouter une Loop',
 ];
