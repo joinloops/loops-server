@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'accountBlocked' => 'Account Blocked',
-    'accountUnavailable' => 'Account Unavailable',
+    'accountBlocked' => 'Compte Bloqué',
+    'accountUnavailable' => 'Compte Indisponible',
     'applyingDotDotDot' => 'Mise à jour...',
     'avatarFailedToUploadError' => 'Échec du téléchargement de l\'avatar. Réessayez.',
     'avatarFileSizeError' => 'L\'image doit faire moins de 5 Mo.',
@@ -39,15 +39,15 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Vidéos',
-        'Favourites' => 'Favourites',
+        'Favourites' => 'Favoris',
     ],
-    'thisAccountIsNotAvailable' => 'This account is not available',
+    'thisAccountIsNotAvailable' => 'Ce compte n\'est pas disponible',
     'unblock' => 'Débloquer',
     'userHasntPostedAnyVideosYet' => ':username n\'a pas encore posté de vidéos',
     'whenPeopleFollowThisAccount' => 'Quand des personnes suivent ce compte, elles apparaîtront ici.',
     'whenThisAccountFollowsSomeone' => 'Quand ce compte suit quelqu\'un, il apparaîtra ici.',
-    'youHaveBlockedThisAccount' => 'You have blocked this account',
+    'youHaveBlockedThisAccount' => 'Vous avez bloqué ce compte',
     'youHaventPostedAnyVideosYet' => 'Vous n\'avez pas encore posté de vidéos',
-    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
+    'yourFavouritePostsWillAppearHere' => 'Vos publications préférées apparaîtront ici.',
     'youveReachedTheEndOfThisList' => 'Vous êtes arrivé au bout de la liste',
 ];
