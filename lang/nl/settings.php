@@ -81,7 +81,7 @@ return [
     'sendingDotDotDot' => 'Sending...',
     'setup2FA' => 'Setup Two-Factor Authentication',
     'setup2FAStep1' => 'Step 1: Scan QR Code',
-    'setup2FAStep1Message' => 'Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)',
+    'setup2FAStep1Message' => 'Scan deze QR-code met je authenticatietoepassing (Google Authenticator, Authy, etc.)',
     'setup2FAStep2' => 'Step 2: Enter Verification Code',
     'setup2FAStep2Message' => 'Enter the 6-digit code from your authenticator app',
     'status' => 'Status',
@@ -104,5 +104,5 @@ return [
     'yourAccountStatistics' => 'Your account statistics',
     'yourDataYourControl' => 'Your data, your control',
     'yourDataYourControlMessage' => 'Download or review your account data. All exports are provided in JSON format for easy portability',
-    'yourEmailIsUsedForRecoveryMessage' => 'Your email is used for account recovery, notifications, and security alerts. We\'ll verify any changes to ensure account security.',
+    'yourEmailIsUsedForRecoveryMessage' => 'Je e-mailadres wordt gebruikt voor accountherstel en (veiligheids)meldingen. We checken aanpassingen voor de veiligheid van je account.',
 ];
