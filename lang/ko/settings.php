@@ -31,6 +31,7 @@ return [
     'dataSharingForResearchMessage' => '익명화된 데이터를 학술 연구와 플랫폼 개선에 사용하도록 허용',
     'deactivate' => '비활성화',
     'deactivateAccount' => '계정 비활성화',
+    'delete' => 'Delete',
     'deleteAccount' => '계정 삭제',
     'disable2FAButton' => '2단계 인증 비활성화',
     'disableTwoFactor' => '2단계 인증 비활성화',
