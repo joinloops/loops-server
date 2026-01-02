@@ -2,15 +2,18 @@
 
 return [
     'about' => 'Quant a',
+    'activity' => 'Activity',
     'admin' => 'Administració',
     'clearAll' => 'Neteja-ho tot',
     'community' => 'Comunitat',
     'contact' => 'Contacte',
     'developers' => 'Desenvolupadors',
     'federation' => 'Federació',
+    'forYou' => 'For You',
     'help' => 'Ajuda',
     'home' => 'Inici',
     'join' => 'Uneix-te',
+    'local' => 'Local',
     'logIn' => 'Inicia sessió',
     'logOut' => 'Tanca sessió',
     'loginOrRegister' => 'Inicia sessió o registra\'t',
