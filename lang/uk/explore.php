@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'discoverTrendingContent' => 'Discover trending content',
-    'noVideosFoundForThisHashtag' => 'No videos found for this hashtag',
+    'discoverTrendingContent' => 'Відкрийте популярний вміст',
+    'noVideosFoundForThisHashtag' => 'Не знайдено відео для цього хештегу',
 ];
