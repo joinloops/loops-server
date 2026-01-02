@@ -50,7 +50,7 @@ return [
     'following' => 'Following',
     'found' => 'found',
     'hashtag' => 'Hashtag',
-    'hashtags' => 'hashtags',
+    'hashtags' => 'хештеґи',
     'language' => 'Language',
     'likes' => 'Likes',
     'loadingMoreDotDotDot' => 'Loading more...',
