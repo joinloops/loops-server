@@ -4,7 +4,7 @@ return [
     'about' => 'Acerca de',
     'activity' => 'Actividad',
     'admin' => 'Administración',
-    'appearance' => 'Appearance',
+    'appearance' => 'Apariencia',
     'clearAll' => 'Limpiar todo',
     'community' => 'Comunidad',
     'contact' => 'Contacto',
@@ -28,7 +28,7 @@ return [
     'search' => 'Buscar',
     'settings' => 'Configuración',
     'terms' => 'Términos',
-    'toggleTheme' => 'Toggle Theme',
+    'toggleTheme' => 'Cambiar tema',
     'upload' => 'Subir',
     'uploadLoop' => 'Subir Loop',
 ];
