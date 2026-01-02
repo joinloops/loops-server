@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'registrationsAreCurrentlyClosed' => 'Registrations are currently closed',
-    'thisServerIsntAccepting' => 'This server isn’t accepting new signups right now. Please check back later or choose another Loops server.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'Неправильна адреса електронної пошти або пароль.',
+    'password' => 'Неправильний пароль.',
+    'registrationsAreCurrentlyClosed' => 'Реєстрація на даний час закрита',
+    'thisServerIsntAccepting' => 'Цей сервер не приймає нових реєстрацій зараз. Будь ласка, перевірте пізніше або виберіть інший сервер Loops.',
+    'throttle' => 'Забагато спроб входу. Повторіть спробу через :seconds секунд.',
 ];
