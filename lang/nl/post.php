@@ -28,7 +28,7 @@ return [
     'goBack' => 'Go Back',
     'goHome' => 'Go Home',
     'hide' => 'Hide',
-    'invalidCommentLink' => 'The comment link is invalid or broken',
+    'invalidCommentLink' => 'De reactielink is ongeldig of beschadigd',
     'loadMoreReplies' => 'Load more replies',
     'loadingComment' => 'Loading comment...',
     'loadingComments' => 'Loading comments...',
@@ -59,5 +59,5 @@ return [
     'viewAllComments' => 'View All Comments',
     'writeAReplyDotDotDot' => 'Write a reply...',
     'writeYourCaptionDotDotDot' => 'Write your caption...',
-    'yourReportingThis' => 'You\'re reporting this :type for: :message',
+    'yourReportingThis' => '',
 ];
