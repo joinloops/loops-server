@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'choseYourPreferredLanguage' => 'Choose your preferred language for the Loops interface.',
-    'displayLanguage' => 'Display Language',
-    'language' => 'Language',
+    'choseYourPreferredLanguage' => 'Válassz nyelvet a Loops kezelőfelületéhez.',
+    'displayLanguage' => 'Megjelenítési nyelv',
+    'language' => 'Nyelv',
     'picker' => [
-        'title' => 'Select Language',
-        'description' => 'Select your preferred language. This will change the language for the entire application.',
-        'select' => 'Select Language:',
-        'applyChanges' => 'Apply Changes',
-        'current' => 'Current Language:',
-        'note' => 'Your language preference will be saved automatically.',
+        'title' => 'Válassz nyelvet',
+        'description' => 'Válassz nyelvet. Ez az egész applikáció nyelvét meg fogja változtatni.',
+        'select' => 'Válassz nyelvet:',
+        'applyChanges' => 'Módosítások alkalmazása',
+        'current' => 'Jelenlegi nyelv:',
+        'note' => 'A módosítások automatikusan el lesznek mentve.',
     ],
 ];
