@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activity' => 'Activity',
+    'activity' => 'Activité',
     'allCaughtUp' => 'Tout est à jour !',
     'errorLoadingNotifications' => 'Erreur de chargement des notifications',
     'messageTypes' => [
@@ -17,13 +17,13 @@ return [
         'default' => 'a interagi avec votre contenu',
     ],
     'messages' => 'Messages',
-    'messagesWillAppearHere' => 'Messages will appear here',
-    'newFollowers' => 'New Followers',
-    'newFollowersWillAppearHere' => 'New followers will appear here',
-    'noMessages' => 'No Messages',
-    'noNewFollowers' => 'No new followers',
+    'messagesWillAppearHere' => 'Les messages apparaîtront ici',
+    'newFollowers' => 'Nouveaux abonnés',
+    'newFollowersWillAppearHere' => 'Les nouveaux abonnés apparaîtront ici',
+    'noMessages' => 'Aucun Message',
+    'noNewFollowers' => 'Aucun nouvel abonné',
     'noNotifications' => 'Aucune notification',
-    'noSystemNotifications' => 'No System Notifications',
-    'system' => 'System',
-    'systemNotificationsWillAppearHere' => 'System notifications will appear here',
+    'noSystemNotifications' => 'Aucune Notification du Système',
+    'system' => 'Système',
+    'systemNotificationsWillAppearHere' => 'Les notifications du système apparaîtront ici',
 ];
