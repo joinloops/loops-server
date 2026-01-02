@@ -4,6 +4,7 @@ return [
     'about' => '소개',
     'activity' => 'Activity',
     'admin' => '관리자',
+    'appearance' => 'Appearance',
     'clearAll' => '모두 지우기',
     'community' => '커뮤니티',
     'contact' => '문의',
@@ -27,6 +28,7 @@ return [
     'search' => '검색',
     'settings' => '설정',
     'terms' => '이용약관',
+    'toggleTheme' => 'Toggle Theme',
     'upload' => '업로드',
     'uploadLoop' => '업로드 루프',
 ];
