@@ -4,6 +4,7 @@ return [
     'about' => 'Σχετικά',
     'activity' => 'Δραστηριότητα',
     'admin' => 'Διαχειριστής',
+    'appearance' => 'Appearance',
     'clearAll' => 'Εκκαθάριση Όλων',
     'community' => 'Κοινότητα',
     'contact' => 'Επικοινωνία',
@@ -27,6 +28,7 @@ return [
     'search' => 'Αναζήτηση',
     'settings' => 'Ρυθμίσεις',
     'terms' => 'Όροι',
+    'toggleTheme' => 'Toggle Theme',
     'upload' => 'Μεταφόρτωση',
     'uploadLoop' => 'Μεταμόρφωση Loop',
 ];
