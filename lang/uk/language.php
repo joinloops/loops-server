@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'choseYourPreferredLanguage' => 'Choose your preferred language for the Loops interface.',
-    'displayLanguage' => 'Display Language',
-    'language' => 'Language',
+    'choseYourPreferredLanguage' => 'Виберіть бажану мову для інтерфейсу Loops.',
+    'displayLanguage' => 'Мова додатку',
+    'language' => 'Мова',
     'picker' => [
-        'title' => 'Select Language',
-        'description' => 'Select your preferred language. This will change the language for the entire application.',
-        'select' => 'Select Language:',
-        'applyChanges' => 'Apply Changes',
-        'current' => 'Current Language:',
-        'note' => 'Your language preference will be saved automatically.',
+        'title' => 'Виберіть мову',
+        'description' => 'Вибір бажаної мови. Це змінить мову для всієї програми.',
+        'select' => 'Вибір мови програми:',
+        'applyChanges' => 'Застосувати зміни',
+        'current' => 'Поточна мова: ',
+        'note' => 'Ваші мовні налаштування будуть збережені автоматично.',
     ],
 ];
