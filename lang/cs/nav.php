@@ -4,6 +4,7 @@ return [
     'about' => 'About',
     'activity' => 'Activity',
     'admin' => 'Admin',
+    'appearance' => 'Appearance',
     'clearAll' => 'Clear All',
     'community' => 'Community',
     'contact' => 'Contact',
@@ -27,6 +28,7 @@ return [
     'search' => 'Search',
     'settings' => 'Settings',
     'terms' => 'Terms',
+    'toggleTheme' => 'Toggle Theme',
     'upload' => 'Upload',
     'uploadLoop' => 'Upload Loop',
 ];
