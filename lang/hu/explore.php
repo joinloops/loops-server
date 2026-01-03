@@ -2,5 +2,5 @@
 
 return [
     'discoverTrendingContent' => 'Fedezz fel népszerű tartalmakat',
-    'noVideosFoundForThisHashtag' => 'No videos found for this hashtag',
+    'noVideosFoundForThisHashtag' => 'Nem található videó ezzel a címkével',
 ];
