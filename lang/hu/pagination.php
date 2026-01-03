@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'next' => 'Next &raquo;',
-    'previous' => '&laquo; Previous',
+    'next' => 'Következő &raquo;',
+    'previous' => '&laquo; Előző',
 ];
