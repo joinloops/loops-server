@@ -2,11 +2,11 @@
 
 return [
     'activity' => 'Діяльність',
-    'allCaughtUp' => 'У вас все налаштовано!',
+    'allCaughtUp' => 'Усе переглянуто!',
     'errorLoadingNotifications' => 'Помилка при завантаженні сповіщень',
     'messageTypes' => [
         'videoLike' => 'сподобалось ваше відео',
-        'newFollower' => 'підписався на вас.',
+        'newFollower' => 'підписався на вас',
         'videoComment' => 'прокоментував ваше відео',
         'videoCommentReply' => 'відповів на коментар про ваше відео',
         'videoCommentLike' => 'сподобався ваш коментар',
