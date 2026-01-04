@@ -78,7 +78,7 @@ return [
     'security' => 'Security',
     'selectiveDataExport' => ' Selective data export',
     'selectiveDataExportMessage' => 'Choose specific types of data to export if you don\'t need everything.',
-    'sendingDotDotDot' => 'Sending...',
+    'sendingDotDotDot' => 'Küldés...',
     'setup2FA' => 'Setup Two-Factor Authentication',
     'setup2FAStep1' => 'Step 1: Scan QR Code',
     'setup2FAStep1Message' => 'Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)',
