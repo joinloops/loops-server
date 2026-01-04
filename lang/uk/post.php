@@ -57,7 +57,7 @@ return [
     'thisActionCannotBeUndone' => 'Цю дію скасувати не можна. Відео буде остаточно вилучено.',
     'view' => 'Перегляд',
     'viewAllComments' => 'Подивитися всі коментарі',
-    'writeAReplyDotDotDot' => 'Написати відповідь ...',
+    'writeAReplyDotDotDot' => 'Написати відповідь...',
     'writeYourCaptionDotDotDot' => 'Напишіть свій підпис...',
     'yourReportingThis' => 'Ви скаржитесь на це :type для: :message',
 ];
