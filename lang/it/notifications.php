@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activity' => 'Activity',
+    'activity' => 'Attivita\'',
     'allCaughtUp' => 'Sai già tutto!',
     'errorLoadingNotifications' => 'Errore nel caricamento delle notifiche',
     'messageTypes' => [
@@ -16,14 +16,14 @@ return [
         'videoShare' => 'ha condiviso il tuo video',
         'default' => 'ha interagito con il tuo contenuto',
     ],
-    'messages' => 'Messages',
-    'messagesWillAppearHere' => 'Messages will appear here',
-    'newFollowers' => 'New Followers',
-    'newFollowersWillAppearHere' => 'New followers will appear here',
-    'noMessages' => 'No Messages',
-    'noNewFollowers' => 'No new followers',
+    'messages' => 'Messaggi',
+    'messagesWillAppearHere' => 'I messaggi appariranno qui',
+    'newFollowers' => 'Nuovi Follower',
+    'newFollowersWillAppearHere' => 'Nuovi follower appariranno qui',
+    'noMessages' => 'Nessun messaggio',
+    'noNewFollowers' => 'Nessun nuovo follower',
     'noNotifications' => 'Nessuna notifica',
-    'noSystemNotifications' => 'No System Notifications',
-    'system' => 'System',
-    'systemNotificationsWillAppearHere' => 'System notifications will appear here',
+    'noSystemNotifications' => 'Nessuna Notifica Di Sistema',
+    'system' => 'Sistema',
+    'systemNotificationsWillAppearHere' => 'Le notifiche di sistema appariranno qui',
 ];
