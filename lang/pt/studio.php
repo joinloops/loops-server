@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'actions' => 'Actions',
-    'addFirstVideo' => 'Add First Video',
+    'actions' => 'Ações',
+    'addFirstVideo' => 'Adicionar Primeiro Vídeo',
     'addSomeVideosToGetStarted' => 'Add some videos to get started',
-    'addVideos' => 'Add Videos',
+    'addVideos' => 'Adicionar Vídeos',
     'addVideosToPlaylist' => 'Add Videos to Playlist',
     'allowOthersTo' => 'Allow others to',
     'altText' => 'Alt Text',
