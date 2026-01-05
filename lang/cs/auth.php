@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'registrationsAreCurrentlyClosed' => 'Registrations are currently closed',
-    'thisServerIsntAccepting' => 'This server isn’t accepting new signups right now. Please check back later or choose another Loops server.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
+    'failed' => 'Nesprávné přihlašovací údaje.',
+    'password' => 'Zadané heslo je neplatné.',
+    'registrationsAreCurrentlyClosed' => 'Registrace jsou momentálně uzavřeny',
+    'thisServerIsntAccepting' => 'Tento server momentálně nepřijímá nové registrace. Zkuste to prosím později nebo vyberte jiný Loops server.',
+    'throttle' => 'Příliš mnoho pokusů o přihlášení. Zkuste to prosím znovu za :sekund sekund.',
 ];
