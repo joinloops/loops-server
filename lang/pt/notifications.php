@@ -7,7 +7,7 @@ return [
     'messageTypes' => [
         'videoLike' => 'curtiu seu vídeo',
         'newFollower' => 'começou a seguir você',
-        'videoComment' => 'comentou em seu vídeo',
+        'videoComment' => 'comentou no seu vídeo',
         'videoCommentReply' => 'respondeu a um comentário no seu vídeo',
         'videoCommentLike' => 'curtiu seu comentário',
         'videoCommentReplyLike' => 'curtiu sua resposta do comentário',
