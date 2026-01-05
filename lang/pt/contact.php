@@ -2,7 +2,7 @@
 
 return [
     'adminContact' => 'Contato do administrador',
-    'adminContactMessage' => 'For inquiries related to essential operational matters (please use the in‑app reporting system for content issues).',
+    'adminContactMessage' => 'Para consultas relacionadas a questões operacionais essenciais (use o sistema de denúncias do aplicativo para questões relacionadas ao conteúdo).',
     'bodyMessage' => 'Estamos aqui para ajudar. Entre em contato conosco através de qualquer um dos canais abaixo e entraremos em contato com você o mais rápido possível.',
     'communityForum' => 'Fórum da Comunidade',
     'communityForumMessage' => 'Junte-se a nossa comunidade de discussões, faça perguntas e compartilhe conhecimento com outros usuários.',
