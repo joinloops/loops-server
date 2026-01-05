@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'accountCreatedSuccessfullyWelcomeAboard' => 'Account created successfully! Welcome aboard!',
-    'actions' => 'Actions',
-    'ageRestrictedContent' => 'Age-Restricted Content',
-    'alreadyHaveAnAccount' => 'Already have an account?',
-    'anUnexpectedErrorOccuredPleaseTryAgain' => 'An unexpected error occurred. Please try again.',
-    'and' => 'and',
-    'apply' => 'Apply',
-    'authenticationCode' => 'Authentication Code',
+    'accountCreatedSuccessfullyWelcomeAboard' => 'Conta criada com sucesso! Bem-vindo(a) a bordo!',
+    'actions' => 'Ações',
+    'ageRestrictedContent' => 'Conteúdo Restrito por Idade',
+    'alreadyHaveAnAccount' => 'Já tem uma conta?',
+    'anUnexpectedErrorOccuredPleaseTryAgain' => 'Ocorreu um erro inesperado. Tente novamente.',
+    'and' => 'e',
+    'apply' => 'Aplicar',
+    'authenticationCode' => 'Código de Autenticação',
     'authenticationSuccessful' => 'Authentication successful!',
     'avatar' => 'Avatar',
     'backToAuthenticatorApp' => 'Back to authenticator app',
