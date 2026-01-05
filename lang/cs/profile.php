@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'accountBlocked' => 'Account Blocked',
-    'accountUnavailable' => 'Account Unavailable',
+    'accountBlocked' => 'Účet byl zablokován',
+    'accountUnavailable' => 'Účet je nedostupný',
     'applyingDotDotDot' => 'Applying...',
-    'avatarFailedToUploadError' => 'Failed to update avatar. Please try again.',
-    'avatarFileSizeError' => 'Image file size must be less than 5MB.',
-    'avatarFileTypeError' => 'Please select a valid image file (PNG, JPEG, or JPG).',
-    'bio' => 'Bio',
+    'avatarFailedToUploadError' => 'Nepodařilo se aktualizovat avatar. Prosím, zkuste to znovu.',
+    'avatarFileSizeError' => 'Velikost obrázku musí být menší než 5 MB.',
+    'avatarFileTypeError' => 'Vyberte prosím platný obrázek (PNG, JPEG nebo JPG).',
+    'bio' => 'O mně',
     'bioHelp' => 'Optional bio (up to 80 characters)',
     'bioPlaceholder' => 'Add an optional bio',
     'block' => 'Block',
