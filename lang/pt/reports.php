@@ -2,8 +2,8 @@
 
 return [
     'error' => [
-        'default' => 'An unexpected error occurred',
-        'title' => 'Report Error',
+        'default' => 'Um erro inesperado ocorreu',
+        'title' => 'Relatar Erro',
     ],
     'success' => [
         'message' => 'Your report was successfully sent and will be reviewed by our content moderation team.<br /><br />Thank you for helping keeping our community safe ❤️',
