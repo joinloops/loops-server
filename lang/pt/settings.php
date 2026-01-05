@@ -1,13 +1,13 @@
 <?php
 
 return [
-    'accountControl' => 'Account control',
-    'accountData' => 'Account data',
-    'accountInformation' => 'Account information',
-    'addAnExtraLayerOfSecurity' => 'Add an extra layer of security to your account with 2FA using an authenticator app.',
-    'added' => 'Added',
-    'allowYourAccountAndVideosToBeShared' => 'Allow your account and videos to be shared with people on other servers.',
-    'analyticsTracking' => 'Analytics tracking',
+    'accountControl' => 'Controle da conta',
+    'accountData' => 'Dados da conta',
+    'accountInformation' => 'Informações da conta',
+    'addAnExtraLayerOfSecurity' => 'Adicionar uma camada extra de segurança à sua conta com 2FA usando um aplicativo autenticador.',
+    'added' => 'Adicionado',
+    'allowYourAccountAndVideosToBeShared' => 'Permitir que sua conta e vídeos sejam compartilhados com pessoas em outros servidores.',
+    'analyticsTracking' => 'Analíticos de rastreamento',
     'analyticsTrackingMessage' => 'Allow Loops to track your usage for analytics and improving the service.',
     'back' => 'Back',
     'blockedAccounts' => 'Blocked accounts',
