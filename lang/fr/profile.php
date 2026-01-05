@@ -19,7 +19,7 @@ return [
     'displayNameHelp' => 'Jusqu\'à 30 caractères maximum.',
     'editProfile' => 'Modifier le profil',
     'failedToUpdateProfileErrorMessage' => 'Échec de la mise à jour du profil. Réessayez.',
-    'favouritePosts' => 'Favourite posts',
+    'favouritePosts' => 'Publications favorites',
     'followRequestPending' => 'Demande de suivi en attente',
     'likes' => 'J\'aime',
     'loadingProfileDotDotDot' => 'Chargement du profil...',
