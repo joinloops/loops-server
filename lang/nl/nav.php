@@ -30,5 +30,5 @@ return [
     'terms' => 'Terms',
     'toggleTheme' => 'Toggle Theme',
     'upload' => 'Upload',
-    'uploadLoop' => 'Upload Loop',
+    'uploadLoop' => 'Loop uploaden',
 ];
