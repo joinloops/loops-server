@@ -1,11 +1,11 @@
 <?php
 
 return [
-    'accountControl' => 'Account control',
-    'accountData' => 'Account data',
-    'accountInformation' => 'Account information',
+    'accountControl' => 'Správa účtu',
+    'accountData' => 'Data účtu',
+    'accountInformation' => 'Údaje účtu',
     'addAnExtraLayerOfSecurity' => 'Add an extra layer of security to your account with 2FA using an authenticator app.',
-    'added' => 'Added',
+    'added' => 'Přidáno',
     'allowYourAccountAndVideosToBeShared' => 'Allow your account and videos to be shared with people on other servers.',
     'analyticsTracking' => 'Analytics tracking',
     'analyticsTrackingMessage' => 'Allow Loops to track your usage for analytics and improving the service.',
