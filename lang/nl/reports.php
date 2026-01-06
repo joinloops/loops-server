@@ -20,7 +20,7 @@ return [
         1017 => 'Shocking and graphic content',
         1018 => 'Misinformation',
         1019 => 'Deceptive behavior and spam',
-        1020 => 'Regulated goods and activities',
+        1020 => 'Goederen en activiteiten die niet voldoen aan de wet',
         1021 => 'Frauds and scams',
         1022 => 'Sharing personal information',
         1023 => 'Report illegal content',
