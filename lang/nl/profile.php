@@ -21,7 +21,7 @@ return [
     'failedToUpdateProfileErrorMessage' => 'Failed to update profile. Please try again.',
     'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Follow Request Pending',
-    'likes' => 'Likes',
+    'likes' => 'Leuk gevonden Loops',
     'loadingProfileDotDotDot' => 'Loading profile...',
     'noFollowersYet' => 'No followers yet',
     'noMorePostsToLoad' => 'No more posts to load',
@@ -49,5 +49,5 @@ return [
     'youHaveBlockedThisAccount' => 'You have blocked this account',
     'youHaventPostedAnyVideosYet' => 'You haven\'t posted any videos yet',
     'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
-    'youveReachedTheEndOfThisList' => 'You\'ve reached the end of this list',
+    'youveReachedTheEndOfThisList' => '',
 ];
