@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'choseYourPreferredLanguage' => 'Choose your preferred language for the Loops interface.',
-    'displayLanguage' => 'Display Language',
-    'language' => 'Language',
+    'choseYourPreferredLanguage' => 'Vyberte si preferovaný jazyk pro rozhraní Loops.',
+    'displayLanguage' => 'Jazyk zobrazení',
+    'language' => 'Jazyk',
     'picker' => [
-        'title' => 'Select Language',
-        'description' => 'Select your preferred language. This will change the language for the entire application.',
-        'select' => 'Select Language:',
-        'applyChanges' => 'Apply Changes',
-        'current' => 'Current Language:',
-        'note' => 'Your language preference will be saved automatically.',
+        'title' => 'Vybrat jazyk',
+        'description' => 'Vyberte preferovaný jazyk. Tímto se změní jazyk celé aplikace.',
+        'select' => 'Vybrat jazyk:',
+        'applyChanges' => 'Použít změny',
+        'current' => 'Stávající jazyk:',
+        'note' => 'Vaše předvolby jazyka budou automaticky uloženy.',
     ],
 ];
