@@ -19,7 +19,7 @@ return [
     'displayNameHelp' => 'I nomi visualizzati possono contenere fino a 30 caratteri.',
     'editProfile' => 'Modifica Profilo',
     'failedToUpdateProfileErrorMessage' => 'Aggiornamento profilo fallito. Prova di nuovo.',
-    'favouritePosts' => 'Favourite posts',
+    'favouritePosts' => 'Post preferiti',
     'followRequestPending' => 'Segui Richiesta In Sospeso',
     'likes' => 'Mi piace',
     'loadingProfileDotDotDot' => 'Caricamento profilo...',
@@ -39,7 +39,7 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Video',
-        'Favourites' => 'Favourites',
+        'Favourites' => 'Preferiti',
     ],
     'thisAccountIsNotAvailable' => 'Questo account non è disponibile',
     'unblock' => 'Sblocca',
