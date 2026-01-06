@@ -102,7 +102,7 @@ return [
     'weveSentAnEmail' => 'We\'ve sent a verification email to',
     'withAPrivateAccountMessage' => 'With a private account, only users you approve can follow you and watch your videos. Your existing followers won\'t be affected.',
     'yourAccountStatistics' => 'Your account statistics',
-    'yourDataYourControl' => 'Your data, your control',
+    'yourDataYourControl' => 'Jouw gegevens, jouw controle',
     'yourDataYourControlMessage' => 'Download or review your account data. All exports are provided in JSON format for easy portability',
     'yourEmailIsUsedForRecoveryMessage' => 'Je e-mailadres wordt gebruikt voor accountherstel en (veiligheids)meldingen. We checken aanpassingen voor de veiligheid van je account.',
 ];
