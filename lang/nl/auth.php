@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'failed' => 'These credentials do not match our records.',
-    'password' => 'The provided password is incorrect.',
-    'registrationsAreCurrentlyClosed' => 'Registrations are currently closed',
-    'thisServerIsntAccepting' => 'This server isn’t accepting new signups right now. Please check back later or choose another Loops server.',
+    'failed' => 'Deze inloggegevens komen niet overeen met onze database.',
+    'password' => 'Het wachtwoord dat je hebt ingevoerd is niet correct.',
+    'registrationsAreCurrentlyClosed' => 'Registraties zijn momenteel gesloten.',
+    'thisServerIsntAccepting' => 'Deze server accepteert nu geen nieuwe aanmeldingen. Kom gerust later terug of kies een andere Loops server.',
     'throttle' => 'Te veel inlogpogingen. Opnieuw proberen kan over :seconds seconden.',
 ];
