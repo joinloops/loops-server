@@ -15,7 +15,7 @@ return [
     'backToSignIn' => 'Terug naar Inloggen',
     'birthdate' => 'Geboortedatum',
     'birthdateVerified' => 'Geboortedatum geverifieerd!',
-    'browseTrendingTagsInstead' => 'Populaire tags bekijken',
+    'browseTrendingTagsInstead' => 'Trending tags bekijken',
     'byContinuingYouAgreeToOur' => 'Door verder te gaan, ga je akkoord met onze',
     'cancel' => 'Annuleren',
     'changeAvatar' => 'Wijzig profielfoto',
