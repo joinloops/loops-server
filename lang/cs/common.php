@@ -153,7 +153,7 @@ return [
     'tapToPlay' => 'Klepněte pro přehrání',
     'termsOfService' => 'Smluvní podmínky',
     'theme' => 'Motiv',
-    'thisContentAppearsToBeOnAnotherServer' => 'This content appears to be on another server. Search the federated network to discover and view this content.',
+    'thisContentAppearsToBeOnAnotherServer' => 'Zdá se, že tento obsah je na jiném serveru. Vyhledejte federovanou síť pro objevení a zobrazení tohoto obsahu.',
     'today' => 'Dnes',
     'tooManyFailedAttemptsPleaseTryAgainLater' => 'Příliš mnoho neúspěšných pokusů, zkuste to prosím později',
     'tryARelatedOrSimilarHashtag' => 'Vyzkoušejte související nebo podobný hashtag',
