@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'adminContact' => 'Kontakt administrátora',
+    'adminContact' => 'Kontakt na správce',
     'adminContactMessage' => 'Pro dotazy týkající se základních provozních záležitostí (pro hlášení spojená s obsahem prosím použijte systém hlášení v rámci aplikace).',
     'bodyMessage' => 'Jsme tu pro vás. Spojte se s námi kterýmkoliv níže uvedeným kanálem a my se ozveme co nejdříve.',
     'communityForum' => 'Komunitní fórum',
