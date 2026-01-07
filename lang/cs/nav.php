@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'about' => 'About',
-    'activity' => 'Activity',
+    'about' => 'O Loops',
+    'activity' => 'Aktivita',
     'admin' => 'Admin',
     'appearance' => 'Vzhled',
     'clearAll' => 'Vymazat vše',
