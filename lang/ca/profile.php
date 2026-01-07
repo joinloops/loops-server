@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'accountBlocked' => 'Account Blocked',
-    'accountUnavailable' => 'Account Unavailable',
+    'accountBlocked' => 'Compte bloquejat',
+    'accountUnavailable' => 'Compte no disponible',
     'applyingDotDotDot' => 'Aplicant...',
     'avatarFailedToUploadError' => 'No s\'ha pogut actualitzar l\'àvatar. Torna-ho a provar.',
     'avatarFileSizeError' => 'La mida del fitxer de la imatge ha de ser inferior a 5 MB.',
@@ -19,8 +19,8 @@ return [
     'displayNameHelp' => 'Els noms visibles poden tenir fins a 30 caràcters.',
     'editProfile' => 'Edita el perfil',
     'failedToUpdateProfileErrorMessage' => 'No s\'ha pogut actualitzar el perfil. Torna-ho a provar.',
-    'favouritePosts' => 'Favourite posts',
-    'followRequestPending' => 'Follow Request Pending',
+    'favouritePosts' => 'Publicacions preferides',
+    'followRequestPending' => 'Sol·licituds de seguiment pendents',
     'likes' => 'M\'agrada',
     'loadingProfileDotDotDot' => 'Carregant el perfil...',
     'noFollowersYet' => 'Encara no tens seguidors',
@@ -39,15 +39,15 @@ return [
     ],
     'tabOptions' => [
         'Videos' => 'Vídeos',
-        'Favourites' => 'Favourites',
+        'Favourites' => 'Preferits',
     ],
-    'thisAccountIsNotAvailable' => 'This account is not available',
+    'thisAccountIsNotAvailable' => 'Aquest compte no està disponible',
     'unblock' => 'Desbloca',
     'userHasntPostedAnyVideosYet' => ':username encara no ha publicat cap vídeo',
     'whenPeopleFollowThisAccount' => 'Quan la gent segueixi aquest compte, apareixerà aquí.',
     'whenThisAccountFollowsSomeone' => 'Quan aquest compte segueixi algú, apareixerà aquí.',
-    'youHaveBlockedThisAccount' => 'You have blocked this account',
+    'youHaveBlockedThisAccount' => 'Has bloquejat aquest compte',
     'youHaventPostedAnyVideosYet' => 'Encara no has publicat cap vídeo',
-    'yourFavouritePostsWillAppearHere' => 'Your favourite posts will appear here.',
+    'yourFavouritePostsWillAppearHere' => 'Les teves publicacions preferides apareixeran aquí.',
     'youveReachedTheEndOfThisList' => 'Has arribat al final d\'aquesta llista',
 ];
