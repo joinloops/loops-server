@@ -2,15 +2,15 @@
 
 return [
     'about' => 'Quant a',
-    'activity' => 'Activity',
+    'activity' => 'Activitat',
     'admin' => 'Administració',
-    'appearance' => 'Appearance',
+    'appearance' => 'Aparença',
     'clearAll' => 'Neteja-ho tot',
     'community' => 'Comunitat',
     'contact' => 'Contacte',
     'developers' => 'Desenvolupadors',
     'federation' => 'Federació',
-    'forYou' => 'For You',
+    'forYou' => 'Per a tu',
     'help' => 'Ajuda',
     'home' => 'Inici',
     'join' => 'Uneix-te',
@@ -28,7 +28,7 @@ return [
     'search' => 'Cerca',
     'settings' => 'Configuració',
     'terms' => 'Condicions',
-    'toggleTheme' => 'Toggle Theme',
+    'toggleTheme' => 'Canvia el tema',
     'upload' => 'Carrega',
     'uploadLoop' => 'Carrega Loop',
 ];
