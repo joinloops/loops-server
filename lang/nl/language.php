@@ -1,9 +1,9 @@
 <?php
 
 return [
-    'choseYourPreferredLanguage' => 'Choose your preferred language for the Loops interface.',
-    'displayLanguage' => 'Display Language',
-    'language' => 'Language',
+    'choseYourPreferredLanguage' => 'Kies uw voorkeurstaal voor het Loops gebruikersbeeld.',
+    'displayLanguage' => 'Applicatie Taal',
+    'language' => 'Taal',
     'picker' => [
         'title' => 'Taal selecteren',
         'description' => 'Selecteer uw voorkeurstaal. Dit verandert de taal voor de hele toepassing.',
