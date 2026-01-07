@@ -1,17 +1,17 @@
 <?php
 
 return [
-    'activity' => 'Activity',
-    'allCaughtUp' => 'You\'re all caught up!',
-    'errorLoadingNotifications' => 'Error loading notifications',
+    'activity' => 'Activiteit',
+    'allCaughtUp' => 'Je bent helemaal bij!',
+    'errorLoadingNotifications' => 'Fout bij laden van meldingen',
     'messageTypes' => [
         'videoLike' => 'vond je video leuk',
-        'newFollower' => 'started following you',
-        'videoComment' => 'commented on your video',
-        'videoCommentReply' => 'replied to a comment on your video',
-        'videoCommentLike' => 'liked your comment',
-        'videoCommentReplyLike' => 'liked your comment reply',
-        'videoCommentShare' => 'shared your comment',
+        'newFollower' => 'volgt je nu',
+        'videoComment' => 'heeft op je video gereageerd',
+        'videoCommentReply' => 'reageerde op een opmerking op je video',
+        'videoCommentLike' => 'heeft je reactie leuk gevonden',
+        'videoCommentReplyLike' => 'heeft je antwoord op een reactie leuk gevonden',
+        'videoCommentShare' => 'heeft je reactie gedeeld',
         'videoCommentReplyShare' => 'shared your comment reply',
         'videoShare' => 'shared your video',
         'default' => 'had een interactie met je inhoud',
