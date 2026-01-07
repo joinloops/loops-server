@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activity' => 'Activity',
+    'activity' => 'Aktivita',
     'allCaughtUp' => 'Již nic nového!',
     'errorLoadingNotifications' => 'Chyba při načítání oznámení',
     'messageTypes' => [
@@ -14,7 +14,7 @@ return [
         'videoCommentShare' => 'sdílel/a váš komentář',
         'videoCommentReplyShare' => 'sdílel/a vaši odpověď na komentář',
         'videoShare' => 'sdílel/a vaše video',
-        'default' => 'interacted with your content',
+        'default' => 'interakce s vaším obsahem',
     ],
     'messages' => 'Soukromé zprávy',
     'messagesWillAppearHere' => 'Zde se zobrazí zprávy',
