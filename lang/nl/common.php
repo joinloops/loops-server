@@ -25,7 +25,7 @@ return [
     'clickToReveal' => 'Klik om te tonen',
     'clickToUploadImage' => 'Klik om afbeelding te geven',
     'close' => 'Sluit',
-    'comment' => 'Commentaar',
+    'comment' => 'Reageren',
     'communityGuidelines' => 'Gemeenschapsrichtlijnen',
     'confirmPassword' => 'Bevestig jouw wachtwoord',
     'confirmYourBirthdate' => 'Bevestig jouw geboortedatum',
