@@ -1,9 +1,13 @@
 <?php
 
 return [
-    'failed' => '这些凭据与我们的记录不匹配。',
-    'password' => '提供的密码不正确。',
+    'byCreatingANewAccount' => 'By creating a new account, you agree to the',
+    'communityGuidelines' => 'Community Guidelines',
+    'failed' => 'These credentials do not match our records.',
+    'password' => 'The provided password is incorrect.',
+    'privacyPolicy' => 'Privacy Policy',
     'registrationsAreCurrentlyClosed' => 'Registrations are currently closed',
+    'termsOfService' => 'Terms of Service',
     'thisServerIsntAccepting' => 'This server isn’t accepting new signups right now. Please check back later or choose another Loops server.',
-    'throttle' => '登录尝试次数过多。请在 :seconds 秒后重试。',
+    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
 ];
