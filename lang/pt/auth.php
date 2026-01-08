@@ -3,11 +3,11 @@
 return [
     'byCreatingANewAccount' => 'By creating a new account, you agree to the',
     'communityGuidelines' => 'Community Guidelines',
-    'failed' => 'Estas credenciais não estão nos nossos registros.',
-    'password' => 'A senha fornecida está incorreta.',
+    'failed' => 'Essas credenciais não correspondem aos nossos registos.',
+    'password' => 'A senha informada está incorreta.',
     'privacyPolicy' => 'Privacy Policy',
-    'registrationsAreCurrentlyClosed' => 'As inscrições estão fechadas no momento',
+    'registrationsAreCurrentlyClosed' => 'Os registos estão atualmente fechados',
     'termsOfService' => 'Terms of Service',
-    'thisServerIsntAccepting' => 'Este servidor não está aceitando novas inscrições no momento. Por favor, volte mais tarde ou escolha outro servidor de Repetições.',
-    'throttle' => 'Você realizou muitas tentativas de \'login\'. Por favor, tente novamente em: \'segundos\' \'segundos\'.',
+    'thisServerIsntAccepting' => 'Este servidor não aceita novas inscrições no momento. Por favor, volte mais tarde ou escolha outro servidor de laços.',
+    'throttle' => 'Demasiadas tentativas de acesso. Por favor, tente novamente.',
 ];
