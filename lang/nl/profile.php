@@ -1,14 +1,14 @@
 <?php
 
 return [
-    'accountBlocked' => 'Account Blocked',
-    'accountUnavailable' => 'Account Unavailable',
-    'applyingDotDotDot' => 'Applying...',
-    'avatarFailedToUploadError' => 'Failed to update avatar. Please try again.',
-    'avatarFileSizeError' => 'Image file size must be less than 5MB.',
-    'avatarFileTypeError' => 'Please select a valid image file (PNG, JPEG, or JPG).',
+    'accountBlocked' => 'Account Geblokkeerd',
+    'accountUnavailable' => 'Account Niet Beschikbaar',
+    'applyingDotDotDot' => 'Toepassen...',
+    'avatarFailedToUploadError' => 'Profielfoto bijwerking mislukt. Probeer opnieuw.',
+    'avatarFileSizeError' => 'Afbeelding moet kleiner zijn dan 5 MB',
+    'avatarFileTypeError' => 'Selecteer een geldig afbeeldingsbestand (PNG, JPG of JPG).',
     'bio' => 'Bio',
-    'bioHelp' => 'Optional bio (up to 80 characters)',
+    'bioHelp' => 'Optionele bio (tot 80 karakters)',
     'bioPlaceholder' => 'Add an optional bio',
     'block' => 'Block',
     'blocked' => 'Blocked',
