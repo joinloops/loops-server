@@ -21,7 +21,7 @@ return [
     'failedToUpdateProfileErrorMessage' => 'Profiel bijwerken mislukt. Probeer het opnieuw.',
     'favouritePosts' => 'Als favoriet markeren',
     'followRequestPending' => 'Volgverzoek In Afwachting',
-    'likes' => 'Leuk gevonden Loops',
+    'likes' => 'Vind-ik-leuks',
     'loadingProfileDotDotDot' => 'Profiel wordt geladen...',
     'noFollowersYet' => 'Nog geen volgers',
     'noMorePostsToLoad' => 'Geen berichten meer te laden',
@@ -49,5 +49,5 @@ return [
     'youHaveBlockedThisAccount' => 'Je hebt dit account geblokkeerd',
     'youHaventPostedAnyVideosYet' => 'Je hebt nog geen video\'s geplaatst',
     'yourFavouritePostsWillAppearHere' => 'Je favoriete berichten verschijnen hier.',
-    'youveReachedTheEndOfThisList' => '',
+    'youveReachedTheEndOfThisList' => 'Je hebt het einde van deze lijst bereikt',
 ];
