@@ -28,7 +28,7 @@ return [
     'goBack' => 'Ga Terug',
     'goHome' => 'Naar Thuis',
     'hide' => 'Verberg',
-    'invalidCommentLink' => 'De reactielink is ongeldig of beschadigd',
+    'invalidCommentLink' => 'De reactie link is ongeldig of gebroken',
     'loadMoreReplies' => 'Meer antwoorden laden',
     'loadingComment' => 'Reactie laden...',
     'loadingComments' => 'Reacties laden...',
