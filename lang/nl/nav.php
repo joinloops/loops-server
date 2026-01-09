@@ -14,7 +14,7 @@ return [
     'help' => 'Hulp',
     'home' => 'Thuis',
     'join' => 'Deelnemen',
-    'local' => 'Mijn instantie',
+    'local' => 'Lokaal',
     'logIn' => 'Inloggen',
     'logOut' => 'Uitloggen',
     'loginOrRegister' => 'Log in of Registreren',
