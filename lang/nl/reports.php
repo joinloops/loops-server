@@ -25,7 +25,7 @@ return [
         1022 => 'Delen van persoonlijke informatie',
         1023 => 'Meld illegale inhoud',
         1024 => 'Imitatieproducten of intellectueel eigendom',
-        1025 => 'Niet-openbaar gemaakte marketing',
+        1025 => 'Niet-transparant gemaakte marketing',
         1026 => 'Overige',
     ],
 ];
