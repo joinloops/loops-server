@@ -2,9 +2,9 @@
 
 return [
     'accountCreated' => 'Account aangemaakt',
-    'byCreatingANewAccount' => 'Door een account aan te maken gaat u akkoord met de',
-    'chooseASecurePasswordForYourAccount' => 'Kies een veilig wachtwoord voor uw account',
-    'chooseYourDisplayNameUsernameAndEmail' => 'Kies uw zichtbare naam, gebruikersnaam en E-mail',
+    'byCreatingANewAccount' => 'Door een account aan te maken gaat je akkoord met de',
+    'chooseASecurePasswordForYourAccount' => 'Kies een veilig wachtwoord voor je account',
+    'chooseYourDisplayNameUsernameAndEmail' => 'Kies je zichtbare naam, gebruikersnaam en E-mail',
     'communityGuidelines' => 'Gemeenschapsrichtlijnen',
     'completeTheVerificationToContinue' => 'Vul de verificatie in om verder te gaan',
     'continueToSignIn' => 'Doorgaan met aanmelden',
