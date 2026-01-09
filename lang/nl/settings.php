@@ -1,12 +1,12 @@
 <?php
 
 return [
-    'accountControl' => 'Account control',
-    'accountData' => 'Account data',
-    'accountInformation' => 'Account information',
-    'addAnExtraLayerOfSecurity' => 'Add an extra layer of security to your account with 2FA using an authenticator app.',
-    'added' => 'Added',
-    'allowYourAccountAndVideosToBeShared' => 'Allow your account and videos to be shared with people on other servers.',
+    'accountControl' => 'Accountbeheer',
+    'accountData' => 'Accountgegevens',
+    'accountInformation' => 'Account informatie',
+    'addAnExtraLayerOfSecurity' => 'Voeg een extra beveiligingslaag toe aan uw account met tweestapsverificatie met behulp van een authenticatie-app.',
+    'added' => 'Toegevoegd',
+    'allowYourAccountAndVideosToBeShared' => 'Toestaan dat je account en video\'s worden gedeeld met mensen op andere servers.',
     'analyticsTracking' => 'Analytics tracking',
     'analyticsTrackingMessage' => 'Allow Loops to track your usage for analytics and improving the service.',
     'back' => 'Back',
