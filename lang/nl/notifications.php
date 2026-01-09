@@ -14,7 +14,7 @@ return [
         'videoCommentShare' => 'heeft je reactie gedeeld',
         'videoCommentReplyShare' => 'heeft je antwoord op een reactie gedeeld',
         'videoShare' => 'deelde je video',
-        'default' => 'had een interactie met je inhoud',
+        'default' => 'had(den) een interactie met je video',
     ],
     'messages' => 'Berichten',
     'messagesWillAppearHere' => 'Berichten verschijnen hier',
