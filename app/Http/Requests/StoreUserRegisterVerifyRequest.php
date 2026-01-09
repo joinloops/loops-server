@@ -72,11 +72,7 @@ class StoreUserRegisterVerifyRequest extends FormRequest
                     'string',
                     new HCaptchaRule(new CaptchaService),
                 ];
-            } else {
-            throw new \RuntimeException(
-                'Captcha is enabled but driver is not properly configured. ' .
-                'Set LOOPS_CAPTCHA_DRIVER to either "turnstile" or "hcaptcha".'
-            );
+            };
           }
         }
 
