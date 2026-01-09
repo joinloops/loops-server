@@ -96,15 +96,21 @@ class LoginController extends Controller
         ];
 
         if ($hasCaptcha) {
+            $driver = config('captcha.driver');
+            
+            if (!in_array($driver, ['turnstile', 'hcaptcha'])) {
+                throw new \RuntimeException('Captcha is enabled but driver is not properly configured.');
+            }
+
             $rules['captcha_type'] = ['required', 'in:turnstile,hcaptcha'];
 
-            if (config('captcha.driver') === 'turnstile') {
+            if ($driver === 'turnstile') {
                 $rules['captcha_token'] = [
                     'required',
                     'string',
                     new TurnstileRule(new CaptchaService),
                 ];
-            } elseif (config('captcha.driver') === 'hcaptcha') {
+            } elseif ($driver === 'hcaptcha') {
                 $rules['captcha_token'] = [
                     'required',
                     'string',
