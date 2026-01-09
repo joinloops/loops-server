@@ -100,9 +100,9 @@ return [
     'videosPosted' => 'Gepubliceerde video\'s',
     'weMayRestrictAccounts' => 'We kunnen de accounts die niet voldoen aan onze gemeenschapsrichtlijnen beperkingen opleggen.',
     'weveSentAnEmail' => 'We sturen je een bevestigingsmail naar',
-    'withAPrivateAccountMessage' => 'With a private account, only users you approve can follow you and watch your videos. Your existing followers won\'t be affected.',
-    'yourAccountStatistics' => 'Your account statistics',
+    'withAPrivateAccountMessage' => 'Met een privéaccount kunnen alleen gebruikers die je goedkeurt je volgen en je video\'s bekijken. Je bestaande volgers worden niet beïnvloed.',
+    'yourAccountStatistics' => 'Je accountstatistieken',
     'yourDataYourControl' => 'Jouw gegevens, jouw controle',
-    'yourDataYourControlMessage' => 'Download or review your account data. All exports are provided in JSON format for easy portability',
+    'yourDataYourControlMessage' => 'Download of bekijk uw accountgegevens. Alle exporten worden in JSON formaat aangeboden voor eenvoudige verhuizingen.',
     'yourEmailIsUsedForRecoveryMessage' => 'Je e-mailadres wordt gebruikt voor accountherstel en (veiligheids)meldingen. We checken aanpassingen voor de veiligheid van je account.',
 ];
