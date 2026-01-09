@@ -30,5 +30,5 @@ return [
     'terms' => 'Voorwaarden',
     'toggleTheme' => 'Thema wisselen',
     'upload' => 'Upload',
-    'uploadLoop' => 'Loop uploaden',
+    'uploadLoop' => 'Loop Uploaden',
 ];
