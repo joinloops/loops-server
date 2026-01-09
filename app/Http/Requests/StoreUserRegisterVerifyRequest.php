@@ -72,7 +72,7 @@ class StoreUserRegisterVerifyRequest extends FormRequest
                     'string',
                     new HCaptchaRule(new CaptchaService),
                 ];
-            };
+            }
           }
         }
 
