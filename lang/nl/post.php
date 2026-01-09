@@ -59,5 +59,5 @@ return [
     'viewAllComments' => 'Alle Reacties Bekijken',
     'writeAReplyDotDotDot' => 'Een antwoord schrijven...',
     'writeYourCaptionDotDotDot' => 'Je onderschrift schrijven...',
-    'yourReportingThis' => '',
+    'yourReportingThis' => 'Je meld deze :type voor: :message',
 ];
