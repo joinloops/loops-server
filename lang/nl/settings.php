@@ -81,7 +81,7 @@ return [
     'sendingDotDotDot' => 'Verzenden...',
     'setup2FA' => 'Tweestapsverificatie instellen',
     'setup2FAStep1' => 'Stap 1: Scan QR-code',
-    'setup2FAStep1Message' => 'Scan deze QR-code met je authenticatietoepassing (Google Authenticator, Authy, etc.)',
+    'setup2FAStep1Message' => 'Scan deze QR-code met je authenticatie-app (Google Authenticator, Authy, etc.)',
     'setup2FAStep2' => 'Stap 2: Voer Bevestigingscode In',
     'setup2FAStep2Message' => 'Voer de 6-cijferige code van je authenticatie-app in',
     'status' => 'Status',
