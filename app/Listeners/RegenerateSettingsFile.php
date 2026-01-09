@@ -14,5 +14,10 @@ class RegenerateSettingsFile implements ShouldQueue
     {
         (new SettingsFileService)->generatePublicConfig();
         (new SettingsFileService)->generateAdminConfig();
+        app(ConfigService::class)->forYouFeed(true);
+        app(ConfigService::class)->federation(true);
+        app(ConfigService::class)->federationMode(true);
+        app(ConfigService::class)->federationAllowedServers(true);
+        app(ConfigService::class)->federationAuthorizedFetch(true);
     }
 }
