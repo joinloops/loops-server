@@ -13,6 +13,11 @@ class ActorController extends Controller
             abort(404);
         }
 
+        // Confirm profile is active (1)
+        if ($actor->status != 1) {
+            return $this->activityPubError('Record not available', 400);
+        }
+
         if (! $this->acceptsActivityPub($request)) {
             return redirect($actor->getPublicUrl());
         }
