@@ -117,7 +117,6 @@ class LoginController extends Controller
                     new HCaptchaRule(new CaptchaService),
                 ];
             }
-          }
         }
 
         $request->validate($rules);
