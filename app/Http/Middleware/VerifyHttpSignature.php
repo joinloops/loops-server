@@ -344,10 +344,12 @@ class VerifyHttpSignature
 
         $now = now();
 
+        // Reject future dates
         if ($date->isAfter($now)) {
             return false;
         }
 
+        // Accept dates within the past hour
         return $date->diffInRealSeconds($now, true) <= 3600;
     }
 
