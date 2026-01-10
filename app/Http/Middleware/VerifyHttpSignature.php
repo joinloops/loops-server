@@ -353,6 +353,8 @@ class VerifyHttpSignature
         if ($date->isBefore($now->copy()->subHour())) {
             return false;
         }
+
+        Return true;
     }
 
     protected function fetchActorData(string $actorUrl)
