@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Models\AdminSetting;
 use App\Events\SettingsUpdated;
+use App\Services\ConfigService;
 use App\Services\SettingsFileService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
