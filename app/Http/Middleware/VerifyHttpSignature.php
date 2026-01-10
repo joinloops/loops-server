@@ -342,15 +342,17 @@ class VerifyHttpSignature
             return false;
         }
 
-        $now = now();
-
-        // Reject future dates
-        if ($date->isAfter($now)) {
+        $now = now('UTC');
+    
+        // Reject if more than 1 hour in the future
+        if ($date->isAfter($now->copy()->addHour())) {
             return false;
         }
-
-        // Accept dates within the past hour
-        return $date->diffInRealSeconds($now, true) <= 3600;
+    
+        // Reject if more than 1 hour in the past
+        if ($date->isBefore($now->copy()->subHour())) {
+            return false;
+        }
     }
 
     protected function fetchActorData(string $actorUrl)
