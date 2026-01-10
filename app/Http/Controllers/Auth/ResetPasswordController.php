@@ -68,7 +68,6 @@ class ResetPasswordController extends Controller
                     new HCaptchaRule(new CaptchaService),
                 ];
             }
-          }
         }
 
         return $rules;
