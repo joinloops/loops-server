@@ -33,6 +33,11 @@ class ProfilePolicy
             return true;
         }
 
+        // Confirm profile is active (1)
+        if ($profile->status != 1) {
+            return false;
+        }
+
         if (! $user->email_verified_at) {
             return false;
         }
