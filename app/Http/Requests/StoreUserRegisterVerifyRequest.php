@@ -73,7 +73,6 @@ class StoreUserRegisterVerifyRequest extends FormRequest
                     new HCaptchaRule(new CaptchaService),
                 ];
             }
-          }
         }
 
         return $rules;
