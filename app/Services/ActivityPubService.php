@@ -101,10 +101,11 @@ class ActivityPubService
             'application/ld+json; profile="https://www.w3.org/ns/activitystreams"',
         ];
 
+        /** @var string|null $contentType */
         $contentType = $res->header('Content-Type');
 
         if ($validateContentType) {
-            if (! $contentType) {
+            if ($contentType === null) {
                 return false;
             }
 
