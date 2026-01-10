@@ -48,7 +48,7 @@ class ProcessInboxActivity implements ShouldQueue
 
     public $maxExceptions = 2;
 
-    public $deleteWhenMissingModels = true;
+    public $deleteWhenMissingModels = false;
 
     /**
      * Create a new job instance.
