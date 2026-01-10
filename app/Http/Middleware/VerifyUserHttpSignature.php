@@ -249,7 +249,7 @@ class VerifyUserHttpSignature
         }
 
         // @phpstan-ignore-next-line
-        return $date->diffInRealSeconds(now()) <= 3600;
+        return $date->diffInRealSeconds(now(), true) <= 3600;
     }
 
     protected function fetchActorData(string $actorUrl)
