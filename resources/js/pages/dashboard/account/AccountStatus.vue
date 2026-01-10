@@ -300,24 +300,26 @@
                     Get help
                 </h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div
-                        class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
-                    >
-                        <div class="p-4 flex items-center justify-between">
-                            <div class="flex items-center gap-3">
-                                <i class="bx bx-help-circle text-blue-500 text-[20px]"></i>
-                                <div>
-                                    <h3 class="font-medium text-gray-800 dark:text-gray-100">
-                                        Help Center
-                                    </h3>
-                                    <p class="text-xs text-gray-600 dark:text-gray-300">
-                                        Find answers to common questions
-                                    </p>
+                    <router-link to="https://github.com/joinloops/loops-server/discussions/categories/q-a">
+                        <div
+                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700"
+                        >
+                            <div class="p-4 flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <i class="bx bx-help-circle text-blue-500 text-[20px]"></i>
+                                    <div>
+                                        <h3 class="font-medium text-gray-800 dark:text-gray-100">
+                                            Help Center
+                                        </h3>
+                                        <p class="text-xs text-gray-600 dark:text-gray-300">
+                                            Find answers to common questions
+                                        </p>
+                                    </div>
                                 </div>
+                                <i class="bx bx-chevron-right text-gray-400 dark:text-gray-500"></i>
                             </div>
-                            <i class="bx bx-chevron-right text-gray-400 dark:text-gray-500"></i>
                         </div>
-                    </div>
+                    </router-link>
 
                     <router-link to="/contact">
                         <div
