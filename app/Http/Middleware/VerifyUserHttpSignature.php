@@ -248,6 +248,13 @@ class VerifyUserHttpSignature
             return false;
         }
 
+        // Reject future dates
+        $now = now();
+        if ($date->isAfter($now)) {
+            return false;
+        }
+
+        // Accept dates within the past hour
         // @phpstan-ignore-next-line
         return $date->diffInRealSeconds(now(), true) <= 3600;
     }
