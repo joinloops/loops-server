@@ -92,59 +92,50 @@ abstract class BaseValidator
     {
         $isLocal = $this->isLocalObject($url);
 
-        if ($isLocal) {
-            $statusMatch = app(SanitizeService::class)->matchUrlTemplate(
-                url: $url,
-                templates: [
-                    '/ap/users/{userId}/video/{videoId}',
-                ],
-                useAppHost: true,
-                constraints: ['userId' => '\d+', 'videoId' => '\d+']
-            );
-
-            if ($statusMatch && isset($statusMatch['userId'], $statusMatch['videoId'])) {
-                return Video::whereProfileId($statusMatch['userId'])->whereKey($statusMatch['videoId'])->exists();
-            }
-
-            $commentMatch = app(SanitizeService::class)->matchUrlTemplate(
-                url: $url,
-                templates: [
-                    '/ap/users/{userId}/comment/{replyId}',
-                ],
-                useAppHost: true,
-                constraints: ['userId' => '\d+', 'replyId' => '\d+']
-            );
-
-            if ($commentMatch && isset($commentMatch['userId'], $commentMatch['replyId'])) {
-                return Comment::whereProfileId($commentMatch['userId'])->whereKey($commentMatch['replyId'])->exists();
-            }
-
-            $commentReplyMatch = app(SanitizeService::class)->matchUrlTemplate(
-                url: $url,
-                templates: [
-                    '/ap/users/{userId}/reply/{commentReplyId}',
-                ],
-                useAppHost: true,
-                constraints: ['userId' => '\d+', 'commentReplyId' => '\d+']
-            );
-
-            if ($commentReplyMatch && isset($commentReplyMatch['userId'], $commentReplyMatch['commentReplyId'])) {
-                return CommentReply::whereProfileId($commentReplyMatch['userId'])->whereKey($commentReplyMatch['commentReplyId'])->exists();
-            }
-
-            return false;
+        // Return false immediately for non-local URLs
+        if (!$isLocal) {
+            return false; 
         }
 
-        $commentMatch = Comment::where('ap_id', $url)->exists();
-        if ($commentMatch) {
-            return true;
+        $statusMatch = app(SanitizeService::class)->matchUrlTemplate(
+            url: $url,
+            templates: [
+                '/ap/users/{userId}/video/{videoId}',
+            ],
+            useAppHost: true,
+            constraints: ['userId' => '\d+', 'videoId' => '\d+']
+        );
+
+        if ($statusMatch && isset($statusMatch['userId'], $statusMatch['videoId'])) {
+            return Video::whereProfileId($statusMatch['userId'])->whereKey($statusMatch['videoId'])->exists();
         }
 
-        $commentReplyMatch = CommentReply::where('ap_id', $url)->exists();
-        if ($commentReplyMatch) {
-            return true;
+        $commentMatch = app(SanitizeService::class)->matchUrlTemplate(
+            url: $url,
+            templates: [
+                '/ap/users/{userId}/comment/{replyId}',
+            ],
+            useAppHost: true,
+            constraints: ['userId' => '\d+', 'replyId' => '\d+']
+        );
+
+        if ($commentMatch && isset($commentMatch['userId'], $commentMatch['replyId'])) {
+            return Comment::whereProfileId($commentMatch['userId'])->whereKey($commentMatch['replyId'])->exists();
         }
 
-        return Video::where('uri', $url)->exists();
+        $commentReplyMatch = app(SanitizeService::class)->matchUrlTemplate(
+            url: $url,
+            templates: [
+                '/ap/users/{userId}/reply/{commentReplyId}',
+            ],
+            useAppHost: true,
+            constraints: ['userId' => '\d+', 'commentReplyId' => '\d+']
+        );
+
+        if ($commentReplyMatch && isset($commentReplyMatch['userId'], $commentReplyMatch['commentReplyId'])) {
+            return CommentReply::whereProfileId($commentReplyMatch['userId'])->whereKey($commentReplyMatch['commentReplyId'])->exists();
+        }
+
+        return false;
     }
 }
