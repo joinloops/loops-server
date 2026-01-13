@@ -13,7 +13,7 @@ return [
     'blockedAccounts' => 'Geblokkeerde accounts',
     'blockingAndRestrictions' => 'Blokkeren en beperken',
     'cancelChange' => 'Annuleer wijzigingen ',
-    'change' => 'Wijzigen',
+    'change' => 'Aanpassen',
     'changeEmail' => 'E-mailadres wijzigen',
     'changeEmailAddress' => 'E-mailadres aanpassen',
     'changePassword' => 'Wachtwoord Wijzigen',
