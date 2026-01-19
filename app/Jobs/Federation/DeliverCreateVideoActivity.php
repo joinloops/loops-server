@@ -82,6 +82,10 @@ class DeliverCreateVideoActivity implements ShouldBeUnique, ShouldQueue
 
         $activity = CreateActivityBuilder::buildForVideo($actor, $video);
 
+        if ($actor->local && $video->visibility === 'public') {
+            app(\App\Services\RelayService::class)->deliverToRelays($actor, $activity);
+        }
+
         $parsedUrl = $this->parsedUrl;
 
         $headers = [

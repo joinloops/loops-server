@@ -120,7 +120,8 @@ import {
     ServerStackIcon,
     HomeIcon,
     SunIcon,
-    MoonIcon
+    MoonIcon,
+    ArrowPathIcon
 } from '@heroicons/vue/24/outline'
 import { useAdminStore } from '~/stores/admin'
 
@@ -133,6 +134,7 @@ const navigation = [
     { name: 'Replies', href: '/admin/replies', icon: ChatBubbleLeftRightIcon },
     { name: 'Hashtags', href: '/admin/hashtags', icon: HashtagIcon },
     { name: 'Instances', href: '/admin/instances', icon: ServerStackIcon },
+    { name: 'Relays', href: '/admin/relays', icon: ArrowPathIcon },
     { name: 'Reports', href: '/admin/reports', icon: ExclamationTriangleIcon },
     { name: 'Profiles', href: '/admin/profiles', icon: UserGroupIcon },
     { name: 'Videos', href: '/admin/videos', icon: VideoCameraIcon },

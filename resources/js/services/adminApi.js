@@ -345,7 +345,36 @@ export const settingsApi = {
     }
 }
 
-// Instances API
+export const relaysApi = {
+    async getRelays() {
+        return await apiClient.get('/api/v1/admin/relays')
+    },
+
+    async createRelay(data) {
+        return await apiClient.post('/api/v1/admin/relays', data)
+    },
+
+    async updateRelay(id, data) {
+        return await apiClient.put(`/api/v1/admin/relays/${id}`, data)
+    },
+
+    async deleteRelay(id) {
+        return await apiClient.delete(`/api/v1/admin/relays/${id}`)
+    },
+
+    async enableRelay(id) {
+        return await apiClient.post(`/api/v1/admin/relays/${id}/enable`)
+    },
+
+    async disableRelay(id) {
+        return await apiClient.post(`/api/v1/admin/relays/${id}/disable`)
+    },
+
+    async getStats() {
+        return await apiClient.get('/api/v1/admin/relays/stats')
+    }
+}
+
 export const instancesApi = {
     async getInstances({
         cursor = null,

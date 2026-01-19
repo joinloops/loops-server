@@ -3,6 +3,7 @@
 use App\Http\Controllers\AccountDataController;
 use App\Http\Controllers\ActorController;
 use App\Http\Controllers\AdminInviteController;
+use App\Http\Controllers\AdminRelayController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminController;
@@ -296,6 +297,15 @@ Route::prefix('api')->group(function () {
         Route::post('/settings/update-logo', [AdminSettingsController::class, 'updateLogo'])->middleware('auth:web,api');
         Route::post('/settings/delete-logo', [AdminSettingsController::class, 'deleteLogo'])->middleware('auth:web,api');
         Route::post('/settings/recheck-redis-bf-support', [AdminSettingsController::class, 'recheckRedisBloomFilterSupport'])->middleware('auth:web,api');
+        
+        Route::get('/relays', [AdminRelayController::class, 'index'])->middleware('auth:web,api');
+        Route::post('/relays', [AdminRelayController::class, 'store'])->middleware('auth:web,api');
+        Route::put('/relays/{relay}', [AdminRelayController::class, 'update'])->middleware('auth:web,api');
+        Route::delete('/relays/{relay}', [AdminRelayController::class, 'destroy'])->middleware('auth:web,api');
+        Route::post('/relays/{relay}/enable', [AdminRelayController::class, 'enable'])->middleware('auth:web,api');
+        Route::post('/relays/{relay}/disable', [AdminRelayController::class, 'disable'])->middleware('auth:web,api');
+        Route::get('/relays/stats', [AdminRelayController::class, 'stats'])->middleware('auth:web,api');
+        
         Route::get('/instances', [AdminController::class, 'instances'])->middleware('auth:web,api');
         Route::get('/instances/stats', [AdminController::class, 'instanceStats'])->middleware('auth:web,api');
         Route::post('/instances/create', [AdminController::class, 'instanceCreate'])->middleware('auth:web,api');

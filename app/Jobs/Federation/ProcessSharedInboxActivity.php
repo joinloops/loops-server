@@ -77,14 +77,21 @@ class ProcessSharedInboxActivity implements ShouldQueue
         }
 
         try {
-            // Check if Delete Activity first, it will have no recipients
+            $actorUrl = $this->activity['actor'] ?? null;
+            if ($actorUrl) {
+                $relay = app(\App\Services\RelayService::class)->isFromRelay($actorUrl);
+                if ($relay) {
+                    $this->handleRelayActivity($relay);
+                    return;
+                }
+            }
+
             if (isset($this->activity['type']) && $this->activity['type'] === 'Delete') {
                 $this->handleDeleteActivity();
 
                 return;
             }
 
-            // Handle Follow activities - they don't have to/cc, only actor and object
             if (isset($this->activity['type']) && $this->activity['type'] === 'Follow') {
                 $this->handleFollowActivity();
 
@@ -365,6 +372,52 @@ class ProcessSharedInboxActivity implements ShouldQueue
             Log::info('Processed Delete activity', [
                 'activity_id' => $this->activity['id'] ?? null,
             ]);
+        }
+    }
+
+    protected function handleRelayActivity($relay)
+    {
+        $type = $this->activity['type'] ?? null;
+
+        if ($type === 'Accept' && isset($this->activity['object']['type']) && $this->activity['object']['type'] === 'Follow') {
+            app(\App\Services\RelayService::class)->handleAccept($relay, $this->activity);
+            if (config('logging.dev_log')) {
+                Log::info('Relay subscription accepted', ['relay' => $relay->relay_url]);
+            }
+            return;
+        }
+
+        if ($type === 'Reject' && isset($this->activity['object']['type']) && $this->activity['object']['type'] === 'Follow') {
+            app(\App\Services\RelayService::class)->handleReject($relay);
+            if (config('logging.dev_log')) {
+                Log::warning('Relay subscription rejected', ['relay' => $relay->relay_url]);
+            }
+            return;
+        }
+
+        if (in_array($type, ['Create', 'Announce', 'Update'])) {
+            $recipients = $this->extractRecipients();
+            $localTargets = $this->findLocalTargets($recipients);
+
+            if ($localTargets->isNotEmpty()) {
+                $chunkSize = config('loops.federation.inbox_dispatch_chunk_size', 100);
+                $localTargets->chunk($chunkSize)->each(function ($chunk) {
+                    foreach ($chunk as $target) {
+                        ProcessInboxActivity::dispatch($this->activity, $this->actor, $target)
+                            ->onQueue('activitypub-in');
+                    }
+                });
+            }
+
+            $relay->incrementReceived();
+
+            if (config('logging.dev_log')) {
+                Log::info('Processed relay activity', [
+                    'relay' => $relay->relay_url,
+                    'type' => $type,
+                    'targets' => $localTargets->count() ?? 0,
+                ]);
+            }
         }
     }
 
