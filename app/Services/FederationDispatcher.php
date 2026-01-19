@@ -74,30 +74,32 @@ class FederationDispatcher
                     'video_id' => $video->id,
                 ]);
             }
+        } else {
+            $jobs = $allInboxes->map(function ($inbox) use ($video) {
+                return new DeliverCreateVideoActivity(
+                    $video,
+                    $inbox['inbox'],
+                    $inbox['profile_ids']
+                );
+            })->toArray();
 
-            return;
+            Bus::batch($jobs)
+                ->name("Deliver Video {$video->id}")
+                ->allowFailures()
+                ->onQueue('activitypub-out')
+                ->dispatch();
+
+            if (config('logging.dev_log')) {
+                Log::info('Video creation dispatched', [
+                    'profile_id' => $actor->id,
+                    'video_id' => $video->id,
+                    'inbox_count' => count($jobs),
+                ]);
+            }
         }
 
-        $jobs = $allInboxes->map(function ($inbox) use ($video) {
-            return new DeliverCreateVideoActivity(
-                $video,
-                $inbox['inbox'],
-                $inbox['profile_ids']
-            );
-        })->toArray();
-
-        Bus::batch($jobs)
-            ->name("Deliver Video {$video->id}")
-            ->allowFailures()
-            ->onQueue('activitypub-out')
-            ->dispatch();
-
-        if (config('logging.dev_log')) {
-            Log::info('Video creation dispatched', [
-                'video_id' => $video->id,
-                'inbox_count' => count($jobs),
-                'total_recipients' => collect($jobs)->sum(fn ($job) => count($job->recipientProfileIds)),
-            ]);
+        if ($actor->local && $video->visibility == 1) {
+            app(\App\Services\RelayService::class)->deliverToRelays($actor, \App\Federation\ActivityBuilders\CreateActivityBuilder::buildForVideo($actor, $video));
         }
     }
 
