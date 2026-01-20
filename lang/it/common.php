@@ -160,7 +160,7 @@ return [
     'skipForNow' => 'Salta per ora',
     'somethingWentWrong' => 'Qualcosa è andato storto',
     'status' => 'Stato',
-    'step' => 'Step',
+    'step' => 'Passaggio',
     'suggestions' => 'Suggerimenti',
     'tapToPlay' => 'Tocca per riprodurre',
     'termsOfService' => 'Termini di Servizio',
