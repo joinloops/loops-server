@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c07e4559c86c61bd2d0de69ac6983ef8",
+    "content-hash": "3f547cc600ffc99e794fd07adc2cdaf2",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -11527,11 +11527,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.34",
+            "version": "2.1.35",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/070ba754a949fcade788e16e8dc5a5935b7cf2ee",
-                "reference": "070ba754a949fcade788e16e8dc5a5935b7cf2ee",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/72f843c7f59d3aac0b7510f5e70913a9b72a8e88",
+                "reference": "72f843c7f59d3aac0b7510f5e70913a9b72a8e88",
                 "shasum": ""
             },
             "require": {
@@ -11576,7 +11576,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-19T19:52:16+00:00"
+            "time": "2026-01-20T17:33:48+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -13314,7 +13314,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.3|^8.4"
+        "php": "^8.3|^8.4|^8.5"
     },
     "platform-dev": {},
     "plugin-api-version": "2.6.0"
