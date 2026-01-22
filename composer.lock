@@ -10322,16 +10322,16 @@
         },
         {
             "name": "larastan/larastan",
-            "version": "v3.9.0",
+            "version": "v3.9.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/larastan/larastan.git",
-                "reference": "82c18890d0d5b012bc39a3432531e5b6cd1b4b3a"
+                "reference": "4b92d9627f779fd32bdc16f53f8ce88c50446ff5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/larastan/larastan/zipball/82c18890d0d5b012bc39a3432531e5b6cd1b4b3a",
-                "reference": "82c18890d0d5b012bc39a3432531e5b6cd1b4b3a",
+                "url": "https://api.github.com/repos/larastan/larastan/zipball/4b92d9627f779fd32bdc16f53f8ce88c50446ff5",
+                "reference": "4b92d9627f779fd32bdc16f53f8ce88c50446ff5",
                 "shasum": ""
             },
             "require": {
@@ -10400,7 +10400,7 @@
             ],
             "support": {
                 "issues": "https://github.com/larastan/larastan/issues",
-                "source": "https://github.com/larastan/larastan/tree/v3.9.0"
+                "source": "https://github.com/larastan/larastan/tree/v3.9.1"
             },
             "funding": [
                 {
@@ -10408,7 +10408,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-17T23:00:37+00:00"
+            "time": "2026-01-21T09:15:17+00:00"
         },
         {
             "name": "laravel/pail",
@@ -11527,11 +11527,11 @@
         },
         {
             "name": "phpstan/phpstan",
-            "version": "2.1.35",
+            "version": "2.1.36",
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/72f843c7f59d3aac0b7510f5e70913a9b72a8e88",
-                "reference": "72f843c7f59d3aac0b7510f5e70913a9b72a8e88",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/2132e5e2361d11d40af4c17faa16f043269a4cf3",
+                "reference": "2132e5e2361d11d40af4c17faa16f043269a4cf3",
                 "shasum": ""
             },
             "require": {
@@ -11576,7 +11576,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-01-20T17:33:48+00:00"
+            "time": "2026-01-21T13:58:26+00:00"
         },
         {
             "name": "phpunit/php-code-coverage",
