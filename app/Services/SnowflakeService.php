@@ -24,10 +24,10 @@ class SnowflakeService
             Cache::put('snowflake:seq', 1);
             $seq = 1;
         } else {
-            Cache::increment('snowflake:seq');
+            $seq = Cache::increment('snowflake:seq');
         }
 
-        if ($seq >= 4095) {
+        if ($seq > 4095) {
             Cache::put('snowflake:seq', 0);
             $seq = 0;
         }
