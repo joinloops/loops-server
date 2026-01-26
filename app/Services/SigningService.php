@@ -39,18 +39,28 @@ class SigningService
         return 1;
     }
 
-    public function fetchFromStorageOrCreate()
-    {
-        if (Storage::exists(self::PUBLIC_KEY)) {
-            $public = Storage::get(self::PUBLIC_KEY);
-            $private = Storage::get(self::PRIVATE_KEY);
-            Cache::rememberForever(self::CACHE_PUBLIC_KEY, fn () => $public);
-            Cache::rememberForever(self::CACHE_PRIVATE_KEY, fn () => $private);
+public function fetchFromStorageOrCreate()
+{
+    if (Storage::exists(self::PUBLIC_KEY) && Storage::exists(self::PRIVATE_KEY)) {
+        $public = Storage::get(self::PUBLIC_KEY);
+        $private = Storage::get(self::PRIVATE_KEY);
 
-            return 1;
+        // Validate both keys are loaded
+        if ($public === null) {
+            throw new \RuntimeException('Failed to read public key files from storage');
         }
-        $this->createSigningKeys();
+        if ($private === null) {
+            throw new \RuntimeException('Failed to read private key files from storage');
+        }
+        
+        Cache::rememberForever(self::CACHE_PUBLIC_KEY, fn () => $public);
+        Cache::rememberForever(self::CACHE_PRIVATE_KEY, fn () => $private);
+
+        return 1;
     }
+
+    return $this->createSigningKeys();
+}
 
     public function createSigningKeys()
     {
