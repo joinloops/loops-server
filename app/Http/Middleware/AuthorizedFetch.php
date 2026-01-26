@@ -36,12 +36,6 @@ class AuthorizedFetch
             if (! $request->hasHeader('Signature')) {
                 return abort(403, 'Resource not found.1');
             }
-            if ($config->federationMode() != 'open') {
-                $allowedHosts = $config->federationAllowedServers();
-                if (! in_array($request->host(), $allowedHosts)) {
-                    return abort(403, 'Resource not found.2');
-                }
-            }
 
             $signature = $request->header('Signature');
             $headerParts = app(HttpSignatureService::class)->parseSignatureHeader($signature);
@@ -52,6 +46,17 @@ class AuthorizedFetch
 
             if (! isset($headerParts['keyId'], $headerParts['headers'])) {
                 abort(403, 'Resource not found.3');
+            }
+
+            $keyId = $this->stripUrlFragments($headerParts['keyId']);
+
+            // Validate the remote actor's domain against allowedServers
+            if ($config->federationMode() != 'open') {
+                $allowedHosts = $config->federationAllowedServers();
+                $remoteDomain = parse_url($keyId, PHP_URL_HOST);
+                if ($remoteDomain && ! in_array($remoteDomain, $allowedHosts)) {
+                    return abort(403, 'Resource not found.2');
+                }
             }
 
             $signedHeadersList = explode(' ', strtolower($headerParts['headers']));
