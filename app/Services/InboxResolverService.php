@@ -121,7 +121,7 @@ class InboxResolverService
                         $processedInboxes->put($inboxUrl, $data);
                     }
                 }
-            }, 'profiles.id', 'profile_id')
+            }, 'profiles.id', 'profile_id');
 
         if ($processedInboxes->isNotEmpty()) {
             $callback($processedInboxes->values());
@@ -197,7 +197,7 @@ class InboxResolverService
                         $processedInboxes->put($inboxUrl, $data);
                     }
                 }
-            }, 'profiles.id', 'profile_id')
+            }, 'profiles.id', 'profile_id');
 
         if ($processedInboxes->isNotEmpty()) {
             $callback($processedInboxes->values());
