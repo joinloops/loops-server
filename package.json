@@ -22,7 +22,7 @@
         "@vitejs/plugin-vue": "^6.0.3",
         "@vueuse/core": "^14.1.0",
         "autoprefixer": "^10.4.23",
-        "axios": "^1.13.2",
+        "axios": "^1.13.3",
         "boxicons": "^2.1.4",
         "date-fns": "^4.1.0",
         "echarts": "^6.0.0",
