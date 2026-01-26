@@ -18,7 +18,7 @@ class SharedInboxController extends Controller
 
     public function sharedInbox(Request $request)
     {
-        $activity = $request->all();
+        $activity = $request->json()->all();
 
         if (isset($activity['type']) && $activity['type'] === 'Delete') {
             if (! $this->validateDeleteOrigin($activity, $request)) {
