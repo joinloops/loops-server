@@ -89,7 +89,7 @@ class ObjectController extends Controller
                 $cid = HashidService::safeDecode($replyHashId);
                 $vid = $id;
                 $videoHashId = $hashId;
-                $comment = CommentReply::with('parent')->where('visibility', 1)->whereNull('ap_id')->where('status', 'active')->findOrFail($cid);
+                $comment = CommentReply::with('parent')->where('visibility', 1)->whereNull('ap_id')->where('status', 'active')->where('video_id', $vid)->findOrFail($cid);
 
                 return $this->renderVideoCommentReplyObject($video, $comment, $videoHashId, $hashId, $vid, $cid);
             } else {
