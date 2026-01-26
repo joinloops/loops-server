@@ -46,7 +46,11 @@ class UndoValidator extends BaseValidator
         }
 
         // The actor of the Undo must be the same as the actor of the original activity
-        if (isset($object['actor']) && $object['actor'] !== $activity['actor']) {
+        if (!isset($object['actor'])) {
+            throw new \Exception('Original activity must have an "actor" field.');
+        }
+        
+        if ($object['actor'] !== $activity['actor']) {
             throw new \Exception('Undo activity actor does not match the original activity actor.');
         }
 
