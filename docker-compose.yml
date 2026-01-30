@@ -26,6 +26,8 @@ services:
     image: redis/redis-stack-server:7.4.0-v8
     container_name: loops-redis
     restart: unless-stopped
+    env_file:
+      - .env
     command: redis-server --appendonly yes
     environment:
       REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
