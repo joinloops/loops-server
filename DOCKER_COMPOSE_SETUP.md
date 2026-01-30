@@ -28,6 +28,7 @@ This setup uses `serversideup/php:8.4-fpm-nginx` as the base image and is design
    ```bash
    sed -i "s|^DB_PASSWORD=.*|DB_PASSWORD=\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)\"|" .env
    sed -i "s|^DB_ROOT_PASSWORD=.*|DB_ROOT_PASSWORD=\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)\"|" .env
+   sed -i "s|^REDIS_PASSWORD=.*|REDIS_PASSWORD=\"$(tr -dc 'A-Za-z0-9' </dev/urandom | head -c 32)\"|" .env
    ```
 
 3. **Update `.env` with your configuration:**
