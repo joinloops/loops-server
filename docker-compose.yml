@@ -28,9 +28,8 @@ services:
     restart: unless-stopped
     env_file:
       - .env
-    command: redis-server --appendonly yes
     environment:
-      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
+      REDIS_ARGS: "--save 60 1000 --appendonly yes --requirepass ${REDIS_PASSWORD}"
     volumes:
       - ./redis-data:/data
     healthcheck:
