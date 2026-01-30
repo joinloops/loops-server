@@ -56,13 +56,11 @@ services:
     environment:
       # SSL Configuration (handled by reverse proxy)
       SSL_MODE: "off"
-
       # PHP Configuration
       PHP_POST_MAX_SIZE: "100M"
       PHP_UPLOAD_MAX_FILE_SIZE: "100M"
       PHP_OPCACHE_ENABLE: "1"
       PHP_MEMORY_LIMIT: "512M"
-      
       # Laravel Auto-run Configuration
       AUTORUN_ENABLED: "true"
       AUTORUN_LARAVEL_MIGRATION: "true"
@@ -72,7 +70,6 @@ services:
       AUTORUN_LARAVEL_ROUTE_CACHE: "true"
       AUTORUN_LARAVEL_VIEW_CACHE: "true"
       AUTORUN_LARAVEL_CONFIG_CACHE: "true"
-
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache
