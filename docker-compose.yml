@@ -27,6 +27,8 @@ services:
     container_name: loops-redis
     restart: unless-stopped
     command: redis-server --appendonly yes
+    environment:
+      REDIS_ARGS: "--requirepass ${REDIS_PASSWORD}"
     volumes:
       - ./redis-data:/data
     healthcheck:
