@@ -29,8 +29,7 @@ services:
     env_file:
       - .env
     environment:
-      ## Save Redis to risk every hour
-      #REDIS_ARGS: "--save 3600 1000 --appendonly yes --requirepass ${REDIS_PASSWORD}"
+      #REDIS_ARGS: "--save 3600 1000 --appendonly yes --requirepass ${REDIS_PASSWORD}"  ## Save Redis to risk every hour
       REDIS_ARGS: "--appendonly yes --requirepass ${REDIS_PASSWORD}"
     volumes:
       - ./redis-data:/data
