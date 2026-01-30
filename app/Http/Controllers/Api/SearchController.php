@@ -285,7 +285,19 @@ class SearchController extends Controller
             })
             ->where('profiles.username', 'like', $escapedQuery.'%')
             ->where('profiles.status', 1)
-            ->groupBy('profiles.id', 'profiles.username', 'profiles.followers')
+            ->groupBy(
+                'profiles.id',
+                'profiles.local',
+                'profiles.name',
+                'profiles.avatar',
+                'profiles.username',
+                'profiles.following',
+                'profiles.followers',
+                'profiles.video_count',
+                'profiles.domain',
+                'profiles.status',
+                'profiles.created_at'
+            )
             ->orderByDesc('is_followed')
             ->orderByDesc('profiles.followers')
             ->cursorPaginate(10)
