@@ -15,11 +15,11 @@ class BootstrapService
         $privateKeyPath = storage_path('oauth-private.key');
         $publicKeyPath = storage_path('oauth-public.key');
         
-        self::checkOneFile($privateKeyPath);
-        self::checkOneFile($publicKeyPath);
+        self::checkOAuthFile($privateKeyPath);
+        self::checkOAuthFile($publicKeyPath);
     }
 
-    protected static function checkOneFile(string $filePath): void
+    protected static function checkOAuthFile(string $filePath): void
     {
         if (!file_exists($filePath)) {
             throw new RuntimeException(
