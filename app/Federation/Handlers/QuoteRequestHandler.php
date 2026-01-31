@@ -261,14 +261,7 @@ class QuoteRequestHandler
             }
 
             // Try to re-fetch the actor data to get the inbox URL (bypass cache)
-            $actorData = app(\App\Services\ActivityPubService::class)->get(
-                $quoterProfile->uri,
-                [],
-                true,
-                true,
-                true,
-                true  // bypassCache
-            );
+            $actorData = app(\App\Services\ActivityPubService::class)->get( $quoterProfile->uri, [], true, true, true, true );
             if ($actorData && isset($actorData['inbox'])) {
                 $quoterProfile->inbox_url = $actorData['inbox'];
                 $quoterProfile->shared_inbox_url = data_get($actorData, 'endpoints.sharedInbox');
@@ -277,12 +270,6 @@ class QuoteRequestHandler
                 // Discover the instance since we're seeing it for the first time
                 DiscoverInstance::dispatch($quoterProfile->uri)->onQueue('activitypub-in');
 
-                if (config('logging.dev_log')) {
-                    Log::info('QuoteRequest handler: Re-fetched inbox_url for quoter (reject)', [
-                        'quoter_id' => $quoterProfile->id,
-                        'inbox_url' => $quoterProfile->inbox_url,
-                    ]);
-                }
             } else {
                 if (config('logging.dev_log')) {
                     Log::error('QuoteRequest handler: Failed to fetch inbox_url for quoter (reject)', [
