@@ -113,7 +113,11 @@ class AvatarService
         $tempFileName = 'avatar-'.$profileId.'-'.time().'.jpg';
         $tempPath = storage_path('app/avatars-temp/'.$tempFileName);
 
-        Storage::disk('local')->makeDirectory('avatars-temp');
+        $dirPath = storage_path('app/avatars-temp');
+        if (! is_dir($dirPath)) {
+            Storage::disk('local')->makeDirectory('avatars-temp');
+            chmod($dirPath, 0755);
+        }
 
         Image::read($avatarFile)
             ->cover(300, 300)
