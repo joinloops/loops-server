@@ -7,6 +7,11 @@ class BootstrapService
 {
     public static function ensureBoottimeEnvironment(): void
     {
+
+        if (app()->runningInConsole()) {
+            return;
+        } 
+
         self::checkOAuthKeyPermissions();
     }
 
@@ -21,10 +26,6 @@ class BootstrapService
 
     protected static function checkOAuthFile(string $filePath): void
     {
-        if (app()->runningInConsole()) {
-            return;
-        }
-
         if (app()->environment('production') && ! file_exists($filePath)) {
             throw new RuntimeException(
                 "OAuth key file {$filePath} is missing. Please generate OAuth keys."
