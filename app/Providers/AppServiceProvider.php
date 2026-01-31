@@ -40,8 +40,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        \App\Services\BootstrapService::ensureBoottimeEnvironment();
-
         RateLimiter::for('api', function (Request $request) {
             $enabled = config('loops.api.rate_limits.enabled');
             if (! $enabled) {
