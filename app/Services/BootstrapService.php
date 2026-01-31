@@ -35,7 +35,7 @@ class BootstrapService
             return;
         }
 
-        $fixed = @chmod($filePath, 0660);  // Try to fix it by setting to 660
+        $fixed = @chmod($filePath, 0660);  // Try to change the chmod to 660
         
         if ($fixed) {
             return;
