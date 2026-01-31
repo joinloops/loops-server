@@ -507,7 +507,6 @@ const props = defineProps({
     hasLiked: { type: Boolean, default: false },
     hasBookmarked: { type: Boolean, default: false },
     canComment: { type: Boolean, default: true },
-    bookmarks: { type: Number, default: 0 },
     shares: { type: Number, default: 0 },
     comments: { type: Array, default: () => [] },
     commentCount: { type: Number, default: 0 },
