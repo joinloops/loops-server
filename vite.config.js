@@ -38,8 +38,8 @@ export default defineConfig({
     // PRODUCTION BUILD CONFIGURATION
     // ===========================================
     build: {
-        minify: 'esbuild',  // Use esbuild for minification (faster than terser, already bundled with Vite)
-        chunkSizeWarningLimit: 500,  // Chunk size warning threshold (in KB)
+        minify: 'esbuild',  // Faster than terser, already bundled with Vite
+        chunkSizeWarningLimit: 1024,  // Chunk size warning threshold (in KB)
         rollupOptions: {
             output: {
                 manualChunks: {  // Chunk splitting for better caching
