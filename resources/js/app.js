@@ -26,11 +26,9 @@ const head = createHead()
 const pinia = createPinia()
 
 // Register global components (excluding pages and layouts)
-Object.entries(import.meta.glob([
-    './**/*.vue',
-    '!./pages/**/*.vue',
-    '!./layouts/**/*.vue'
-], { eager: true })).forEach(([path, definition]) => {
+Object.entries(
+    import.meta.glob(['./**/*.vue', '!./pages/**/*.vue', '!./layouts/**/*.vue'], { eager: true })
+).forEach(([path, definition]) => {
     app.component(
         path
             .split('/')
