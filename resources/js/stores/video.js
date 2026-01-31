@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from '~/plugins/axios'
+import { useQueryClient } from '@tanstack/vue-query'
 
 export const useVideoStore = defineStore('video', {
     state: () => ({
@@ -204,6 +205,11 @@ export const useVideoStore = defineStore('video', {
             const axiosInstance = axios.getAxiosInstance()
             try {
                 const res = await axiosInstance.post(`/api/v1/account/follow/${userId}`)
+                try {
+                    const queryClient = useQueryClient()
+                    queryClient.invalidateQueries({ queryKey: ['following-feed'] })
+                } catch (e) {
+                }
                 return res.data
             } catch (error) {
                 console.error('Error following user:', error)
@@ -215,6 +221,11 @@ export const useVideoStore = defineStore('video', {
             const axiosInstance = axios.getAxiosInstance()
             try {
                 const res = await axiosInstance.post(`/api/v1/account/unfollow/${userId}`)
+                try {
+                    const queryClient = useQueryClient()
+                    queryClient.invalidateQueries({ queryKey: ['following-feed'] })
+                } catch (e) {
+                }
                 return res.data
             } catch (error) {
                 console.error('Error unfollowing user:', error)

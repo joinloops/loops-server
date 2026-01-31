@@ -28,6 +28,8 @@ export function useFollowAccount() {
                 }
             })
 
+            // Invalidate following feed so it includes new follows
+            queryClient.invalidateQueries({ queryKey: ['following-feed'] })
             // Optionally update user's following count
             queryClient.invalidateQueries({ queryKey: ['user-profile'] })
         }
@@ -56,6 +58,8 @@ export function useFollowAccount() {
                 }
             })
 
+            // Invalidate following feed so it excludes unfollowed accounts
+            queryClient.invalidateQueries({ queryKey: ['following-feed'] })
             // Optionally update user's following count
             queryClient.invalidateQueries({ queryKey: ['user-profile'] })
         }

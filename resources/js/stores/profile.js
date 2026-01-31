@@ -3,6 +3,7 @@ import { nextTick } from 'vue'
 import axios from '@/plugins/axios'
 import { useAuthStore } from '@/stores/auth'
 import { useAlertModal } from '@/composables/useAlertModal.js'
+import { useQueryClient } from '@tanstack/vue-query'
 const { confirmModal } = useAlertModal()
 
 export const useProfileStore = defineStore('profile', {
@@ -284,6 +285,12 @@ export const useProfileStore = defineStore('profile', {
                 this.followerCount = res.follower_count
                 await nextTick()
                 await this.getProfileState(this.id)
+                try {
+                    const queryClient = useQueryClient()
+                    queryClient.invalidateQueries({ queryKey: ['following-feed'] })
+                } catch (e) {
+                }
+
                 if (!prevState && this.isFollowingRequestPending) {
                     this.pollFollowRequestState().catch((err) => {
                         console.error('Error polling follow request state:', err)

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import axios from '~/plugins/axios'
 import { ref } from 'vue'
+import { useQueryClient } from '@tanstack/vue-query'
 
 export const useSearchStore = defineStore('search', () => {
     const searchQuery = ref('')
@@ -185,6 +186,11 @@ export const useSearchStore = defineStore('search', () => {
                 user.is_following = true
                 user.follower_count = (user.follower_count || 0) + 1
             }
+            try {
+                const queryClient = useQueryClient()
+                queryClient.invalidateQueries({ queryKey: ['following-feed'] })
+            } catch (e) {
+            }
 
             return { success: true }
         } catch (err) {
@@ -205,6 +211,11 @@ export const useSearchStore = defineStore('search', () => {
             if (user) {
                 user.is_following = false
                 user.follower_count = Math.max(0, (user.follower_count || 0) - 1)
+            }
+            try {
+                const queryClient = useQueryClient()
+                queryClient.invalidateQueries({ queryKey: ['following-feed'] })
+            } catch (e) {
             }
 
             return { success: true }
