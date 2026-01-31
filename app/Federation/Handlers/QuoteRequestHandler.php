@@ -3,6 +3,7 @@
 namespace App\Federation\Handlers;
 
 use App\Federation\ActivityBuilders\QuoteRequestActivityBuilder;
+use App\Jobs\Federation\DiscoverInstance;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
@@ -25,6 +26,11 @@ class QuoteRequestHandler
      */
     public function handle(array $activity, Profile $actor, ?Profile $target = null): void
     {
+        // Ensure we discover the instance if this is a new remote actor
+        if (! $actor->local && $actor->uri) {
+            DiscoverInstance::dispatch($actor->uri)->onQueue('activitypub-in');
+        }
+
         $quotedObjectUrl = $activity['object'];
         $quotePostUrl = is_array($activity['instrument'])
             ? ($activity['instrument']['id'] ?? null)
@@ -160,6 +166,39 @@ class QuoteRequestHandler
         string $quotePostUrl,
         Profile $quoterProfile
     ): void {
+        // Ensure the quoter profile has an inbox URL for delivery
+        if (! $quoterProfile->inbox_url) {
+            if (config('logging.dev_log')) {
+                Log::warning('QuoteRequest handler: Cannot approve - quoter has no inbox_url', [
+                    'quoter_id' => $quoterProfile->id,
+                    'quoter_uri' => $quoterProfile->uri,
+                    'quote_post_url' => $quotePostUrl,
+                ]);
+            }
+
+            // Try to re-fetch the actor data to get the inbox URL (bypass cache)
+            $actorData = app(\App\Services\ActivityPubService::class)->get( $quoterProfile->uri, [], true, true, true, true );
+
+            if ($actorData && isset($actorData['inbox'])) {
+                $quoterProfile->inbox_url = $actorData['inbox'];
+                $quoterProfile->shared_inbox_url = data_get($actorData, 'endpoints.sharedInbox');
+                $quoterProfile->save();
+
+                // Discover the instance since we're seeing it for the first time
+                DiscoverInstance::dispatch($quoterProfile->uri)->onQueue('activitypub-in');
+
+            } else {
+                if (config('logging.dev_log')) {
+                    Log::error('QuoteRequest handler: Failed to fetch inbox_url for quoter', [
+                        'quoter_id' => $quoterProfile->id,
+                        'quoter_uri' => $quoterProfile->uri,
+                    ]);
+                }
+
+                return;
+            }
+        }
+
         $existing = QuoteAuthorization::where('quote_post_url', $quotePostUrl)
             ->where('quotable_type', get_class($quotable))
             ->where('quotable_id', $quotable->id)
@@ -212,6 +251,50 @@ class QuoteRequestHandler
      */
     protected function rejectQuoteRequest(array $activity, $quotable, Profile $quoterProfile): void
     {
+        // Ensure the quoter profile has an inbox URL for delivery
+        if (! $quoterProfile->inbox_url) {
+            if (config('logging.dev_log')) {
+                Log::warning('QuoteRequest handler: Cannot reject - quoter has no inbox_url', [
+                    'quoter_id' => $quoterProfile->id,
+                    'quoter_uri' => $quoterProfile->uri,
+                ]);
+            }
+
+            // Try to re-fetch the actor data to get the inbox URL (bypass cache)
+            $actorData = app(\App\Services\ActivityPubService::class)->get(
+                $quoterProfile->uri,
+                [],
+                true,
+                true,
+                true,
+                true  // bypassCache
+            );
+            if ($actorData && isset($actorData['inbox'])) {
+                $quoterProfile->inbox_url = $actorData['inbox'];
+                $quoterProfile->shared_inbox_url = data_get($actorData, 'endpoints.sharedInbox');
+                $quoterProfile->save();
+
+                // Discover the instance since we're seeing it for the first time
+                DiscoverInstance::dispatch($quoterProfile->uri)->onQueue('activitypub-in');
+
+                if (config('logging.dev_log')) {
+                    Log::info('QuoteRequest handler: Re-fetched inbox_url for quoter (reject)', [
+                        'quoter_id' => $quoterProfile->id,
+                        'inbox_url' => $quoterProfile->inbox_url,
+                    ]);
+                }
+            } else {
+                if (config('logging.dev_log')) {
+                    Log::error('QuoteRequest handler: Failed to fetch inbox_url for quoter (reject)', [
+                        'quoter_id' => $quoterProfile->id,
+                        'quoter_uri' => $quoterProfile->uri,
+                    ]);
+                }
+
+                return;
+            }
+        }
+
         $reject = QuoteRequestActivityBuilder::buildReject(
             $activity,
             $quotable->profile
