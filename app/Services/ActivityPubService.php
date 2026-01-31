@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Http;
 
 class ActivityPubService
 {
-    public function get($url, $params = [], $signed = true, $validateUrl = true, $validateContentType = true)
+    public function get($url, $params = [], $signed = true, $validateUrl = true, $validateContentType = true, $bypassCache = false)
     {
         if ($validateUrl) {
             $valid = app(SanitizeService::class)->url($url, true);
@@ -21,9 +21,11 @@ class ActivityPubService
 
         $cacheKey = 'activitypub-fetch:'.sha1($url.json_encode($params));
 
-        $cached = Cache::get($cacheKey);
-        if ($cached !== null) {
-            return $cached;
+        if (! $bypassCache) {
+            $cached = Cache::get($cacheKey);
+            if ($cached !== null) {
+                return $cached;
+            }
         }
 
         $lock = Cache::lock('activitypub-fetch_lock:'.sha1($url.json_encode($params)), 10);
@@ -31,17 +33,19 @@ class ActivityPubService
         try {
             $lock->block(10);
 
-            $cached = Cache::get($cacheKey);
-            if ($cached !== null) {
-                return $cached;
+            if (! $bypassCache) {
+                $cached = Cache::get($cacheKey);
+                if ($cached !== null) {
+                    return $cached;
+                }
             }
 
             $result = $this->fetchActivityPub($url, $params, $signed, $validateContentType);
 
-            if ($result !== false) {
-                Cache::put($cacheKey, $result, 14400);
+            if ($result !== false && $result !== null) {
+                Cache::put($cacheKey, $result, 14400);  // Cache successful results for 4 hours
             } else {
-                Cache::put($cacheKey, null, 14400);
+                Cache::put($cacheKey, null, 300);  // Cache failures for only 5 minutes
             }
 
             return $result;
