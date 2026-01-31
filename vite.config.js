@@ -32,5 +32,24 @@ export default defineConfig({
     },
     optimizeDeps: {
         exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
-    }
+    },
+
+    // ===========================================
+    // PRODUCTION BUILD CONFIGURATION
+    // ===========================================
+    build: {
+        minify: 'esbuild',  // Use esbuild for minification (faster than terser, already bundled with Vite)
+        chunkSizeWarningLimit: 500,  // Chunk size warning threshold (in KB)
+        rollupOptions: {
+            output: {
+                manualChunks: {  // Chunk splitting for better caching
+                    'vendor': ['vue', 'vue-router', 'pinia'],
+                    'ui': ['@vueuse/core', '@headlessui/vue', '@heroicons/vue'],
+                },
+            },
+        },
+    },
+    define: {
+        __VUE_PROD_DEVTOOLS__: false,  // Disable Vue devtools in production
+    },
 });
