@@ -751,7 +751,11 @@ const handleVerifyCode = async () => {
     clearMessages()
     loading.value = true
 
-    if (form.value.verificationCode?.length != 6) {
+    // Strip spaces and non-numeric characters from the code
+    const cleanCode = form.value.verificationCode?.replace(/[^0-9]/g, '') || ''
+    form.value.verificationCode = cleanCode
+
+    if (cleanCode.length != 6) {
         setError(t('common.invalidCodeLength'))
         setTimeout(() => {
             clearMessages()
@@ -762,7 +766,7 @@ const handleVerifyCode = async () => {
 
     try {
         await authStore
-            .verifyEmailVerification(form.value.email, form.value.verificationCode)
+            .verifyEmailVerification(form.value.email, cleanCode)
             .then((res) => {
                 registrationStep.value = 3
                 setSuccess(t('common.emailVerifiedSuccessfully'))
