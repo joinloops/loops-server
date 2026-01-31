@@ -16,6 +16,54 @@ use Illuminate\Validation\ValidationException;
 class EmailVerificationController extends Controller
 {
     /**
+     * Send verification code for a user (can be called from other controllers)
+     *
+     * Checks if there's already a pending (unverified) code for this user.
+     * If true, resends the same code (in case original was lost/spam).
+     * If false, creates a new code and sends the verification email.
+     *
+     * @return bool True if a new code was created, false if existing code was resent
+     */
+    public static function sendVerificationCode(User $user, Request $request): bool
+    {
+        // Check for existing pending verification code
+        $existing = UserRegisterVerify::whereEmail($user->email)
+            ->whereNull('verified_at')
+            ->latest()
+            ->first();
+
+        if ($existing) {
+            // Resend existing code (in case it was lost or caught in spam)
+            $request->session()->put('user:reg:session_key', $existing->session_key);
+            $request->session()->put('user:reg:email', $existing->email);
+            $request->session()->put('user:reg:id', $existing->id);
+
+            NewAccountEmailVerifyJob::dispatch($existing);
+
+            return false;
+        }
+
+        // Create new verification code and send email
+        $sessionKey = Str::random(32);
+        $reg = new UserRegisterVerify;
+        $reg->session_key = $sessionKey;
+        $reg->email = $user->email;
+        $reg->verify_code = (string) app(VerificationCode::class)->generate();
+        $reg->ip_address = $request->ip();
+        $reg->user_agent = $request->userAgent();
+        $reg->email_last_sent_at = now();
+        $reg->save();
+
+        $request->session()->put('user:reg:session_key', $sessionKey);
+        $request->session()->put('user:reg:email', $reg->email);
+        $request->session()->put('user:reg:id', $reg->id);
+
+        NewAccountEmailVerifyJob::dispatch($reg);
+
+        return true;
+    }
+
+    /**
      * Initiate email verification - send code
      */
     public function initiate(EmailManualVerificationRequest $request)
@@ -48,37 +96,7 @@ class EmailVerificationController extends Controller
             ], 400);
         }
 
-        $existing = UserRegisterVerify::whereEmail($user->email)
-            ->whereNull('verified_at')
-            ->latest()
-            ->first();
-
-        if ($existing) {
-            $request->session()->put('user:reg:session_key', $existing->session_key);
-            $request->session()->put('user:reg:email', $existing->email);
-            $request->session()->put('user:reg:id', $existing->id);
-
-            return response()->json([
-                'message' => 'We have already sent a verification code to your email.',
-                'expires_in' => 900,
-            ]);
-        }
-
-        $sessionKey = Str::random(32);
-        $reg = new UserRegisterVerify;
-        $reg->session_key = $sessionKey;
-        $reg->email = $user->email;
-        $reg->verify_code = (string) app(VerificationCode::class)->generate();
-        $reg->ip_address = $request->ip();
-        $reg->user_agent = $request->userAgent();
-        $reg->email_last_sent_at = now();
-        $reg->save();
-
-        $request->session()->put('user:reg:session_key', $sessionKey);
-        $request->session()->put('user:reg:email', $reg->email);
-        $request->session()->put('user:reg:id', $reg->id);
-
-        NewAccountEmailVerifyJob::dispatch($reg);
+        self::sendVerificationCode($user, $request);
 
         return response()->json([
             'message' => 'Verification code sent to your email.',
@@ -215,6 +233,43 @@ class EmailVerificationController extends Controller
 
         return response()->json([
             'message' => 'New verification code sent to your email.',
+        ]);
+    }
+
+    /**
+     * Check if there's a pending email verification session
+     */
+    public function status(Request $request)
+    {
+        $sEmail = $request->session()->get('user:reg:email');
+        $sKey = $request->session()->get('user:reg:session_key');
+        $sId = $request->session()->get('user:reg:id');
+
+        if (! $sEmail || ! $sKey || ! $sId) {
+            return response()->json([
+                'has_pending_verification' => false,
+            ]);
+        }
+
+        // Verify the session is still valid
+        $verify = UserRegisterVerify::where('session_key', $sKey)
+            ->whereNull('verified_at')
+            ->find($sId);
+
+        if (! $verify) {
+            return response()->json([
+                'has_pending_verification' => false,
+            ]);
+        }
+
+        // Mask the email for privacy (show first 2 chars and domain)
+        $emailParts = explode('@', $sEmail);
+        $maskedEmail = substr($emailParts[0], 0, 2).'***@'.$emailParts[1];
+
+        return response()->json([
+            'has_pending_verification' => true,
+            'email' => $sEmail,
+            'masked_email' => $maskedEmail,
         ]);
     }
 }

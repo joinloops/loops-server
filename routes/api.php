@@ -98,6 +98,7 @@ Route::prefix('api')->group(function () {
     Route::post('/v1/auth/verify/email', [EmailVerificationController::class, 'initiate']);
     Route::post('/v1/auth/verify/email/confirm', [EmailVerificationController::class, 'confirm']);
     Route::post('/v1/auth/verify/email/resend', [EmailVerificationController::class, 'resend']);
+    Route::get('/v1/auth/verify/email/status', [EmailVerificationController::class, 'status']);
 
     // Studio
     Route::get('/v1/studio/posts', [StudioController::class, 'getPosts'])->middleware('auth:web,api');

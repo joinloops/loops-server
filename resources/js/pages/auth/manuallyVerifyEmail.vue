@@ -4,6 +4,13 @@
             class="grid min-h-full w-full place-items-center bg-white dark:bg-slate-950 px-6 py-24 sm:py-32 lg:px-8"
         >
             <div class="w-full max-w-md">
+                <!-- Loading state while checking for pending verification -->
+                <div v-if="isCheckingStatus" class="flex flex-col items-center justify-center py-12">
+                    <i class="bx bx-loader-alt animate-spin text-4xl text-blue-600 dark:text-blue-400 mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-400">{{ t('common.loading') }}...</p>
+                </div>
+
+                <template v-else>
                 <div class="text-center mb-8">
                     <div
                         class="mx-auto h-12 w-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center mb-4"
@@ -319,13 +326,14 @@
                         {{ t('common.thisVerificationLinkWillExpireIn24Hours') }}
                     </p>
                 </div>
+                </template>
             </div>
         </div>
     </FullLayout>
 </template>
 
 <script setup>
-import { inject, ref, computed } from 'vue'
+import { inject, ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import FullLayout from '@/layouts/FullLayout.vue'
 import { useAlertModal } from '@/composables/useAlertModal.js'
@@ -360,6 +368,25 @@ const successMessage = ref('')
 const showPassword = ref(false)
 const resendCooldown = ref(0)
 const resendTimer = ref(null)
+const isCheckingStatus = ref(true)
+
+// Check for pending verification session on mount
+onMounted(async () => {
+    try {
+        const response = await axiosInstance.get('/api/v1/auth/verify/email/status')
+        if (response.data.has_pending_verification) {
+            form.value.email = response.data.email
+            currentStep.value = 2
+            successMessage.value = t('common.verificationCodeSentToYourEmail')
+            startResendCooldown()
+        }
+    } catch (err) {
+        // If status check fails, just show step 1
+        console.error('Failed to check verification status:', err)
+    } finally {
+        isCheckingStatus.value = false
+    }
+})
 
 const canSubmitStep1 = computed(() => {
     return form.value.email && form.value.password && !isVerifying.value
