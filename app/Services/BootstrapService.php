@@ -1,50 +1,54 @@
 <?php
-
 namespace App\Services;
 
 use RuntimeException;
 
 class BootstrapService
 {
-    /**
-     * Run all boot-time environment checks.
-     */
     public static function ensureBoottimeEnvironment(): void
     {
-        self::ensureOAuthKeyPermissions();
+        self::checkOAuthKeyPermissions();
     }
 
-    protected static function ensureOAuthKeyPermissions(): void
+    protected static function checkOAuthKeyPermissions(): void
     {
-        $keys = [
-            storage_path('oauth-private.key'),
-            storage_path('oauth-public.key'),
-        ];
+        $privateKeyPath = storage_path('oauth-private.key');
+        $publicKeyPath = storage_path('oauth-public.key');
+        
+        self::checkOneFile($privateKeyPath);
+        self::checkOneFile($publicKeyPath);
+    }
 
-        foreach ($keys as $keyPath) {
-            if (! file_exists($keyPath)) {
-                continue;
-            }
-
-            $perms = fileperms($keyPath) & 0777;
-
-            if ($perms <= 0660) {
-                continue;
-            }
-
-            if (@chmod($keyPath, 0660)) {
-                continue;
-            }
-
+    protected static function checkOneFile(string $filePath): void
+    {
+        if (!file_exists($filePath)) {
             throw new RuntimeException(
-                "OAuth key file \"{$keyPath}\" has insecure permissions (" . self::formatPerms($perms) . "). " .
-                "Expected 600 or 660. Please run: chmod 660 {$keyPath}"
+                "OAuth key file {$filePath} is missing. Please generate OAuth keys."
             );
         }
+
+        $permissions = self::getPermissions($filePath);
+        
+        $isSafe = ($permissions === '600' || $permissions === '660');
+        
+        if ($isSafe) {
+            return;
+        }
+
+        $fixed = @chmod($filePath, 0660);  // Try to fix it by setting to 660
+        
+        if ($fixed) {
+            return;
+        }
+
+        throw new RuntimeException(
+            "File {$filePath} has bad permissions ({$permissions}). " . "Should be 600 or 660. Run this command: chmod 660 {$filePath}"
+        );
     }
 
-    protected static function formatPerms(int $perms): string
+    protected static function getPermissions(string $filePath): string
     {
-        return sprintf('%04o', $perms);
+        $permissionNumber = fileperms($filePath) & 0777;// fileperms() returns a number with extra info we don't need & 0777 removes that extra info, leaving just the permissions
+        return decoct($permissionNumber);  // Convert to a readable string like "644" or "600" (decoct converts decimal to octal)
     }
 }
