@@ -135,50 +135,18 @@ class LoginController extends Controller
         $user->update(['last_ip' => $request->ip()]);
 
         if (! $user->email_verified_at) {
-            // Automatically send verification code before logging out
-            $existing = \App\Models\UserRegisterVerify::whereEmail($user->email)
-                ->whereNull('verified_at')
-                ->latest()
-                ->first();
-
-            if (! $existing) {
-                $sessionKey = \Illuminate\Support\Str::random(32);
-                $reg = new \App\Models\UserRegisterVerify;
-                $reg->session_key = $sessionKey;
-                $reg->email = $user->email;
-                $reg->verify_code = (string) app(\App\Support\VerificationCode::class)->generate();
-                $reg->ip_address = $request->ip();
-                $reg->user_agent = $request->userAgent();
-                $reg->email_last_sent_at = now();
-                $reg->save();
-
-                $request->session()->put('user:reg:session_key', $sessionKey);
-                $request->session()->put('user:reg:email', $reg->email);
-                $request->session()->put('user:reg:id', $reg->id);
-
-                \App\Jobs\Auth\NewAccountEmailVerifyJob::dispatch($reg);
-            } else {
-                $request->session()->put('user:reg:session_key', $existing->session_key);
-                $request->session()->put('user:reg:email', $existing->email);
-                $request->session()->put('user:reg:id', $existing->id);
-            }
-
-            $this->guard()->logout();
-
-            $request->session()->regenerate();
+            // Send verification code - user stays logged in
+            \App\Http\Controllers\EmailVerificationController::sendVerificationCode($user, $request);
 
             if ($request->expectsJson() || $request->ajax()) {
                 return response()->json([
                     'redirect' => url('/auth/verify-email'),
-                    'message' => 'You need to verify your email.',
-                    'email' => $user->email,
+                    'message' => 'Please verify your email to continue.',
                     'verification_sent' => true,
-                ], 403);
+                ]);
             }
 
-            return redirect()->route('login')->withErrors([
-                $this->username() => 'You need to verify your email.',
-            ]);
+            return redirect('/auth/verify-email');
         }
 
         if ((int) $user->status === 6) {
