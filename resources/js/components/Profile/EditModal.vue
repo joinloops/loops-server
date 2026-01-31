@@ -134,7 +134,7 @@
                                         cols="30"
                                         rows="4"
                                         v-model="userBio"
-                                        maxlength="80"
+                                        maxlength="250"
                                         :placeholder="t('profile.bioPlaceholder')"
                                         :disabled="isSaving"
                                         class="resize-none w-full bg-[#F1F1F2] dark:bg-slate-900 dark:text-slate-50 text-gray-800 border dark:border-slate-800 border-gray-300 rounded-md py-2.5 px-3 focus:outline-none focus:ring-2 focus:ring-[#F02C56] focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
@@ -152,7 +152,7 @@
                                                     : 'text-gray-500'
                                             "
                                         >
-                                            {{ userBio.length }}/80
+                                            {{ userBio.length }}/250
                                         </div>
                                     </div>
                                 </div>

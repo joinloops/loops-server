@@ -8,7 +8,7 @@ return [
     'avatarFileSizeError' => 'Velikost obrázku musí být menší než 5 MB.',
     'avatarFileTypeError' => 'Vyberte prosím platný obrázek (PNG, JPEG nebo JPG).',
     'bio' => 'O mně',
-    'bioHelp' => 'Volitelné bio (až 80 znaků)',
+    'bioHelp' => 'Volitelné bio (až 250 znaků)',
     'bioPlaceholder' => 'Přidat volitelné bio',
     'block' => 'Blokovat',
     'blocked' => 'Zablokován',

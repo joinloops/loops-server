@@ -8,7 +8,7 @@ return [
     'avatarFileSizeError' => 'La mida del fitxer de la imatge ha de ser inferior a 5 MB.',
     'avatarFileTypeError' => 'Si us plau, selecciona un fitxer d\'imatge vàlid (PNG, JPEG o JPG).',
     'bio' => 'Biografia',
-    'bioHelp' => 'Biografia opcional (fins a 80 caràcters)',
+    'bioHelp' => 'Biografia opcional (fins a 250 caràcters)',
     'bioPlaceholder' => 'Afegeix una biografia opcional',
     'block' => 'Bloca',
     'blocked' => 'Blocat',

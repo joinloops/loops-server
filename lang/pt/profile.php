@@ -8,7 +8,7 @@ return [
     'avatarFileSizeError' => 'O tamanho do arquivo de imagem deve ser inferior a 5MB.',
     'avatarFileTypeError' => 'Selecione um arquivo de imagem válido (PNG, JPEG ou JPG).',
     'bio' => 'Bio',
-    'bioHelp' => 'Bio opcional (até 80 caracteres)',
+    'bioHelp' => 'Bio opcional (até 250 caracteres)',
     'bioPlaceholder' => 'Adicionar uma bio opcional',
     'block' => 'Bloquear',
     'blocked' => 'Bloqueado',

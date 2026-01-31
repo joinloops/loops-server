@@ -407,7 +407,7 @@
         "avatarFileSizeError": "Afbeelding moet kleiner zijn dan 5 MB",
         "avatarFileTypeError": "Selecteer een geldig afbeeldingsbestand (PNG, JPG of JPG).",
         "bio": "Bio",
-        "bioHelp": "Optionele bio (tot 80 karakters)",
+        "bioHelp": "Optionele bio (tot 250 karakters)",
         "bioPlaceholder": "Voeg een optionele bio toe",
         "block": "Blokkeren",
         "blocked": "Geblokkeerd",

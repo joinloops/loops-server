@@ -407,7 +407,7 @@
         "avatarFileSizeError": "El tamaño del archivo de imagen debe ser menor a 5MB.",
         "avatarFileTypeError": "Por favor selecciona un archivo de imagen válido (PNG, JPEG o JPG).",
         "bio": "Biografía",
-        "bioHelp": "Biografía opcional (hasta 80 caracteres)",
+        "bioHelp": "Biografía opcional (hasta 250 caracteres)",
         "bioPlaceholder": "Añade una biografía opcional",
         "block": "Bloquear",
         "blocked": "Bloqueado",

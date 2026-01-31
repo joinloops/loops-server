@@ -8,7 +8,7 @@ return [
     'avatarFileSizeError' => '图片文件大小必须小于 5MB。',
     'avatarFileTypeError' => '请选择有效的图片文件（PNG、JPEG 或 JPG）。',
     'bio' => '个人简介',
-    'bioHelp' => '个人简介（选填，最多 80 个字符）',
+    'bioHelp' => '个人简介（选填，最多 250 个字符）',
     'bioPlaceholder' => '添加个人简介（可选）',
     'block' => '屏蔽',
     'blocked' => '已屏蔽',

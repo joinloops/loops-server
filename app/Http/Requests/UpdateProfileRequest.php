@@ -38,7 +38,7 @@ class UpdateProfileRequest extends FormRequest
                     }
                 },
             ],
-            'bio' => 'sometimes|string|nullable|min:0|max:80',
+            'bio' => 'sometimes|string|nullable|min:0|max:250',
         ];
     }
 }

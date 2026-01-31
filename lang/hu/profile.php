@@ -8,7 +8,7 @@ return [
     'avatarFileSizeError' => 'Kép mérete nem lehet több 5MB-nál.',
     'avatarFileTypeError' => 'Kérlek megfelelő képfájlt válassz (PNG, JPEG, vagy JPG).',
     'bio' => 'Bemutatkozás',
-    'bioHelp' => 'Opcionális bemutatkozás (maximum 80 karakter)',
+    'bioHelp' => 'Opcionális bemutatkozás (maximum 250 karakter)',
     'bioPlaceholder' => 'Opcionális bemutatkozás hozzáadása',
     'block' => 'Letiltás',
     'blocked' => 'Letiltva',

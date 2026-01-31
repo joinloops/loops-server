@@ -8,7 +8,7 @@ return [
     'avatarFileSizeError' => '이미지 파일 크기는 5MB 이하이어야 합니다.',
     'avatarFileTypeError' => '유효한 이미지 파일(PNG, JPEG, 또는 JPG)을 선택하세요.',
     'bio' => '자기소개',
-    'bioHelp' => '선택적 자기소개 (최대 80자)',
+    'bioHelp' => '선택적 자기소개 (최대 250자)',
     'bioPlaceholder' => '선택적으로 자기소개 추가',
     'block' => '차단',
     'blocked' => '차단됨',
