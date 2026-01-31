@@ -33,13 +33,9 @@ export default defineConfig({
     optimizeDeps: {
         exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util']
     },
-
-    // ===========================================
-    // PRODUCTION BUILD CONFIGURATION
-    // ===========================================
     build: {
         minify: 'esbuild',
-        chunkSizeWarningLimit: 1024,  // Chunk size warning threshold (in KB)
+        chunkSizeWarningLimit: 1024,
         rollupOptions: {
             output: {
                 manualChunks: {  // Chunk splitting for better caching
