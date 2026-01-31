@@ -1235,12 +1235,10 @@ const handleVerifyCode = async () => {
     }
 
     try {
-        await authStore
-            .verifyEmailVerification(form.value.email, cleanCode)
-            .then((res) => {
-                registrationStep.value = 3
-                setSuccess(t('common.emailVerifiedSuccessfully'))
-            })
+        await authStore.verifyEmailVerification(form.value.email, cleanCode).then((res) => {
+            registrationStep.value = 3
+            setSuccess(t('common.emailVerifiedSuccessfully'))
+        })
     } catch (err) {
         console.error('Verification error:', err)
 
