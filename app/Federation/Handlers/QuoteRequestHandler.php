@@ -243,13 +243,6 @@ class QuoteRequestHandler
     {
         // Ensure the quoter profile has an inbox URL for delivery
         if (! $quoterProfile->inbox_url) {
-            if (config('logging.dev_log')) {
-                Log::warning('QuoteRequest handler: Cannot reject - quoter has no inbox_url', [
-                    'quoter_id' => $quoterProfile->id,
-                    'quoter_uri' => $quoterProfile->uri,
-                ]);
-            }
-
             // Try to re-fetch the actor data to get the inbox URL (bypass cache)
             $actorData = app(\App\Services\ActivityPubService::class)->get( $quoterProfile->uri, [], true, true, true, true );
             if ($actorData && isset($actorData['inbox'])) {
