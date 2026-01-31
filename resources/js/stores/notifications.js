@@ -54,7 +54,7 @@ export const useNotificationStore = defineStore('notifications', () => {
             if (cursor) {
                 params.cursor = cursor
             } else {
-                await fetchUnreadCount(type)
+                await fetchUnreadCount()
             }
 
             const response = await axios.get('/api/v1/account/notifications', { params })
