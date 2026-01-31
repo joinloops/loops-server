@@ -288,8 +288,7 @@ export const useProfileStore = defineStore('profile', {
                 try {
                     const queryClient = useQueryClient()
                     queryClient.invalidateQueries({ queryKey: ['following-feed'] })
-                } catch (e) {
-                }
+                } catch (e) {}
 
                 if (!prevState && this.isFollowingRequestPending) {
                     this.pollFollowRequestState().catch((err) => {

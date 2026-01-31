@@ -189,8 +189,7 @@ export const useSearchStore = defineStore('search', () => {
             try {
                 const queryClient = useQueryClient()
                 queryClient.invalidateQueries({ queryKey: ['following-feed'] })
-            } catch (e) {
-            }
+            } catch (e) {}
 
             return { success: true }
         } catch (err) {
@@ -215,8 +214,7 @@ export const useSearchStore = defineStore('search', () => {
             try {
                 const queryClient = useQueryClient()
                 queryClient.invalidateQueries({ queryKey: ['following-feed'] })
-            } catch (e) {
-            }
+            } catch (e) {}
 
             return { success: true }
         } catch (err) {

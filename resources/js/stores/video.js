@@ -208,8 +208,7 @@ export const useVideoStore = defineStore('video', {
                 try {
                     const queryClient = useQueryClient()
                     queryClient.invalidateQueries({ queryKey: ['following-feed'] })
-                } catch (e) {
-                }
+                } catch (e) {}
                 return res.data
             } catch (error) {
                 console.error('Error following user:', error)
@@ -224,8 +223,7 @@ export const useVideoStore = defineStore('video', {
                 try {
                     const queryClient = useQueryClient()
                     queryClient.invalidateQueries({ queryKey: ['following-feed'] })
-                } catch (e) {
-                }
+                } catch (e) {}
                 return res.data
             } catch (error) {
                 console.error('Error unfollowing user:', error)
