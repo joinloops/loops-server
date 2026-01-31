@@ -36,6 +36,13 @@ class AdminProfileResource extends JsonResource
             $deleteAfter = $this->user->delete_after;
         }
 
+        $statusDesc = $this->getStatusDescription();
+
+        // For local accounts, check if email is verified
+        if ($this->local && $this->status === 1 && $this->user && ! $this->user->email_verified_at) {
+            $statusDesc = 'unverified';
+        }
+
         return [
             'id' => (string) $this->id,
             'name' => $this->name ?? 'user'.$this->id,
@@ -53,7 +60,7 @@ class AdminProfileResource extends JsonResource
             'is_suspended' => $this->is_suspended,
             'is_hidden' => $this->is_hidden,
             'status' => $this->status,
-            'status_desc' => $this->getStatusDescription(),
+            'status_desc' => $statusDesc,
             'can_upload' => $this->can_upload,
             'can_share' => $this->can_share,
             'can_like' => $this->can_like,
