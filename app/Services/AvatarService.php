@@ -6,6 +6,7 @@ use App\Models\Profile;
 use App\Models\ProfileAvatar;
 use Exception;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
@@ -114,9 +115,8 @@ class AvatarService
         $tempPath = storage_path('app/avatars-temp/'.$tempFileName);
 
         $dirPath = storage_path('app/avatars-temp');
-        if (! is_dir($dirPath)) {
-            Storage::disk('local')->makeDirectory('avatars-temp');
-            chmod($dirPath, 0755);
+        if (! File::isDirectory($dirPath)) {
+            File::makeDirectory($dirPath, 0755, true);
         }
 
         Image::read($avatarFile)
