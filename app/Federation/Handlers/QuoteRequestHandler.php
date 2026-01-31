@@ -169,7 +169,7 @@ class QuoteRequestHandler
         // Ensure the quoter profile has an inbox URL for delivery
         if (! $quoterProfile->inbox_url) {
             // Try to re-fetch the actor data to get the inbox URL (bypass cache)
-            $actorData = app(\App\Services\ActivityPubService::class)->get( $quoterProfile->uri, [], true, true, true, true );
+            $actorData = app(\App\Services\ActivityPubService::class)->get($quoterProfile->uri, [], true, true, true, true);
 
             if ($actorData && isset($actorData['inbox'])) {
                 $quoterProfile->inbox_url = $actorData['inbox'];
@@ -186,6 +186,7 @@ class QuoteRequestHandler
                         'quoter_uri' => $quoterProfile->uri,
                     ]);
                 }
+
                 return;
             }
         }
@@ -202,6 +203,7 @@ class QuoteRequestHandler
                     'quote_post_url' => $quotePostUrl,
                 ]);
             }
+
             return;
         }
 
@@ -244,7 +246,7 @@ class QuoteRequestHandler
         // Ensure the quoter profile has an inbox URL for delivery
         if (! $quoterProfile->inbox_url) {
             // Try to re-fetch the actor data to get the inbox URL (bypass cache)
-            $actorData = app(\App\Services\ActivityPubService::class)->get( $quoterProfile->uri, [], true, true, true, true );
+            $actorData = app(\App\Services\ActivityPubService::class)->get($quoterProfile->uri, [], true, true, true, true);
             if ($actorData && isset($actorData['inbox'])) {
                 $quoterProfile->inbox_url = $actorData['inbox'];
                 $quoterProfile->shared_inbox_url = data_get($actorData, 'endpoints.sharedInbox');
