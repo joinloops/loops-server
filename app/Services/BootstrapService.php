@@ -1,25 +1,49 @@
 <?php
+
 namespace App\Services;
 
+use Illuminate\Support\Facades\File;
 use RuntimeException;
 
 class BootstrapService
 {
     public static function ensureBoottimeEnvironment(): void
     {
-
-        if (app()->runningInConsole()) {
-            return;
-        } 
-
         self::checkOAuthKeyPermissions();
+        self::ensureAvatarTempDirectory();
+    }
+
+    protected static function ensureAvatarTempDirectory(): void
+    {
+        $path = storage_path('app/avatar-temp');
+
+        if (! File::isDirectory($path)) {
+            File::makeDirectory($path, 0755, true);
+
+            return;
+        }
+
+        $perms = fileperms($path) & 0777;
+
+        if ($perms === 0755) {
+            return;
+        }
+
+        if (@chmod($path, 0755)) {
+            return;
+        }
+
+        throw new RuntimeException(
+            "Avatar temp directory \"{$path}\" has incorrect permissions (" . self::formatPerms($perms) . "). " .
+            "Expected 0755. Please run: chmod 755 {$path}"
+        );
     }
 
     protected static function checkOAuthKeyPermissions(): void
     {
         $privateKeyPath = storage_path('oauth-private.key');
         $publicKeyPath = storage_path('oauth-public.key');
-        
+
         self::checkOAuthFile($privateKeyPath);
         self::checkOAuthFile($publicKeyPath);
     }
@@ -33,15 +57,15 @@ class BootstrapService
         }
 
         $permissions = self::getPermissions($filePath);
-        
+
         $isSafe = ($permissions === '600' || $permissions === '660');
-        
+
         if ($isSafe) {
             return;
         }
 
-        $fixed = @chmod($filePath, 0660);  // Try to change the chmod to 660
-        
+        $fixed = @chmod($filePath, 0660);
+
         if ($fixed) {
             return;
         }
@@ -53,7 +77,13 @@ class BootstrapService
 
     protected static function getPermissions(string $filePath): string
     {
-        $permissionNumber = fileperms($filePath) & 0777;// fileperms() returns a number with extra info we don't need & 0777 removes that extra info, leaving just the permissions
-        return decoct($permissionNumber);  // Convert to a readable string like "644" or "600" (decoct converts decimal to octal)
+        $permissionNumber = fileperms($filePath) & 0777;
+
+        return decoct($permissionNumber);
+    }
+
+    protected static function formatPerms(int $perms): string
+    {
+        return sprintf('%04o', $perms);
     }
 }

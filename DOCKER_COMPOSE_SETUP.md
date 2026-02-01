@@ -63,7 +63,12 @@ This setup uses `serversideup/php:8.4-fpm-nginx` as the base image and is design
    docker compose exec loops php artisan passport:keys
    ```
 
-8. **Create admin user:**
+8. **Ensure boot-time environment:**
+   ```bash
+   docker compose exec loops php artisan app:ensure-boottime
+   ```
+
+9. **Create admin user:**
    ```bash
    docker compose exec loops php artisan create-admin-account
    ```
