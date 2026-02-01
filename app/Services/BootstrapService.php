@@ -34,7 +34,7 @@ class BootstrapService
         }
 
         throw new RuntimeException(
-            "Avatar temp directory \"{$path}\" has incorrect permissions (" . self::formatPerms($perms) . "). " .
+            "Avatar temp directory \"{$path}\" has incorrect permissions (".self::formatPerms($perms).'). '.
             "Expected 0755. Please run: chmod 755 {$path}"
         );
     }
@@ -71,7 +71,7 @@ class BootstrapService
         }
 
         throw new RuntimeException(
-            "File {$filePath} has bad permissions ({$permissions}). " . "Should be 600 or 660. Run this command: chmod 660 {$filePath}"
+            "File {$filePath} has bad permissions ({$permissions}). "."Should be 600 or 660. Run this command: chmod 660 {$filePath}"
         );
     }
 
