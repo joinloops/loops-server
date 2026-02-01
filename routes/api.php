@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\WebPublicController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\EmailVerificationController;
+use App\Http\Controllers\HealthController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\InstanceActorController;
 use App\Http\Controllers\NodeInfoController;
@@ -36,6 +37,10 @@ use App\Http\Middleware\AdminOnlyAccess;
 use App\Http\Middleware\AuthorizedFetch;
 use App\Http\Middleware\FederationEnabled;
 use Illuminate\Support\Facades\Route;
+
+// Health check endpoints
+Route::get('/ping', [HealthController::class, 'ping'])->name('health.ping');
+Route::get('/health', [HealthController::class, 'health'])->name('health.check');
 
 // NodeInfo endpoints
 Route::group(['prefix' => 'nodeinfo'], function () {
