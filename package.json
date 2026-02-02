@@ -58,7 +58,7 @@
         "esbuild": "^0.27.2",
         "eslint": "^9.39.2",
         "eslint-plugin-vue": "^10.7.0",
-        "globals": "^17.2.0",
+        "globals": "^17.3.0",
         "prettier": "^3.8.1",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.54.0",
