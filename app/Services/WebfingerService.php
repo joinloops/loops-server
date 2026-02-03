@@ -28,14 +28,15 @@ class WebfingerService
 
             if ($profileMatch && isset($profileMatch['profileId'])) {
                 $actor = Profile::where('id', $profileMatch['profileId'])->whereLocal(true)->first();
-                $resource = "acct:{$actor->username}@{$this->getLocalDomain()}";
-            } else {
-                $actor = null;
+
+                if ($actor) {
+                    $resource = "acct:{$actor->username}@{$this->getLocalDomain()}";
+
+                    return $this->buildWebfingerResponse($resource, $actor);
+                }
             }
 
-            if ($actor) {
-                return $this->buildWebfingerResponse($resource, $actor);
-            }
+            return null;
         }
 
         $parsed = $this->parseResource($resource);
