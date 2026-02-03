@@ -58,15 +58,18 @@ class RedisService
         $redis = Redis::connection($connection);
 
         try {
-            $modules = $redis->command('MODULE', ['LIST']);
+            $client = $redis->client();
+            $modules = $client->rawCommand('MODULE', 'LIST');
 
-            foreach ($modules as $module) {
-                $moduleData = is_array($module) ? $module : (array) $module;
+            if (is_array($modules)) {
+                foreach ($modules as $module) {
+                    $moduleData = is_array($module) ? $module : (array) $module;
 
-                $flatInfo = array_map('strtolower', \Illuminate\Support\Arr::flatten($moduleData));
+                    $flatInfo = array_map('strtolower', \Illuminate\Support\Arr::flatten($moduleData));
 
-                if (in_array('bf', $flatInfo) || in_array('redisbloom', $flatInfo)) {
-                    return true;
+                    if (in_array('bf', $flatInfo) || in_array('redisbloom', $flatInfo)) {
+                        return true;
+                    }
                 }
             }
         } catch (Throwable $e) {
