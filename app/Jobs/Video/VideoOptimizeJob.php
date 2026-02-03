@@ -157,6 +157,7 @@ class VideoOptimizeJob implements ShouldQueue
                 $video->processing_status = 'failed';
                 $video->processing_failed_at = now();
                 $video->save();
+                return;
             }
 
             throw $e;
