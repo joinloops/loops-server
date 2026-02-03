@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Activity;
 use App\Models\Profile;
+use App\Models\InstanceActor;
 use Illuminate\Support\Facades\Log;
 
 class ActivityService
@@ -11,7 +12,7 @@ class ActivityService
     /**
      * Process an incoming activity
      */
-    public function processIncomingActivity(array $activityData, Profile $actor, Profile $target)
+    public function processIncomingActivity(array $activityData, Profile|InstanceActor $actor, Profile $target)
     {
         $type = $activityData['type'] ?? null;
         $mapping = $this->getMapType($type);
