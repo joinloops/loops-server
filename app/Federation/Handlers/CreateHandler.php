@@ -238,7 +238,7 @@ class CreateHandler extends BaseHandler
             );
 
             if ($replyMatch && isset($replyMatch['profileId'], $replyMatch['replyId'])) {
-                $commentReply = CommentReply::whereProfile($replyMatch['profileId'])->whereKey($replyMatch['replyId'])->first();
+                $commentReply = CommentReply::whereProfileId($replyMatch['profileId'])->whereKey($replyMatch['replyId'])->first();
                 if ($commentReply) {
                     return $this->createCommentReply($object, $actor, $commentReply->video_id, $commentReply->comment_id);
                 }
