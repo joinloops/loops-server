@@ -2087,12 +2087,19 @@ const saveSettings = async () => {
 
     try {
         const response = await settingsApi.updateSettings(settings)
-    } catch (error) {
-        alertModal('Error', error?.response?.data?.message)
-    } finally {
-        saving.value = false
         await nextTick()
         window.location.reload()
+    } catch (error) {
+        saving.value = false
+        const errorMessage = error?.response?.data?.message || 'An error occurred while saving settings'
+        const validationErrors = error?.response?.data?.errors
+        
+        if (validationErrors) {
+            const errorList = Object.entries(validationErrors).map(([field, messages]) => `${field}: ${messages.join(', ')}`).join('\n')
+            alertModal('Validation Error', `${errorMessage}\n\n${errorList}`)
+        } else {
+            alertModal('Error', errorMessage)
+        }
     }
 }
 
