@@ -63,6 +63,12 @@ class AdminSettingsController extends Controller
             'general.userSpamDetection' => 'required|boolean',
             'general.pushNotifications' => 'required|boolean',
             'general.emailVerification' => 'required|accepted',
+            'federation.enableFederation' => 'required|boolean',
+            'federation.federationMode' => 'sometimes|string|in:open,lockdown',
+            'federation.authorizedFetch' => 'sometimes|boolean',
+            'federation.autoAcceptFollows' => 'sometimes|boolean',
+            'federation.allowedInstances' => 'sometimes|array',
+            'federation.blockedInstances' => 'sometimes|array',
         ]);
 
         $supportsBf = app(RedisService::class)->supportsBloomFilters();
