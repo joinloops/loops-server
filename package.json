@@ -19,7 +19,7 @@
         "@tailwindcss/vite": "^4.1.18",
         "@tanstack/vue-query": "^5.92.9",
         "@unhead/vue": "^2.1.2",
-        "@vitejs/plugin-vue": "^6.0.3",
+        "@vitejs/plugin-vue": "^6.0.4",
         "@vueuse/core": "^14.2.0",
         "autoprefixer": "^10.4.24",
         "axios": "^1.13.4",
