@@ -63,7 +63,7 @@ class HashidService
     {
         self::init();
 
-        if ($encoded === '' || $encoded === null) {
+        if ($encoded === '') {
             throw new InvalidArgumentException('Encoded string cannot be empty');
         }
 
