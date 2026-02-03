@@ -165,7 +165,7 @@ class ActivityService
     /**
      * Store an activity in the database
      */
-    protected function storeActivity(array $activityData, Profile $actor, Profile $target): Activity
+    protected function storeActivity(array $activityData, Profile|InstanceActor $actor, Profile $target): Activity
     {
         return Activity::firstOrCreate(
             ['activity_id' => $activityData['id']],
