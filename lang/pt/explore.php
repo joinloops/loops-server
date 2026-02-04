@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'discoverTrendingContent' => 'Discover trending content',
-    'noVideosFoundForThisHashtag' => 'No videos found for this hashtag',
+    'discoverTrendingContent' => 'Descubra conteúdo em alta',
+    'noVideosFoundForThisHashtag' => 'Nenhum vídeo encontrado para esta hashtag',
 ];
