@@ -707,8 +707,8 @@
                                             v-else
                                             class="w-full h-full flex flex-col items-center justify-center text-white/70 text-xs bg-gray-800"
                                         >
-                                            <span class="text-lg mb-1">No preview</span>
-                                            <span>Upload a video to see it here</span>
+                                            <span class="text-lg mb-1">{{ $t('studio.noPreview') }}</span>
+                                            <span>{{ $t('studio.uploadPreviewHelp') }}</span>
                                         </div>
 
                                         <div
@@ -769,7 +769,7 @@
                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                         ></path>
                                     </svg>
-                                    {{ isSubmitting ? 'Posting...' : 'Post' }}
+                                    {{ isSubmitting ? $t('common.posting') : $t('common.post') }}
                                 </button>
                                 <button
                                     @click="handleDiscard"
