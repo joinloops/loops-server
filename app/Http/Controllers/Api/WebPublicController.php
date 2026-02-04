@@ -199,7 +199,7 @@ class WebPublicController extends Controller
         $res['is_owner'] = $request->user()?->profile_id == $profile->id;
         $res['likes_count'] = AccountService::getAccountLikesCount($profile->id);
 
-        return response()->json(['data' => $res]);
+        return response()->json(['data' => $res], 200, [], JSON_UNESCAPED_SLASHES);
     }
 
     public function accountFollowers(Request $request, $id)

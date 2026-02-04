@@ -933,19 +933,35 @@ class AdminController extends Controller
         $res = [
             [
                 'name' => 'Total',
-                'value' => Instance::whereNotNull('software')->whereFederationState(5)->count(),
+                'value' => Instance::active()->count(),
             ],
             [
                 'name' => 'New',
-                'value' => Instance::whereNotNull('software')->whereFederationState(5)->where('created_at', '>', now()->subHours(24))->count(),
+                'value' => Instance::active()->where('created_at', '>', now()->subHours(24))->count(),
+            ],
+            [
+                'name' => 'Blocked',
+                'value' => Instance::whereFederationState(2)->count(),
             ],
             [
                 'name' => 'Users',
-                'value' => Instance::whereNotNull('software')->where('federation_state', 5)->sum('user_count'),
+                'value' => Instance::active()->sum('user_count'),
+            ],
+            [
+                'name' => 'Videos',
+                'value' => Instance::active()->sum('video_count'),
+            ],
+            [
+                'name' => 'Followers',
+                'value' => Instance::active()->sum('follower_count'),
+            ],
+            [
+                'name' => 'Following',
+                'value' => Instance::active()->sum('following_count'),
             ],
             [
                 'name' => 'Comments',
-                'value' => Instance::whereNotNull('software')->where('federation_state', 5)->sum('comment_count'),
+                'value' => Instance::active()->sum('comment_count'),
             ],
         ];
 
@@ -954,14 +970,16 @@ class AdminController extends Controller
 
     public function instanceAdvancedStats()
     {
-        $totalInstances = Instance::count();
-        $activeInstances = Instance::where('is_blocked', false)->count();
-        $allowedVideoPosts = Instance::where('allow_video_posts', true)->count();
-        $allowedInFyf = Instance::where('allow_videos_in_fyf', true)->count();
+        $totalInstances = Instance::active()->count();
+        $activeInstances = Instance::active()->count();
+        $allowedVideoPosts = Instance::active()->where('allow_video_posts', true)->count();
+        $allowedInFyf = Instance::active()->where('allow_videos_in_fyf', true)->count();
 
         $softwareStats = Instance::select('software')
             ->selectRaw('COUNT(*) as count')
             ->selectRaw('SUM(CASE WHEN allow_video_posts = 1 THEN 1 ELSE 0 END) as allow_video_posts_count')
+            ->where('is_blocked', false)
+            ->active()
             ->groupBy('software')
             ->orderByDesc('count')
             ->get();

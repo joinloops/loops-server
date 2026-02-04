@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -109,4 +110,13 @@ class Instance extends Model
      * 4 - Temporary Silenced
      * 5 - Full federation
      */
+
+    /**
+     * @param  Builder<Instance>  $query
+     * @return Builder<Instance>
+     */
+    protected function scopeActive(Builder $query): Builder
+    {
+        return $query->where('federation_state', 5);
+    }
 }
