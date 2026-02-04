@@ -707,7 +707,9 @@
                                             v-else
                                             class="w-full h-full flex flex-col items-center justify-center text-white/70 text-xs bg-gray-800"
                                         >
-                                            <span class="text-lg mb-1">{{ $t('studio.noPreview') }}</span>
+                                            <span class="text-lg mb-1">{{
+                                                $t('studio.noPreview')
+                                            }}</span>
                                             <span>{{ $t('studio.uploadPreviewHelp') }}</span>
                                         </div>
 
