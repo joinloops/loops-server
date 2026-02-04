@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'choseYourPreferredLanguage' => 'Choose your preferred language for the Loops interface.',
-    'displayLanguage' => 'Display Language',
-    'language' => 'Language',
+    'choseYourPreferredLanguage' => 'Escolha o seu idioma preferido para a interface do Loops.',
+    'displayLanguage' => 'Idioma de Exibição',
+    'language' => 'Idioma',
     'picker' => [
-        'title' => 'Select Language',
-        'description' => 'Select your preferred language. This will change the language for the entire application.',
-        'select' => 'Select Language:',
-        'applyChanges' => 'Apply Changes',
-        'current' => 'Current Language:',
-        'note' => 'Your language preference will be saved automatically.',
+        'title' => 'Selecione o Idioma',
+        'description' => 'Selecione o seu idioma preferido. Isso mudará o idioma de todo o aplicativo.',
+        'select' => 'Selecione o Idioma:',
+        'applyChanges' => 'Aplicar Alterações',
+        'current' => 'Idioma Atual:',
+        'note' => 'Sua preferência de idioma será salva automaticamente.',
     ],
 ];
