@@ -12,8 +12,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $profile_id
  * @property int $following_id
- * @property int $following_is_local
- * @property int $profile_is_local
+ * @property bool $following_is_local
+ * @property bool $profile_is_local
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \App\Models\Profile|null $following
@@ -38,7 +38,7 @@ class Follower extends Model
 
     protected $fillable = ['profile_id', 'following_id', 'profile_is_local', 'following_is_local'];
 
-    public $visible = ['profile_id', 'following_id'];
+    protected $visible = ['profile_id', 'following_id'];
 
     protected $casts = [
         'profile_is_local' => 'boolean',
