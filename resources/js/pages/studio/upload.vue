@@ -1270,7 +1270,7 @@ const resetForm = () => {
     coverImage.value = null
     privacy.value = 'everyone'
     settings.allowComments = true
-    settings.allowDuet = true
+    settings.allowDuets = true
     settings.allowStitch = true
     settings.containsAd = false
     settings.containsAi = false
