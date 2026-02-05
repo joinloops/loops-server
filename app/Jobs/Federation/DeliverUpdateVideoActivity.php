@@ -93,6 +93,7 @@ class DeliverUpdateVideoActivity implements ShouldBeUnique, ShouldQueue
         ];
 
         $signatureService = app(HttpSignatureService::class);
+        $fullParsedUrl = ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '');
 
         try {
             $privateKey = app(SigningService::class)->getPrivateKey();
@@ -101,7 +102,7 @@ class DeliverUpdateVideoActivity implements ShouldBeUnique, ShouldQueue
                 $privateKey,
                 $headers,
                 'POST',
-                ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : ''),
+                $fullParsedUrl,
                 json_encode($activity)
             );
 
