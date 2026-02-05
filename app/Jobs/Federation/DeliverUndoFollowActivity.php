@@ -91,7 +91,7 @@ class DeliverUndoFollowActivity implements ShouldQueue
                 $privateKey,
                 $headers,
                 'POST',
-                $parsedUrl['path'] ?? '/',
+                ($parsedUrl['path'] ?? '/') . (isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : ''),
                 json_encode($activity)
             );
 
