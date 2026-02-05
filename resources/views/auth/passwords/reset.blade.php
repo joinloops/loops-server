@@ -68,6 +68,30 @@
                                    autocomplete="new-password">
                         </div>
 
+                        @if(config('captcha.enabled'))
+                            <div class="mb-6">
+                                <input type="hidden" name="captcha_type" value="{{ config('captcha.driver') }}">
+                                @if(config('captcha.driver') === 'turnstile')
+                                    <div class="cf-turnstile" data-sitekey="{{ config('captcha.siteKey') }}" data-callback="onCaptchaSuccess"></div>
+                                    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+                                @elseif(config('captcha.driver') === 'hcaptcha')
+                                    <div class="h-captcha" data-sitekey="{{ config('captcha.siteKey') }}" data-callback="onCaptchaSuccess"></div>
+                                    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+                                @endif
+                                <input type="hidden" name="captcha_token" id="captcha_token" value="">
+                                <script>
+                                    function onCaptchaSuccess(token) {
+                                        document.getElementById('captcha_token').value = token;
+                                    }
+                                </script>
+                                @error('captcha_token')
+                                    <p class="text-red-500 dark:text-red-400 text-sm mt-1" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </p>
+                                @enderror
+                            </div>
+                        @endif
+
                         <div class="flex justify-end">
                             <button type="submit" class="bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800">
                                 {{ __('Reset Password') }}
