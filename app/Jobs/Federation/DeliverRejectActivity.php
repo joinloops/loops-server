@@ -66,7 +66,9 @@ class DeliverRejectActivity implements ShouldQueue
         }
 
         $signatureService = app(HttpSignatureService::class);
-        $fullParsedUrl = ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '');
+        $path = $parsedUrl['path'] ?? '/';
+        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
+        $requestPath = $path.$queryString;
 
         $headers = [
             'Host' => $parsedUrl['host'],
@@ -83,7 +85,7 @@ class DeliverRejectActivity implements ShouldQueue
                 $privateKey,
                 $headers,
                 'POST',
-                $fullParsedUrl,
+                $requestPath,
                 json_encode($activity)
             );
 

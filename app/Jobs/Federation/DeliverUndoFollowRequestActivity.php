@@ -71,7 +71,9 @@ class DeliverUndoFollowRequestActivity implements ShouldQueue
         ];
 
         $signatureService = app(HttpSignatureService::class);
-        $fullParsedUrl = ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '');
+        $path = $parsedUrl['path'] ?? '/';
+        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
+        $requestPath = $path.$queryString;
 
         try {
             $privateKey = app(SigningService::class)->getPrivateKey();
@@ -80,7 +82,7 @@ class DeliverUndoFollowRequestActivity implements ShouldQueue
                 $privateKey,
                 $headers,
                 'POST',
-                $fullParsedUrl,
+                $requestPath,
                 json_encode($activity)
             );
 

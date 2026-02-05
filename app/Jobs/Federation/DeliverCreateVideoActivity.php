@@ -97,7 +97,9 @@ class DeliverCreateVideoActivity implements ShouldBeUnique, ShouldQueue
         ];
 
         $signatureService = app(HttpSignatureService::class);
-        $fullParsedUrl = ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '');
+        $path = $parsedUrl['path'] ?? '/';
+        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
+        $requestPath = $path.$queryString;
 
         try {
             $privateKey = app(SigningService::class)->getPrivateKey();
@@ -106,7 +108,7 @@ class DeliverCreateVideoActivity implements ShouldBeUnique, ShouldQueue
                 $privateKey,
                 $headers,
                 'POST',
-                $fullParsedUrl,
+                $requestPath,
                 json_encode($activity)
             );
 
