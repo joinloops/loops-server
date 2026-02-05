@@ -200,7 +200,7 @@ class RelayService
             $privateKey,
             $headers,
             'POST',
-            ($parsedUrl['path'] ?? '/') . (isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : ''),
+            ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : ''),
             $body
         );
 

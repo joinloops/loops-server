@@ -98,7 +98,7 @@ class DeliverCommentReplyLikeActivity implements ShouldBeUnique, ShouldQueue
                 $privateKey,
                 $headers,
                 'POST',
-                ($parsedUrl['path'] ?? '/') . (isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : ''),
+                ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : ''),
                 json_encode($activity)
             );
 
