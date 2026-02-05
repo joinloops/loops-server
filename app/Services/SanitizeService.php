@@ -219,11 +219,16 @@ class SanitizeService
             return false;
         }
 
+        $parsed = parse_url($url);
+        if (! $parsed || ! isset($parsed['scheme']) || $parsed['scheme'] !== 'https') {
+            return false;
+        }
+
         $app = parse_url(config('app.url'));
         $appHost = strtolower(data_get($app, 'host'));
-        $urlHost = parse_url($url, PHP_URL_HOST);
+        $urlHost = strtolower(data_get($parsed, 'host'));
 
-        return $appHost === strtolower($urlHost);
+        return $appHost === $urlHost;
     }
 
     /**
