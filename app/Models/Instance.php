@@ -25,8 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property bool $allow_videos_in_fyf
  * @property \Illuminate\Support\Carbon|null $last_contacted_at
  * @property \Illuminate\Support\Carbon|null $last_failure_at
- * @property string|null $version_last_checked_at
- * @property string|null $instance_last_crawled_at
+ * @property \Illuminate\Support\Carbon|null $version_last_checked_at
+ * @property \Illuminate\Support\Carbon|null $instance_last_crawled_at
  * @property int $failure_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -99,6 +99,8 @@ class Instance extends Model
         'failure_count' => 'integer',
         'federation_state' => 'integer',
         'stats_last_collected_at' => 'datetime',
+        'version_last_checked_at' => 'datetime',
+        'instance_last_crawled_at' => 'datetime',
     ];
 
     /* Federation State
