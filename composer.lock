@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "afc59c69c54efb6573ba2043d7bdd383",
+    "content-hash": "34f907a7f7c5f35e586350c5b932c35c",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -62,16 +62,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.369.26",
+            "version": "3.369.28",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "ad0916c6595d98f9052f60e1d7204f4740369e94"
+                "reference": "d19d88c4d9d709eb119f2d85a385a9e40b834e33"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/ad0916c6595d98f9052f60e1d7204f4740369e94",
-                "reference": "ad0916c6595d98f9052f60e1d7204f4740369e94",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/d19d88c4d9d709eb119f2d85a385a9e40b834e33",
+                "reference": "d19d88c4d9d709eb119f2d85a385a9e40b834e33",
                 "shasum": ""
             },
             "require": {
@@ -153,9 +153,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.26"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.369.28"
             },
-            "time": "2026-02-03T19:16:42+00:00"
+            "time": "2026-02-05T19:09:46+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
