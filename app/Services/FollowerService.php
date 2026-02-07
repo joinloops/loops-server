@@ -36,8 +36,16 @@ class FollowerService
                 throw new \Exception("Profile with ID {$pid} not found");
             }
 
-            $followers = Follower::whereFollowingId($pid)->count();
-            $following = Follower::whereProfileId($pid)->count();
+            // Only count followers/following where the related profile is active (status=1)
+            $followers = Follower::whereFollowingId($pid)
+                ->join('profiles', 'followers.profile_id', '=', 'profiles.id')
+                ->where('profiles.status', 1)
+                ->count();
+
+            $following = Follower::whereProfileId($pid)
+                ->join('profiles', 'followers.following_id', '=', 'profiles.id')
+                ->where('profiles.status', 1)
+                ->count();
 
             $affected = Profile::where('id', $pid)->update([
                 'followers' => $followers,
