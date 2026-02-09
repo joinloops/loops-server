@@ -29,6 +29,9 @@ class Audience
      */
     public static function determineVisibility(array $to, array $cc, ?string $followersUrl = null): int
     {
+        $to = array_filter($to, 'is_string');
+        $cc = array_filter($cc, 'is_string');
+
         $to = array_map('strtolower', $to);
         $cc = array_map('strtolower', $cc);
 
@@ -36,19 +39,17 @@ class Audience
         $localOnlyCollection = strtolower(self::LOCAL_ONLY_COLLECTION);
         $followersUrlLower = $followersUrl ? strtolower($followersUrl) : null;
 
-        // Check for local-only (Mastodon-style)
-        // Local-only posts typically have as:Public or a local-only identifier
-        if (in_array($localOnlyCollection, $to) || in_array($localOnlyCollection, $cc)) {
-            return self::VISIBILITY_LOCAL_ONLY;
-        }
+        // as:Public is a standard CURIE for the Public collection, treat it as public
+        $isPublicTo = in_array($publicCollection, $to) || in_array($localOnlyCollection, $to);
+        $isPublicCc = in_array($publicCollection, $cc) || in_array($localOnlyCollection, $cc);
 
         // Public: Public collection in 'to'
-        if (in_array($publicCollection, $to)) {
+        if ($isPublicTo) {
             return self::VISIBILITY_PUBLIC;
         }
 
         // Unlisted: Public collection in 'cc' but not in 'to'
-        if (in_array($publicCollection, $cc)) {
+        if ($isPublicCc) {
             return self::VISIBILITY_UNLISTED;
         }
 
