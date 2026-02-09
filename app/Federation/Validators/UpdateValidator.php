@@ -59,10 +59,6 @@ class UpdateValidator extends BaseValidator
      */
     private function validateStatusUpdate(array $activity, array $object): void
     {
-        if (! $this->isLocalStatus($object['id'])) {
-            throw new \Exception("Update activity rejected: Object '{$object['id']}' is not a local status on this server.");
-        }
-
         if (isset($object['content']) && ! is_string($object['content'])) {
             throw new \Exception('Object "content" must be a string.');
         }
@@ -93,10 +89,6 @@ class UpdateValidator extends BaseValidator
      */
     private function validateProfileUpdate(array $activity, array $object): void
     {
-        if (! $this->isLocalProfile($object['id'])) {
-            throw new \Exception("Update activity rejected: Object '{$object['id']}' is not a local profile on this server.");
-        }
-
         if (isset($object['name']) && ! is_string($object['name'])) {
             throw new \Exception('Object "name" must be a string.');
         }
