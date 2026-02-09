@@ -25,7 +25,7 @@ class SettingsFileService
     /**
      * Generate public settings file (safe for frontend consumption)
      */
-    public function generatePublicConfig(): string
+    public function generatePublicConfig(): array
     {
         $settings = AdminSetting::getPublicSettings();
 
@@ -53,15 +53,16 @@ class SettingsFileService
 
         $json = json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
+        Storage::disk('public')->put('config/app-config.json', $json);
         Cache::put('settings:public', $config);
 
-        return $json;
+        return $config;
     }
 
     /**
      * Generate admin settings file (includes sensitive data)
      */
-    public function generateAdminConfig(): string
+    public function generateAdminConfig(): array
     {
         $settings = AdminSetting::getAllSettings();
 
@@ -69,9 +70,10 @@ class SettingsFileService
 
         $json = json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
+        Storage::disk('local')->put('config/admin-config.json', $json);
         Cache::put('settings:admin', $config);
 
-        return $json;
+        return $config;
     }
 
     /**
@@ -84,7 +86,7 @@ class SettingsFileService
             return $config;
         }
 
-        return json_decode($this->generatePublicConfig(), true);
+        return $this->generatePublicConfig();
     }
 
     /**
@@ -92,7 +94,12 @@ class SettingsFileService
      */
     public function getAdminConfig(): array
     {
-        return json_decode($this->generateAdminConfig(), true);
+        $config = Cache::get('settings:admin');
+        if ($config) {
+            return $config;
+        }
+
+        return $this->generateAdminConfig();
     }
 
     /**
