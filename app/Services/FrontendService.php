@@ -17,31 +17,29 @@ class FrontendService
         return $res;
     }
 
-    public static function getCaptchaData()
+    public static function getCaptchaData(): array
     {
         if (! config('captcha.enabled')) {
-            $res = json_encode([
+            return [
                 'enabled' => false,
                 'provider' => null,
                 'siteKey' => null,
-            ], JSON_UNESCAPED_SLASHES);
-        } else {
-            $res = json_encode([
-                'enabled' => true,
-                'provider' => config('captcha.driver'),
-                'siteKey' => config('captcha.siteKey'),
-            ], JSON_UNESCAPED_SLASHES);
+            ];
         }
 
-        return 'window.appCaptcha = '.$res.';';
+        return [
+            'enabled' => true,
+            'provider' => config('captcha.driver'),
+            'siteKey' => config('captcha.siteKey'),
+        ];
     }
 
-    public static function getAppData()
+    public static function getAppData(): array
     {
         $res = self::getCache();
         $res['app_version'] = app('app_version');
 
-        return json_encode($res, JSON_UNESCAPED_SLASHES);
+        return $res;
     }
 
     public static function getAppName()
@@ -77,7 +75,9 @@ class FrontendService
 
         $styles = preg_replace('/\R+/', ' ', data_get($res, 'branding.customCSS'));
 
-        return '<style>'.$styles.'</style>';
+        // Sanitize to prevent </style> breakout
+        $styles = str_ireplace('</style>', '', $styles);
 
+        return '<style>'.e($styles).'</style>';
     }
 }

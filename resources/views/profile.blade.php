@@ -54,9 +54,9 @@ $profileAvatar = $profile && $profile->avatar ? $profile->avatar : url('/storage
     {!! FrontendService::getCustomCss() !!}
 
     <script type="text/javascript">
-    window.appConfig = {!! FrontendService::getAppData() !!};
-    window._navi = {!! App\Services\PageService::getActiveSideLinks() !!};
-    {!! FrontendService::getCaptchaData() !!}
+    window.appConfig = @json(FrontendService::getAppData());
+    window._navi = @json(App\Services\PageService::getActiveSideLinks());
+    window.appCaptcha = @json(FrontendService::getCaptchaData());
     </script>
 </head>
 

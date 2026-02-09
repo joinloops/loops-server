@@ -32,7 +32,7 @@ class PageService
                         'location' => $item->location,
                     ];
                 })
-                ->toJson(JSON_UNESCAPED_SLASHES);
+                ->toArray();
         });
     }
 
