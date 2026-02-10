@@ -20,7 +20,7 @@
         "@tanstack/vue-query": "^5.92.9",
         "@unhead/vue": "^2.1.4",
         "@vitejs/plugin-vue": "^6.0.4",
-        "@vueuse/core": "^14.2.0",
+        "@vueuse/core": "^14.2.1",
         "autoprefixer": "^10.4.24",
         "axios": "^1.13.5",
         "boxicons": "^2.1.4",
