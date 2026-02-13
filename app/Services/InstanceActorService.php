@@ -18,22 +18,35 @@ class InstanceActorService
             'type' => 'Application',
             'inbox' => $this->permalink('/inbox'),
             'outbox' => $this->permalink('/outbox'),
+            'endpoints' => [
+                'sharedInbox' => url('/ap/inbox'),
+            ],
             'preferredUsername' => $domain,
+            'name' => config('app.name').' (Instance Actor)',
+            'summary' => 'Instance actor for '.config('app.url'),
             'publicKey' => [
-                'id' => $this->permalink('#main-key'),
+                'id' => $this->getKeyId(),
                 'owner' => $this->permalink(),
                 'publicKeyPem' => $publicKey,
             ],
-            'manuallyApprovesFollowers' => true,
+            'manuallyApprovesFollowers' => false,
             'url' => url('/about?instance_actor=true'),
         ];
     }
 
-    public function permalink($suffix = null)
+    public function permalink($suffix = '')
     {
-        $url = url('/ap/actor');
+        return url('/ap/actor').$suffix;
+    }
 
-        return $url.$suffix;
+    public function getActorId()
+    {
+        return $this->permalink();
+    }
+
+    public function getKeyId()
+    {
+        return $this->permalink('#main-key');
     }
 
     public function getActorOutbox()
@@ -47,7 +60,23 @@ class InstanceActorService
             'type' => 'OrderedCollection',
             'totalItems' => 0,
             'first' => $this->permalink('/outbox?page=true'),
-            'last' => $this->permalink('/outbox?min_id=0page=true'),
+            'last' => $this->permalink('/outbox?min_id=0&page=true'),
         ];
+    }
+
+    /**
+     * Get the inbox URL for the instance actor
+     */
+    public function getInboxUrl()
+    {
+        return $this->permalink('/inbox');
+    }
+
+    /**
+     * Get the shared inbox URL
+     */
+    public function getSharedInboxUrl()
+    {
+        return url('/ap/sharedInbox');
     }
 }

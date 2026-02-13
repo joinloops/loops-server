@@ -59,11 +59,13 @@ class RelayService
 
     public function sendFollowActivity(RelaySubscription $relay): void
     {
-        $instanceActor = $this->instanceActorService->get();
+        $instanceActor = $this->instanceActorService;
+
+        $activityId = $instanceActor->permalink('#follows/'.$relay->id);
 
         $activity = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'id' => route('activitypub.activity', ['id' => uniqid('follow-relay-', true)]),
+            'id' => $activityId,
             'type' => 'Follow',
             'actor' => $instanceActor->getActorId(),
             'object' => $relay->relay_actor_url ?? $relay->relay_url,
@@ -74,15 +76,17 @@ class RelayService
             throw new Exception('Relay inbox URL not found');
         }
 
-        $this->deliverActivity($instanceActor, $inboxUrl, $activity);
+        $this->deliverActivityAsInstance($inboxUrl, $activity);
     }
 
     public function sendUndoFollowActivity(RelaySubscription $relay): void
     {
-        $instanceActor = $this->instanceActorService->get();
+        $instanceActor = $this->instanceActorService;
+
+        $activityId = $instanceActor->permalink('#follows/'.$relay->id);
 
         $followActivity = [
-            'id' => route('activitypub.activity', ['id' => uniqid('follow-relay-', true)]),
+            'id' => $activityId,
             'type' => 'Follow',
             'actor' => $instanceActor->getActorId(),
             'object' => $relay->relay_actor_url ?? $relay->relay_url,
@@ -90,7 +94,7 @@ class RelayService
 
         $activity = [
             '@context' => 'https://www.w3.org/ns/activitystreams',
-            'id' => route('activitypub.activity', ['id' => uniqid('undo-relay-', true)]),
+            'id' => $activityId.'/undo',
             'type' => 'Undo',
             'actor' => $instanceActor->getActorId(),
             'object' => $followActivity,
@@ -98,7 +102,7 @@ class RelayService
 
         $inboxUrl = $relay->getInbox();
         if ($inboxUrl) {
-            $this->deliverActivity($instanceActor, $inboxUrl, $activity);
+            $this->deliverActivityAsInstance($inboxUrl, $activity);
         }
     }
 
@@ -135,7 +139,8 @@ class RelayService
                     continue;
                 }
 
-                $this->deliverActivity($actor, $inboxUrl, $activity);
+                // Deliver as the original actor, not the instance actor
+                $this->deliverActivityAsUser($actor, $inboxUrl, $activity);
                 $relay->incrementSent();
 
                 if (config('logging.dev_log')) {
@@ -165,18 +170,30 @@ class RelayService
 
     protected function fetchRelayInfo(string $relayUrl): array
     {
-        $actorUrl = rtrim($relayUrl, '/').'/actor';
+        $possiblePaths = [
+            rtrim($relayUrl, '/').'/actor',
+            rtrim($relayUrl, '/'),
+        ];
 
-        $info = $this->activityPubService->get($actorUrl, [], false);
+        foreach ($possiblePaths as $actorUrl) {
+            try {
+                $info = $this->activityPubService->get($actorUrl, [], false);
 
-        if (! $info || ! is_array($info)) {
-            throw new Exception('Failed to fetch relay information');
+                if ($info && is_array($info) && isset($info['id'])) {
+                    return $info;
+                }
+            } catch (Exception $e) {
+                continue;
+            }
         }
 
-        return $info;
+        throw new Exception('Failed to fetch relay information from any known endpoint');
     }
 
-    protected function deliverActivity(Profile $actor, string $inboxUrl, array $activity): void
+    /**
+     * Deliver activity signed by the instance actor
+     */
+    protected function deliverActivityAsInstance(string $inboxUrl, array $activity): void
     {
         $parsedUrl = parse_url($inboxUrl);
 
@@ -195,6 +212,60 @@ class RelayService
         ];
 
         $privateKey = $this->signingService->getPrivateKey();
+        $path = $parsedUrl['path'] ?? '/';
+        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
+        $requestPath = $path.$queryString;
+
+        $signature = app(HttpSignatureService::class)->sign(
+            $this->instanceActorService->getKeyId(),
+            $privateKey,
+            $headers,
+            'POST',
+            $requestPath,
+            $body
+        );
+
+        $headers['Signature'] = $signature;
+
+        $response = Http::timeout(config('loops.federation.delivery.timeout', 10))
+            ->withHeaders($headers)
+            ->withBody($body, 'application/activity+json')
+            ->post($inboxUrl);
+
+        if (! $response->successful()) {
+            throw new Exception("Delivery failed: {$response->status()} - {$response->body()}");
+        }
+
+        if (config('logging.dev_log')) {
+            Log::debug('Delivered activity as instance actor', [
+                'inbox' => $inboxUrl,
+                'type' => $activity['type'] ?? 'unknown',
+            ]);
+        }
+    }
+
+    /**
+     * Deliver activity signed by a user actor
+     */
+    protected function deliverActivityAsUser(Profile $actor, string $inboxUrl, array $activity): void
+    {
+        $parsedUrl = parse_url($inboxUrl);
+
+        if (! $parsedUrl || ! isset($parsedUrl['host'])) {
+            throw new Exception('Invalid inbox URL');
+        }
+
+        $body = json_encode($activity);
+
+        $headers = [
+            'Host' => $parsedUrl['host'],
+            'Date' => now()->toRfc7231String(),
+            'Content-Type' => 'application/activity+json',
+            'Accept' => 'application/activity+json',
+            'User-Agent' => app('user_agent'),
+        ];
+
+        $privateKey = $actor->private_key ?? $this->signingService->getPrivateKey();
         $path = $parsedUrl['path'] ?? '/';
         $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
         $requestPath = $path.$queryString;
