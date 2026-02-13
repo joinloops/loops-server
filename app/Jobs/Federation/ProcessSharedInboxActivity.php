@@ -79,7 +79,14 @@ class ProcessSharedInboxActivity implements ShouldQueue
         try {
             $actorUrl = $this->activity['actor'] ?? null;
             if ($actorUrl) {
-                $relay = app(\App\Services\RelayService::class)->isFromRelay($actorUrl);
+                $relayService = app(\App\Services\RelayService::class);
+                $type = $this->activity['type'] ?? null;
+
+                if (in_array($type, ['Accept', 'Reject'])) {
+                    $relay = $relayService->findRelayByActor($actorUrl);
+                } else {
+                    $relay = $relayService->isFromRelay($actorUrl);
+                }
                 if ($relay) {
                     $this->handleRelayActivity($relay);
 

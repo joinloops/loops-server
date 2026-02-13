@@ -170,12 +170,27 @@ class RelayService
 
     protected function fetchRelayInfo(string $relayUrl): array
     {
-        $possiblePaths = [
-            rtrim($relayUrl, '/').'/actor',
-            rtrim($relayUrl, '/'),
+        $cleanUrl = rtrim($relayUrl, '/');
+        $parsed = parse_url($cleanUrl);
+        $baseUrl = $parsed['scheme'].'://'.$parsed['host'];
+
+        $candidates = [
+            $cleanUrl,
         ];
 
-        foreach ($possiblePaths as $actorUrl) {
+        if (str_ends_with($cleanUrl, '/inbox')) {
+            $withoutInbox = substr($cleanUrl, 0, -6);
+            $candidates[] = $withoutInbox.'/actor';
+            $candidates[] = $withoutInbox;
+        }
+
+        $candidates[] = $cleanUrl.'/actor';
+        $candidates[] = $baseUrl.'/actor';
+        $candidates[] = $baseUrl;
+
+        $candidates = array_unique($candidates);
+
+        foreach ($candidates as $actorUrl) {
             try {
                 $info = $this->activityPubService->get($actorUrl, [], false);
 
@@ -188,6 +203,13 @@ class RelayService
         }
 
         throw new Exception('Failed to fetch relay information from any known endpoint');
+    }
+
+    public function findRelayByActor(string $actorUrl): ?RelaySubscription
+    {
+        return RelaySubscription::where('relay_actor_url', $actorUrl)
+            ->whereIn('status', ['active', 'pending'])
+            ->first();
     }
 
     /**
