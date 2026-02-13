@@ -135,7 +135,10 @@ class ProcessVideoAudioJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
         try {
             $media = FFMpeg::fromDisk('s3')->open($path);
 
-            return $media->getAudioStream() !== null;
+            $res = $media->getAudioStream() !== null;
+            $media->cleanupTemporaryFiles();
+
+            return $res;
         } catch (Throwable $e) {
             Log::warning('ffprobe failed while checking audio stream', [
                 'video_id' => $video->id,
