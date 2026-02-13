@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\StudioController;
 use App\Http\Controllers\Api\UserPreferencesController;
 use App\Http\Controllers\Api\VideoController;
+use App\Http\Controllers\Api\VideoSoundController;
 use App\Http\Controllers\Api\WebPublicController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EmailChangeController;
@@ -246,6 +247,10 @@ Route::prefix('api')->group(function () {
     Route::get('/v1/video/likes/{id}', [VideoController::class, 'showVideoLikes'])->middleware('auth:web,api');
     Route::get('/v1/video/shares/{id}', [VideoController::class, 'showVideoShares'])->middleware('auth:web,api');
     Route::get('/v1/video/{id}', [WebPublicController::class, 'showVideo'])->middleware('throttle:api');
+
+    // Sounds
+    Route::get('/v1/sounds/details/{id}', [VideoSoundController::class, 'getSoundDetails'])->middleware('auth:web,api');
+    Route::get('/v1/sounds/feed/{id}', [VideoSoundController::class, 'getSoundFeed'])->middleware('auth:web,api');
 
     // Autocomplete
     Route::get('/v1/autocomplete/tags', [VideoController::class, 'showAutocompleteTags'])->middleware(['auth:web,api', 'throttle:autocomplete']);

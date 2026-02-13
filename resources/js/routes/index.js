@@ -80,6 +80,12 @@ const router = createRouter({
             meta: { requiresAuth: false, params: true }
         },
         {
+            path: '/sounds/:id',
+            name: 'soundsPage',
+            component: () => import('~/pages/sounds/index.vue'),
+            meta: { requiresAuth: true, params: true }
+        },
+        {
             path: '/@:id',
             name: 'profilePage',
             component: () => import('~/pages/profile/index.vue'),

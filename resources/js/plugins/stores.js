@@ -7,6 +7,7 @@ import { useVideoStore } from '~/stores/video'
 import { useSearchStore } from '~/stores/search'
 import { useEditHistoryStore } from '~/stores/editHistory'
 import { useTagFeedStore } from '~/stores/tagFeed'
+import { useSoundsStore } from '~/stores/sounds'
 
 export default {
     install: (app) => {
@@ -19,6 +20,7 @@ export default {
         const editHistoryStore = useEditHistoryStore()
         const tagFeedStore = useTagFeedStore()
         const searchStore = useSearchStore()
+        const soundsStore = useSoundsStore()
 
         app.provide('authStore', authStore)
         app.provide('adminStore', adminStore)
@@ -29,6 +31,7 @@ export default {
         app.provide('editHistoryStore', editHistoryStore)
         app.provide('tagFeedStore', tagFeedStore)
         app.provide('searchStore', searchStore)
+        app.provide('soundsStore', soundsStore)
 
         app.config.globalProperties.$authStore = authStore
         app.config.globalProperties.$adminStore = adminStore
@@ -39,5 +42,6 @@ export default {
         app.config.globalProperties.$editHistoryStore = editHistoryStore
         app.config.globalProperties.$tagFeedStore = tagFeedStore
         app.config.globalProperties.$searchStore = searchStore
+        app.config.globalProperties.$soundsStore = soundsStore
     }
 }
