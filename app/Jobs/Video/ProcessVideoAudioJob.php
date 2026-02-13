@@ -100,6 +100,24 @@ class ProcessVideoAudioJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
                 'audio_processed_at' => now(),
                 'has_audio' => true,
             ]);
+        } catch (\RuntimeException $e) {
+            if (str_contains($e->getMessage(), 'Empty fingerprint') ||
+                str_contains($e->getMessage(), 'Failed to generate fingerprint')) {
+
+                if (config('logging.dev_log')) {
+                    Log::warning("Unable to generate fingerprint for video {$video->id}", [
+                        'video_id' => $video->id,
+                        'error' => $e->getMessage(),
+                        'attempt' => $this->attempts(),
+                    ]);
+                }
+
+                $this->markAsNoAudio($video, 'fingerprint_failed');
+
+                return;
+            }
+
+            throw $e;
         } catch (Throwable $e) {
             Log::error("Failed to process audio for video {$video->id}: {$e->getMessage()}", [
                 'exception' => $e,
@@ -130,13 +148,22 @@ class ProcessVideoAudioJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
         }
     }
 
-    protected function markAsNoAudio(Video $video): void
+    protected function markAsNoAudio(Video $video, ?string $reason = null): void
     {
         $video->updateQuietly([
             'audio_processed_at' => now(),
             'has_audio' => false,
             'sound_id' => null,
         ]);
+
+        if ($reason) {
+            if (config('logging.dev_log')) {
+                Log::info("Video {$video->id} marked as no audio", [
+                    'video_id' => $video->id,
+                    'reason' => $reason,
+                ]);
+            }
+        }
     }
 
     public function failed(Throwable $exception): void
