@@ -42,6 +42,7 @@ class AudioFingerprintService
         $existing = $this->findExactMatch($hash);
         if ($existing) {
             $existing->incrementUsage();
+
             return $existing;
         }
 
