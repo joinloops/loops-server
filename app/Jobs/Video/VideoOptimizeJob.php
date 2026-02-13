@@ -77,6 +77,14 @@ class VideoOptimizeJob implements ShouldQueue
                 throw new \Exception('Could not read video stream from file');
             }
 
+            $hasAudio = false;
+            try {
+                $audioStream = $mediaInfo->getAudioStream();
+                $hasAudio = $audioStream !== null;
+            } catch (\Exception $e) {
+                $hasAudio = false;
+            }
+
             $width = $videoStream->get('width');
             $height = $videoStream->get('height');
 
@@ -139,6 +147,7 @@ class VideoOptimizeJob implements ShouldQueue
             $video->duration = $media->getDurationInSeconds();
             $video->vid_optimized = $name;
             $video->has_processed = true;
+            $video->has_audio = (bool) $hasAudio;
             $video->status = 2;
             $video->save();
 
