@@ -227,6 +227,21 @@ return [
                 'timeout' => 420,
                 'nice' => 0,
             ],
+
+            'audio-processor' => [
+                'connection' => 'redis',
+                'queue' => ['audio-processing'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 512,
+                'tries' => 3,
+                'timeout' => 420,
+                'nice' => 0,
+            ],
         ],
 
         'local' => [
@@ -246,6 +261,18 @@ return [
             'video-processor' => [
                 'connection' => 'redis',
                 'queue' => ['video-processing'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
+                'memory' => 512,
+                'tries' => 3,
+                'timeout' => 420,
+            ],
+
+            'audio-processor' => [
+                'connection' => 'redis',
+                'queue' => ['audio-processing'],
                 'balance' => 'simple',
                 'processes' => 1,
                 'minProcesses' => 1,

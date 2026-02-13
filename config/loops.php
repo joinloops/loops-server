@@ -95,6 +95,10 @@ return [
         'secret' => env('LOOPS_HEALTH_ENDPOINT_SECRET'),
     ],
 
+    'chromaprint' => [
+        'enabled' => env('LOOPS_CHROMAPRINT_ENABLED', false),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Local Domains (Same-Server Instances)
