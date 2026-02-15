@@ -54,7 +54,7 @@ class VideoResource extends JsonResource
             'pinned' => $this->is_pinned,
             'likes' => $this->likes,
             'shares' => $this->shares,
-            'comments' => $this->comments,
+            'comments' => $this->comment_state === 4 ? $this->comments : 0,
             'bookmarks' => $this->bookmarks,
             'has_liked' => $hasLiked,
             'has_bookmarked' => (bool) $hasBookmarked,
