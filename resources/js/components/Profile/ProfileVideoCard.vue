@@ -69,6 +69,7 @@
                 </div>
 
                 <div
+                    v-if="post.permissions.can_comment"
                     class="absolute bottom-3 right-3 flex items-center gap-1 text-white text-sm font-bold drop-shadow"
                 >
                     <ChatBubbleOvalLeftIcon class="w-5 h-5 text-white" />
