@@ -85,7 +85,7 @@ class AccountController extends Controller
     public function notifications(Request $request)
     {
         $validated = $request->validate([
-            'type' => 'sometimes|in:all,activity,system,followers',
+            'type' => 'sometimes|in:all,activity,system,followers,videoLike,videoShare,comments',
         ]);
 
         $pid = $request->user()->profile_id;
@@ -96,6 +96,9 @@ class AccountController extends Controller
             'activity' => Notification::activityTypes(),
             'followers' => Notification::followerTypes(),
             'system' => Notification::systemTypes(),
+            'videoLike' => Notification::videoLikeTypes(),
+            'videoShare' => Notification::videoShareTypes(),
+            'comments' => Notification::commentsTypes(),
             default => Notification::allTypes()
         };
 

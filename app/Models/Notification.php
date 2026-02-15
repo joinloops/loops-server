@@ -127,6 +127,21 @@ class Notification extends Model
         return [11, 15, 16, 18, 21, 22, 23, 26, 27, 28, 31];
     }
 
+    public static function videoLikeTypes()
+    {
+        return [21];
+    }
+
+    public static function videoShareTypes()
+    {
+        return [26];
+    }
+
+    public static function commentsTypes()
+    {
+        return [15, 16, 18];
+    }
+
     public static function activityTypes()
     {
         return [15, 16, 18, 21, 22, 23, 26, 27, 28, 31];
