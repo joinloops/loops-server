@@ -44,25 +44,25 @@ class ReportController extends Controller
         }
 
         if ($type === 'video') {
-            Video::published()->findOrFail($id);
+            Video::published()->where('profile_id', '!=', $pid)->findOrFail($id);
             Report::firstOrCreate([
                 'reporter_profile_id' => $pid,
                 'reported_video_id' => $id,
             ], $extra);
         } elseif ($type === 'profile') {
-            Profile::findOrFail($id);
+            Profile::where('id', '!=', $pid)->findOrFail($id);
             Report::firstOrCreate([
                 'reporter_profile_id' => $pid,
                 'reported_profile_id' => $id,
             ], $extra);
         } elseif ($type === 'comment') {
-            Comment::findOrFail($id);
+            Comment::where('profile_id', '!=', $pid)->findOrFail($id);
             Report::firstOrCreate([
                 'reporter_profile_id' => $pid,
                 'reported_comment_id' => $id,
             ], $extra);
         } elseif ($type === 'reply') {
-            CommentReply::findOrFail($id);
+            CommentReply::where('profile_id', '!=', $pid)->findOrFail($id);
             Report::firstOrCreate([
                 'reporter_profile_id' => $pid,
                 'reported_comment_reply_id' => $id,
