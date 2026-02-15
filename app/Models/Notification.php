@@ -142,6 +142,16 @@ class Notification extends Model
         return [15, 16, 18];
     }
 
+    public static function commentLikeTypes()
+    {
+        return [22, 23];
+    }
+
+    public static function commentShareTypes()
+    {
+        return [27, 28];
+    }
+
     public static function activityTypes()
     {
         return [15, 16, 18, 21, 22, 23, 26, 27, 28, 31];

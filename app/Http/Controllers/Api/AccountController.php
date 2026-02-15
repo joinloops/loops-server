@@ -85,7 +85,7 @@ class AccountController extends Controller
     public function notifications(Request $request)
     {
         $validated = $request->validate([
-            'type' => 'sometimes|in:all,activity,system,followers,videoLike,videoShare,comments',
+            'type' => 'sometimes|in:all,activity,system,followers,videoLike,videoShare,comments,commentLike,commentShare',
         ]);
 
         $pid = $request->user()->profile_id;
@@ -99,6 +99,8 @@ class AccountController extends Controller
             'videoLike' => Notification::videoLikeTypes(),
             'videoShare' => Notification::videoShareTypes(),
             'comments' => Notification::commentsTypes(),
+            'commentLike' => Notification::commentLikeTypes(),
+            'commentShare' => Notification::commentShareTypes(),
             default => Notification::allTypes()
         };
 
@@ -142,7 +144,7 @@ class AccountController extends Controller
     public function markAllNotificationsAsRead(Request $request)
     {
         $validated = $request->validate([
-            'type' => 'sometimes|in:all,activity,system,followers',
+            'type' => 'sometimes|in:all,activity,system,followers,videoLike,videoShare,comments,commentLike,commentShare',
         ]);
         $pid = $request->user()->profile_id;
         $type = data_get($validated, 'type', 'all');
@@ -152,6 +154,11 @@ class AccountController extends Controller
             'activity' => Notification::whereUserId($pid)->whereIn('type', Notification::activityTypes())->update(['read_at' => now()]),
             'followers' => Notification::whereUserId($pid)->whereIn('type', Notification::followerTypes())->update(['read_at' => now()]),
             'system' => Notification::whereUserId($pid)->whereIn('type', Notification::systemTypes())->update(['read_at' => now()]),
+            'videoLike' => Notification::whereUserId($pid)->whereIn('type', Notification::videoLikeTypes())->update(['read_at' => now()]),
+            'videoShare' => Notification::whereUserId($pid)->whereIn('type', Notification::videoShareTypes())->update(['read_at' => now()]),
+            'comments' => Notification::whereUserId($pid)->whereIn('type', Notification::commentsTypes())->update(['read_at' => now()]),
+            'commentLike' => Notification::whereUserId($pid)->whereIn('type', Notification::commentLikeTypes())->update(['read_at' => now()]),
+            'commentShare' => Notification::whereUserId($pid)->whereIn('type', Notification::commentShareTypes())->update(['read_at' => now()]),
             default => Notification::whereUserId($pid)->update(['read_at' => now()]),
         };
         NotificationService::clearUnreadCount($pid);

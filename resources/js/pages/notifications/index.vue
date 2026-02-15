@@ -68,6 +68,58 @@
             </div>
 
             <div v-if="activeTab === 'activity'">
+                <div class="px-3 md:px-0 mb-4">
+                    <div class="relative inline-block" ref="dropdownRef">
+                        <button
+                            @click="toggleFilterDropdown"
+                            class="inline-flex items-center justify-between px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F02C56] dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-700 cursor-pointer transition-colors min-w-[140px]"
+                        >
+                            <span>{{ activeFilterLabel }}</span>
+                            <ChevronDownIcon
+                                class="ml-2 h-4 w-4 transition-transform"
+                                :class="{ 'rotate-180': showFilterDropdown }"
+                            />
+                        </button>
+
+                        <transition
+                            enter-active-class="transition ease-out duration-100"
+                            enter-from-class="transform opacity-0 scale-95"
+                            enter-to-class="transform opacity-100 scale-100"
+                            leave-active-class="transition ease-in duration-75"
+                            leave-from-class="transform opacity-100 scale-100"
+                            leave-to-class="transform opacity-0 scale-95"
+                        >
+                            <div
+                                v-if="showFilterDropdown"
+                                class="absolute left-0 mt-2 w-48 rounded-lg shadow-lg bg-white dark:bg-gray-800 ring-1 ring-gray-300 dark:ring-gray-700 z-10"
+                            >
+                                <div class="py-1" role="menu">
+                                    <button
+                                        v-for="filter in activityFilters"
+                                        :key="filter.value"
+                                        @click="selectFilter(filter.value)"
+                                        :class="[
+                                            'w-full text-left px-4 py-2 text-sm transition-colors',
+                                            activityFilter === filter.value
+                                                ? 'bg-[#F02C56]/10 text-[#F02C56] dark:bg-[#F02C56]/20'
+                                                : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
+                                        ]"
+                                        role="menuitem"
+                                    >
+                                        <span class="flex items-center justify-between">
+                                            <span>{{ filter.label }}</span>
+                                            <CheckIcon
+                                                v-if="activityFilter === filter.value"
+                                                class="h-4 w-4 text-[#F02C56]"
+                                            />
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+                </div>
+
                 <div
                     v-if="currentError"
                     class="p-4 mb-6 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800"
@@ -160,7 +212,6 @@
                 </div>
             </div>
 
-            <!-- Followers Tab -->
             <div v-else-if="activeTab === 'followers'">
                 <div
                     v-if="isCurrentTabLoading && currentNotifications.length === 0"
@@ -233,7 +284,6 @@
                 </div>
             </div>
 
-            <!-- System Tab -->
             <div v-else-if="activeTab === 'system'">
                 <div
                     v-if="isCurrentTabLoading && currentNotifications.length === 0"
@@ -311,7 +361,7 @@
 </template>
 
 <script setup>
-import { inject, onMounted, computed, ref, watch } from 'vue'
+import { inject, onMounted, computed, ref, watch, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useNotificationStore } from '~/stores/notifications'
 import {
@@ -319,7 +369,9 @@ import {
     ArrowPathIcon,
     ExclamationTriangleIcon,
     UserPlusIcon,
-    BellAlertIcon
+    BellAlertIcon,
+    ChevronDownIcon,
+    CheckIcon
 } from '@heroicons/vue/24/outline'
 import MainLayout from '~/layouts/MainLayout.vue'
 import NotificationItem from '~/components/NotificationItem.vue'
@@ -344,6 +396,27 @@ const getInitialTab = () => {
 }
 
 const activeTab = ref(getInitialTab())
+const showFilterDropdown = ref(false)
+const dropdownRef = ref(null)
+
+const activityFilters = [
+    { value: 'all', label: 'All' },
+    { value: 'videoLike', label: 'Video Likes' },
+    { value: 'videoShare', label: 'Video Shares' },
+    { value: 'comments', label: 'Comments' },
+    { value: 'commentLike', label: 'Comment Likes' },
+    { value: 'commentShare', label: 'Comment Shares' }
+]
+
+const activityFilter = computed({
+    get: () => notificationStore.activityFilter,
+    set: (value) => notificationStore.setActivityFilter(value)
+})
+
+const activeFilterLabel = computed(() => {
+    const filter = activityFilters.find((f) => f.value === activityFilter.value)
+    return filter ? filter.label : 'All'
+})
 
 const activityNotifications = computed(() => notificationStore.activityNotifications)
 const followersNotifications = computed(() => notificationStore.followersNotifications)
@@ -478,6 +551,22 @@ const formatDate = (dateString) => {
     }
 }
 
+const toggleFilterDropdown = () => {
+    showFilterDropdown.value = !showFilterDropdown.value
+}
+
+const selectFilter = async (filterValue) => {
+    activityFilter.value = filterValue
+    showFilterDropdown.value = false
+    await refresh('activity')
+}
+
+const handleClickOutside = (event) => {
+    if (dropdownRef.value && !dropdownRef.value.contains(event.target)) {
+        showFilterDropdown.value = false
+    }
+}
+
 const handleMarkAllRead = async () => {
     const result = await confirmModal(
         t('common.markAsRead'),
@@ -520,6 +609,11 @@ watch(
 
 onMounted(async () => {
     await fetchNotifications(activeTab.value)
+    document.addEventListener('click', handleClickOutside)
+})
+
+onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside)
 })
 </script>
 

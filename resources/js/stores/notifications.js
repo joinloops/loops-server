@@ -41,7 +41,13 @@ export const useNotificationStore = defineStore('notifications', () => {
         system: null
     })
 
+    const activityFilter = ref('all')
+
     const axios = inject('axios')
+
+    const setActivityFilter = (filter) => {
+        activityFilter.value = filter
+    }
 
     const fetchNotifications = async (type = 'activity', cursor = null) => {
         if (loading.value[type]) return
@@ -51,6 +57,11 @@ export const useNotificationStore = defineStore('notifications', () => {
 
         try {
             const params = { type }
+
+            if (type === 'activity' && activityFilter.value !== 'all') {
+                params.type = activityFilter.value
+            }
+
             if (cursor) {
                 params.cursor = cursor
             } else {
@@ -122,6 +133,11 @@ export const useNotificationStore = defineStore('notifications', () => {
     const markAllAsRead = async (type = 'activity') => {
         try {
             const params = { type: type }
+
+            if (type === 'activity' && activityFilter.value !== 'all') {
+                params.type = activityFilter.value
+            }
+
             await axios.post('/api/v1/account/notifications/mark-all-read', params)
             unreadCounts.value[type] = 0
             unreadCount.value = 0
@@ -197,6 +213,7 @@ export const useNotificationStore = defineStore('notifications', () => {
         error,
         unreadCount,
         unreadCounts,
+        activityFilter,
 
         groupedNotifications,
         activityNotifications,
@@ -221,6 +238,7 @@ export const useNotificationStore = defineStore('notifications', () => {
         refresh,
         markAsRead,
         markAllAsRead,
-        fetchUnreadCount
+        fetchUnreadCount,
+        setActivityFilter
     }
 })
