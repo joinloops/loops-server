@@ -120,6 +120,7 @@ return [
     'notifications' => 'Notifications',
     'of' => 'of',
     'onlyVerifyIfYouRequestedThis' => 'Only proceed if you requested this verification yourself. If you didn\'t request this, please close this page.',
+    'openOriginalPage' => 'Open Original Page',
     'password' => 'Password',
     'passwordResetLinkHasBeenSentToYourEmail' => 'Password reset link has been sent to your email.',
     'passwordStrength' => 'Password strength',
