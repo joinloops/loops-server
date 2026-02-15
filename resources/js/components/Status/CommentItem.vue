@@ -38,9 +38,9 @@
                         :to="`/@${comment.account.username}`"
                         class="flex items-center space-x-1"
                     >
-                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400">{{
-                            comment.account.name
-                        }}</span>
+                        <span class="text-sm font-medium text-gray-500 dark:text-gray-400"
+                            >@{{ comment.account.username }}</span
+                        >
                         <span
                             v-if="comment.account.id == activePost.account.id"
                             class="text-sm font-medium text-[#fe2c55]"
