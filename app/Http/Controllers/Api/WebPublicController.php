@@ -97,8 +97,13 @@ class WebPublicController extends Controller
 
         $comments = Comment::withTrashed()
             ->whereVideoId($video->id)
+            ->where('is_hidden', false)
             ->orderByDesc('id')
             ->cursorPaginate(10);
+
+        if ($video->has_hidden_comments) {
+            return CommentResource::collection($comments)->additional(['meta' => ['has_hidden_comments' => true]]);
+        }
 
         return CommentResource::collection($comments);
     }
@@ -111,6 +116,7 @@ class WebPublicController extends Controller
 
         $comment = Comment::withTrashed()
             ->whereVideoId($video->id)
+            ->where('is_hidden', false)
             ->findOrFail($commentId);
 
         return new CommentResource($comment);

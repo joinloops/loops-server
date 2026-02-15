@@ -281,7 +281,22 @@
                         >
                             {{ $t('common.edit') }}
                         </button>
-
+                        <template v-if="isVideoOwner">
+                            <button
+                                v-if="!comment.is_hidden"
+                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                @click="handleHideComment"
+                            >
+                                {{ $t('post.hideComment') }}
+                            </button>
+                            <button
+                                v-else
+                                class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                                @click="handleUnhideComment"
+                            >
+                                {{ $t('post.unhideComment') }}
+                            </button>
+                        </template>
                         <button
                             v-if="comment.is_owner"
                             @click="handleDelete"
@@ -292,6 +307,7 @@
                                 isDeletingComment ? $t('post.deletingDotDotDot') : $t('post.delete')
                             }}
                         </button>
+
                         <button
                             v-else
                             @click="handleReport"
@@ -379,6 +395,7 @@ import { useUtils } from '@/composables/useUtils'
 import { useI18n } from 'vue-i18n'
 import { useEditHistory } from '@/composables/useEditHistory'
 import MentionHashtagInput from '@/components/Status/MentionHashtagInput.vue'
+import { useHideCommentModal } from '@/composables/useHideCommentModal'
 
 const props = defineProps({
     comment: {
@@ -424,6 +441,8 @@ const isDeletingComment = ref(false)
 const replyInputRef = ref()
 const replyEditInputRef = ref()
 
+const { openHideCommentModal, openUnhideCommentModal } = useHideCommentModal()
+
 // Edit state
 const isEditing = ref(false)
 const editedCaption = ref('')
@@ -432,8 +451,40 @@ const initialValidatedMentions = ref([])
 const initialValidatedHashtags = ref([])
 const showReplies = ref(false)
 
+const handleHideComment = async () => {
+    showDropdown.value = false
+
+    const success = await openHideCommentModal(
+        props.videoId,
+        props.comment.id,
+        props.parentCommentId
+    )
+
+    if (success) {
+        await videoStore.decrementCommentCount()
+    }
+}
+
+const handleUnhideComment = async () => {
+    showDropdown.value = false
+
+    const success = await openUnhideCommentModal(
+        props.videoId,
+        props.comment.id,
+        props.parentCommentId
+    )
+
+    if (success) {
+        await videoStore.incrementCommentCount()
+    }
+}
+
 const activePost = computed(() => {
     return videoStore.currentVideo
+})
+
+const isVideoOwner = computed(() => {
+    return videoStore.currentVideo.account.id === authStore.id
 })
 
 const isLoadingReplies = computed(() => {
@@ -765,10 +816,12 @@ const fetchHashtags = async (query) => {
         background-color: rgba(240, 44, 86, 0.15);
         box-shadow: 0 0 0 0 rgba(240, 44, 86, 0.4);
     }
+
     50% {
         background-color: rgba(240, 44, 86, 0.25);
         box-shadow: 0 0 0 8px rgba(240, 44, 86, 0);
     }
+
     100% {
         background-color: rgba(240, 44, 86, 0.1);
         box-shadow: 0 0 0 0 rgba(240, 44, 86, 0);
@@ -779,6 +832,7 @@ const fetchHashtags = async (query) => {
     0% {
         background-color: rgba(240, 44, 86, 0.1);
     }
+
     100% {
         background-color: transparent;
     }
@@ -817,10 +871,12 @@ const fetchHashtags = async (query) => {
         background-color: rgba(240, 44, 86, 0.25);
         box-shadow: 0 0 0 0 rgba(240, 44, 86, 0.5);
     }
+
     50% {
         background-color: rgba(240, 44, 86, 0.35);
         box-shadow: 0 0 0 8px rgba(240, 44, 86, 0);
     }
+
     100% {
         background-color: rgba(240, 44, 86, 0.15);
         box-shadow: 0 0 0 0 rgba(240, 44, 86, 0);
@@ -831,6 +887,7 @@ const fetchHashtags = async (query) => {
     0% {
         background-color: rgba(240, 44, 86, 0.15);
     }
+
     100% {
         background-color: transparent;
     }

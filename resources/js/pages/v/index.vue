@@ -437,6 +437,8 @@
 
         <EditHistoryModal />
 
+        <HideCommentConfirmModal />
+
         <InteractionModal
             :is-open="showInteractionModal"
             :video-id="currentVideo?.id"

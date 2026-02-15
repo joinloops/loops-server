@@ -27,6 +27,7 @@
             @item-hidden="onVideoHidden"
             @interaction="onUserInteraction"
         />
+        <HideCommentConfirmModal />
     </FeedLayout>
 </template>
 

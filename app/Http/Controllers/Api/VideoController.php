@@ -475,6 +475,25 @@ class VideoController extends Controller
 
         $comments = Comment::withTrashed()
             ->whereVideoId($video->id)
+            ->where('is_hidden', false)
+            ->orderByDesc('id')
+            ->cursorPaginate(10);
+
+        return CommentResource::collection($comments);
+    }
+
+    public function showHiddenComments(Request $request, $id)
+    {
+        $pid = $request->user()->profile_id;
+        $video = Video::published()->canComment()->find($id);
+
+        if (! $video || $request->user()->cannot('view', [Video::class, $video])) {
+            return $this->error('Video not found or is unavailable or has comments disabled', 404);
+        }
+
+        $comments = Comment::withTrashed()
+            ->whereVideoId($video->id)
+            ->where('is_hidden', true)
             ->orderByDesc('id')
             ->cursorPaginate(10);
 
@@ -500,6 +519,7 @@ class VideoController extends Controller
         $comments = CommentReply::withTrashed()
             ->whereVideoId($video->id)
             ->whereCommentId($request->input('cr'))
+            ->where('is_hidden', false)
             ->orderByDesc('id')
             ->cursorPaginate(3)
             ->withQueryString();
@@ -686,6 +706,53 @@ class VideoController extends Controller
         $video->recalculateCommentsCount();
 
         return $this->success();
+    }
+
+    public function hideComment(Request $request, $vid, $id)
+    {
+        $video = Video::published()->findOrFail($vid);
+        $comment = Comment::findOrFail($id);
+
+        if ($comment->video_id !== $video->id || $video->profile_id != $request->user()->profile_id) {
+            return $this->error('Record not found');
+        }
+        $video->update(['has_hidden_comments' => true]);
+        $comment->update(['is_hidden' => true]);
+
+        return $this->success();
+    }
+
+    public function hideCommentReply(Request $request, $vid, $pid, $id)
+    {
+        $video = Video::published()->findOrFail($vid);
+        $comment = CommentReply::findOrFail($id);
+
+        if ($comment->video_id !== $video->id ||
+            $video->profile_id != $request->user()->profile_id ||
+            $comment->comment_id != $pid
+        ) {
+            return $this->error('Record not found');
+        }
+
+        $video->update(['has_hidden_comments' => true]);
+        $comment->update(['is_hidden' => true]);
+
+        return $this->success();
+    }
+
+    public function unhideComment(Request $request, $vid, $id)
+    {
+        $video = Video::published()->findOrFail($vid);
+        $comment = Comment::findOrFail($id);
+
+        if ($comment->video_id !== $video->id || $video->profile_id != $request->user()->profile_id) {
+            return $this->error('Record not found');
+        }
+        $commentsHidden = Comment::whereVideoId($video->id)->where('is_hidden', true)->count();
+        $video->update(['has_hidden_comments' => $commentsHidden]);
+        $comment->update(['is_hidden' => false]);
+
+        return new CommentResource($comment->fresh());
     }
 
     public function storeCommentReplyLike(Request $request, $vid, $pid, $id)

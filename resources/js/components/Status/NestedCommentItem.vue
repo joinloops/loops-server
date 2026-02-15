@@ -179,6 +179,14 @@
                     </button>
 
                     <button
+                        v-if="isVideoOwner"
+                        class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        @click="handleHideComment"
+                    >
+                        {{ $t('post.hideComment') }}
+                    </button>
+
+                    <button
                         v-if="comment.is_owner"
                         @click="handleDelete"
                         class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -224,6 +232,7 @@ import { useAlertModal } from '@/composables/useAlertModal.js'
 import { useReportModal } from '@/composables/useReportModal'
 import { useEditHistory } from '@/composables/useEditHistory'
 import MentionHashtagInput from '@/components/Status/MentionHashtagInput.vue'
+import { useHideCommentModal } from '@/composables/useHideCommentModal'
 
 const props = defineProps({
     comment: {
@@ -255,6 +264,7 @@ const { formatContentDate } = useUtils()
 const { alertModal, confirmModal } = useAlertModal()
 const { openReportModal } = useReportModal()
 const { openCommentReplyHistory } = useEditHistory()
+const { openHideCommentModal } = useHideCommentModal()
 
 const showDropdown = ref(false)
 const isDeletingComment = ref(false)
@@ -267,6 +277,24 @@ const initialValidatedHashtags = ref([])
 
 const activePost = computed(() => {
     return videoStore.currentVideo
+})
+
+const handleHideComment = async () => {
+    showDropdown.value = false
+
+    const success = await openHideCommentModal(
+        props.videoId,
+        props.comment.id,
+        props.parentCommentId
+    )
+
+    if (success) {
+        await videoStore.decrementCommentCount()
+    }
+}
+
+const isVideoOwner = computed(() => {
+    return videoStore.currentVideo.account.id === authStore.id
 })
 
 const isLikeLoading = computed(() => {

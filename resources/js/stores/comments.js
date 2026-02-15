@@ -18,11 +18,17 @@ export const useCommentStore = defineStore('comment', {
         cooldownMs: 1500,
         highlightedCommentMap: new Map(),
         highlightedCommentDataMap: new Map(),
+        hasHiddenComments: false,
         keepCommentsOpen:
             typeof window !== 'undefined'
                 ? localStorage.getItem('loops_keepCommentsOpen') === 'true'
                 : false,
-        userManuallyClosed: false
+        userManuallyClosed: false,
+        hiddenCommentsMap: new Map(),
+        hiddenCursorsMap: new Map(),
+        hiddenLoadingStates: new Map(),
+        hiddenHasMoreMap: new Map(),
+        showingHiddenCommentsMap: new Map()
     }),
 
     getters: {
@@ -36,6 +42,22 @@ export const useCommentStore = defineStore('comment', {
 
         hasMore() {
             return (videoId) => this.hasMoreMap.get(videoId) || false
+        },
+
+        getHiddenComments() {
+            return (videoId) => this.hiddenCommentsMap.get(videoId) || []
+        },
+
+        isLoadingHidden() {
+            return (videoId) => this.hiddenLoadingStates.get(videoId) || false
+        },
+
+        hasMoreHidden() {
+            return (videoId) => this.hiddenHasMoreMap.get(videoId) || false
+        },
+
+        isShowingHidden() {
+            return (videoId) => this.showingHiddenCommentsMap.get(videoId) || false
         },
 
         isLoadingReplies() {
@@ -288,6 +310,10 @@ export const useCommentStore = defineStore('comment', {
                 } else {
                     const existingComments = this.commentsMap.get(videoId) || []
                     this.commentsMap.set(videoId, [...existingComments, ...data])
+                }
+
+                if (meta?.has_hidden_comments) {
+                    this.hasHiddenComments = true
                 }
 
                 this.cursorsMap.set(videoId, meta.next_cursor)
@@ -702,6 +728,60 @@ export const useCommentStore = defineStore('comment', {
             }
         },
 
+        async hideComment(videoId, commentId) {
+            try {
+                const axiosInstance = axios.getAxiosInstance()
+                await axiosInstance.post(`/api/v1/comments/hide/${videoId}/${commentId}`)
+
+                const existingComments = this.commentsMap.get(videoId) || []
+                const updatedComments = this.findAndRemoveComment(existingComments, commentId)
+                this.commentsMap.set(videoId, updatedComments)
+            } catch (error) {
+                console.error('Error hiding comment:', error)
+                throw error
+            }
+        },
+
+        async hideCommentReply(videoId, parentCommentId, commentId) {
+            try {
+                const axiosInstance = axios.getAxiosInstance()
+                await axiosInstance.post(
+                    `/api/v1/comments/hide/${videoId}/${parentCommentId}/${commentId}`
+                )
+
+                const existingComments = this.commentsMap.get(videoId) || []
+                const updatedComments = this.findAndRemoveComment(existingComments, commentId)
+                this.commentsMap.set(videoId, updatedComments)
+            } catch (error) {
+                console.error('Error hiding comment reply:', error)
+                throw error
+            }
+        },
+
+        async unhideComment(videoId, commentId) {
+            try {
+                const axiosInstance = axios.getAxiosInstance()
+                const response = await axiosInstance.post(
+                    `/api/v1/comments/unhide/${videoId}/${commentId}`
+                )
+
+                const unHiddenComment = response.data.data || response.data
+
+                const existingComments = this.commentsMap.get(videoId) || []
+                this.commentsMap.set(videoId, [unHiddenComment, ...existingComments])
+
+                const existingHiddenComments = this.hiddenCommentsMap.get(videoId) || []
+                const updatedHiddenComments = this.findAndRemoveComment(
+                    existingHiddenComments,
+                    commentId
+                )
+                this.hiddenCommentsMap.set(videoId, updatedHiddenComments)
+            } catch (error) {
+                console.error('Error unhiding comment:', error)
+                throw error
+            }
+        },
+
         async likeComment(videoId, commentId) {
             const key = `${videoId}-${commentId}`
 
@@ -822,6 +902,52 @@ export const useCommentStore = defineStore('comment', {
             }
         },
 
+        async fetchHiddenComments(videoId, reset = false) {
+            if (this.hiddenLoadingStates.get(videoId)) return
+            if (!this.hiddenHasMoreMap.get(videoId) && !reset) return
+
+            try {
+                this.hiddenLoadingStates.set(videoId, true)
+                const axiosInstance = axios.getAxiosInstance()
+                const cursor = reset ? null : this.hiddenCursorsMap.get(videoId)
+                const limit = 10
+
+                const response = await axiosInstance.get(
+                    `/api/v1/video/comments/${videoId}/hidden?cursor=${cursor || ''}&limit=${limit}`
+                )
+                const { data, meta } = response.data
+
+                if (reset) {
+                    this.hiddenCommentsMap.set(videoId, data)
+                    this.showingHiddenCommentsMap.set(videoId, true)
+                } else {
+                    const existingComments = this.hiddenCommentsMap.get(videoId) || []
+                    this.hiddenCommentsMap.set(videoId, [...existingComments, ...data])
+                }
+
+                this.hiddenCursorsMap.set(videoId, meta.next_cursor)
+                this.hiddenHasMoreMap.set(videoId, !!meta.next_cursor)
+            } catch (error) {
+                console.error('Error fetching hidden comments:', error)
+                throw error
+            } finally {
+                this.hiddenLoadingStates.set(videoId, false)
+            }
+        },
+
+        toggleShowingHiddenComments(videoId) {
+            const current = this.showingHiddenCommentsMap.get(videoId) || false
+            this.showingHiddenCommentsMap.set(videoId, !current)
+        },
+
+        clearHiddenComments(videoId) {
+            this.hiddenCommentsMap.delete(videoId)
+            this.hiddenCursorsMap.delete(videoId)
+            this.hiddenLoadingStates.delete(videoId)
+            this.hiddenHasMoreMap.delete(videoId)
+            this.showingHiddenCommentsMap.delete(videoId)
+        },
+
         clearComments(videoId) {
             this.commentsMap.delete(videoId)
             this.cursorsMap.delete(videoId)
@@ -853,6 +979,7 @@ export const useCommentStore = defineStore('comment', {
             })
 
             this.clearHighlightedComment(videoId)
+            this.clearHiddenComments(videoId)
         },
 
         clearReplies(videoId, parentId) {
@@ -886,6 +1013,11 @@ export const useCommentStore = defineStore('comment', {
             this.likeLoadingStates.clear()
             this.highlightedCommentMap.clear()
             this.highlightedCommentDataMap.clear()
+            this.hiddenCommentsMap.clear()
+            this.hiddenCursorsMap.clear()
+            this.hiddenLoadingStates.clear()
+            this.hiddenHasMoreMap.clear()
+            this.showingHiddenCommentsMap.clear()
         }
     }
 })

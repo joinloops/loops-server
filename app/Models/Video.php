@@ -190,6 +190,7 @@ class Video extends Model
             'contains_ad' => 'boolean',
             'federated_at' => 'datetime',
             'audio_allow_reuse' => 'boolean',
+            'has_hidden_comments' => 'boolean',
         ];
     }
 

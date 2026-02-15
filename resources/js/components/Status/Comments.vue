@@ -1,7 +1,6 @@
 <template>
     <div class="h-full flex flex-col bg-white dark:bg-slate-900">
         <div class="flex-1 overflow-y-auto p-3">
-            <!-- Loading State -->
             <div v-if="isLoadingHighlightedComment" class="p-4 text-center">
                 <Spinner />
                 <p class="text-sm text-gray-500 dark:text-slate-400 mt-2">
@@ -9,7 +8,6 @@
                 </p>
             </div>
 
-            <!-- Error State -->
             <div v-else-if="highlightError" class="p-4 text-center">
                 <div
                     class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4"
@@ -41,7 +39,6 @@
                     />
                 </div>
 
-                <!-- View All Comments Button -->
                 <div class="mt-6 text-center">
                     <button
                         @click="handleViewAllComments"
@@ -67,7 +64,6 @@
                 </div>
             </div>
 
-            <!-- Normal Comments View -->
             <div v-else>
                 <div v-if="isLoading && !comments.length" class="p-4 text-center">
                     <Spinner />
@@ -106,6 +102,70 @@
                             >
                                 {{ $t('common.loadMore') }}
                             </button>
+                        </div>
+
+                        <div v-if="!hasMore && commentStore.hasHiddenComments" class="mt-4">
+                            <div class="border-t border-gray-200 dark:border-slate-700 my-4"></div>
+
+                            <div v-if="!isShowingHidden" class="text-center">
+                                <button
+                                    @click="handleShowHiddenComments"
+                                    class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-slate-100 bg-transparent hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer"
+                                >
+                                    <EyeIcon class="w-5 h-5" />
+                                    <span class="text-sm font-medium">Show hidden comments</span>
+                                </button>
+                            </div>
+
+                            <div v-else>
+                                <div class="flex items-center justify-between mb-3 px-2">
+                                    <h3
+                                        class="text-sm font-semibold text-gray-700 dark:text-slate-300"
+                                    >
+                                        Hidden Comments
+                                    </h3>
+                                    <button
+                                        @click="handleHideHiddenComments"
+                                        class="text-xs text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 cursor-pointer"
+                                    >
+                                        <EyeSlashIcon class="w-4 h-4 inline mr-1" />
+                                        Hide
+                                    </button>
+                                </div>
+
+                                <div
+                                    v-if="isLoadingHidden && !hiddenComments.length"
+                                    class="p-4 text-center"
+                                >
+                                    <Spinner />
+                                </div>
+
+                                <div
+                                    v-else-if="!hiddenComments.length"
+                                    class="p-4 text-center text-gray-500 dark:text-slate-400 text-sm"
+                                >
+                                    No hidden comments
+                                </div>
+
+                                <div v-else class="space-y-3">
+                                    <CommentItem
+                                        v-for="comment in hiddenComments"
+                                        :key="comment.id"
+                                        :comment="comment"
+                                        :videoId="videoId"
+                                    />
+
+                                    <div v-if="hasMoreHidden" class="p-4 text-center">
+                                        <button
+                                            @click="loadMoreHidden"
+                                            class="text-sm font-medium text-[#F02C56] hover:text-[#F02C56]/70 cursor-pointer"
+                                            :disabled="isLoadingHidden"
+                                        >
+                                            {{ $t('common.loadMore') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -187,6 +247,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCommentStore } from '@/stores/comments'
 import { useHashids } from '@/composables/useHashids'
+import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
 import EmojiPicker from '@/components/Form/EmojiPicker.vue'
 import CommentItem from './CommentItem.vue'
 import Spinner from '../Spinner.vue'
@@ -247,7 +308,19 @@ const comments = computed(() => (videoId.value ? commentStore.getComments(videoI
 const isLoading = computed(() => (videoId.value ? commentStore.isLoading(videoId.value) : false))
 const hasMore = computed(() => (videoId.value ? commentStore.hasMore(videoId.value) : false))
 
-// Highlighted comment state
+const hiddenComments = computed(() =>
+    videoId.value ? commentStore.getHiddenComments(videoId.value) : []
+)
+const isLoadingHidden = computed(() =>
+    videoId.value ? commentStore.isLoadingHidden(videoId.value) : false
+)
+const hasMoreHidden = computed(() =>
+    videoId.value ? commentStore.hasMoreHidden(videoId.value) : false
+)
+const isShowingHidden = computed(() =>
+    videoId.value ? commentStore.isShowingHidden(videoId.value) : false
+)
+
 const highlightedComment = computed(() =>
     videoId.value ? commentStore.getHighlightedComment(videoId.value) : null
 )
@@ -267,7 +340,6 @@ const canComment = computed(() => {
 const normalizedComment = computed(() => newComment.value.trim())
 
 const onEmojiSelect = (emoji) => {
-    // Insert emoji at cursor position
     if (commentInputRef.value) {
         commentInputRef.value.insertAtCursor(emoji.native)
         commentInputRef.value.focus()
@@ -276,7 +348,6 @@ const onEmojiSelect = (emoji) => {
     }
 }
 
-// Mention the video account
 const mentionCreator = async () => {
     if (!currentVideo.value?.account) return
 
@@ -307,7 +378,6 @@ const fetchMentions = async (query) => {
     }
 }
 
-// Fetch hashtags for autocomplete
 const fetchHashtags = async (query) => {
     try {
         const response = await videoStore.autocompleteHashtag(encodeURIComponent(query))
@@ -348,7 +418,6 @@ const handleAddComment = async () => {
         initialValidatedMentions.value = []
         initialValidatedHashtags.value = []
 
-        // Clear the input component
         if (commentInputRef.value) {
             commentInputRef.value.clear()
         }
@@ -365,7 +434,6 @@ const handleAddComment = async () => {
 }
 
 const handleViewAllComments = async () => {
-    // Clear the query parameters and highlighted state
     await router.replace({
         path: route.path,
         query: {}
@@ -373,7 +441,6 @@ const handleViewAllComments = async () => {
 
     commentStore.clearHighlightedComment(videoId.value)
 
-    // Load normal comments
     if (!comments.value.length) {
         await commentStore.fetchComments(videoId.value, true)
     }
@@ -384,12 +451,40 @@ const handleClearHighlight = () => {
     handleViewAllComments()
 }
 
-// Load highlighted comment if query params exist
+const handleShowHiddenComments = async () => {
+    if (!videoId.value) return
+
+    if (!authStore.isAuthenticated) {
+        authStore.openAuthModal('login')
+        return
+    }
+
+    try {
+        await commentStore.fetchHiddenComments(videoId.value, true)
+    } catch (err) {
+        console.error('Error loading hidden comments:', err)
+    }
+}
+
+const handleHideHiddenComments = () => {
+    if (!videoId.value) return
+    commentStore.toggleShowingHiddenComments(videoId.value)
+}
+
+const loadMoreHidden = async () => {
+    if (!videoId.value || !hasMoreHidden.value || isLoadingHidden.value) return
+
+    try {
+        await commentStore.fetchHiddenComments(videoId.value, false)
+    } catch (err) {
+        console.error('Error loading more hidden comments:', err)
+    }
+}
+
 const loadHighlightedComment = async () => {
     const { cid, rid } = route.query
 
     if (!cid && !rid) {
-        // No highlight params, load normal comments
         if (canComment.value) {
             try {
                 error.value = null
@@ -409,14 +504,12 @@ const loadHighlightedComment = async () => {
 
     try {
         if (cid) {
-            // Load specific comment
             const commentId = decodeHashid(cid)
             if (!commentId) {
                 throw new Error('Invalid comment ID')
             }
             await commentStore.fetchCommentById(videoId.value, commentId)
         } else if (rid) {
-            // Load specific reply
             const replyId = decodeHashid(rid)
             if (!replyId) {
                 throw new Error('Invalid reply ID')
@@ -467,7 +560,3 @@ const loadMore = async () => {
     }
 }
 </script>
-
-<style scoped>
-/* Highlight animation will be in CommentItem component */
-</style>

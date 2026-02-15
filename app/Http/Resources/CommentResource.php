@@ -58,6 +58,7 @@ class CommentResource extends JsonResource
                 'liked' => false,
                 'url' => null,
                 'is_owner' => false,
+                'is_hidden' => false,
                 'tombstone' => true,
                 'created_at' => $this->created_at->format('c'),
             ];
@@ -77,6 +78,7 @@ class CommentResource extends JsonResource
             'url' => $this->shareUrl(),
             'tombstone' => false,
             'is_edited' => $this->is_edited,
+            'is_hidden' => $this->is_hidden,
             'is_owner' => $pid ? (string) $this->profile_id === (string) $pid : false,
             'created_at' => $this->created_at->format('c'),
         ];
