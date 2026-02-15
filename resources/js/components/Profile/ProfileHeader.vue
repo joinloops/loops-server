@@ -88,58 +88,93 @@
                             >
                                 <button
                                     @click="toggleMenu"
-                                    class="flex items-center justify-center w-8 h-8 rounded-md border border-gray-300 hover:bg-gray-100 dark:border-slate-500 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                                    type="button"
+                                    aria-haspopup="menu"
+                                    :aria-expanded="showMenu"
+                                    class="flex items-center justify-center w-8 h-8 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800/80 border border-gray-200/70 dark:border-gray-800/70 bg-white/70 dark:bg-gray-950/40 backdrop-blur transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-pink-500/70 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-950"
                                 >
                                     <EllipsisHorizontalIcon
-                                        class="w-4 h-4 text-gray-600 dark:text-slate-400"
+                                        class="w-5 h-5 text-gray-500 dark:text-gray-400"
                                     />
                                 </button>
 
                                 <Transition
-                                    enter-active-class="transition ease-out duration-100"
-                                    enter-from-class="transform opacity-0 scale-95"
-                                    enter-to-class="transform opacity-100 scale-100"
-                                    leave-active-class="transition ease-in duration-75"
-                                    leave-from-class="transform opacity-100 scale-100"
-                                    leave-to-class="transform opacity-0 scale-95"
+                                    enter-active-class="transition ease-out duration-120"
+                                    enter-from-class="opacity-0 translate-y-1 scale-95"
+                                    enter-to-class="opacity-100 translate-y-0 scale-100"
+                                    leave-active-class="transition ease-in duration-90"
+                                    leave-from-class="opacity-100 translate-y-0 scale-100"
+                                    leave-to-class="opacity-0 translate-y-1 scale-95"
                                 >
                                     <div
                                         v-if="showMenu"
-                                        class="absolute right-0 top-12 w-48 bg-white dark:bg-slate-800 rounded-md shadow-lg border border-gray-200 dark:border-slate-600 z-50"
+                                        role="menu"
+                                        class="absolute right-0 mt-2 w-56 origin-top-right z-50"
+                                        @click.stop
                                     >
-                                        <div class="divide-y divide-gray-200 dark:divide-gray-700">
+                                        <div
+                                            class="rounded-xl bg-white/95 dark:bg-gray-900/95 backdrop-blur shadow-xl shadow-black/5 dark:shadow-black/30 ring-1 ring-black/5 dark:ring-white/10 border border-gray-200/70 dark:border-gray-800/70 p-1"
+                                        >
                                             <a
                                                 v-if="!profile.local && profile.remote_url"
                                                 :href="profile.remote_url"
                                                 target="_blank"
                                                 rel="noopener nofollow noreferrer"
-                                                class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                role="menuitem"
+                                                class="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/70"
                                             >
-                                                <ArrowTopRightOnSquareIcon class="w-4 h-4 mr-3" />
-                                                View full profile
+                                                <ArrowTopRightOnSquareIcon
+                                                    class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                />
+                                                <span class="flex-1">View full profile</span>
                                             </a>
+
+                                            <div
+                                                class="my-1 h-px bg-gray-100 dark:bg-gray-800"
+                                            ></div>
+
                                             <button
                                                 @click="handleReport"
-                                                class="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                type="button"
+                                                role="menuitem"
+                                                class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-left text-gray-700 dark:text-gray-200 hover:bg-gray-100/80 dark:hover:bg-gray-800/70"
                                             >
-                                                <FlagIcon class="w-4 h-4 mr-3" />
-                                                {{ t('common.report') }}
+                                                <FlagIcon
+                                                    class="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                                />
+                                                <span class="flex-1">{{ t('common.report') }}</span>
                                             </button>
+
+                                            <div
+                                                class="my-1 h-px bg-gray-100 dark:bg-gray-800"
+                                            ></div>
+
                                             <button
                                                 v-if="profile.relationship.blocking"
                                                 @click="handleUnblock"
-                                                class="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                type="button"
+                                                role="menuitem"
+                                                class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-left text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10"
                                             >
-                                                <NoSymbolIcon class="w-4 h-4 mr-3" />
-                                                {{ t('profile.unblock') }}
+                                                <NoSymbolIcon
+                                                    class="w-4 h-4 text-red-600/80 dark:text-red-300/80"
+                                                />
+                                                <span class="flex-1">{{
+                                                    t('profile.unblock')
+                                                }}</span>
                                             </button>
+
                                             <button
                                                 v-else
                                                 @click="handleBlock"
-                                                class="flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors cursor-pointer"
+                                                type="button"
+                                                role="menuitem"
+                                                class="w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-left text-red-700 dark:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10"
                                             >
-                                                <NoSymbolIcon class="w-4 h-4 mr-3" />
-                                                {{ t('profile.block') }}
+                                                <NoSymbolIcon
+                                                    class="w-4 h-4 text-red-600/80 dark:text-red-300/80"
+                                                />
+                                                <span class="flex-1">{{ t('profile.block') }}</span>
                                             </button>
                                         </div>
                                     </div>
