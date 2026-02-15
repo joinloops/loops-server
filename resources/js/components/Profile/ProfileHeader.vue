@@ -130,6 +130,7 @@
                                             </a>
 
                                             <div
+                                                v-if="!profile.local && profile.remote_url"
                                                 class="my-1 h-px bg-gray-100 dark:bg-gray-800"
                                             ></div>
 
