@@ -54,6 +54,7 @@
         "@types/fs-extra": "^11.0.4",
         "@types/lodash": "^4.17.23",
         "@types/video.js": "^7.3.58",
+        "@vue/eslint-config-typescript": "^14.7.0",
         "@vue/eslint-config-prettier": "^10.2.0",
         "esbuild": "^0.27.3",
         "eslint": "^10.0.0",

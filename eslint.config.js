@@ -1,6 +1,7 @@
 import js from '@eslint/js'
 import vue from 'eslint-plugin-vue'
 import tseslint from 'typescript-eslint'
+import vueConfigTypeScript from '@vue/eslint-config-typescript'
 import vueConfigPrettier from '@vue/eslint-config-prettier'
 import globals from 'globals'
 
@@ -15,6 +16,7 @@ export default [
     ...tseslint.configs.recommended,
 
     // Vue + TypeScript configuration
+    ...vueConfigTypeScript(),
 
     // Prettier integration (should be last)
     vueConfigPrettier,
