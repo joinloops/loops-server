@@ -47,7 +47,11 @@
                     :class="!notification.read_at ? 'font-bold' : 'font-semibold'"
                     @click.stop="navigateToProfile"
                 >
-                    {{ notification.actor.name }}
+                    {{
+                        notification.actor.local
+                            ? notification.actor.name
+                            : notification.actor.username
+                    }}
                 </span>
                 <span class="text-gray-600 dark:text-gray-400 font-normal">
                     {{ ' ' + getNotificationMessage() }}
