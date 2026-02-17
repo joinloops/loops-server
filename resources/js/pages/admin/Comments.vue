@@ -15,6 +15,7 @@
             :sort-options="sortOptions"
             @sort="handleSort"
             :initial-search-query="searchQuery"
+            :has-actions="false"
             :show-local-filter="true"
             @local-change="handleLocalChange"
             @search="handleSearch"
@@ -83,15 +84,6 @@
                 <div class="text-xs text-gray-500 dark:text-gray-400">
                     {{ formatRecentDate(value) }}
                 </div>
-            </template>
-
-            <template #actions="{ item }">
-                <button
-                    class="cursor-pointer text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                    @click="showConfirmDelete(item)"
-                >
-                    Delete
-                </button>
             </template>
         </DataTable>
 

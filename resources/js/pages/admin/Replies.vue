@@ -20,6 +20,7 @@
             @sort="handleSort"
             :initial-search-query="searchQuery"
             :show-local-filter="true"
+            :has-actions="false"
             @local-change="handleLocalChange"
             @search="handleSearch"
             @refresh="refreshComments"
@@ -76,16 +77,9 @@
             </template>
 
             <template #cell-created_at="{ value }">
-                {{ formatDate(value) }}
-            </template>
-
-            <template #actions="{ item }">
-                <button
-                    class="cursor-pointer text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300"
-                    @click="showConfirmDelete(item)"
-                >
-                    Delete
-                </button>
+                <div class="text-xs text-gray-500 dark:text-gray-400">
+                    {{ formatRecentDate(value) }}
+                </div>
             </template>
         </DataTable>
 
