@@ -75,7 +75,7 @@
                 <div v-else class="h-full">
                     <div
                         v-if="!comments.length"
-                        class="flex flex-col h-full p-4 text-gray-500 dark:text-slate-400"
+                        class="flex flex-col h-full px-4 text-gray-500 dark:text-slate-400"
                     >
                         <div class="flex flex-col items-center justify-center flex-grow">
                             <div
@@ -173,7 +173,7 @@
                         <div v-if="!hasMore && commentStore.hasHiddenComments" class="mt-4">
                             <div class="border-t border-gray-200 dark:border-slate-700 my-4"></div>
 
-                            <div v-if="!isShowingHidden" class="text-center">
+                            <div v-if="!isShowingHidden" class="text-center pb-4">
                                 <button
                                     @click="handleShowHiddenComments"
                                     class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-slate-100 bg-transparent hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer"

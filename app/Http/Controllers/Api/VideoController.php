@@ -748,9 +748,9 @@ class VideoController extends Controller
         if ($comment->video_id !== $video->id || $video->profile_id != $request->user()->profile_id) {
             return $this->error('Record not found');
         }
+        $comment->update(['is_hidden' => false]);
         $commentsHidden = Comment::whereVideoId($video->id)->where('is_hidden', true)->count();
         $video->update(['has_hidden_comments' => $commentsHidden]);
-        $comment->update(['is_hidden' => false]);
 
         return new CommentResource($comment->fresh());
     }
