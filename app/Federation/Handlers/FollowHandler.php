@@ -6,6 +6,7 @@ use App\Jobs\Federation\DeliverAcceptActivity;
 use App\Models\Follower;
 use App\Models\Profile;
 use App\Models\UserFilter;
+use App\Services\NotificationService;
 use App\Services\SanitizeService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -62,6 +63,8 @@ class FollowHandler extends BaseHandler
             $this->sendAcceptActivity($activity, $targetProfile, $actor, $follower);
 
             DB::commit();
+
+            NotificationService::newFollower($targetProfile->id, $actor->id);
 
             if (config('logging.dev_log')) {
                 Log::info('Successfully handled Follow activity', [
