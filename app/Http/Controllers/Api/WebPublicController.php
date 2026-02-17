@@ -177,6 +177,7 @@ class WebPublicController extends Controller
         $comments = CommentReply::withTrashed()
             ->whereVideoId($video->id)
             ->whereCommentId($request->input('cr'))
+            ->where('is_hidden', false)
             ->orderByDesc('id')
             ->cursorPaginate(3)
             ->withQueryString();
