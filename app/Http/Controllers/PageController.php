@@ -35,7 +35,7 @@ class PageController extends Controller
 
         $query->orderBy('updated_at', 'desc');
 
-        $perPage = $request->get('per_page', 50);
+        $perPage = $request->input('per_page', 50);
         $pages = $query->paginate($perPage);
 
         return response()->json([
