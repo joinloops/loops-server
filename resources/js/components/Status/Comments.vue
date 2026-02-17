@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <div v-else>
+            <div v-else class="h-full">
                 <div v-if="isLoading && !comments.length" class="p-4 text-center">
                     <Spinner />
                 </div>
@@ -72,18 +72,84 @@
                     {{ error?.message || $t('post.errorLoadingComments') }}
                 </div>
 
-                <div v-else>
+                <div v-else class="h-full">
                     <div
                         v-if="!comments.length"
-                        class="p-4 text-center text-gray-500 dark:text-slate-400"
+                        class="flex flex-col h-full p-4 text-gray-500 dark:text-slate-400"
                     >
-                        <div v-if="!canComment" class="flex flex-col items-center space-y-2">
-                            <i class="bx bx-comment-x text-[36px]"></i>
-                            <span>{{ $t('post.commentsAreDisabledForThisVideo') }}</span>
+                        <div class="flex flex-col items-center justify-center flex-grow">
+                            <div
+                                v-if="!canComment"
+                                class="flex text-center flex-col items-center space-y-2"
+                            >
+                                <i class="bx bx-comment-x text-[36px]"></i>
+                                <span>{{ $t('post.commentsAreDisabledForThisVideo') }}</span>
+                            </div>
+                            <div v-else class="flex flex-col items-center space-y-2">
+                                <i class="bx bx-comment-dots text-2xl"></i>
+                                <span>{{ $t('post.noCommentsYet') }}</span>
+                            </div>
                         </div>
-                        <div v-else class="flex flex-col items-center space-y-2">
-                            <i class="bx bx-comment-dots text-2xl"></i>
-                            <span>{{ $t('post.noCommentsYet') }}</span>
+
+                        <div v-if="commentStore.hasHiddenComments" class="flex-shrink mt-4">
+                            <div class="border-t border-gray-200 dark:border-slate-700 my-4"></div>
+
+                            <div v-if="!isShowingHidden" class="text-center">
+                                <button
+                                    @click="handleShowHiddenComments"
+                                    class="inline-flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-slate-300 hover:text-gray-900 dark:hover:text-slate-100 bg-transparent hover:bg-gray-50 dark:hover:bg-slate-800 rounded-lg transition-colors duration-200 cursor-pointer"
+                                >
+                                    <EyeIcon class="w-5 h-5" />
+                                    <span class="text-sm font-medium">Show hidden comments</span>
+                                </button>
+                            </div>
+
+                            <div v-else>
+                                <div class="flex items-center justify-between mb-3 px-2">
+                                    <h3
+                                        class="text-sm font-semibold text-gray-700 dark:text-slate-300"
+                                    >
+                                        Hidden Comments
+                                    </h3>
+                                    <button
+                                        @click="handleHideHiddenComments"
+                                        class="text-xs text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 cursor-pointer"
+                                    >
+                                        <EyeSlashIcon class="w-4 h-4 inline mr-1" />
+                                        Hide
+                                    </button>
+                                </div>
+
+                                <div
+                                    v-if="isLoadingHidden && !hiddenComments.length"
+                                    class="p-4 text-center"
+                                >
+                                    <Spinner />
+                                </div>
+                                <div
+                                    v-else-if="!hiddenComments.length"
+                                    class="p-4 text-center text-gray-500 dark:text-slate-400 text-sm"
+                                >
+                                    No hidden comments
+                                </div>
+                                <div v-else class="space-y-3">
+                                    <CommentItem
+                                        v-for="comment in hiddenComments"
+                                        :key="comment.id"
+                                        :comment="comment"
+                                        :videoId="videoId"
+                                    />
+                                    <div v-if="hasMoreHidden" class="p-4 text-center">
+                                        <button
+                                            @click="loadMoreHidden"
+                                            class="text-sm font-medium text-[#F02C56] hover:text-[#F02C56]/70 cursor-pointer"
+                                            :disabled="isLoadingHidden"
+                                        >
+                                            {{ $t('common.loadMore') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div v-else class="">
