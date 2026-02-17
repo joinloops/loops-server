@@ -47,6 +47,7 @@ export default [
             'no-console': 'off',
             'no-debugger': 'off',
             'no-unused-vars': 'off',
+            'no-useless-assignment': 'off',
 
             // TypeScript rules
             '@typescript-eslint/no-unused-vars': 'off',
