@@ -63,7 +63,7 @@
         "prettier": "^3.8.1",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.54.0",
-        "vue-eslint-parser": "^10.2.0",
+        "vue-eslint-parser": "^10.4.0",
         "vue-tsc": "^3.2.4"
     }
 }
