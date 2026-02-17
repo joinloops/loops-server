@@ -289,8 +289,12 @@ Route::prefix('api')->group(function () {
         Route::get('/comment/{id}', [AdminController::class, 'getComment'])->middleware('auth:web,api');
         Route::get('/replies', [AdminController::class, 'replies'])->middleware('auth:web,api');
         Route::post('/replies/{id}/delete', [AdminController::class, 'videoReplyDelete'])->middleware('auth:web,api');
+        Route::post('/replies/{id}/hide', [AdminController::class, 'videoReplyHide'])->middleware('auth:web,api');
+        Route::post('/replies/{id}/unhide', [AdminController::class, 'videoReplyUnhide'])->middleware('auth:web,api');
         Route::get('/videos/{id}/comments', [AdminController::class, 'videoCommentsShow'])->middleware('auth:web,api');
         Route::post('/comments/{id}/delete', [AdminController::class, 'videoCommentsDelete'])->middleware('auth:web,api');
+        Route::post('/comments/{id}/hide', [AdminController::class, 'videoCommentsHide'])->middleware('auth:web,api');
+        Route::post('/comments/{id}/unhide', [AdminController::class, 'videoCommentsUnhide'])->middleware('auth:web,api');
         Route::post('/videos/{id}/moderate', [AdminController::class, 'videoModerate'])->middleware('auth:web,api');
         Route::get('/video/{id}', [AdminController::class, 'videoShow'])->middleware('auth:web,api');
         Route::get('/profiles', [AdminController::class, 'profiles'])->middleware('auth:web,api');

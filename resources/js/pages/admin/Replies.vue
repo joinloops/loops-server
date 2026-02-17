@@ -16,6 +16,8 @@
             :loading="loading"
             :has-previous="pagination.prev_cursor"
             :has-next="pagination.next_cursor"
+            :sort-options="sortOptions"
+            @sort="handleSort"
             :initial-search-query="searchQuery"
             :show-local-filter="true"
             @local-change="handleLocalChange"
@@ -31,27 +33,46 @@
             <template #cell-user="{ item }">
                 <router-link
                     :to="`/admin/profiles/${item.account.id}`"
-                    class="truncate cursor-pointer"
+                    class="cursor-pointer [white-space:normal]"
                 >
-                    <div class="flex items-center">
+                    <div class="flex items-center min-w-0">
                         <img
                             :src="item.account.avatar"
                             :alt="item.account.username"
-                            class="w-8 h-8 rounded-full mr-2"
+                            class="w-8 h-8 rounded-full mr-2 flex-shrink-0"
                             @error="$event.target.src = '/storage/avatars/default.jpg'"
                         />
-                        <span class="font-bold">{{ item.account.username }}</span>
+                        <div class="min-w-0 max-w-[180px]">
+                            <span
+                                class="font-bold truncate block"
+                                :class="[item.account.username.length > 30 ? 'text-xs' : 'text-sm']"
+                                >{{ item.account.username }}</span
+                            >
+                        </div>
                     </div>
                 </router-link>
             </template>
 
             <template #cell-id="{ value, item }">
                 <button
-                    @click="showCommentModal(item)"
+                    @click="openCommentModal(item)"
                     class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline cursor-pointer"
                 >
-                    {{ value }}
+                    {{ truncateMiddle(value, 12) }}
                 </button>
+            </template>
+
+            <template #cell-stats="{ item }">
+                <span
+                    v-if="item.is_hidden"
+                    class="inline-flex items-center rounded-full bg-indigo-100 px-1.5 py-0.5 text-xs font-medium text-indigo-700 dark:bg-indigo-400/10 dark:text-indigo-400"
+                >
+                    Hidden
+                </span>
+                <div v-else class="space-y-1 text-gray-500 dark:text-gray-400">
+                    <div class="text-xs font-light">Likes: {{ formatNumber(item.likes) }}</div>
+                    <div class="text-xs font-light">Shares: {{ formatNumber(item.shares) }}</div>
+                </div>
             </template>
 
             <template #cell-created_at="{ value }">
@@ -68,221 +89,16 @@
             </template>
         </DataTable>
 
-        <Teleport to="body">
-            <Transition name="modal">
-                <div
-                    v-if="isModalOpen"
-                    class="fixed inset-0 z-50 overflow-y-auto"
-                    @click.self="closeModal"
-                >
-                    <div class="flex min-h-screen items-center justify-center p-4">
-                        <div
-                            class="fixed inset-0 bg-black/90 transition-opacity"
-                            @click="closeModal"
-                        ></div>
-
-                        <div
-                            class="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-2xl w-full max-h-[85vh] flex flex-col"
-                        >
-                            <div
-                                class="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700"
-                            >
-                                <div>
-                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
-                                        Comment Thread
-                                    </h3>
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                                        Video ID:
-                                        <a
-                                            :href="selectedComment?.url"
-                                            class="text-blue-400"
-                                            target="_blank"
-                                        >
-                                            {{ selectedComment?.v_id }}
-                                        </a>
-                                    </p>
-                                </div>
-                                <button
-                                    @click="closeModal"
-                                    class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                                >
-                                    <span class="text-[30px] bx bx-x"></span>
-                                </button>
-                            </div>
-
-                            <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                                <div v-if="loadingParent" class="animate-pulse space-y-3">
-                                    <div
-                                        class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4"
-                                    ></div>
-                                    <div
-                                        class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2"
-                                    ></div>
-                                </div>
-
-                                <div
-                                    v-else-if="parentComment"
-                                    class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border-1 border-gray-200 dark:border-gray-950"
-                                >
-                                    <div class="flex items-start space-x-3">
-                                        <img
-                                            :src="parentComment.account.avatar"
-                                            :alt="parentComment.account.username"
-                                            class="w-10 h-10 rounded-full flex-shrink-0"
-                                            @error="
-                                                $event.target.src = '/storage/avatars/default.jpg'
-                                            "
-                                        />
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center space-x-2">
-                                                <span
-                                                    class="font-semibold text-gray-900 dark:text-white"
-                                                >
-                                                    {{ parentComment.account.name }}
-                                                </span>
-                                                <span
-                                                    class="text-sm text-gray-500 dark:text-gray-400"
-                                                >
-                                                    @{{ parentComment.account.username }}
-                                                </span>
-                                            </div>
-                                            <p
-                                                class="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
-                                            >
-                                                <AutolinkedText
-                                                    :caption="parentComment.caption"
-                                                    :mentions="parentComment?.mentions"
-                                                    :tags="parentComment?.tags"
-                                                    :max-char-limit="120"
-                                                />
-                                            </p>
-                                            <div
-                                                class="mt-2 flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400"
-                                            >
-                                                <a
-                                                    :href="parentComment?.url"
-                                                    class="text-blue-500"
-                                                    target="_blank"
-                                                >
-                                                    {{ formatRecentDate(parentComment.created_at) }}
-                                                </a>
-                                                <span class="flex items-center space-x-1">
-                                                    <span class="text-lg bx bx-heart"></span>
-
-                                                    <span>
-                                                        {{ formatCount(parentComment.likes) }}
-                                                    </span>
-                                                </span>
-
-                                                <span class="flex items-center space-x-1">
-                                                    <span class="text-lg bx bx-message"></span>
-
-                                                    <span>
-                                                        {{ formatCount(parentComment.replies) }}
-                                                    </span>
-                                                </span>
-
-                                                <router-link
-                                                    :to="`/admin/videos/${parentComment?.v_id}`"
-                                                    class="text-blue-500"
-                                                >
-                                                    Manage
-                                                </router-link>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div v-if="parentComment" class="flex justify-center">
-                                    <div class="w-0.5 h-6 bg-gray-300 dark:bg-gray-600"></div>
-                                </div>
-
-                                <div
-                                    v-if="selectedComment"
-                                    class="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700"
-                                >
-                                    <div class="flex items-start space-x-3">
-                                        <img
-                                            :src="selectedComment.account.avatar"
-                                            :alt="selectedComment.account.username"
-                                            class="w-10 h-10 rounded-full flex-shrink-0"
-                                            @error="
-                                                $event.target.src = '/storage/avatars/default.jpg'
-                                            "
-                                        />
-                                        <div class="flex-1 min-w-0">
-                                            <div class="flex items-center space-x-2">
-                                                <span
-                                                    class="font-semibold text-gray-900 dark:text-white"
-                                                >
-                                                    {{ selectedComment.account.name }}
-                                                </span>
-                                                <span
-                                                    class="text-sm text-gray-500 dark:text-gray-400"
-                                                >
-                                                    @{{ selectedComment.account.username }}
-                                                </span>
-                                                <span
-                                                    v-if="selectedComment.is_edited"
-                                                    class="text-xs text-gray-400 dark:text-gray-500"
-                                                >
-                                                    (edited)
-                                                </span>
-                                            </div>
-                                            <p
-                                                class="mt-2 text-gray-700 dark:text-gray-300 whitespace-pre-wrap"
-                                            >
-                                                <AutolinkedText
-                                                    :caption="selectedComment.caption"
-                                                    :mentions="selectedComment?.mentions"
-                                                    :tags="selectedComment?.tags"
-                                                    textSize="text-md"
-                                                    :max-char-limit="280"
-                                                />
-                                            </p>
-                                            <div
-                                                class="mt-2 flex items-center space-x-4 text-xs text-gray-500 dark:text-gray-400"
-                                            >
-                                                <span>
-                                                    {{
-                                                        formatRecentDate(selectedComment.created_at)
-                                                    }}
-                                                </span>
-                                                <span class="flex items-center space-x-1">
-                                                    <span class="text-[15px] bx bx-heart"></span>
-                                                    <span>
-                                                        {{ formatCount(selectedComment.likes) }}
-                                                    </span>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div
-                                class="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900"
-                            >
-                                <button
-                                    @click="closeModal"
-                                    class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                >
-                                    Close
-                                </button>
-                                <button
-                                    @click="deleteFromModal"
-                                    :disabled="deletingFromModal"
-                                    class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 dark:bg-red-500 dark:hover:bg-red-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
-                                >
-                                    <Spinner v-if="deletingFromModal" size="xs" />
-                                    <span>Delete Comment</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </Transition>
-        </Teleport>
+        <CommentDetailModal
+            v-model="showModal"
+            :comment="selectedComment"
+            :parent-comment="parentComment"
+            :loading-parent="loadingParent"
+            :action-loading="modalActionLoading"
+            @hide="handleHideComment"
+            @unhide="handleUnhideComment"
+            @delete="handleModalDelete"
+        />
     </div>
 </template>
 
@@ -293,10 +109,10 @@ import { repliesApi } from '@/services/adminApi'
 import { useAlertModal } from '@/composables/useAlertModal.js'
 import { useRoute } from 'vue-router'
 import { useUtils } from '@/composables/useUtils'
-const { formatNumber, formatDate, formatRecentDate, goBack, formatCount } = useUtils()
+const { formatNumber, formatDate, formatRecentDate, goBack, formatCount, truncateMiddle } =
+    useUtils()
 
 const { alertModal, confirmModal } = useAlertModal()
-
 const route = useRoute()
 
 const comments = ref([])
@@ -310,25 +126,35 @@ const searchQuery = ref(route.query.q || '')
 const localOnly = ref(false)
 const DEBOUNCE_DELAY = 300
 let searchTimeout = null
+const sortBy = ref('')
 
-const isModalOpen = ref(false)
+const showModal = ref(false)
 const selectedComment = ref(null)
 const parentComment = ref(null)
 const loadingParent = ref(false)
-const deletingFromModal = ref(false)
+const modalActionLoading = ref(false)
 
 const columns = [
     { key: 'id', label: 'Reply ID' },
     { key: 'user', label: 'User' },
     { key: 'caption', label: 'Content' },
+    { key: 'stats', label: 'Engagement' },
     { key: 'created_at', label: 'Created' }
+]
+
+const sortOptions = [
+    { name: 'Most Likes', value: 'likes_desc' },
+    { name: 'Most Replies', value: 'replies_desc' },
+    { name: 'Newest', value: 'created_at_desc' },
+    { name: 'Oldest', value: 'created_at_asc' },
+    { name: 'Hidden', value: 'is_hidden' },
+    { name: 'Last Updated', value: 'updated_at_desc' }
 ]
 
 const fetchComments = async (cursor = null, direction = 'next') => {
     loading.value = true
     try {
         const params = { cursor, direction }
-
         if (searchQuery.value) {
             params.search = searchQuery.value
         }
@@ -337,15 +163,17 @@ const fetchComments = async (cursor = null, direction = 'next') => {
             params.local = true
         }
 
+        if (sortBy.value) {
+            params.sort = sortBy.value
+        }
+
         await repliesApi
             .getComments(params)
             .then((response) => {
                 comments.value = response.data
                 pagination.value = response.meta
             })
-            .catch((error) => {
-                alertModal('Error fetching comments:', error)
-            })
+            .catch((error) => alertModal('Error fetching comments:', error))
     } catch (error) {
         alertModal('Error fetching comments:', error)
     } finally {
@@ -363,6 +191,7 @@ const fetchParentComment = async (parentId) => {
             })
             .catch((error) => {
                 alertModal('Error fetching parent comment:', error)
+                parentComment.value = null
             })
     } catch (error) {
         console.error('Error fetching parent comment:', error)
@@ -372,112 +201,117 @@ const fetchParentComment = async (parentId) => {
     }
 }
 
-const showCommentModal = async (comment) => {
+const openCommentModal = async (comment) => {
     selectedComment.value = comment
-    isModalOpen.value = true
     parentComment.value = null
+    showModal.value = true
 
     if (comment.p_id) {
         await fetchParentComment(comment.p_id)
     }
 }
 
-const closeModal = () => {
-    isModalOpen.value = false
-    selectedComment.value = null
-    parentComment.value = null
-}
-
-const deleteFromModal = async () => {
-    if (!selectedComment.value) return
-
-    deletingFromModal.value = true
-
-    const result = await confirmModal(
-        'Delete Comment',
-        `Are you sure you want to delete this comment from ${selectedComment.value.account.username}? This action cannot be undone.`,
-        'Delete',
-        'Cancel'
-    )
-
-    if (result) {
-        await repliesApi
-            .deleteComment(selectedComment.value.id)
-            .then(() => {
-                closeModal()
-                refreshComments()
-            })
-            .catch((error) => {
-                alertModal('Error deleting comment:', error)
-            })
-            .finally(() => {
-                deletingFromModal.value = false
-            })
-    } else {
-        deletingFromModal.value = false
+const updateCommentInList = (id, patch) => {
+    const idx = comments.value.findIndex((c) => c.id === id)
+    if (idx !== -1) comments.value[idx] = { ...comments.value[idx], ...patch }
+    if (selectedComment.value?.id === id) {
+        selectedComment.value = { ...selectedComment.value, ...patch }
     }
 }
 
-watch(localOnly, () => {
-    if (searchTimeout) {
-        clearTimeout(searchTimeout)
-    }
-
-    searchTimeout = setTimeout(() => {
-        fetchComments()
-    }, DEBOUNCE_DELAY)
-})
-
-watch(searchQuery, () => {
-    if (searchTimeout) {
-        clearTimeout(searchTimeout)
-    }
-
-    searchTimeout = setTimeout(() => {
-        fetchComments()
-    }, DEBOUNCE_DELAY)
-})
-
-const handleSearch = (query) => {
-    searchQuery.value = query
-}
-
-const handleLocalChange = (value) => {
-    localOnly.value = value
-}
-
-const refreshComments = () => {
-    fetchComments()
-}
-
-const nextPage = () => {
-    if (pagination.value.next_cursor) {
-        fetchComments(pagination.value.next_cursor, 'next')
+const handleHideComment = async (item) => {
+    modalActionLoading.value = true
+    try {
+        await repliesApi.hideComment(item.id)
+        updateCommentInList(item.id, { is_hidden: true })
+    } catch (error) {
+        alertModal('Error hiding comment', error)
+    } finally {
+        modalActionLoading.value = false
     }
 }
 
-const previousPage = () => {
-    if (pagination.value.prev_cursor) {
-        fetchComments(pagination.value.prev_cursor, 'previous')
+const handleUnhideComment = async (item) => {
+    modalActionLoading.value = true
+    try {
+        await repliesApi.unhideComment(item.id)
+        updateCommentInList(item.id, { is_hidden: false })
+    } catch (error) {
+        alertModal('Error unhiding comment', error)
+    } finally {
+        modalActionLoading.value = false
     }
 }
 
-const showConfirmDelete = async (item) => {
-    loading.value = true
-
+const handleModalDelete = async (item) => {
     const result = await confirmModal(
         'Delete Comment',
         `Are you sure you want to delete this comment from ${item.account.username}? This action cannot be undone.`,
         'Delete',
         'Cancel'
     )
-
     if (result) {
+        modalActionLoading.value = true
         await repliesApi
             .deleteComment(item.id)
             .then(() => {
+                showModal.value = false
+                selectedComment.value = null
                 refreshComments()
             })
+            .catch((error) => alertModal('Error deleting comment:', error))
+            .finally(() => {
+                modalActionLoading.value = false
+            })
+    }
+}
+
+const handleSort = (sortValue) => {
+    sortBy.value = sortValue
+}
+
+watch(localOnly, () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => fetchComments(), DEBOUNCE_DELAY)
+})
+
+watch(searchQuery, () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => fetchComments(), DEBOUNCE_DELAY)
+})
+
+watch(sortBy, () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => fetchComments(), DEBOUNCE_DELAY)
+})
+
+const handleSearch = (query) => {
+    searchQuery.value = query
+}
+const handleLocalChange = (value) => {
+    localOnly.value = value
+}
+const refreshComments = () => fetchComments()
+
+const nextPage = () => {
+    if (pagination.value.next_cursor) fetchComments(pagination.value.next_cursor, 'next')
+}
+const previousPage = () => {
+    if (pagination.value.prev_cursor) fetchComments(pagination.value.prev_cursor, 'previous')
+}
+
+const showConfirmDelete = async (item) => {
+    loading.value = true
+    const result = await confirmModal(
+        'Delete Comment',
+        `Are you sure you want to delete this comment from ${item.account.username}? This action cannot be undone.`,
+        'Delete',
+        'Cancel'
+    )
+    if (result) {
+        await repliesApi
+            .deleteComment(item.id)
+            .then(() => refreshComments())
             .finally(() => {
                 loading.value = false
             })
@@ -487,38 +321,10 @@ const showConfirmDelete = async (item) => {
 }
 
 onUnmounted(() => {
-    if (searchTimeout) {
-        clearTimeout(searchTimeout)
-    }
+    if (searchTimeout) clearTimeout(searchTimeout)
 })
 
 onMounted(() => {
     fetchComments()
 })
 </script>
-
-<style scoped>
-.modal-enter-active,
-.modal-leave-active {
-    transition: opacity 0.3s ease;
-}
-
-.modal-enter-from,
-.modal-leave-to {
-    opacity: 0;
-}
-
-.modal-enter-active .bg-white,
-.modal-leave-active .bg-white,
-.modal-enter-active .dark\:bg-gray-800,
-.modal-leave-active .dark\:bg-gray-800 {
-    transition: transform 0.3s ease;
-}
-
-.modal-enter-from .bg-white,
-.modal-leave-to .bg-white,
-.modal-enter-from .dark\:bg-gray-800,
-.modal-leave-to .dark\:bg-gray-800 {
-    transform: scale(0.95);
-}
-</style>

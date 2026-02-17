@@ -56,7 +56,8 @@ export const commentsApi = {
         direction = 'next',
         search = '',
         limit = 15,
-        local = false
+        local = false,
+        sort = null
     } = {}) {
         const params = {
             cursor: cursor,
@@ -67,7 +68,23 @@ export const commentsApi = {
         if (local) {
             params.local = 1
         }
+
+        if (sort) {
+            params.sort = sort
+        }
         return await apiClient.get('/api/v1/admin/comments', params)
+    },
+
+    async getComment(id) {
+        return await apiClient.get(`/api/v1/admin/comment/${id}`)
+    },
+
+    async hideComment(id) {
+        return await apiClient.post(`/api/v1/admin/comments/${id}/hide`)
+    },
+
+    async unhideComment(id) {
+        return await apiClient.post(`/api/v1/admin/comments/${id}/unhide`)
     },
 
     async deleteComment(id) {
@@ -82,7 +99,8 @@ export const repliesApi = {
         direction = 'next',
         search = '',
         limit = 15,
-        local = false
+        local = false,
+        sort = null
     } = {}) {
         const params = {
             cursor: cursor,
@@ -93,11 +111,23 @@ export const repliesApi = {
         if (local) {
             params.local = 1
         }
+
+        if (sort) {
+            params.sort = sort
+        }
         return await apiClient.get('/api/v1/admin/replies', params)
     },
 
     async getParentComment(id) {
         return await apiClient.get(`/api/v1/admin/comment/${id}`)
+    },
+
+    async hideComment(id) {
+        return await apiClient.post(`/api/v1/admin/replies/${id}/hide`)
+    },
+
+    async unhideComment(id) {
+        return await apiClient.post(`/api/v1/admin/replies/${id}/unhide`)
     },
 
     async deleteComment(id) {

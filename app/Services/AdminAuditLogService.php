@@ -152,6 +152,26 @@ class AdminAuditLogService
         return $this->log($user, 'video:delete_comment', $changes, $video, null, 1);
     }
 
+    public function logVideoCommentHide(User|int $user, $video, $changes)
+    {
+        return $this->log($user, 'video:hide_comment', $changes, $video, null, 1);
+    }
+
+    public function logVideoCommentUnhide(User|int $user, $video, $changes)
+    {
+        return $this->log($user, 'video:unhide_comment', $changes, $video, null, 1);
+    }
+
+    public function logVideoCommentReplyHide(User|int $user, $video, $changes)
+    {
+        return $this->log($user, 'video:hide_comment_reply', $changes, $video, null, 1);
+    }
+
+    public function logVideoCommentReplyUnhide(User|int $user, $video, $changes)
+    {
+        return $this->log($user, 'video:unhide_comment_reply', $changes, $video, null, 1);
+    }
+
     public function logVideoDelete(User|int $user, $video, $changes)
     {
         return $this->log($user, 'video:delete', $changes, $video, null, 1);

@@ -162,6 +162,74 @@ class AdminController extends Controller
         return $this->success();
     }
 
+    public function videoCommentsHide(Request $request, $id)
+    {
+        $comment = Comment::findOrFail($id);
+        $video = Video::findOrFail($comment->video_id);
+        app(AdminAuditLogService::class)->logVideoCommentHide($request->user(), $video, ['vid' => $video->id, 'comment_id' => $comment->id, 'comment_profile_id' => $comment->profile_id]);
+        $comment->update(['is_hidden' => true]);
+        $video->update(['has_hidden_comments' => true]);
+
+        return $this->success();
+    }
+
+    public function videoCommentsUnhide(Request $request, $id)
+    {
+        $comment = Comment::withCount('children')->findOrFail($id);
+        $video = Video::findOrFail($comment->video_id);
+        app(AdminAuditLogService::class)->logVideoCommentUnhide($request->user(), $video, ['vid' => $video->id, 'comment_id' => $comment->id, 'comment_profile_id' => $comment->profile_id]);
+        $comment->update(['is_hidden' => false]);
+        $commentsHidden = Comment::whereVideoId($video->id)->where('is_hidden', true)->count();
+        $video->update(['has_hidden_comments' => $commentsHidden]);
+
+        return $this->success();
+    }
+
+    public function videoReplyHide(Request $request, $id)
+    {
+        $comment = CommentReply::findOrFail($id);
+        $video = Video::findOrFail($comment->video_id);
+
+        app(AdminAuditLogService::class)->logVideoCommentReplyHide(
+            $request->user(),
+            $video,
+            [
+                'comment_reply_id' => $comment->id,
+            ]
+        );
+
+        $comment->update(['is_hidden' => true]);
+        $video->update(['has_hidden_comments' => true]);
+
+        return $this->success();
+    }
+
+    public function videoReplyUnhide(Request $request, $id)
+    {
+        $comment = CommentReply::findOrFail($id);
+        $video = Video::findOrFail($comment->video_id);
+
+        app(AdminAuditLogService::class)->logVideoCommentReplyUnhide(
+            $request->user(),
+            $video,
+            [
+                'comment_reply_id' => $comment->id,
+            ]
+        );
+
+        $comment->update(['is_hidden' => false]);
+        $totalHidden = DB::selectOne('
+            SELECT (
+                (SELECT COUNT(*) FROM comments WHERE video_id = :vid1 AND is_hidden = 1) + 
+                (SELECT COUNT(*) FROM comment_replies WHERE video_id = :vid2 AND is_hidden = 1)
+            ) as total',
+            ['vid1' => $video->id, 'vid2' => $video->id]
+        )->total;
+        $video->update(['has_hidden_comments' => (bool) $totalHidden]);
+
+        return $this->success();
+    }
+
     public function videoReplyDelete(Request $request, $id)
     {
         $comment = CommentReply::findOrFail($id);
@@ -611,7 +679,9 @@ class AdminController extends Controller
             $query->whereNull('ap_id');
         }
 
-        $search = $request->get('q');
+        $search = $request->query('q');
+
+        $sort = $request->query('sort');
 
         if (! empty($search)) {
             if (str_starts_with($search, 'user:')) {
@@ -631,8 +701,13 @@ class AdminController extends Controller
             }
         }
 
-        $comments = $query->orderByDesc('id')
-            ->cursorPaginate(10)
+        if ($sort != 'is_hidden') {
+            $query = $query->where('is_hidden', false);
+        }
+
+        $query = $this->applySorting($query, $sort);
+
+        $comments = $query->cursorPaginate(10)
             ->withQueryString();
 
         return CommentResource::collection($comments);
@@ -647,7 +722,7 @@ class AdminController extends Controller
 
     public function replies(Request $request)
     {
-        $local = $request->query('local');
+        $local = $request->filled('local');
 
         $query = CommentReply::query();
 
@@ -655,7 +730,8 @@ class AdminController extends Controller
             $query->whereNull('ap_id');
         }
 
-        $search = $request->get('q');
+        $search = $request->query('q');
+        $sort = $request->query('sort');
 
         if (! empty($search)) {
             if (str_starts_with($search, 'user:')) {
@@ -675,8 +751,13 @@ class AdminController extends Controller
             }
         }
 
-        $comments = $query->orderByDesc('id')
-            ->cursorPaginate(10)
+        if ($sort != 'is_hidden') {
+            $query = $query->where('is_hidden', false);
+        }
+
+        $query = $this->applySorting($query, $sort);
+
+        $comments = $query->cursorPaginate(10)
             ->withQueryString();
 
         return CommentReplyResource::collection($comments);
@@ -1235,6 +1316,7 @@ class AdminController extends Controller
             'created_at_desc' => ['created_at', 'desc'],
             'updated_at_asc' => ['updated_at', 'asc'],
             'updated_at_desc' => ['updated_at', 'desc'],
+            'replies_desc' => ['replies', 'desc'],
             'popular' => ['followers', 'desc'],
             'newest' => ['created_at', 'desc'],
             'oldest' => ['created_at', 'asc'],
