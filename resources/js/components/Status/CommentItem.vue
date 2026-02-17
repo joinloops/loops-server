@@ -347,7 +347,10 @@
                                     </button>
                                 </template>
 
-                                <div class="my-1 h-px bg-gray-100 dark:bg-gray-800"></div>
+                                <div
+                                    v-if="comment.is_owner || isVideoOwner"
+                                    class="my-1 h-px bg-gray-100 dark:bg-gray-800"
+                                ></div>
 
                                 <button
                                     v-if="comment.is_owner"
