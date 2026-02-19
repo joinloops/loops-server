@@ -571,7 +571,7 @@ const isLoadingReplies = computed(() => {
 })
 
 const isLoadingMoreReplies = computed(() => {
-    return commentStore.isLoadingReplies(props.videoId, props.comment.id)
+    return commentStore.isLoadingMoreReplies(props.videoId, props.comment.id)
 })
 
 const hasMoreReplies = computed(() => {
