@@ -701,8 +701,10 @@ class AdminController extends Controller
             }
         }
 
-        if ($sort != 'is_hidden') {
-            $query = $query->where('is_hidden', false);
+        if ($sort === 'is_hidden') {
+            $sort = 'comments.is_hidden';
+        } else {
+            $query = $query->where('comments.is_hidden', false);
         }
 
         $query = $this->applySorting($query, $sort);
@@ -737,9 +739,9 @@ class AdminController extends Controller
             if (str_starts_with($search, 'user:')) {
                 $username = trim(substr($search, 5));
                 if (! empty($username)) {
-                    $query->join('profiles', 'comments.profile_id', '=', 'profiles.id')
+                    $query->join('profiles', 'comment_replies.profile_id', '=', 'profiles.id')
                         ->where('profiles.username', 'like', '%'.$username.'%')
-                        ->select('comments.*');
+                        ->select('comment_replies.*');
                 }
             } elseif (str_starts_with($search, 'video:')) {
                 $videoId = trim(substr($search, 6));
@@ -751,8 +753,10 @@ class AdminController extends Controller
             }
         }
 
-        if ($sort != 'is_hidden') {
-            $query = $query->where('is_hidden', false);
+        if ($sort === 'is_hidden') {
+            $sort = 'comment_replies.is_hidden';
+        } else {
+            $query = $query->where('comment_replies.is_hidden', false);
         }
 
         $query = $this->applySorting($query, $sort);
@@ -1287,6 +1291,14 @@ class AdminController extends Controller
 
     private function applySorting($query, $sort)
     {
+        if ($sort === 'comment_replies.is_hidden') {
+            return $query->where('comment_replies.is_hidden', true);
+        }
+
+        if ($sort === 'comments.is_hidden') {
+            return $query->where('comments.is_hidden', true);
+        }
+
         if ($sort === 'allow_video_posts') {
             return $query->where('allow_video_posts', 1);
         }
