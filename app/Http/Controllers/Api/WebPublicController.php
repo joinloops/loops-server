@@ -72,7 +72,7 @@ class WebPublicController extends Controller
         abort_if(! $video->profile, 404, 'Resource not available');
         abort_if($video->profile->status != 1, 400, 'Resource not available');
 
-        if (! $video || ($request->user() && $request->user()->cannot('view', $video))) {
+        if ($request->user() && $request->user()->cannot('view', $video)) {
             return $this->error('Video not found or is unavailable', 404);
         }
 
