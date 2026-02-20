@@ -16,7 +16,7 @@
         "@heroicons/vue": "^2.2.0",
         "@mdi/font": "^7.4.47",
         "@tailwindcss/postcss": "^4.1.18",
-        "@tailwindcss/vite": "^4.1.18",
+        "@tailwindcss/vite": "^4.2.0",
         "@tanstack/vue-query": "^5.92.9",
         "@unhead/vue": "^2.1.4",
         "@vitejs/plugin-vue": "^6.0.4",
