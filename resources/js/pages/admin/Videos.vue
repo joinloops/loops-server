@@ -113,7 +113,7 @@
             </template>
 
             <template #cell-created_at="{ value }">
-                {{ formatDate(value) }}
+                {{ formatRecentDate(value) }}
             </template>
         </DataTable>
     </div>
@@ -125,7 +125,7 @@ import { useRouter, useRoute } from 'vue-router'
 import DataTable from '@/components/DataTable.vue'
 import { videosApi } from '@/services/adminApi'
 import { useUtils } from '@/composables/useUtils'
-const { truncateMiddle, formatNumber, formatDate } = useUtils()
+const { truncateMiddle, formatNumber, formatDate, formatRecentDate } = useUtils()
 
 const router = useRouter()
 const route = useRoute()
