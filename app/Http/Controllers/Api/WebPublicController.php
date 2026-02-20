@@ -68,6 +68,8 @@ class WebPublicController extends Controller
     {
         $video = Video::with('profile')->published()->find($id);
 
+        abort_if(! $video, 404, 'Resource not available');
+        abort_if(! $video->profile, 404, 'Resource not available');
         abort_if($video->profile->status != 1, 400, 'Resource not available');
 
         if (! $video || ($request->user() && $request->user()->cannot('view', $video))) {
