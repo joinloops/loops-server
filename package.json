@@ -46,7 +46,7 @@
         "vue-advanced-cropper": "^2.8.9",
         "vue-draggable-next": "^2.3.0",
         "vue-i18n": "^11.2.8",
-        "vue-router": "^5.0.2"
+        "vue-router": "^5.0.3"
     },
     "devDependencies": {
         "@eslint/css": "^0.14.1",
