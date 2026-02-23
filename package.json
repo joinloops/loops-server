@@ -52,7 +52,7 @@
         "@eslint/css": "^0.14.1",
         "@eslint/js": "^10.0.1",
         "@types/fs-extra": "^11.0.4",
-        "@types/lodash": "^4.17.23",
+        "@types/lodash": "^4.17.24",
         "@types/video.js": "^7.3.58",
         "@vue/eslint-config-typescript": "^14.7.0",
         "@vue/eslint-config-prettier": "^10.2.0",
