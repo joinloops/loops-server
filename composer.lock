@@ -2909,16 +2909,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.31.0",
+            "version": "3.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "1717e0b3642b0df65ecb0cc89cdd99fa840672ff"
+                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/1717e0b3642b0df65ecb0cc89cdd99fa840672ff",
-                "reference": "1717e0b3642b0df65ecb0cc89cdd99fa840672ff",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/254b1595b16b22dbddaaef9ed6ca9fdac4956725",
+                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725",
                 "shasum": ""
             },
             "require": {
@@ -2986,9 +2986,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.31.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.32.0"
             },
-            "time": "2026-01-23T15:38:47+00:00"
+            "time": "2026-02-25T17:01:41+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -4126,31 +4126,30 @@
         },
         {
             "name": "pbmedia/laravel-ffmpeg",
-            "version": "8.7.1",
+            "version": "8.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/protonemedia/laravel-ffmpeg.git",
-                "reference": "596804eee95b97bca146653770e7622159976bb1"
+                "reference": "2e85d33d0414e4b4d107e644cf5dbdb4dabac065"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/protonemedia/laravel-ffmpeg/zipball/596804eee95b97bca146653770e7622159976bb1",
-                "reference": "596804eee95b97bca146653770e7622159976bb1",
+                "url": "https://api.github.com/repos/protonemedia/laravel-ffmpeg/zipball/2e85d33d0414e4b4d107e644cf5dbdb4dabac065",
+                "reference": "2e85d33d0414e4b4d107e644cf5dbdb4dabac065",
                 "shasum": ""
             },
             "require": {
-                "illuminate/contracts": "^10.0|^11.0|^12.0",
-                "php": "^8.1|^8.2|^8.3|^8.4",
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "php": "^8.2|^8.3|^8.4|^8.5",
                 "php-ffmpeg/php-ffmpeg": "^1.2",
                 "ramsey/collection": "^2.0"
             },
             "require-dev": {
-                "laravel/pint": "^1.21",
                 "league/flysystem-memory": "^3.10",
                 "mockery/mockery": "^1.4.4",
                 "nesbot/carbon": "^2.66|^3.0",
-                "orchestra/testbench": "^8.0|^9.0|^10.0",
-                "phpunit/phpunit": "^10.4|^11.5.3",
+                "orchestra/testbench": "^9.10|^10.0|^11.0",
+                "phpunit/phpunit": "^10.4|^11.5.3|^12.5.12",
                 "spatie/image": "^2.2|^3.3",
                 "spatie/phpunit-snapshot-assertions": "^5.0"
             },
@@ -4193,7 +4192,7 @@
             ],
             "support": {
                 "issues": "https://github.com/protonemedia/laravel-ffmpeg/issues",
-                "source": "https://github.com/protonemedia/laravel-ffmpeg/tree/8.7.1"
+                "source": "https://github.com/protonemedia/laravel-ffmpeg/tree/8.9.0"
             },
             "funding": [
                 {
@@ -4201,7 +4200,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2025-04-01T21:11:35+00:00"
+            "time": "2026-02-24T21:26:50+00:00"
         },
         {
             "name": "php-ffmpeg/php-ffmpeg",
@@ -6219,16 +6218,16 @@
         },
         {
             "name": "symfony/cache",
-            "version": "v7.3.11",
+            "version": "v7.4.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/cache.git",
-                "reference": "e3e76b9ba0dff3dfe08ebda500723976dd9de407"
+                "reference": "8dde98d5a4123b53877aca493f9be57b333f14bd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/cache/zipball/e3e76b9ba0dff3dfe08ebda500723976dd9de407",
-                "reference": "e3e76b9ba0dff3dfe08ebda500723976dd9de407",
+                "url": "https://api.github.com/repos/symfony/cache/zipball/8dde98d5a4123b53877aca493f9be57b333f14bd",
+                "reference": "8dde98d5a4123b53877aca493f9be57b333f14bd",
                 "shasum": ""
             },
             "require": {
@@ -6236,12 +6235,14 @@
                 "psr/cache": "^2.0|^3.0",
                 "psr/log": "^1.1|^2|^3",
                 "symfony/cache-contracts": "^3.6",
-                "symfony/deprecation-contracts": "^2.5|^3.0",
+                "symfony/deprecation-contracts": "^2.5|^3",
                 "symfony/service-contracts": "^2.5|^3",
-                "symfony/var-exporter": "^6.4|^7.0"
+                "symfony/var-exporter": "^6.4|^7.0|^8.0"
             },
             "conflict": {
                 "doctrine/dbal": "<3.6",
+                "ext-redis": "<6.1",
+                "ext-relay": "<0.12.1",
                 "symfony/dependency-injection": "<6.4",
                 "symfony/http-kernel": "<6.4",
                 "symfony/var-dumper": "<6.4"
@@ -6256,13 +6257,13 @@
                 "doctrine/dbal": "^3.6|^4",
                 "predis/predis": "^1.1|^2.0",
                 "psr/simple-cache": "^1.0|^2.0|^3.0",
-                "symfony/clock": "^6.4|^7.0",
-                "symfony/config": "^6.4|^7.0",
-                "symfony/dependency-injection": "^6.4|^7.0",
-                "symfony/filesystem": "^6.4|^7.0",
-                "symfony/http-kernel": "^6.4|^7.0",
-                "symfony/messenger": "^6.4|^7.0",
-                "symfony/var-dumper": "^6.4|^7.0"
+                "symfony/clock": "^6.4|^7.0|^8.0",
+                "symfony/config": "^6.4|^7.0|^8.0",
+                "symfony/dependency-injection": "^6.4|^7.0|^8.0",
+                "symfony/filesystem": "^6.4|^7.0|^8.0",
+                "symfony/http-kernel": "^6.4|^7.0|^8.0",
+                "symfony/messenger": "^6.4|^7.0|^8.0",
+                "symfony/var-dumper": "^6.4|^7.0|^8.0"
             },
             "type": "library",
             "autoload": {
@@ -6297,7 +6298,7 @@
                 "psr6"
             ],
             "support": {
-                "source": "https://github.com/symfony/cache/tree/v7.3.11"
+                "source": "https://github.com/symfony/cache/tree/v7.4.5"
             },
             "funding": [
                 {
@@ -6317,7 +6318,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-01-27T16:12:03+00:00"
+            "time": "2026-01-27T16:16:02+00:00"
         },
         {
             "name": "symfony/cache-contracts",
