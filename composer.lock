@@ -2909,16 +2909,16 @@
         },
         {
             "name": "league/flysystem",
-            "version": "3.31.0",
+            "version": "3.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/flysystem.git",
-                "reference": "1717e0b3642b0df65ecb0cc89cdd99fa840672ff"
+                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/1717e0b3642b0df65ecb0cc89cdd99fa840672ff",
-                "reference": "1717e0b3642b0df65ecb0cc89cdd99fa840672ff",
+                "url": "https://api.github.com/repos/thephpleague/flysystem/zipball/254b1595b16b22dbddaaef9ed6ca9fdac4956725",
+                "reference": "254b1595b16b22dbddaaef9ed6ca9fdac4956725",
                 "shasum": ""
             },
             "require": {
@@ -2986,9 +2986,9 @@
             ],
             "support": {
                 "issues": "https://github.com/thephpleague/flysystem/issues",
-                "source": "https://github.com/thephpleague/flysystem/tree/3.31.0"
+                "source": "https://github.com/thephpleague/flysystem/tree/3.32.0"
             },
-            "time": "2026-01-23T15:38:47+00:00"
+            "time": "2026-02-25T17:01:41+00:00"
         },
         {
             "name": "league/flysystem-aws-s3-v3",
@@ -5667,16 +5667,16 @@
         },
         {
             "name": "resend/resend-laravel",
-            "version": "v1.2.0",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resend/resend-laravel.git",
-                "reference": "de4b144784d84cb743166e6306c3f45697572493"
+                "reference": "a27b2f6df4da2e22cd05389ce36c214125499315"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resend/resend-laravel/zipball/de4b144784d84cb743166e6306c3f45697572493",
-                "reference": "de4b144784d84cb743166e6306c3f45697572493",
+                "url": "https://api.github.com/repos/resend/resend-laravel/zipball/a27b2f6df4da2e22cd05389ce36c214125499315",
+                "reference": "a27b2f6df4da2e22cd05389ce36c214125499315",
                 "shasum": ""
             },
             "require": {
@@ -5730,9 +5730,9 @@
             ],
             "support": {
                 "issues": "https://github.com/resend/resend-laravel/issues",
-                "source": "https://github.com/resend/resend-laravel/tree/v1.2.0"
+                "source": "https://github.com/resend/resend-laravel/tree/v1.3.0"
             },
-            "time": "2026-02-12T20:41:26+00:00"
+            "time": "2026-02-20T21:34:07+00:00"
         },
         {
             "name": "resend/resend-php",
