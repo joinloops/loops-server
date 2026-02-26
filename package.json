@@ -18,7 +18,7 @@
         "@tailwindcss/postcss": "^4.2.1",
         "@tailwindcss/vite": "^4.2.1",
         "@tanstack/vue-query": "^5.92.9",
-        "@unhead/vue": "^2.1.4",
+        "@unhead/vue": "^2.1.8",
         "@vitejs/plugin-vue": "^6.0.4",
         "@vueuse/core": "^14.2.1",
         "autoprefixer": "^10.4.24",
