@@ -20,10 +20,13 @@ return [
     'messagesWillAppearHere' => 'Messages will appear here',
     'newFollowers' => 'New Followers',
     'newFollowersWillAppearHere' => 'New followers will appear here',
+    'newStarterKitWillAppearHere' => 'New starter kit notifications will appear here',
     'noMessages' => 'No Messages',
     'noNewFollowers' => 'No new followers',
     'noNotifications' => 'No notifications',
+    'noStarterKits' => 'No starter kit notifications',
     'noSystemNotifications' => 'No System Notifications',
+    'starterKits' => 'Starter Kits',
     'system' => 'System',
     'systemNotificationsWillAppearHere' => 'System notifications will appear here',
 ];
