@@ -27,6 +27,7 @@ return [
     'recentSearches' => 'Recent Searches',
     'search' => 'Search',
     'settings' => 'Settings',
+    'starterKits' => 'Starter Kits',
     'terms' => 'Terms',
     'toggleTheme' => 'Toggle Theme',
     'upload' => 'Upload',
