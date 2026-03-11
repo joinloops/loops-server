@@ -18,7 +18,8 @@ export default defineConfig({
                     includeAbsolute: false
                 }
             }
-        })
+        }),
+        tailwindcss()
     ],
     resolve: {
         alias: {
