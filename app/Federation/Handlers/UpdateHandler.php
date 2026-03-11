@@ -94,7 +94,7 @@ class UpdateHandler extends BaseHandler
             $updateData['caption'] = app(SanitizeService::class)->cleanHtmlWithSpacing($object['content']);
         }
 
-        if (isset($object['summary']) && $statusClass == Video::class) {
+        if (isset($object['summary']) && $statusClass === Video::class) {
             $updateData['cw_body'] = $object['summary'];
         }
 
@@ -108,7 +108,7 @@ class UpdateHandler extends BaseHandler
             $updateData['updated_at'] = now();
         }
 
-        if ($statusClass === 'App\Models\Comment') {
+        if ($statusClass === 'Comment::class') {
             $updateData['is_edited'] = true;
 
             CommentCaptionEdit::create([
@@ -116,7 +116,7 @@ class UpdateHandler extends BaseHandler
                 'profile_id' => $status->profile_id,
                 'caption' => $status->caption,
             ]);
-        } elseif ($statusClass === 'App\Models\CommentReply') {
+        } elseif ($statusClass === 'CommentReply::class') {
             $updateData['is_edited'] = true;
 
             CommentReplyCaptionEdit::create([
