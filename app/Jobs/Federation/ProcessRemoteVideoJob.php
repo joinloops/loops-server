@@ -3,6 +3,7 @@
 namespace App\Jobs\Federation;
 
 use App\Federation\Audience;
+use App\Jobs\Video\VideoThumbnailJob;
 use App\Models\Profile;
 use App\Models\Video;
 use App\Services\SanitizeService;
@@ -118,6 +119,8 @@ class ProcessRemoteVideoJob implements ShouldBeUnique, ShouldQueue
                 $video->syncHashtagsFromCaption();
                 $video->syncMentionsFromCaption();
             }
+            // Dispatch thumbnail generation for federated videos
+            VideoThumbnailJob::dispatch($video);
 
         } catch (Throwable $e) {
             $this->handleFailure($e, $video, $remoteUrl);
