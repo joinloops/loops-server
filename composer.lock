@@ -5667,21 +5667,21 @@
         },
         {
             "name": "resend/resend-laravel",
-            "version": "v1.3.0",
+            "version": "v1.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resend/resend-laravel.git",
-                "reference": "a27b2f6df4da2e22cd05389ce36c214125499315"
+                "reference": "c78a042d1fccc31ffa0d3dbbbf0c421e3fd0043d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resend/resend-laravel/zipball/a27b2f6df4da2e22cd05389ce36c214125499315",
-                "reference": "a27b2f6df4da2e22cd05389ce36c214125499315",
+                "url": "https://api.github.com/repos/resend/resend-laravel/zipball/c78a042d1fccc31ffa0d3dbbbf0c421e3fd0043d",
+                "reference": "c78a042d1fccc31ffa0d3dbbbf0c421e3fd0043d",
                 "shasum": ""
             },
             "require": {
-                "illuminate/http": "^10.0|^11.0|^12.0",
-                "illuminate/support": "^10.0|^11.0|^12.0",
+                "illuminate/http": "^10.0|^11.0|^12.0|^13.0",
+                "illuminate/support": "^10.0|^11.0|^12.0|^13.0",
                 "php": "^8.1",
                 "resend/resend-php": "^1.0.0",
                 "symfony/mailer": "^6.2|^7.0"
@@ -5689,7 +5689,7 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.14",
                 "mockery/mockery": "^1.5",
-                "orchestra/testbench": "^8.17|^9.0|^10.8",
+                "orchestra/testbench": "^8.17|^9.0|^10.8|^11.0",
                 "pestphp/pest": "^1.0|^2.0|^3.7|^4.0"
             },
             "type": "library",
@@ -5730,9 +5730,9 @@
             ],
             "support": {
                 "issues": "https://github.com/resend/resend-laravel/issues",
-                "source": "https://github.com/resend/resend-laravel/tree/v1.3.0"
+                "source": "https://github.com/resend/resend-laravel/tree/v1.3.1"
             },
-            "time": "2026-02-20T21:34:07+00:00"
+            "time": "2026-03-07T11:50:48+00:00"
         },
         {
             "name": "resend/resend-php",
