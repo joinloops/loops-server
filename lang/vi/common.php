@@ -5,7 +5,7 @@ return [
     'actions' => 'Actions',
     'ageRestrictedContent' => 'Age-Restricted Content',
     'alreadyHaveAnAccount' => 'Already have an account?',
-    'anUnexpectedErrorOccuredPleaseTryAgain' => 'An unexpected error occurred. Please try again.',
+    'anUnexpectedErrorOccurredPleaseTryAgain' => 'An unexpected error occurred. Please try again.',
     'and' => 'and',
     'apply' => 'Apply',
     'authenticationCode' => 'Authentication Code',
