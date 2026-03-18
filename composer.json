@@ -34,7 +34,7 @@
         "laravel/horizon": "^5.33",
         "laravel/passport": "^13.0",
         "laravel/sanctum": "^4.1",
-        "laravel/tinker": "^2.9",
+        "laravel/tinker": "^3.0",
         "laravel/ui": "^4.6",
         "league/flysystem-aws-s3-v3": "^3.0",
         "pbmedia/laravel-ffmpeg": "^8.7",
