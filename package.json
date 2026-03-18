@@ -64,6 +64,6 @@
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.57.1",
         "vue-eslint-parser": "^10.4.0",
-        "vue-tsc": "^3.2.5"
+        "vue-tsc": "^3.2.6"
     }
 }
