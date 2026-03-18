@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b7686829cdefe214c367232dd343a790",
+    "content-hash": "65402cb318194d0dd3c94e071fd1f792",
     "packages": [
         {
             "name": "aws/aws-crt-php",
@@ -4613,27 +4613,27 @@
         },
         {
             "name": "pragmarx/google2fa-laravel",
-            "version": "v2.3.0",
+            "version": "v3.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/antonioribeiro/google2fa-laravel.git",
-                "reference": "60f363c16db1e94263e0560efebe9fc2e302b7ef"
+                "reference": "d885bb5bca8be03b226d040aa80250402760a67c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/antonioribeiro/google2fa-laravel/zipball/60f363c16db1e94263e0560efebe9fc2e302b7ef",
-                "reference": "60f363c16db1e94263e0560efebe9fc2e302b7ef",
+                "url": "https://api.github.com/repos/antonioribeiro/google2fa-laravel/zipball/d885bb5bca8be03b226d040aa80250402760a67c",
+                "reference": "d885bb5bca8be03b226d040aa80250402760a67c",
                 "shasum": ""
             },
             "require": {
-                "laravel/framework": "^5.4.36|^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "laravel/framework": "^6.0|^7.0|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0",
                 "php": ">=7.0",
                 "pragmarx/google2fa-qrcode": "^1.0|^2.0|^3.0"
             },
             "require-dev": {
                 "bacon/bacon-qr-code": "^2.0",
-                "orchestra/testbench": "3.4.*|3.5.*|3.6.*|3.7.*|4.*|5.*|6.*|7.*|8.*|9.*|10.*",
-                "phpunit/phpunit": "~5|~6|~7|~8|~9|~10|~11"
+                "orchestra/testbench": "3.4.*|3.5.*|3.6.*|3.7.*|4.*|5.*|6.*|7.*|8.*|9.*|10.*|11.*",
+                "phpunit/phpunit": "~5|~6|~7|~8|~9|~10|~11|~12"
             },
             "suggest": {
                 "bacon/bacon-qr-code": "Required to generate inline QR Codes.",
@@ -4683,9 +4683,9 @@
             ],
             "support": {
                 "issues": "https://github.com/antonioribeiro/google2fa-laravel/issues",
-                "source": "https://github.com/antonioribeiro/google2fa-laravel/tree/v2.3.0"
+                "source": "https://github.com/antonioribeiro/google2fa-laravel/tree/v3.0.1"
             },
-            "time": "2025-02-26T19:39:35+00:00"
+            "time": "2026-03-17T20:54:53+00:00"
         },
         {
             "name": "pragmarx/google2fa-qrcode",
