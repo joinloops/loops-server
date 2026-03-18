@@ -27,7 +27,6 @@ return [
     'recentSearches' => 'Viimeisimmät haut',
     'search' => 'Hae',
     'settings' => 'Asetukset',
-    'starterKits' => 'Aloitussarjat',
     'terms' => 'Ehdot',
     'toggleTheme' => 'Vaihda teema',
     'upload' => 'Lähetä',
