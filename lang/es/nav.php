@@ -27,7 +27,6 @@ return [
     'recentSearches' => 'Búsquedas recientes',
     'search' => 'Buscar',
     'settings' => 'Ajustes',
-    'starterKits' => 'Kits de inicio',
     'terms' => 'Términos',
     'toggleTheme' => 'Cambiar tema',
     'upload' => 'Cargar',
