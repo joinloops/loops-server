@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'activity' => 'Activity',
+    'activity' => 'Atividade',
     'allCaughtUp' => 'You\'re all caught up!',
     'errorLoadingNotifications' => 'Error loading notifications',
     'messageTypes' => [
@@ -16,17 +16,17 @@ return [
         'videoShare' => 'shared your video',
         'default' => 'interacted with your content',
     ],
-    'messages' => 'Messages',
+    'messages' => 'Mensagens',
     'messagesWillAppearHere' => 'Messages will appear here',
-    'newFollowers' => 'New Followers',
+    'newFollowers' => 'Novos Seguidores',
     'newFollowersWillAppearHere' => 'New followers will appear here',
     'newStarterKitWillAppearHere' => 'New starter kit notifications will appear here',
-    'noMessages' => 'No Messages',
-    'noNewFollowers' => 'No new followers',
-    'noNotifications' => 'No notifications',
+    'noMessages' => 'Sem Mensagens',
+    'noNewFollowers' => 'Sem novos seguidores',
+    'noNotifications' => 'Sem notificações',
     'noStarterKits' => 'No starter kit notifications',
     'noSystemNotifications' => 'No System Notifications',
     'starterKits' => 'Starter Kits',
-    'system' => 'System',
+    'system' => 'Sistema',
     'systemNotificationsWillAppearHere' => 'System notifications will appear here',
 ];
