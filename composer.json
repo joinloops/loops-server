@@ -41,7 +41,7 @@
         "pragmarx/google2fa-laravel": "^3.0",
         "predis/predis": "^3.2",
         "resend/resend-laravel": "^1.0.0",
-        "spatie/laravel-backup": "^9.3",
+        "spatie/laravel-backup": "^10.2",
         "stevebauman/purify": "^6.3",
         "symfony/http-client": "^7.3",
         "symfony/http-foundation": "7.3.7",
