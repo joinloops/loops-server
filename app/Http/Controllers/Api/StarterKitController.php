@@ -148,7 +148,7 @@ class StarterKitController extends Controller
                 $accounts = StarterKitAccount::whereStarterKitId($starterKit->id)->whereKitStatus(1)->get();
             }
         } else {
-            if ($user && $user->is_admin || $user->profile_id == $starterKit->profile_id) {
+            if ($user && ($user->is_admin || $user->profile_id == $starterKit->profile_id)) {
                 $accounts = StarterKitAccount::whereStarterKitId($starterKit->id)->get();
             } else {
                 $accounts = [];
@@ -167,7 +167,7 @@ class StarterKitController extends Controller
         $profile = $user->profile;
 
         if ($request->user()->cannot('create', StarterKit::class)) {
-            return $this->error('You are not authorized to perform this actions.');
+            return $this->error('You are not authorized to perform this action.');
         }
 
         $config = app(StarterKitService::class)->getConfig();
@@ -1069,7 +1069,7 @@ class StarterKitController extends Controller
                 Storage::disk('s3')->delete($starterKit->header_path);
             }
             $starterKit->update(['header_path' => null, 'header_url' => null]);
-            app(StarterKitService::class)->forget($starterKit->id);
+            // app(StarterKitService::class)->forget($starterKit->id);  # Dupe of line 1078?
         } else {
             app(StarterKitPendingChangeService::class)->deleteMedia($starterKit, $user->profile_id, 'header_path');
             app(AdminDashboardService::class)->getReportsCount(true);
