@@ -2,6 +2,7 @@
 
 return [
     'accountCreated' => 'Account created',
+    'applyToJoin' => 'Apply to Join',
     'byCreatingANewAccount' => 'By creating a new account, you agree to the',
     'chooseASecurePasswordForYourAccount' => 'Choose a secure password for your account.',
     'chooseYourDisplayNameUsernameAndEmail' => 'Choose your display name, username, and email.',
@@ -10,6 +11,8 @@ return [
     'continueToSignIn' => 'Continue to sign in',
     'createYourProfile' => 'Create your profile',
     'creatingAccountDotDotDot' => 'Creating account…',
+    'curatedOnboarding' => 'This server uses curated onboarding',
+    'curatedOnboardingDesc' => 'New accounts are reviewed before joining. Apply below and we\'ll take a look at your application.',
     'failed' => 'These credentials do not match our records.',
     'inviteIsNotValid' => 'Invite is not valid.',
     'inviteLinkNotValid' => 'Invite link not valid',
