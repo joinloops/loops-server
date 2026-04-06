@@ -55,7 +55,7 @@
         "vue": "^3.5.32",
         "vue-advanced-cropper": "^2.8.9",
         "vue-draggable-next": "^2.3.0",
-        "vue-i18n": "^11.3.0",
+        "vue-i18n": "^11.3.1",
         "vue-router": "^5.0.4"
     },
     "devDependencies": {
