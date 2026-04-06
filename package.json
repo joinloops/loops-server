@@ -27,7 +27,7 @@
         "@tiptap/extension-paragraph": "^3.22.2",
         "@tiptap/extension-text": "^3.22.2",
         "@tiptap/vue-3": "^3.22.2",
-        "@unhead/vue": "^2.1.12",
+        "@unhead/vue": "^2.1.13",
         "@vitejs/plugin-vue": "^6.0.5",
         "@vueuse/core": "^14.2.1",
         "@xmldom/xmldom": ">=0.8.12",
