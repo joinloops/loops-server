@@ -51,7 +51,7 @@
         "sass": "^1.99.0",
         "tailwindcss": "^4.2.1",
         "video.js": "^8.23.7",
-        "vite": "^7.3.2",
+        "vite": "^8.0.7",
         "vue": "^3.5.32",
         "vue-advanced-cropper": "^2.8.9",
         "vue-draggable-next": "^2.3.0",
