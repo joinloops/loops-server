@@ -73,7 +73,7 @@
         "globals": "^17.4.0",
         "prettier": "^3.8.1",
         "typescript": "^5.9.2",
-        "typescript-eslint": "^8.58.0",
+        "typescript-eslint": "^8.58.1",
         "unplugin-auto-import": "^21.0.0",
         "vue-eslint-parser": "^10.4.0",
         "vue-tsc": "^3.2.6"
