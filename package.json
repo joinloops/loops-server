@@ -24,7 +24,7 @@
         "@tiptap/extension-history": "^3.22.3",
         "@tiptap/extension-italic": "^3.22.2",
         "@tiptap/extension-link": "^3.22.3",
-        "@tiptap/extension-paragraph": "^3.22.2",
+        "@tiptap/extension-paragraph": "^3.22.3",
         "@tiptap/extension-text": "^3.22.3",
         "@tiptap/vue-3": "^3.22.2",
         "@unhead/vue": "^2.1.13",
