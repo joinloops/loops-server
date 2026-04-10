@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'actions' => 'Akce',
-    'addFirstVideo' => 'Přidat první video',
-    'addSomeVideosToGetStarted' => 'Pro začátek přidejte nějaká videa',
-    'addVideos' => 'Přidat videa',
+    'actions' => 'Actions',
+    'addFirstVideo' => 'Add First Video',
+    'addSomeVideosToGetStarted' => 'Add some videos to get started',
+    'addVideos' => 'Add Videos',
     'addVideosToPlaylist' => 'Add Videos to Playlist',
     'allowOthersTo' => 'Allow others to',
     'altText' => 'Alt Text',
@@ -15,6 +15,7 @@ return [
     'aspectRatiosMessage' => 'Recommended: 16:9 for landscape, 9:16 for vertical.',
     'backToPlaylists' => 'Back to Playlists',
     'caption' => 'Caption',
+    'changeThumbnail' => 'Change thumbnail image',
     'clearPlaylistSearch' => 'Clear Search',
     'commentMessage' => 'Allow others to post comments and replies on this post',
     'comments' => 'Comments',
@@ -28,6 +29,7 @@ return [
     'createPlaylist' => 'Create Playlist',
     'createYourFirstPlaylistTo' => 'Create your first playlist to organize your videos',
     'customCover' => 'Custom Cover',
+    'customThumbnail' => 'Custom Thumbnail',
     'deletePlaylist' => 'Delete Playlist',
     'describeYourPlaylistDotDotDot' => 'Describe your playlist...',
     'describeYourVideoDotDotDot' => 'Describe your video...',
@@ -100,6 +102,7 @@ return [
     'tryDifferentPlaylistSearch' => 'Try a different search term or clear your search to see all playlists',
     'unsavedWarning' => 'A video you were editing wasn\'t saved. Continue editing?',
     'uploadFirstVideo' => 'Upload first video',
+    'uploadThumbnail' => 'Upload thumbnail image',
     'users' => 'users',
     'videoResolutions' => 'Video resolutions',
     'videoResolutionsMessage' => 'High-resolution recommended: 1080p, 1440p, 4K.',
