@@ -18,7 +18,7 @@
         "@tailwindcss/postcss": "^4.2.2",
         "@tailwindcss/vite": "^4.2.2",
         "@tanstack/vue-query": "^5.96.2",
-        "@tiptap/extension-bold": "^3.22.2",
+        "@tiptap/extension-bold": "^3.22.3",
         "@tiptap/extension-character-count": "^3.22.3",
         "@tiptap/extension-document": "^3.22.2",
         "@tiptap/extension-history": "^3.22.2",
