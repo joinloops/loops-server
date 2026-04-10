@@ -75,6 +75,7 @@ return [
     'containsSensitiveTopicsOrAccounts' => 'Contains sensitive topics or accounts',
     'continue' => 'Continue',
     'continueToLogin' => 'Continue to Login',
+    'copy' => 'Copy',
     'create' => 'Create',
     'createAFreeAccountToContinueExploring' => 'Create a free account to continue exploring videos and discover amazing content from creators around the world.',
     'createANewAccountToGetStarted' => 'Create a new account to get started',
