@@ -62,7 +62,7 @@ return [
     'unhideComment' => 'Mostrar comentario',
     'unhideCommentDescription' => 'Este comentario dejará de estar oculto en tu vídeo y volverá a ser visible. El autor del comentario no recibirá ninguna notificación.',
     'unhideCommentNote' => 'Puedes ocultar los comentarios desde el menú de comentarios.',
-    'view' => 'Vista',
+    'view' => 'Ver',
     'viewAllComments' => 'Ver todos los comentarios',
     'writeAReplyDotDotDot' => 'Escribir una respuesta...',
     'writeYourCaptionDotDotDot' => 'Escribe tu descripción...',
