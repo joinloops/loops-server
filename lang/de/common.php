@@ -75,6 +75,7 @@ return [
     'containsSensitiveTopicsOrAccounts' => 'Enthält sensible Themen oder Accounts',
     'continue' => 'Fortsetzen',
     'continueToLogin' => 'Weiter zum Login',
+    'copy' => 'Copy',
     'create' => 'Erstellen',
     'createAFreeAccountToContinueExploring' => 'Erstelle ein kostenloses Konto, um weitere Videos zu entdecken und fantastische Inhalte von Künstlern aus aller Welt zu finden.',
     'createANewAccountToGetStarted' => 'Erstelle ein neues Konto, um loszulegen',
