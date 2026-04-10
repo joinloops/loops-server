@@ -75,6 +75,7 @@ return [
     'containsSensitiveTopicsOrAccounts' => 'Містить чутливі теми або облікові записи',
     'continue' => 'Продовжити',
     'continueToLogin' => 'Перейти до входу в систему',
+    'copy' => 'Copy',
     'create' => 'Create',
     'createAFreeAccountToContinueExploring' => 'Створіть безкоштовний обліковий запис, щоб продовжувати переглядати відео та відкривати для себе дивовижний контент від авторів з усього світу.',
     'createANewAccountToGetStarted' => 'Створіть новий обліковий запис, щоб розпочати',
