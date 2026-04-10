@@ -75,6 +75,7 @@ return [
     'containsSensitiveTopicsOrAccounts' => 'Contains sensitive topics or accounts',
     'continue' => 'Jatka',
     'continueToLogin' => 'Continue to Login',
+    'copy' => 'Copy',
     'create' => 'Create',
     'createAFreeAccountToContinueExploring' => 'Luo ilmainen tili jatkaaksesi videoiden tutkimista ja hämmästyttävän sisällön löytämistä tekijöiltä ympäri maailmaa.',
     'createANewAccountToGetStarted' => 'Luo uusi tili aloittaaksesi',
