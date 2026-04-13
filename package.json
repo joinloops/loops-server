@@ -17,7 +17,7 @@
         "@mdi/font": "^7.4.47",
         "@tailwindcss/postcss": "^4.2.2",
         "@tailwindcss/vite": "^4.2.2",
-        "@tanstack/vue-query": "^5.97.0",
+        "@tanstack/vue-query": "^5.99.0",
         "@tiptap/extension-bold": "^3.22.3",
         "@tiptap/extension-character-count": "^3.22.3",
         "@tiptap/extension-document": "^3.22.3",
