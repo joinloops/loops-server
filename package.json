@@ -72,7 +72,7 @@
         "flatted": ">=3.4.2",
         "follow-redirects": ">=1.16.0",
         "globals": "^17.5.0",
-        "prettier": "^3.8.2",
+        "prettier": "^3.8.3",
         "typescript": "^5.9.2",
         "typescript-eslint": "^8.58.2",
         "unplugin-auto-import": "^21.0.0",
