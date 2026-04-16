@@ -107,7 +107,7 @@ return [
     'videoResolutions' => 'Resoluciones de vídeo',
     'videoResolutionsMessage' => 'Se recomienda que tengan alta resolución: 1080p, 1440p, 4K.',
     'videosInPlaylist' => 'Vídeos en lista de reproducción',
-    'view' => 'Vista',
+    'view' => 'Ver',
     'visibility' => 'Visibilidad',
     'yourPostedAndProcessingVideos' => 'Los vídeos que hayas publicado y que estén en proceso aparecerán aquí',
 ];
