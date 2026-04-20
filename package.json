@@ -75,6 +75,6 @@
         "unplugin-auto-import": "^21.0.0",
         "unplugin-vue-components": "^32.0.0",
         "vue-eslint-parser": "^10.4.0",
-        "vue-tsc": "^3.2.6"
+        "vue-tsc": "^3.2.7"
     }
 }
