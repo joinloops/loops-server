@@ -47,7 +47,7 @@
         "pinia": "^3.0.4",
         "postcss": "^8.5.10",
         "sass": "^1.99.0",
-        "tailwindcss": "^4.2.1",
+        "tailwindcss": "^4.2.3",
         "video.js": "^8.23.7",
         "vite": "^7.3.2",
         "vue": "^3.5.32",
