@@ -2000,16 +2000,16 @@
         },
         {
             "name": "laravel/horizon",
-            "version": "v5.45.6",
+            "version": "v5.46.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/horizon.git",
-                "reference": "629707ff3cce9ff72715e7815f74dda10bdcbe0a"
+                "reference": "bfea968e8aa674fb649d02e55ea0d38bdf5137d5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/horizon/zipball/629707ff3cce9ff72715e7815f74dda10bdcbe0a",
-                "reference": "629707ff3cce9ff72715e7815f74dda10bdcbe0a",
+                "url": "https://api.github.com/repos/laravel/horizon/zipball/bfea968e8aa674fb649d02e55ea0d38bdf5137d5",
+                "reference": "bfea968e8aa674fb649d02e55ea0d38bdf5137d5",
                 "shasum": ""
             },
             "require": {
@@ -2074,9 +2074,9 @@
             ],
             "support": {
                 "issues": "https://github.com/laravel/horizon/issues",
-                "source": "https://github.com/laravel/horizon/tree/v5.45.6"
+                "source": "https://github.com/laravel/horizon/tree/v5.46.0"
             },
-            "time": "2026-04-14T13:31:53+00:00"
+            "time": "2026-04-20T18:08:11+00:00"
         },
         {
             "name": "laravel/passport",
@@ -2155,16 +2155,16 @@
         },
         {
             "name": "laravel/prompts",
-            "version": "v0.3.16",
+            "version": "v0.3.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/prompts.git",
-                "reference": "11e7d5f93803a2190b00e145142cb00a33d17ad2"
+                "reference": "6a82ac19a28b916ae0885828795dbd4c59d9a818"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/prompts/zipball/11e7d5f93803a2190b00e145142cb00a33d17ad2",
-                "reference": "11e7d5f93803a2190b00e145142cb00a33d17ad2",
+                "url": "https://api.github.com/repos/laravel/prompts/zipball/6a82ac19a28b916ae0885828795dbd4c59d9a818",
+                "reference": "6a82ac19a28b916ae0885828795dbd4c59d9a818",
                 "shasum": ""
             },
             "require": {
@@ -2208,9 +2208,9 @@
             "description": "Add beautiful and user-friendly forms to your command-line applications.",
             "support": {
                 "issues": "https://github.com/laravel/prompts/issues",
-                "source": "https://github.com/laravel/prompts/tree/v0.3.16"
+                "source": "https://github.com/laravel/prompts/tree/v0.3.17"
             },
-            "time": "2026-03-23T14:35:33+00:00"
+            "time": "2026-04-20T16:07:33+00:00"
         },
         {
             "name": "laravel/sanctum",
