@@ -71,6 +71,8 @@ return [
     'combinedFollowers' => 'Нових підписників немає',
     'comment' => 'Коментар',
     'communityGuidelines' => 'Правила спільноти',
+    'confirm' => 'Confirm',
+    'confirmDeleteComment' => 'Are you sure you want to delete this comment?',
     'confirmPassword' => 'Повторіть пароль',
     'confirmYourBirthdate' => 'Підтвердити вашу дату народження',
     'containsSensitiveTopicsOrAccounts' => 'Містить чутливі теми або облікові записи',
