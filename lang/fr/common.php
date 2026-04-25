@@ -71,6 +71,8 @@ return [
     'combinedFollowers' => 'combined followers',
     'comment' => 'Comment',
     'communityGuidelines' => 'Community Guidelines',
+    'confirm' => 'Confirm',
+    'confirmDeleteComment' => 'Are you sure you want to delete this comment?',
     'confirmPassword' => 'Confirm Password',
     'confirmYourBirthdate' => 'Confirm your birthdate',
     'containsSensitiveTopicsOrAccounts' => 'Contains sensitive topics or accounts',
