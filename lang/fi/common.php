@@ -71,6 +71,8 @@ return [
     'combinedFollowers' => 'combined followers',
     'comment' => 'Comment',
     'communityGuidelines' => 'Yhteisön säännöt',
+    'confirm' => 'Confirm',
+    'confirmDeleteComment' => 'Are you sure you want to delete this comment?',
     'confirmPassword' => 'Vahvista salasana',
     'confirmYourBirthdate' => 'Vahvista syntymäpäiväsi',
     'containsSensitiveTopicsOrAccounts' => 'Contains sensitive topics or accounts',
