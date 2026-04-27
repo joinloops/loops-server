@@ -58,6 +58,8 @@ class CommentResource extends JsonResource
                 'is_edited' => false,
                 'liked' => false,
                 'url' => null,
+                'media_count' => 0,
+                'media' => [],
                 'remote_url' => null,
                 'is_owner' => false,
                 'is_hidden' => false,
@@ -79,6 +81,9 @@ class CommentResource extends JsonResource
             'shares' => $this->shares ?? 0,
             'liked' => $pid ? app(LikeService::class)->hasLikedComment((string) $this->id, (string) $pid) : false,
             'url' => $this->shareUrl(),
+            'media_count' => (int) $this->media_count,
+            'media' => $this->whenLoaded('mediaAttachments', fn () => MediaAttachmentResource::collection($this->mediaAttachments)
+            ),
             'remote_url' => $this->remote_url,
             'tombstone' => false,
             'is_edited' => $this->is_edited,

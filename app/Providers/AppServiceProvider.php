@@ -110,6 +110,17 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('klipy', function ($request) {
+            $user = $request->user();
+            // if ($user->is_admin) {
+            //     return;
+            // }
+
+            return [
+                Limit::perMinute(5)->by($user->id),
+            ];
+        });
+
         RateLimiter::for('followIntents', function (Request $request) {
             $user = $request->user();
             if ($user->is_admin) {

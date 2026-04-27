@@ -154,7 +154,7 @@
                                     ></i>
                                 </button>
                                 <span class="mt-1 text-xs font-medium">{{
-                                    formatCount(commentCount)
+                                    formatCount(displayCommentCount)
                                 }}</span>
                             </div>
 
@@ -271,7 +271,7 @@
                                 <i class="bx bx-message-square-dots text-[30px]"></i>
                             </button>
                             <span class="mt-1 text-sm font-medium">{{
-                                formatCount(commentCount)
+                                formatCount(displayCommentCount)
                             }}</span>
                         </div>
 
@@ -366,7 +366,7 @@
             @touchstart.stop.prevent
             @touchmove.stop.prevent
             @touchend.stop.prevent
-            @click.stop="toggleComments"
+            @click.stop="closeComments"
         ></div>
 
         <div
@@ -378,102 +378,25 @@
             @touchstart.stop
             @touchmove.stop
             @touchend.stop
+            @wheel.stop
             @click.stop
             data-interactive="true"
         >
-            <div class="sticky top-0 z-10 bg-gray-50 dark:bg-slate-900">
+            <div class="flex-shrink-0 bg-gray-50 dark:bg-slate-900">
                 <div
                     class="flex items-center justify-between p-4 border-b border-gray-300 dark:border-slate-700"
                 >
                     <h2 class="text-lg font-semibold text-black dark:text-gray-400">
-                        {{ $t('post.comments') }} ({{ formatCount(commentCount) }})
+                        {{ $t('post.comments') }} ({{ formatCount(displayCommentCount) }})
                     </h2>
-                    <button @click.stop="toggleComments" class="text-gray-400 hover:text-gray-300">
+                    <button @click.stop="closeComments" class="text-gray-400 hover:text-gray-300">
                         <i class="bx bx-x text-[20px]" />
                     </button>
                 </div>
             </div>
 
-            <div
-                class="flex-1 overflow-y-auto overscroll-contain pb-16"
-                @wheel.stop
-                @touchstart.stop
-                @touchmove.stop
-                @touchend.stop
-                @scroll.stop="handleScroll"
-            >
-                <div
-                    v-if="comments.length === 0 && !isLoading"
-                    class="h-full flex items-center justify-center flex-grow text-dark dark:text-gray-600"
-                >
-                    <p class="text-sm text-gray-400">
-                        {{ $t('post.noCommentsYet') }}
-                    </p>
-                </div>
-
-                <CommentItem
-                    v-for="comment in comments"
-                    :key="comment.id"
-                    :comment="comment"
-                    :videoId="videoId"
-                />
-
-                <div v-if="isLoading" class="p-4 text-center">
-                    <Spinner />
-                </div>
-            </div>
-
-            <div
-                v-if="authStore.authenticated"
-                class="absolute bottom-0 left-0 right-0 bg-gray-50 dark:bg-slate-900 border-t border-gray-300 dark:border-slate-700 p-3"
-                @touchstart.stop
-                @touchmove.stop
-                @touchend.stop
-                @click.stop
-            >
-                <form @submit.prevent.stop="submitComment" class="flex items-center space-x-2">
-                    <div class="flex-1 relative">
-                        <textarea
-                            v-model="newComment"
-                            :placeholder="$t('post.addCommentDotDotDot')"
-                            class="w-full px-4 py-2 text-sm bg-gray-100 dark:bg-slate-800 dark:text-white border border-gray-200 dark:border-slate-700 rounded-lg resize-none focus:outline-none focus:ring-1 focus:ring-red-500"
-                            rows="1"
-                            style="min-height: 40px; max-height: 120px"
-                            @input.stop="autoResize"
-                            @touchstart.stop
-                            @touchmove.stop
-                            @touchend.stop
-                            @click.stop
-                        ></textarea>
-                        <div
-                            class="absolute right-2 top-1/2 -translate-y-1/2 flex items-center space-x-2"
-                        >
-                            <EmojiPicker v-model="selectedEmoji" @select="onEmojiSelect">
-                                <template #trigger="{ toggle }">
-                                    <button
-                                        type="button"
-                                        class="text-gray-400 hover:text-gray-600"
-                                        @click.stop="toggle"
-                                        @touchstart.stop
-                                        @touchend.stop
-                                    >
-                                        <i class="bx bx-smile text-xl"></i>
-                                    </button>
-                                </template>
-                            </EmojiPicker>
-                        </div>
-                    </div>
-                    <button
-                        type="submit"
-                        class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        :disabled="!newComment.trim()"
-                        @click.stop
-                        @touchstart.stop
-                        @touchend.stop
-                    >
-                        {{ $t('post.post') }}
-                    </button>
-                </form>
+            <div class="flex-1 min-h-0 overflow-hidden">
+                <Comments />
             </div>
         </div>
     </div>
@@ -493,9 +416,8 @@ import {
 import { useVideoTracking } from '~/composables/useVideoTracking'
 import { useCommentStore } from '~/stores/comments'
 import { useFeedInteraction } from '~/composables/useFeedInteraction'
-import EmojiPicker from '@/components/Form/EmojiPicker.vue'
 import ShareModal from '@/components/Feed/ShareModal.vue'
-import Spinner from '@/components/Spinner.vue'
+import Comments from '@/components/Status/Comments.vue'
 import videojs from 'video.js'
 import 'video.js/dist/video-js.css'
 import LoopLink from '../LoopLink.vue'
@@ -535,17 +457,12 @@ const videoStore = inject('videoStore')
 const showMenu = ref(false)
 const showComments = ref(false)
 const commentStore = useCommentStore()
-const comments = computed(() => commentStore.getComments(props.videoId))
-const isLoading = computed(() => commentStore.isLoading(props.videoId))
-const hasMore = computed(() => commentStore.hasMore(props.videoId))
 const videoRef = ref(null)
 const isPaused = ref(true)
-const newComment = ref('')
 const likeCount = ref(0)
 const bookmarksCount = ref(0)
 const videoLiked = ref(false)
 const videoBookmarked = ref(false)
-const selectedEmoji = ref('')
 const isVisible = ref(false)
 const playerReady = ref(false)
 const isSensitiveRevealed = ref(false)
@@ -563,6 +480,7 @@ const hasFlushedFinal = ref(false)
 const videoWidth = ref(null)
 const videoHeight = ref(null)
 const videoOrientation = ref('portrait')
+const shouldShowComments = computed(() => commentStore.shouldKeepCommentsOpen)
 
 const {
     hasInteracted: hasGlobalInteraction,
@@ -574,6 +492,14 @@ const {
 const isMuted = computed({
     get: () => globalMuted.value,
     set: (value) => setGlobalMuted(value)
+})
+
+const displayCommentCount = computed(() => {
+    const cv = videoStore.currentVideo
+    if (cv && cv.id === props.videoId && typeof cv.comments === 'number') {
+        return cv.comments
+    }
+    return props.commentCount
 })
 
 const videoAspectClass = computed(() => {
@@ -618,6 +544,25 @@ const isLongPress = ref(false)
 const longPressTimeout = ref(null)
 
 let player = null
+
+const setCurrentVideoForComments = () => {
+    videoStore.setVideo({
+        id: props.videoId,
+        account: {
+            id: props.profileId,
+            username: props.username,
+            avatar: props.profileImage
+        },
+        permissions: {
+            can_comment: props.canComment
+        },
+        comments: props.commentCount,
+        likes: props.likes,
+        bookmarks: props.bookmarks,
+        has_liked: props.hasLiked,
+        has_bookmarked: props.hasBookmarked
+    })
+}
 
 const revealSensitiveContent = async () => {
     isSensitiveRevealed.value = true
@@ -695,27 +640,6 @@ const handleResize = () => {
     windowWidth.value = window.innerWidth
 }
 
-const onEmojiSelect = (emoji) => {
-    newComment.value += emoji.native
-}
-
-const autoResize = (e) => {
-    const textarea = e.target
-    textarea.style.height = 'auto'
-    textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px'
-}
-
-const submitComment = async () => {
-    if (!newComment.value.trim()) return
-    try {
-        await commentStore.addComment(props.videoId, newComment.value).then(() => {
-            newComment.value = ''
-        })
-    } catch (error) {
-        console.error('Error submitting comment:', error)
-    }
-}
-
 const toggleLike = async () => {
     if (!authStore.authenticated) {
         authStore.openAuthModal()
@@ -771,19 +695,16 @@ const toggleMute = () => {
 onMounted(async () => {
     await nextTick()
     window.addEventListener('resize', handleResize)
-    videoStore.setVideo({
-        id: props.videoId,
-        account: { id: props.profileId },
-        comments: props.commentCount,
-        likes: props.likesCount,
-        bookmarks: props.bookmarks,
-        has_liked: props.hasLiked,
-        has_bookmarked: props.hasBookmarked
-    })
+    setCurrentVideoForComments()
     likeCount.value = props.likes
     videoLiked.value = props.hasLiked
     videoBookmarked.value = props.hasBookmarked
     bookmarksCount.value = props.bookmarks
+
+    if (!isMobile.value) {
+        await checkCommentDrawer()
+    }
+
     if (videoRef.value) {
         player = videojs(videoRef.value, {
             controls: false,
@@ -877,27 +798,19 @@ const flushTracking = (reason = 'unknown') => {
 
 watch(
     () => [props.videoId, props.isSensitive],
-    () => {
+    async () => {
         isSensitiveRevealed.value = false
         pendingPlay.value = false
+        videoWidth.value = null
+        videoHeight.value = null
+        videoOrientation.value = 'portrait'
         pause()
+
+        if (!isMobile.value) {
+            await checkCommentDrawer()
+        }
     }
 )
-
-watch(showComments, async (newVal) => {
-    if (newVal) {
-        await commentStore.fetchComments(props.videoId, true)
-    }
-})
-
-const handleScroll = async (e) => {
-    const container = e.target
-    const bottomReached =
-        container.scrollHeight - container.scrollTop <= container.clientHeight + 100
-    if (bottomReached && !isLoading.value && hasMore.value) {
-        await commentStore.fetchComments(props.videoId)
-    }
-}
 
 onBeforeUnmount(() => {
     flushTracking('Unmount')
@@ -920,6 +833,9 @@ onBeforeUnmount(() => {
 })
 
 const play = async () => {
+    if (!isMobile.value) {
+        await checkCommentDrawer()
+    }
     if (!player) return Promise.resolve()
     if (!canInteract.value) return Promise.resolve()
     try {
@@ -955,6 +871,15 @@ const play = async () => {
     }
 }
 
+const checkCommentDrawer = async () => {
+    if (shouldShowComments.value) {
+        setCurrentVideoForComments()
+        showComments.value = true
+    } else {
+        showComments.value = false
+    }
+}
+
 const pause = () => {
     if (player) {
         player.pause()
@@ -964,18 +889,35 @@ const pause = () => {
 }
 
 const hideUI = () => {
-    if (showComments.value) showComments.value = false
     if (showMenu.value) showMenu.value = false
     showMobilePauseButton.value = false
+
+    if (!commentStore.shouldKeepCommentsOpen) {
+        showComments.value = false
+    }
 }
 
-const toggleComments = (e) => {
+const toggleComments = async (e) => {
     if (e) {
         e.preventDefault()
         e.stopPropagation()
     }
-    showComments.value = !showComments.value
-    if (showComments.value && showMenu.value) showMenu.value = false
+
+    const opening = !showComments.value
+    if (opening) {
+        // Make sure Comments sees this video as the current one before it renders.
+        setCurrentVideoForComments()
+    }
+
+    showComments.value = opening
+
+    if (opening && showMenu.value) showMenu.value = false
+}
+
+const closeComments = async () => {
+    showComments.value = false
+    commentStore.setUserManuallyClosed(true)
+    commentStore.setKeepCommentsOpen(false)
 }
 
 const handlePlayClick = async () => {
@@ -1005,12 +947,15 @@ const preload = async () => {
 const cleanup = () => {
     if (player) player.pause()
     isVisible.value = false
-    showComments.value = false
     showMenu.value = false
     showMobilePauseButton.value = false
     videoWidth.value = null
     videoHeight.value = null
     videoOrientation.value = 'portrait'
+
+    if (!commentStore.shouldKeepCommentsOpen) {
+        showComments.value = false
+    }
 }
 
 const onVisible = () => {
@@ -1018,12 +963,6 @@ const onVisible = () => {
     accumulatedWatchTime.value = 0
     watchStartTime.value = 0
 }
-
-// const onHidden = () => {
-//     isVisible.value = false
-//     pause()
-//     flushTracking(false)
-// }
 
 const onHidden = () => {
     // Pause internally to stop the visual playing, but don't let it mess up our math

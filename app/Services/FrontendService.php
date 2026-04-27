@@ -38,6 +38,7 @@ class FrontendService
     {
         $res = self::getCache();
         $res['app_version'] = app('app_version');
+        $res['hasKlipy'] = (bool) ! empty(config('klipy.api_key'));
 
         return $res;
     }

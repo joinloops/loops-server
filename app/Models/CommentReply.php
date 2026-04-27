@@ -145,9 +145,24 @@ class CommentReply extends Model
         return $this->ap_id ?: url('/ap/users/'.$this->profile_id.'/reply/'.$this->id.$suffix);
     }
 
+    /** @return MorphMany<QuoteAuthorization, $this> */
     public function quoteAuthorizations(): MorphMany
     {
         return $this->morphMany(QuoteAuthorization::class, 'quotable');
+    }
+
+    /** @return MorphMany<MediaAttachments, $this> */
+    public function mediaAttachments()
+    {
+        return $this->morphMany(MediaAttachments::class, 'attachable')->orderBy('order');
+    }
+
+    protected function recalculateMedia(): void
+    {
+        $count = $this->mediaAttachments()->count();
+        $this->media_count = $count;
+        $this->has_media = $count > 0;
+        $this->saveQuietly();
     }
 
     public function shareUrl(): string

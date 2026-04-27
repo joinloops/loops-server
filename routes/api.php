@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\DuetController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\ForYouFeedController;
+use App\Http\Controllers\Api\KlipyController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SettingsController;
@@ -102,6 +103,14 @@ Route::prefix('api/v1/auth')
         Route::post('force-password-change/cancel', [ForcePasswordChangeController::class, 'cancel'])
             ->middleware('throttle:20,1')
             ->name('auth.force-password.cancel');
+    });
+
+Route::middleware(['auth:web'])
+    ->prefix('api/v1/klipy')
+    ->whereIn('type', ['gifs', 'stickers', 'memes', 'clips'])
+    ->group(function () {
+        Route::get('{type}/trending', [KlipyController::class, 'trending'])->name('klipy.trending');
+        Route::get('{type}/search', [KlipyController::class, 'search'])->middleware('throttle:klipy')->name('klipy.search');
     });
 
 Route::prefix('api')->group(function () {
@@ -309,6 +318,7 @@ Route::prefix('api')->group(function () {
     Route::post('/v1/video/comments/reply/edit/{id}', [VideoController::class, 'storeCommentReplyUpdate'])->middleware('auth:web,api');
     Route::post('/v1/video/comments/edit/{id}', [VideoController::class, 'storeCommentUpdate'])->middleware('auth:web,api');
     Route::post('/v1/video/comments/{id}', [VideoController::class, 'storeComment'])->middleware('auth:web,api');
+    Route::post('/v1/video/comments/{id}/media', [VideoController::class, 'storeCommentMedia'])->middleware('auth:web,api');
     Route::get('/v1/video/comments/{id}', [WebPublicController::class, 'comments'])->middleware('throttle:api');
     Route::get('/v1/video/comments/{vid}/hidden', [VideoController::class, 'showHiddenComments'])->middleware('auth:web,api');
     Route::get('/v1/video/comments/{vid}/replies', [WebPublicController::class, 'commentsThread'])->middleware('throttle:api');

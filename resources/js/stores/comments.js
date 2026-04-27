@@ -18,7 +18,7 @@ export const useCommentStore = defineStore('comment', {
         cooldownMs: 1500,
         highlightedCommentMap: new Map(),
         highlightedCommentDataMap: new Map(),
-        hasHiddenComments: false,
+        hasHiddenCommentsMap: new Map(),
         keepCommentsOpen:
             typeof window !== 'undefined'
                 ? localStorage.getItem('loops_keepCommentsOpen') === 'true'
@@ -54,6 +54,10 @@ export const useCommentStore = defineStore('comment', {
 
         hasMoreHidden() {
             return (videoId) => this.hiddenHasMoreMap.get(videoId) || false
+        },
+
+        hasHiddenComments() {
+            return (videoId) => this.hasHiddenCommentsMap.get(videoId) || false
         },
 
         isShowingHidden() {
@@ -139,6 +143,40 @@ export const useCommentStore = defineStore('comment', {
 
         _makeCommentReplyUpdateKey(videoId, parentId, commentId, text) {
             return `${videoId}:${parentId}:${commentId}:${text}`
+        },
+
+        _makeMediaKey(videoId, klipyId) {
+            return `media:${videoId}:${klipyId}`
+        },
+
+        _pickKlipyTempUrl(item, type) {
+            const chain =
+                type === 'memes'
+                    ? ['preview.url', 'full.url']
+                    : type === 'clips'
+                      ? ['mp4.url', 'webm.url', 'full.url', 'preview.url']
+                      : ['webm.url', 'mp4.url', 'full.url', 'preview.url']
+
+            for (const path of chain) {
+                const value = path.split('.').reduce((acc, k) => acc?.[k], item)
+                if (value) return value
+            }
+            return null
+        },
+
+        _pickKlipyTempMime(url) {
+            const ext = (url.split('?')[0].split('.').pop() || '').toLowerCase()
+            return (
+                {
+                    webm: 'video/webm',
+                    mp4: 'video/mp4',
+                    webp: 'image/webp',
+                    png: 'image/png',
+                    jpg: 'image/jpeg',
+                    jpeg: 'image/jpeg',
+                    gif: 'image/gif'
+                }[ext] || 'application/octet-stream'
+            )
         },
 
         findCommentById(comments, commentId) {
@@ -312,8 +350,10 @@ export const useCommentStore = defineStore('comment', {
                     this.commentsMap.set(videoId, [...existingComments, ...data])
                 }
 
-                if (meta?.has_hidden_comments) {
-                    this.hasHiddenComments = true
+                if (reset) {
+                    this.hasHiddenCommentsMap.set(videoId, !!meta?.has_hidden_comments)
+                } else if (meta?.has_hidden_comments) {
+                    this.hasHiddenCommentsMap.set(videoId, true)
                 }
 
                 this.cursorsMap.set(videoId, meta.next_cursor)
@@ -698,6 +738,102 @@ export const useCommentStore = defineStore('comment', {
             }
         },
 
+        async addCommentMedia(videoId, type, item, rawContent) {
+            if (!item || !item.id) return null
+
+            const content = String(rawContent ?? '').trim()
+            const key = this._makeMediaKey(videoId, item.id)
+            const now = Date.now()
+
+            const lastAt = this.lastSubmittedKeyAt.get(key)
+            if (lastAt && now - lastAt < this.cooldownMs) {
+                return null
+            }
+
+            if (this.pendingPosts.has(key)) {
+                return this.pendingPosts.get(key)
+            }
+
+            const authStore = useAuthStore()
+            const tempId = `temp-${now}-${Math.random().toString(36).slice(2)}`
+
+            const tempUrl = this._pickKlipyTempUrl(item, type)
+            const tempMime = tempUrl ? this._pickKlipyTempMime(tempUrl) : 'application/octet-stream'
+
+            const tempMedia = tempUrl
+                ? [
+                      {
+                          id: `temp-media-${tempId}`,
+                          url: tempUrl,
+                          remote_url: tempUrl,
+                          mime_type: tempMime,
+                          width: item.width ?? null,
+                          height: item.height ?? null,
+                          blurhash: null,
+                          placeholder: item.blur_preview ?? null,
+                          provider: 'klipy',
+                          external_id: String(item.id)
+                      }
+                  ]
+                : []
+
+            const tempComment = {
+                id: tempId,
+                account: authStore.getUser,
+                caption: content,
+                created_at: Date.now(),
+                children: [],
+                likes: 0,
+                dislikes: 0,
+                liked: false,
+                pending: true,
+                has_media: true,
+                media_count: 1,
+                media: tempMedia
+            }
+
+            const existing = this.getComments(videoId)
+            const alreadyTemp = existing.some(
+                (c) => c.pending && c.media?.[0]?.external_id === String(item.id)
+            )
+            if (!alreadyTemp) {
+                this._unshiftComment(videoId, tempComment)
+            }
+
+            const promise = (async () => {
+                try {
+                    const axiosInstance = axios.getAxiosInstance()
+                    const res = await axiosInstance.post(
+                        `/api/v1/video/comments/${String(videoId)}/media`,
+                        { type, item, comment: content }
+                    )
+
+                    const payload = res?.data?.data?.[0] ?? {}
+                    const serverComment = {
+                        ...payload,
+                        children: [],
+                        likes: payload?.likes ?? 0,
+                        dislikes: payload?.dislikes ?? 0,
+                        liked: payload?.liked ?? false,
+                        pending: false
+                    }
+
+                    this._replaceTemp(videoId, tempId, serverComment)
+                    this.lastSubmittedKeyAt.set(key, Date.now())
+
+                    return serverComment
+                } catch (err) {
+                    this._removeById(videoId, tempId)
+                    throw err
+                } finally {
+                    this.pendingPosts.delete(key)
+                }
+            })()
+
+            this.pendingPosts.set(key, promise)
+            return promise
+        },
+
         async deleteComment(videoId, commentId) {
             try {
                 const axiosInstance = axios.getAxiosInstance()
@@ -776,6 +912,11 @@ export const useCommentStore = defineStore('comment', {
                     commentId
                 )
                 this.hiddenCommentsMap.set(videoId, updatedHiddenComments)
+
+                const remaining = this.hiddenCommentsMap.get(videoId) || []
+                if (remaining.length === 0) {
+                    this.hasHiddenCommentsMap.set(videoId, false)
+                }
             } catch (error) {
                 console.error('Error unhiding comment:', error)
                 throw error
@@ -980,6 +1121,8 @@ export const useCommentStore = defineStore('comment', {
 
             this.clearHighlightedComment(videoId)
             this.clearHiddenComments(videoId)
+            this.userManuallyClosed = false
+            this.hasHiddenCommentsMap.delete(videoId)
         },
 
         clearReplies(videoId, parentId) {
@@ -1011,6 +1154,8 @@ export const useCommentStore = defineStore('comment', {
             this.replyHasMoreMap.clear()
             this.repliesLoadedMap.clear()
             this.likeLoadingStates.clear()
+            this.pendingPosts.clear()
+            this.lastSubmittedKeyAt.clear()
             this.highlightedCommentMap.clear()
             this.highlightedCommentDataMap.clear()
             this.hiddenCommentsMap.clear()
@@ -1018,6 +1163,8 @@ export const useCommentStore = defineStore('comment', {
             this.hiddenLoadingStates.clear()
             this.hiddenHasMoreMap.clear()
             this.showingHiddenCommentsMap.clear()
+            this.userManuallyClosed = false
+            this.hasHiddenCommentsMap.clear()
         }
     }
 })

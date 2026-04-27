@@ -132,6 +132,10 @@
                     </p>
                 </div>
 
+                <div v-if="comment.media?.length" class="mb-2 space-y-2">
+                    <CommentMediaAttachment v-for="m in comment.media" :key="m.id" :media="m" />
+                </div>
+
                 <div
                     v-if="!comment.tombstone && !isEditing"
                     class="flex items-center justify-between"
@@ -465,6 +469,8 @@ import { useI18n } from 'vue-i18n'
 import { useEditHistory } from '@/composables/useEditHistory'
 import MentionHashtagInput from '@/components/Status/MentionHashtagInput.vue'
 import { useHideCommentModal } from '@/composables/useHideCommentModal'
+import CommentMediaAttachment from './CommentMediaAttachment.vue'
+
 import {
     EllipsisHorizontalIcon,
     ArrowTopRightOnSquareIcon,
@@ -624,12 +630,10 @@ const startReply = async () => {
 }
 
 const shouldShowInitialLoadButton = computed(() => {
-    // Don't show if we're highlighting a specific reply
     if (props.highlightedReplyId) {
         return false
     }
 
-    // Show only if there are replies and they haven't been loaded yet
     return totalRepliesCount.value > 0 && !repliesLoaded.value && !isLoadingReplies.value
 })
 
@@ -638,17 +642,14 @@ const shouldShowToggleButton = computed(() => {
         return false
     }
 
-    // Show if replies have been loaded and there are children
     return repliesLoaded.value && props.comment.children && props.comment.children.length > 0
 })
 
 const shouldShowReplies = computed(() => {
-    // Always show if we're highlighting a specific reply
     if (props.highlightedReplyId) {
         return true
     }
 
-    // Otherwise show based on toggle state
     return showReplies.value
 })
 
@@ -657,14 +658,12 @@ const visibleReplies = computed(() => {
         return []
     }
 
-    // If highlighting a specific reply, only show that reply
     if (props.highlightedReplyId) {
         return props.comment.children.filter(
             (reply) => reply.id.toString() === props.highlightedReplyId.toString()
         )
     }
 
-    // Otherwise show all loaded replies
     return props.comment.children
 })
 
@@ -719,7 +718,7 @@ const startEdit = async () => {
 
 const cancelEdit = async () => {
     const result = await confirmModal(
-        t('common.confirmCancel'),
+        t('post.confirmCancel'),
         t('post.confirmCancelEdit'),
         t('common.yes'),
         t('common.no')
@@ -808,7 +807,7 @@ const handleDelete = async () => {
 
     const result = await confirmModal(
         t('common.confirm'),
-        t('post.confirmDeleteComment'),
+        t('common.confirmDeleteComment'),
         t('post.delete'),
         t('common.cancel')
     )

@@ -235,6 +235,7 @@ class User extends Authenticatable implements OAuthenticatable
             'can_create_starter_kits' => 'boolean',
             'can_use_starter_kits' => 'boolean',
             'can_report' => 'boolean',
+            'can_comment' => 'boolean',
         ];
     }
 

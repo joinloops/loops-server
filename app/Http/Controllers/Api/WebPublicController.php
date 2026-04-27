@@ -102,7 +102,8 @@ class WebPublicController extends Controller
             return $this->error('Video not found or is unavailable or has comments disabled', 404);
         }
 
-        $comments = Comment::withTrashed()
+        $comments = Comment::with('mediaAttachments')
+            ->withTrashed()
             ->whereVideoId($video->id)
             ->where('is_hidden', false)
             ->orderByDesc('id')
@@ -121,7 +122,8 @@ class WebPublicController extends Controller
 
         abort_if($video->profile->status != 1, 400, 'Resource not available');
 
-        $comment = Comment::withTrashed()
+        $comment = Comment::with('mediaAttachments')
+            ->withTrashed()
             ->whereVideoId($video->id)
             ->where('is_hidden', false)
             ->findOrFail($commentId);
@@ -455,6 +457,7 @@ class WebPublicController extends Controller
         $config = FrontendService::getCache();
         $config['app']['software'] = 'loops';
         $config['app']['version'] = app('app_version');
+        $config['hasKlipy'] = (bool) ! empty(config('klipy.api_key'));
         unset($config['branding']);
 
         return response()->json($config);

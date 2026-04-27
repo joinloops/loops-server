@@ -91,7 +91,7 @@
                             </div>
                         </div>
 
-                        <div v-if="commentStore.hasHiddenComments" class="flex-shrink mt-4">
+                        <div v-if="hasHiddenComments" class="flex-shrink mt-4">
                             <div class="border-t border-gray-200 dark:border-slate-700 my-4"></div>
 
                             <div v-if="!isShowingHidden" class="text-center">
@@ -170,7 +170,7 @@
                             </button>
                         </div>
 
-                        <div v-if="!hasMore && commentStore.hasHiddenComments" class="mt-4">
+                        <div v-if="!hasMore && hasHiddenComments" class="mt-4">
                             <div class="border-t border-gray-200 dark:border-slate-700 my-4"></div>
 
                             <div v-if="!isShowingHidden" class="text-center pb-4">
@@ -256,13 +256,22 @@
                         :initial-validated-mentions="initialValidatedMentions"
                         :initial-validated-hashtags="initialValidatedHashtags"
                         border-class="border-gray-300 dark:border-slate-700 bg-gray-50 dark:bg-slate-800 dark:text-slate-50 focus:border-[#F02C56]"
-                        min-height="42px"
+                        min-height="40px"
                         max-height="120px"
                         @focus="handleInputFocus"
                     />
                 </div>
 
-                <div class="flex items-center space-x-2 pt-2">
+                <div class="flex items-center space-x-2 pt-1">
+                    <button
+                        v-if="hasKlipy"
+                        type="button"
+                        class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800 dark:hover:text-white"
+                        aria-label="Open media picker"
+                        @click="pickerOpen = true"
+                    >
+                        <GifIcon class="w-5 h-5" />
+                    </button>
                     <EmojiPicker v-model="selectedEmoji" @select="onEmojiSelect">
                         <template #trigger="{ toggle }">
                             <button
@@ -304,6 +313,8 @@
                 {{ $t('post.signInToLeaveAComment') }}
             </div>
         </div>
+
+        <KlipyPicker :open="pickerOpen" @close="pickerOpen = false" @select="onSelect" />
     </div>
 </template>
 
@@ -313,7 +324,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCommentStore } from '@/stores/comments'
 import { useHashids } from '@/composables/useHashids'
-import { EyeIcon, EyeSlashIcon } from '@heroicons/vue/24/outline'
+import { EyeIcon, EyeSlashIcon, GifIcon } from '@heroicons/vue/24/outline'
 import EmojiPicker from '@/components/Form/EmojiPicker.vue'
 import CommentItem from './CommentItem.vue'
 import Spinner from '../Spinner.vue'
@@ -325,6 +336,7 @@ const appStore = inject('appStore')
 const videoStore = inject('videoStore')
 const commentStore = useCommentStore()
 const { decodeHashid } = useHashids()
+const api = useApiClient()
 
 const newComment = ref('')
 const isSubmitting = ref(false)
@@ -337,6 +349,7 @@ const commentInputRef = ref(null)
 const initialValidatedMentions = ref([])
 const initialValidatedHashtags = ref([])
 const hasAutoMentioned = ref(new Set())
+const hasKlipy = window.appConfig?.hasKlipy
 
 const handleInputFocus = async () => {
     const vid = currentVideo.value?.id
@@ -387,6 +400,10 @@ const isShowingHidden = computed(() =>
     videoId.value ? commentStore.isShowingHidden(videoId.value) : false
 )
 
+const hasHiddenComments = computed(() =>
+    videoId.value ? commentStore.hasHiddenComments(videoId.value) : false
+)
+
 const highlightedComment = computed(() =>
     videoId.value ? commentStore.getHighlightedComment(videoId.value) : null
 )
@@ -402,6 +419,29 @@ const previewComments = computed(() => comments.value.slice(0, 2))
 const canComment = computed(() => {
     return currentVideo.value?.permissions?.can_comment !== false
 })
+
+const pickerOpen = ref(false)
+const message = ref('')
+
+const onSelect = async ({ type, item }) => {
+    pickerOpen.value = false
+
+    const text = normalizedComment.value
+
+    try {
+        await commentStore.addCommentMedia(videoId.value, type, item, text)
+    } catch (error) {
+        console.error('Failed to post media comment:', error)
+    } finally {
+        newComment.value = ''
+        initialValidatedMentions.value = []
+        initialValidatedHashtags.value = []
+
+        if (commentInputRef.value) {
+            commentInputRef.value.clear()
+        }
+    }
+}
 
 const normalizedComment = computed(() => newComment.value.trim())
 

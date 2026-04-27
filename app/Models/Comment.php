@@ -162,6 +162,20 @@ class Comment extends Model
         return $this->belongsTo(Video::class);
     }
 
+    /** @return MorphMany<MediaAttachments, $this> */
+    public function mediaAttachments()
+    {
+        return $this->morphMany(MediaAttachments::class, 'attachable')->orderBy('order');
+    }
+
+    public function recalculateMedia(): void
+    {
+        $count = $this->mediaAttachments()->count();
+        $this->media_count = $count;
+        $this->has_media = $count > 0;
+        $this->saveQuietly();
+    }
+
     public function recalculateReplies()
     {
         $this->update(['replies' => CommentReply::where('comment_id', $this->id)->count()]);

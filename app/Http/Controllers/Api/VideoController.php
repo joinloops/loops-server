@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\DeleteVideoRequest;
 use App\Http\Requests\GetMentionAutocomplete;
 use App\Http\Requests\GetTagAutocomplete;
+use App\Http\Requests\StoreCommentMediaRequest;
 use App\Http\Requests\StoreCommentReplyUpdateRequest;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\StoreCommentUpdateRequest;
@@ -22,6 +23,7 @@ use App\Http\Resources\VideoCaptionEditResource;
 use App\Http\Resources\VideoLikeResource;
 use App\Http\Resources\VideoRepostResource;
 use App\Http\Resources\VideoResource;
+use App\Jobs\Comment\CommentKlipyMediaShareTriggerJob;
 use App\Jobs\Federation\DeliverCommentLikeActivity;
 use App\Jobs\Federation\DeliverCommentReplyLikeActivity;
 use App\Jobs\Federation\DeliverUndoCommentLikeActivity;
@@ -51,6 +53,7 @@ use App\Services\AccountService;
 use App\Services\ActivityPubCacheService;
 use App\Services\ConfigService;
 use App\Services\FederationDispatcher;
+use App\Services\KlipyMediaSelector;
 use App\Services\LikeService;
 use App\Services\NotificationService;
 use App\Services\SanitizeService;
@@ -524,7 +527,7 @@ class VideoController extends Controller
             return $this->error('Video not found or is unavailable or has comments disabled', 404);
         }
 
-        $comments = Comment::withTrashed()
+        $comments = Comment::with('mediaAttachments')->withTrashed()
             ->whereVideoId($video->id)
             ->where('is_hidden', false)
             ->orderByDesc('id')
@@ -542,7 +545,8 @@ class VideoController extends Controller
             return $this->error('Video not found or is unavailable or has comments disabled', 404);
         }
 
-        $comments = Comment::withTrashed()
+        $comments = Comment::with('mediaAttachments')
+            ->withTrashed()
             ->whereVideoId($video->id)
             ->where('is_hidden', true)
             ->orderByDesc('id')
@@ -654,6 +658,69 @@ class VideoController extends Controller
             CommentResource::collection([$comment]);
     }
 
+    public function storeCommentMedia(StoreCommentMediaRequest $request, $vid)
+    {
+        $user = $request->user();
+        $pid = $user->profile_id;
+        $video = Video::published()->canComment()->find($vid);
+
+        if (! $video || $user->cannot('view', [Video::class, $video])) {
+            return $this->error('Video not found or is unavailable or has comments disabled', 404);
+        }
+
+        $body = $request->filled('comment') ? $this->purifyText($request->comment) : null;
+        $klipy = $request->input('item');
+        $type = $request->input('type');
+        $klipyId = data_get($klipy, 'id', $klipy['slug']);
+
+        $picked = app(KlipyMediaSelector::class)->pick($klipy, $type);
+
+        $comment = new Comment;
+        $comment->video_id = $vid;
+        $comment->profile_id = $pid;
+        $comment->caption = $body;
+        $comment->status = 'active';
+        $comment->save();
+
+        if ($body) {
+            $comment->syncHashtagsFromCaption();
+            $comment->syncMentionsFromCaption();
+        }
+
+        $comment->mediaAttachments()->create([
+            'profile_id' => $pid,
+            'remote_url' => $picked['url'],
+            'mime_type' => $picked['mime_type'],
+            'width' => $picked['width'],
+            'height' => $picked['height'],
+            'description' => $klipy['title'],
+            'provider' => 'klipy',
+            'external_id' => $klipyId,
+            'visibility' => 1,
+        ]);
+
+        $comment->recalculateMedia();
+
+        $config = app(ConfigService::class);
+        if ($config->federation()) {
+            app(FederationDispatcher::class)->dispatchCommentCreation($comment);
+        }
+        if ($config->pushNotifications() && $pid != $video->profile_id) {
+            SendPushNotificationJob::dispatch_newVideoComment(
+                profileId: $video->profile_id,
+                videoId: $video->id,
+                actorId: $pid,
+                commentId: $comment->id,
+            );
+        }
+
+        CommentKlipyMediaShareTriggerJob::dispatch((string) $klipyId, $type, (string) $user->id);
+
+        $video->recalculateCommentsCount();
+
+        return CommentResource::collection([$comment->load('mediaAttachments')]);
+    }
+
     public function storeCommentUpdate(StoreCommentUpdateRequest $request, $vid)
     {
         $pid = $request->user()->profile_id;
@@ -740,8 +807,10 @@ class VideoController extends Controller
 
         if ($comment->children_count) {
             $comment->update(['caption' => null, 'status' => 'deleted_by_user']);
+            $comment->mediaAttachments()->delete();
             $comment->delete();
         } else {
+            $comment->mediaAttachments()->delete();
             $comment->forceDelete();
         }
 

@@ -31,6 +31,12 @@
                     >
                         Hidden
                     </span>
+                    <div
+                        v-if="item.media_count && !value"
+                        class="max-w-xs truncate italic text-gray-500 dark:text-gray-400"
+                    >
+                        {{ item.media_count }} media attached
+                    </div>
                     <div class="max-w-xs truncate" :title="value">{{ value }}</div>
                 </div>
             </template>

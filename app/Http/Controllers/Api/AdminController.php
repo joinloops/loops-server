@@ -932,6 +932,8 @@ class AdminController extends Controller
 
         $query = Comment::query();
 
+        $query = $query->with('mediaAttachments');
+
         if ($local) {
             $query->whereNull('ap_id');
         }
@@ -974,7 +976,7 @@ class AdminController extends Controller
 
     public function getComment(Request $request, $id)
     {
-        $query = Comment::findOrFail($id);
+        $query = Comment::with('mediaAttachments')->findOrFail($id);
 
         return new CommentResource($query);
     }

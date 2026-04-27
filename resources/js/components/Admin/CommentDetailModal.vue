@@ -97,7 +97,15 @@
                         <div
                             class="rounded-xl bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-4 py-3"
                         >
+                            <template v-if="comment.media?.length">
+                                <CommentMediaAttachment
+                                    v-for="m in comment.media"
+                                    :key="m.id"
+                                    :media="m"
+                                />
+                            </template>
                             <p
+                                v-if="comment?.caption"
                                 class="text-gray-800 dark:text-gray-200 text-sm leading-relaxed whitespace-pre-wrap break-words"
                                 :class="{ 'italic opacity-60': comment.tombstone }"
                             >
@@ -333,6 +341,7 @@ import {
     LinkIcon,
     ArrowTopRightOnSquareIcon
 } from '@heroicons/vue/24/outline'
+import CommentMediaAttachment from '../Status/CommentMediaAttachment.vue'
 const { truncateMiddle, formatNumber, formatRecentDate } = useUtils()
 
 defineProps({

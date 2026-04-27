@@ -235,7 +235,7 @@ class CreateActivityBuilder
         $commentObject = [
             'id' => $comment->getObjectUrl(),
             'type' => 'Note',
-            'content' => AutoLinkerService::link($comment->caption),
+            'content' => $comment->caption ? AutoLinkerService::link($comment->caption) : null,
             'attributedTo' => $actor->getActorId(),
             'inReplyTo' => $comment->video->getObjectUrl(),
             'url' => $comment->shareUrl(),
@@ -287,6 +287,20 @@ class CreateActivityBuilder
             }
         }
 
+        if ($comment->has_media) {
+            $media = $comment->mediaAttachments->map(function ($m) {
+                return [
+                    'type' => 'Document',
+                    'mediaType' => $m->mime_type,
+                    'url' => $m->remote_url,
+                    'name' => $m->description,
+                    'width' => $m->width,
+                    'height' => $m->height,
+                ];
+            })->filter()->toArray();
+            $commentObject['attachment'] = $media;
+        }
+
         $audience = Audience::getAudience($comment->visibility, $actor->getFollowersUrl(), $mentions);
         $commentObject['to'] = $audience['to'];
         $commentObject['cc'] = $audience['cc'];
@@ -336,7 +350,7 @@ class CreateActivityBuilder
         $commentObject = [
             'id' => $comment->getObjectUrl(),
             'type' => 'Note',
-            'content' => AutoLinkerService::link($comment->caption),
+            'content' => $comment->caption ? AutoLinkerService::link($comment->caption) : null,
             'attributedTo' => $actor->getActorId(),
             'inReplyTo' => $comment->parent->getObjectUrl(),
             'url' => $comment->shareUrl(),
