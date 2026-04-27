@@ -65,6 +65,7 @@ return [
     'unhideComment' => 'Unhide Comment',
     'unhideCommentDescription' => 'This comment will be unhidden from your video, and will be visible again. The commenter won\'t be notified.',
     'unhideCommentNote' => 'You can hide comments from the comment menu.',
+    'unsupportedMedia' => 'Unsupported media',
     'view' => 'View',
     'viewAllComments' => 'View All Comments',
     'writeAReplyDotDotDot' => 'Write a reply...',
