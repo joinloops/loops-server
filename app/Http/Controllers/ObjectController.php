@@ -132,7 +132,11 @@ class ObjectController extends Controller
         abort_if($actor != $video->profile_id || ! $video->is_local, 404);
         $hashId = HashidService::safeEncode($video->id);
 
-        return $this->renderVideoObject($video, $hashId);
+        if ($request->wantsJson()) {
+            return $this->renderVideoObject($video, $hashId);
+        }
+
+        return redirect('/v/'.$hashId);
     }
 
     public function showComment(Request $request, $videoHashId, $hashId)
