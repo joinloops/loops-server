@@ -592,6 +592,12 @@ const router = createRouter({
                     meta: { requiresAdmin: true }
                 },
                 {
+                    path: 'blocked-terms',
+                    name: 'blockedTermsgAdminHome',
+                    component: () => import('~/pages/admin/BlockedTerms.vue'),
+                    meta: { requiresAdmin: true }
+                },
+                {
                     path: 'curated-onboarding-settings',
                     name: 'curatedOnboardingAdminSettings',
                     component: () => import('~/pages/admin/OnboardingSettings.vue'),

@@ -8,6 +8,7 @@ use App\Http\Requests\AdminResetProfilePasswordRequest;
 use App\Http\Requests\AdminSendProfileEmailRequest;
 use App\Http\Requests\StoreAdminInviteRequest;
 use App\Http\Resources\AdminAuditLogResource;
+use App\Http\Resources\AdminBlockedTermResource;
 use App\Http\Resources\AdminHashtagResource;
 use App\Http\Resources\AdminInstanceResource;
 use App\Http\Resources\AdminInviteResource;
@@ -27,6 +28,7 @@ use App\Mail\AdminMessageMail;
 use App\Mail\AdminPasswordResetMail;
 use App\Models\AdminAuditLog;
 use App\Models\AdminInvite;
+use App\Models\BlockedTerm;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Follower;
@@ -49,6 +51,7 @@ use App\Services\ExploreService;
 use App\Services\InstanceService;
 use App\Services\NodeinfoCrawlerService;
 use App\Services\PrivateMediaTokenService;
+use App\Services\ProfanityFilterService;
 use App\Services\PushTokenCacheService;
 use App\Services\SanitizeService;
 use App\Services\StarterKitPendingChangeService;
@@ -63,6 +66,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AdminController extends Controller
 {
@@ -1020,6 +1024,196 @@ class AdminController extends Controller
         return CommentReplyResource::collection($comments);
     }
 
+    public function blockedTerms(Request $request)
+    {
+        $query = BlockedTerm::query();
+
+        $search = $request->filled('q') ? $request->query('q') : null;
+
+        $sort = $request->query('sort') ?? 'newest';
+
+        if ($type = $request->input('type')) {
+            $query->where('type', $type);
+        }
+
+        if ($search) {
+            $query->where('term', 'like', "%{$search}%");
+        }
+
+        $query = $this->applySorting($query, $sort);
+
+        $res = $query->cursorPaginate(25)->withQueryString();
+
+        return AdminBlockedTermResource::collection($res);
+    }
+
+    public function blockedTermsStore(Request $request)
+    {
+        $data = $request->validate([
+            'term' => ['required', 'string', 'max:120', 'unique:blocked_terms,term'],
+            'type' => ['required', 'in:block,allow'],
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $data['term'] = mb_strtolower(trim($data['term']));
+        $data['created_by'] = $request->user()->id;
+
+        $term = BlockedTerm::create($data);
+
+        app(AdminAuditLogService::class)->logBlockedTermCreate($request->user(), $term);
+        BlockedTerm::flushCache();
+
+        return new AdminBlockedTermResource($term);
+    }
+
+    public function blockedTermsUpdate(Request $request, BlockedTerm $blockedTerm)
+    {
+        $data = $request->validate([
+            'term' => ['sometimes', 'string', 'max:120', 'unique:blocked_terms,term,'.$blockedTerm->id],
+            'type' => ['sometimes', 'in:block,allow'],
+            'note' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        if (isset($data['term'])) {
+            $data['term'] = mb_strtolower(trim($data['term']));
+        }
+        $old = $blockedTerm->only(['term', 'type', 'note']);
+        $blockedTerm->update($data);
+        $blockedTerm->refresh();
+
+        $changes = ['old' => $old, 'new' => $blockedTerm->only(['term', 'type', 'note'])];
+
+        app(AdminAuditLogService::class)->logBlockedTermUpdate($request->user(), $blockedTerm, $changes);
+
+        BlockedTerm::flushCache();
+
+        return new AdminBlockedTermResource($blockedTerm);
+    }
+
+    public function blockedTermsDestroy(Request $request, BlockedTerm $blockedTerm)
+    {
+        $changes = $blockedTerm->only(['id', 'term', 'type', 'note', 'created_by', 'created_at']);
+        app(AdminAuditLogService::class)->logBlockedTermDelete($request->user(), $blockedTerm, $changes);
+
+        $blockedTerm->delete();
+        BlockedTerm::flushCache();
+
+        return response()->noContent();
+    }
+
+    public function blockedTermsTest(Request $request, ProfanityFilterService $filter)
+    {
+        $data = $request->validate([
+            'query' => ['required', 'string', 'max:500'],
+        ]);
+
+        return response()->json($filter->inspect($data['query']));
+    }
+
+    public function blockedTermsBulkFlushCache(Request $request)
+    {
+        BlockedTerm::flushCache();
+
+        return response()->noContent();
+    }
+
+    public function blockedTermsCounts(Request $request)
+    {
+        $counts = Cache::remember('admin:blocked-terms:counts', now()->addHours(15), function () {
+            $byType = BlockedTerm::selectRaw('type, COUNT(*) as count')
+                ->groupBy('type')
+                ->pluck('count', 'type');
+
+            return [
+                'total' => (int) $byType->sum(),
+                'block' => (int) ($byType['block'] ?? 0),
+                'allow' => (int) ($byType['allow'] ?? 0),
+            ];
+        });
+
+        return response()->json($counts);
+    }
+
+    public function blockedTermsExport(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:all,block,allow',
+            'format' => 'required|in:list,csv,json',
+        ]);
+
+        $stamp = now()->format('Y-m-d');
+
+        $ext = match ($validated['format']) {
+            'list' => 'txt',
+            'csv' => 'csv',
+            'json' => 'json',
+            default => 'txt',
+        };
+
+        $filename = "blocked-terms-{$validated['type']}-{$stamp}.{$ext}";
+
+        return match ($validated['format']) {
+            'list' => $this->exportList($validated['type'], $filename),
+            'csv' => $this->exportCsv($validated['type'], $filename),
+            'json' => $this->exportJson($validated['type'], $filename),
+            default => [],
+        };
+    }
+
+    public function blockedTermsDeleteAll(Request $request)
+    {
+        $validated = $request->validate([
+            'type' => 'required|in:all,block,allow',
+        ]);
+
+        $query = BlockedTerm::query();
+        if ($validated['type'] !== 'all') {
+            $query->where('type', $validated['type']);
+        }
+
+        app(AdminAuditLogService::class)->logBlockedTermDeleteAll($request->user(), ['total' => $query->count()]);
+
+        $deleted = $query->delete();
+
+        BlockedTerm::flushCache();
+
+        return response()->json(['deleted' => (int) $deleted]);
+    }
+
+    public function blockedTermsBulkImport(Request $request)
+    {
+        $data = $request->validate([
+            'terms' => ['required', 'array', 'max:1000'],
+            'terms.*' => ['required', 'string', 'max:120'],
+            'type' => ['required', 'in:block,allow'],
+            'note' => ['sometimes', 'nullable', 'string', 'max:500'],
+        ]);
+
+        $now = now();
+        $userId = $request->user()->id;
+
+        $rows = collect($data['terms'])
+            ->map(fn ($t) => mb_strtolower(trim($t)))
+            ->filter()
+            ->unique()
+            ->map(fn ($term) => [
+                'term' => $term,
+                'type' => $data['type'],
+                'note' => $data['note'],
+                'created_by' => $userId,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ])
+            ->all();
+
+        BlockedTerm::insertOrIgnore($rows);
+        BlockedTerm::flushCache();
+
+        app(AdminAuditLogService::class)->logBlockedTermBulkImport($request->user(), ['total' => count($rows)]);
+
+        return response()->json(['inserted' => count($rows)]);
+    }
+
     public function hashtags(Request $request)
     {
         $q = $request->query('q');
@@ -1901,6 +2095,8 @@ class AdminController extends Controller
             'count_desc' => ['count', 'desc'],
             'domain_asc' => ['domain', 'asc'],
             'domain_desc' => ['domain', 'desc'],
+            'term_asc' => ['term', 'asc'],
+            'term_desc' => ['term', 'desc'],
         ];
 
         if (str_starts_with($sort, 'is_')) {
@@ -2000,5 +2196,87 @@ class AdminController extends Controller
         }
 
         return false;
+    }
+
+    protected function exportList(string $type, string $filename): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($type) {
+            $handle = fopen('php://output', 'w');
+
+            $query = BlockedTerm::query()->orderBy('id');
+            if ($type !== 'all') {
+                $query->where('type', $type);
+            }
+
+            $query->chunk(1000, function ($terms) use ($handle) {
+                foreach ($terms as $term) {
+                    fwrite($handle, $term->term."\n");
+                }
+            });
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/plain; charset=UTF-8',
+        ]);
+    }
+
+    protected function exportCsv(string $type, string $filename): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($type) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF");
+            fputcsv($handle, ['term', 'type', 'note', 'created_at']);
+
+            $query = BlockedTerm::query()->orderBy('id');
+            if ($type !== 'all') {
+                $query->where('type', $type);
+            }
+
+            $query->chunk(1000, function ($terms) use ($handle) {
+                foreach ($terms as $term) {
+                    fputcsv($handle, [
+                        $term->term,
+                        $term->type,
+                        $term->note,
+                        $term->created_at?->toIso8601String(),
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    protected function exportJson(string $type, string $filename)
+    {
+        $data = [];
+        $query = BlockedTerm::query()->orderBy('id');
+        if ($type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        $query->chunk(1000, function ($terms) use (&$data) {
+            foreach ($terms as $term) {
+                $data[] = [
+                    'term' => $term->term,
+                    'type' => $term->type,
+                    'note' => $term->note,
+                    'created_at' => $term->created_at?->toIso8601String(),
+                ];
+            }
+        });
+
+        $payload = [
+            'exported_at' => now()->toIso8601String(),
+            'type' => $type,
+            'count' => count($data),
+            'terms' => $data,
+        ];
+
+        return response()->json($payload, 200, [
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ], JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }

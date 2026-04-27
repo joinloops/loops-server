@@ -349,7 +349,8 @@ import {
     ArrowPathIcon,
     MagnifyingGlassIcon,
     ChevronDownIcon,
-    WalletIcon
+    WalletIcon,
+    ChatBubbleBottomCenterIcon
 } from '@heroicons/vue/24/outline'
 import { useAdminStore } from '~/stores/admin'
 
@@ -380,6 +381,11 @@ const navigation = computed(() => [
     {
         title: 'Moderation',
         items: [
+            {
+                name: 'Blocked Terms',
+                href: '/admin/blocked-terms',
+                icon: ChatBubbleBottomCenterIcon
+            },
             { name: 'Reports', href: '/admin/reports', icon: ExclamationTriangleIcon },
             { name: 'Kit Updates', href: '/admin/starter-kits-review', icon: WalletIcon },
             ...(config.value?.curated_onboarding_enabled

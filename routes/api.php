@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\DuetController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\ForYouFeedController;
+use App\Http\Controllers\Api\KlipyController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SettingsController;
@@ -491,6 +492,16 @@ Route::prefix('api')->group(function () {
         Route::get('/starter-kits/pending-changes/{changeset}', [AdminController::class, 'starterKitsReviewShow'])->middleware('auth:web,api');
         Route::post('/starter-kits/pending-changes/{changeset}/fields/{field}/approve', [AdminController::class, 'starterKitsReviewApproveField'])->middleware('auth:web,api');
         Route::post('/starter-kits/pending-changes/{changeset}/fields/{field}/reject', [AdminController::class, 'starterKitsReviewRejectField'])->middleware('auth:web,api');
+        Route::get('/blocked-terms', [AdminController::class, 'blockedTerms']);
+        Route::get('/blocked-terms/counts', [AdminController::class, 'blockedTermsCounts']);
+        Route::get('/blocked-terms/export', [AdminController::class, 'blockedTermsExport']);
+        Route::post('/blocked-terms', [AdminController::class, 'blockedTermsStore']);
+        Route::put('/blocked-terms/{blockedTerm}', [AdminController::class, 'blockedTermsUpdate']);
+        Route::post('/blocked-terms/delete-all', [AdminController::class, 'blockedTermsDeleteAll']);
+        Route::delete('/blocked-terms/delete-term/{blockedTerm}', [AdminController::class, 'blockedTermsDestroy']);
+        Route::post('/blocked-terms/bulk-import', [AdminController::class, 'blockedTermsBulkImport']);
+        Route::post('/blocked-terms/test', [AdminController::class, 'blockedTermsTest']);
+        Route::post('/blocked-terms/flush-cache', [AdminController::class, 'blockedTermsBulkFlushCache']);
     });
 
     Route::any('{any}', function () {

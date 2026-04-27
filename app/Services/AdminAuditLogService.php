@@ -52,6 +52,31 @@ class AdminAuditLogService
         return $this->log($user, 'instance:activated', null, $instance, null, 1);
     }
 
+    public function logBlockedTermCreate(User|int $user, $term)
+    {
+        return $this->log($user, 'blocked_term:create', null, $term, null, 1);
+    }
+
+    public function logBlockedTermUpdate(User|int $user, $term, $changes)
+    {
+        return $this->log($user, 'blocked_term:update', $changes, $term, null, 1);
+    }
+
+    public function logBlockedTermDelete(User|int $user, $term, $changes)
+    {
+        return $this->log($user, 'blocked_term:delete', $changes, $term, null, 1);
+    }
+
+    public function logBlockedTermDeleteAll(User|int $user, $changes)
+    {
+        return $this->log($user, 'blocked_term:delete_all', $changes, null, null, 1);
+    }
+
+    public function logBlockedTermBulkImport(User|int $user, $changes)
+    {
+        return $this->log($user, 'blocked_term:import', $changes, null, null, 1);
+    }
+
     public function logInstanceUpdateSettings(User|int $user, $instance, $changes)
     {
         return $this->log($user, 'instance:updated_settings', $changes, $instance, null, 1);

@@ -631,3 +631,62 @@ export const apiClient = {
         return response
     }
 }
+
+// Blocked terms
+export const blockedTermsApi = {
+    async getTerms({
+        cursor = null,
+        direction = 'next',
+        search = '',
+        sort = null,
+        type = null
+    } = {}) {
+        return await apiClient.get('/api/v1/admin/blocked-terms', {
+            cursor,
+            direction,
+            q: search,
+            sort,
+            type
+        })
+    },
+
+    async createTerm(data) {
+        return await apiClient.post('/api/v1/admin/blocked-terms', data)
+    },
+
+    async updateTerm(id, data) {
+        return await apiClient.put(`/api/v1/admin/blocked-terms/${id}`, data)
+    },
+
+    async deleteTerm(id) {
+        return await apiClient.delete(`/api/v1/admin/blocked-terms/delete-term/${id}`)
+    },
+
+    async bulkImport(data) {
+        return await apiClient.post('/api/v1/admin/blocked-terms/bulk-import', data)
+    },
+
+    async testTerm(query) {
+        return await apiClient.post('/api/v1/admin/blocked-terms/test', { query })
+    },
+
+    async getCounts() {
+        return await apiClient.get('/api/v1/admin/blocked-terms/counts')
+    },
+
+    async exportTerms({ type, format }) {
+        const axiosInstance = axios.getAxiosInstance()
+        return await axiosInstance.get('/api/v1/admin/blocked-terms/export', {
+            params: { type, format },
+            responseType: 'blob'
+        })
+    },
+
+    async deleteAllTerms({ type }) {
+        return await apiClient.post('/api/v1/admin/blocked-terms/delete-all', { type: type })
+    },
+
+    async flushCache() {
+        return await apiClient.post('/api/v1/admin/blocked-terms/flush-cache')
+    }
+}
