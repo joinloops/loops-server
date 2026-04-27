@@ -21,6 +21,8 @@ return [
     'failedToUpdateProfileErrorMessage' => 'Failed to update profile. Please try again.',
     'favouritePosts' => 'Favourite posts',
     'followRequestPending' => 'Follow Request Pending',
+    'followersOnlyMessage' => ':username reviews follow requests. Only approved followers can see this list.',
+    'followersOnlyTitle' => 'Followers-only',
     'likes' => 'Likes',
     'loadingProfileDotDotDot' => 'Loading profile...',
     'noFollowersYet' => 'No followers yet',
