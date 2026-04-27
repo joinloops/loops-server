@@ -16,7 +16,6 @@ use App\Http\Controllers\Api\DuetController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\FeedController;
 use App\Http\Controllers\Api\ForYouFeedController;
-use App\Http\Controllers\Api\KlipyController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SettingsController;
