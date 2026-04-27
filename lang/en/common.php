@@ -335,6 +335,7 @@ return [
     'signIntoYourAccountToContinue' => 'Sign in to your account to continue',
     'signUp' => 'Sign up',
     'skipForNow' => 'Skip for now',
+    'slowDownAMoment' => 'Slow down a moment',
     'someFieldsHaveBeenUpdatedAndAreWaitingForModeratorApproval' => 'Some fields have been updated and are waiting for moderator approval',
     'somethingWentWrong' => 'Something went wrong',
     'somethingWentWrongPleaseTryAgain' => 'Something went wrong. Please try again.',
@@ -453,4 +454,5 @@ return [
     'youveAlreadyDeclinedTheInvitationTo' => 'You\'ve already declined the invitation to',
     'youveBeenAddedToAStarterKit' => 'You\'ve been added to a Starter Kit',
     'youveCreatedTheMaximumOf' => 'You\'ve created the maximum of',
+    'youveHitTheSearchLimitWellTryAgainAutomatically' => 'You\'ve hit the search limit. We\'ll try again automatically.',
 ];
