@@ -178,7 +178,7 @@ class AccountController extends Controller
 
     public function getSystemNotification(Request $request, $id)
     {
-        $systemMessage = SystemMessage::active()->published()->where('key_id', $id)->first();
+        $systemMessage = SystemMessage::active()->published()->where('key_id', $id)->firstOrFail();
         $cached = app(SystemMessageService::class)->getFull($systemMessage->id);
 
         return response()->json(['data' => $cached]);
@@ -576,7 +576,7 @@ class AccountController extends Controller
         $authProfileId = $request->user()->profile_id;
 
         if ($authProfileId == $id) {
-            return $this->error('Cannot get mutual following with yourself', 200);
+            return $this->error('Cannot get mutual following with yourself', 422);
         }
 
         if (! $request->user()->can_follow || $request->user()->cannot('viewAny', [Profile::class])) {
@@ -812,7 +812,7 @@ class AccountController extends Controller
         ]);
     }
 
-    public function defaultCursorTokenResponse($request, $limit)
+    public function defaultCursorTokenResponse(Request $request, int $limit)
     {
         return response()->json([
             'data' => [],
