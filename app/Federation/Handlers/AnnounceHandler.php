@@ -74,7 +74,7 @@ class AnnounceHandler extends BaseHandler
                 $share = $this->createVideoRepostAnnounce($actor, $modelObject, $activity);
                 $this->updateVideoShareCount($modelObject);
 
-                if ($actor->id !== $video->profile_id) {
+                if ((string) $actor->id !== (string) $video->profile_id) {
                     NotificationService::newVideoShare(
                         $video->profile_id,
                         $video->id,
@@ -106,7 +106,7 @@ class AnnounceHandler extends BaseHandler
 
                 $share = $this->createCommentRepostAnnounce($actor, $comment, $activity);
 
-                if ($actor->id !== $comment->profile_id) {
+                if ((string) $actor->id !== (string) $comment->profile_id) {
                     NotificationService::newVideoCommentShare(
                         $comment->profile_id,
                         $comment->id,
@@ -139,7 +139,7 @@ class AnnounceHandler extends BaseHandler
 
                 $share = $this->createCommentReplyRepostAnnounce($actor, $reply, $activity);
 
-                if ($actor->id !== $reply->profile_id) {
+                if ((string) $actor->id !== (string) $reply->profile_id) {
                     NotificationService::newVideoReplyShare(
                         $reply->profile_id,
                         $reply->id,

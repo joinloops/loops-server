@@ -88,6 +88,11 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
 
             if (($this->activity['type'] ?? null) === 'Delete') {
                 if (! $this->validateDeleteOrigin($verifiedActor)) {
+                    Log::info('Delete dropped at origin validation', [
+                        'activity_id' => $this->activity['id'] ?? null,
+                        'actor' => is_object($verifiedActor) ? ($verifiedActor->uri ?? null) : null,
+                    ]);
+
                     return;
                 }
             }
@@ -431,27 +436,47 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
     protected function validateDeleteOrigin($actor): bool
     {
         if (! isset($this->activity['object'])) {
+            Log::info('Delete rejected: missing object', ['activity_id' => $this->activity['id'] ?? null]);
+
             return false;
         }
 
         $objectUrl = is_array($this->activity['object'])
-            ? data_get($this->activity, 'object.id', null)
-            : data_get($this->activity, 'object', null);
+            ? data_get($this->activity, 'object.id')
+            : data_get($this->activity, 'object');
 
         if (! $objectUrl) {
+            Log::info('Delete rejected: no object url', ['activity_id' => $this->activity['id'] ?? null]);
+
             return false;
         }
 
         $actorDomain = is_object($actor)
-            ? ($actor->domain ?? parse_url($actor->uri ?? '', PHP_URL_HOST))
+            ? ($actor->domain ?: parse_url($actor->uri ?? '', PHP_URL_HOST))
             : null;
 
         if (! $actorDomain) {
+            Log::warning('Delete rejected: no actor domain', [
+                'activity_id' => $this->activity['id'] ?? null,
+                'actor_class' => get_class($actor),
+                'actor_uri' => ($actor->uri ?? null),
+            ]);
+
             return false;
         }
 
         $objectDomain = parse_url($objectUrl, PHP_URL_HOST);
 
-        return $objectDomain && strtolower($actorDomain) === strtolower($objectDomain);
+        $match = $objectDomain && strtolower($actorDomain) === strtolower($objectDomain);
+
+        if (! $match) {
+            Log::warning('Delete rejected: cross-domain origin mismatch', [
+                'activity_id' => $this->activity['id'] ?? null,
+                'actor_domain' => $actorDomain,
+                'object_domain' => $objectDomain,
+            ]);
+        }
+
+        return $match;
     }
 }

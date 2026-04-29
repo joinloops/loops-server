@@ -56,7 +56,7 @@ class DeleteHandler extends BaseHandler
             return true;
         }
 
-        if ($actor && $account->id !== $actor->id) {
+        if ($actor && (string) $account->id !== (string) $actor->id) {
             if (config('logging.dev_log')) {
                 Log::warning('Rejecting profile delete by non-owner', ['actor' => $actor->id, 'target' => $account->id]);
             }
@@ -87,7 +87,7 @@ class DeleteHandler extends BaseHandler
 
                 return true;
             }
-            if ($actor && $account->id !== $actor->id) {
+            if ($actor && (string) $account->id !== (string) $actor->id) {
                 if (config('logging.dev_log')) {
                     Log::warning('Rejecting profile delete by non-owner', ['target' => $account->id]);
                 }
@@ -108,7 +108,7 @@ class DeleteHandler extends BaseHandler
 
         $comment = Comment::where('ap_id', $objectUrl)->first();
         if ($comment) {
-            if ($actor && $comment->profile_id !== $actor->id) {
+            if ($actor && (string) $comment->profile_id !== (string) $actor->id) {
                 if (config('logging.dev_log')) {
                     Log::warning('Rejecting comment delete by non-owner', ['actor' => $actor->id, 'target' => $comment->profile_id]);
                 }
@@ -134,7 +134,7 @@ class DeleteHandler extends BaseHandler
 
         $video = Video::where('ap_id', $objectUrl)->first();
         if ($video && ! $video->is_local) {
-            if ($actor && $video->profile_id !== $actor->id) {
+            if ($actor && (string) $video->profile_id !== (string) $actor->id) {
                 if (config('logging.dev_log')) {
                     Log::warning('Rejecting video delete by non-owner', ['actor' => $actor->id, 'target' => $video->profile_id]);
                 }
@@ -160,7 +160,7 @@ class DeleteHandler extends BaseHandler
 
         $commentReply = CommentReply::where('ap_id', $objectUrl)->first();
         if ($commentReply) {
-            if ($actor && $commentReply->profile_id !== $actor->id) {
+            if ($actor && (string) $commentReply->profile_id !== (string) $actor->id) {
                 if (config('logging.dev_log')) {
                     Log::warning('Rejecting comment reply delete by non-owner', ['actor' => $actor->id, 'target' => $commentReply->profile_id]);
                 }

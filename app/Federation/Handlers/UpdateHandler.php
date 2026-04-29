@@ -78,7 +78,7 @@ class UpdateHandler extends BaseHandler
 
         $statusClass = get_class($status);
 
-        if ($status->profile_id !== $actor->id) {
+        if ((string) $status->profile_id !== (string) $actor->id) {
             if (config('logging.dev_log')) {
                 Log::warning('Update activity rejected - actor not authorized', [
                     'actor' => $actor->username,
@@ -157,7 +157,7 @@ class UpdateHandler extends BaseHandler
         }
 
         // Verify the actor owns the profile or is authorized to update it
-        if ($profile->id !== $actor->id) {
+        if ((string) $profile->id !== (string) $actor->id) {
             if (config('logging.dev_log')) {
                 Log::warning('Update activity rejected - actor not authorized for profile update', [
                     'actor' => $actor->username,

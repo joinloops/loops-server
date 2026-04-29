@@ -155,7 +155,7 @@ class UndoHandler extends BaseHandler
             $status->decrement('likes');
         }
 
-        if ($actor->id !== $status->profile_id) {
+        if ((string) $actor->id !== (string) $status->profile_id) {
             NotificationService::deleteVideoLike(
                 $status->profile_id,
                 $status->id,
@@ -196,7 +196,7 @@ class UndoHandler extends BaseHandler
             $status->decrement('likes');
         }
 
-        if ($actor->id !== $status->profile_id) {
+        if ((string) $actor->id !== (string) $status->profile_id) {
             NotificationService::deleteCommentLike(
                 $status->profile_id,
                 $status->id,
@@ -237,7 +237,7 @@ class UndoHandler extends BaseHandler
             $status->decrement('likes');
         }
 
-        if ($actor->id !== $status->profile_id) {
+        if ((string) $actor->id !== (string) $status->profile_id) {
             NotificationService::deleteCommentReplyLike(
                 $status->profile_id,
                 $actor->id,
@@ -279,7 +279,7 @@ class UndoHandler extends BaseHandler
             $status->decrement('shares');
         }
 
-        if ($actor->id !== $status->profile_id) {
+        if ((string) $actor->id !== (string) $status->profile_id) {
             NotificationService::deleteVideoShare(
                 $status->profile_id,
                 $status->id,
@@ -320,7 +320,7 @@ class UndoHandler extends BaseHandler
             $status->decrement('shares');
         }
 
-        if ($actor->id !== $status->profile_id) {
+        if ((string) $actor->id !== (string) $status->profile_id) {
             NotificationService::deleteVideoCommentShare(
                 $status->profile_id,
                 $status->id,
@@ -362,7 +362,7 @@ class UndoHandler extends BaseHandler
             $status->decrement('shares');
         }
 
-        if ($actor->id !== $status->profile_id) {
+        if ((string) $actor->id !== (string) $status->profile_id) {
             NotificationService::deleteVideoReplyShare(
                 $status->profile_id,
                 $status->id,
