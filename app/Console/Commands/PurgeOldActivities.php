@@ -19,14 +19,14 @@ class PurgeOldActivities extends Command
      *
      * @var string
      */
-    protected $description = 'Purge federation activitylog entries older than 30 days';
+    protected $description = 'Purge federation activitylog entries older than 14 days';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        $count = Activity::where('created_at', '<', now()->subDays(30))->delete();
+        $count = Activity::where('created_at', '<', now()->subDays(14))->delete();
         $this->info("Purged {$count} activities!");
     }
 }
