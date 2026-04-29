@@ -16,6 +16,7 @@ Schedule::command('app:instance-stats-collector-command')->hourlyAt(20)->onOneSe
 Schedule::command('logs:clean-admin-security --days=14')->dailyAt('03:00')->onOneServer();
 Schedule::command('curated:expire-stale')->hourly()->onOneServer();
 Schedule::command('admin:check-activity')->everySixHours(15)->onOneServer();
+Schedule::command('app:purge-old-activities')->daily()->at('16:20')->onOneServer();
 
 if (config('loops.admin_dashboard.autoUpdate')) {
     Schedule::command('admin:refresh-dashboard-30d')->everyThirtyMinutes()->onOneServer();
