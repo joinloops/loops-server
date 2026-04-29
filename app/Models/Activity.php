@@ -62,6 +62,9 @@ class Activity extends Model
     ];
 
     protected $casts = [
+        'to' => 'array',
+        'cc' => 'array',
+        'bcc' => 'array',
         'payload' => 'array',
         'raw_activity' => 'array',
         'processed' => 'boolean',
