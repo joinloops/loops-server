@@ -72,6 +72,18 @@ class ProcessInboxActivity implements ShouldQueue
             ]);
         }
 
+        if (! $this->actor) {
+            if (config('logging.dev_log')) {
+                Log::error('Failed to process activity', [
+                    'type' => $this->activity['type'] ?? 'unknown',
+                    'actor' => $this->actor ?? 'missing or invalid actor',
+                    'id' => $this->activity['id'] ?? null,
+                ]);
+            }
+
+            return;
+        }
+
         try {
             $result = $activityService->processIncomingActivity($this->activity, $this->actor, $this->target);
 
