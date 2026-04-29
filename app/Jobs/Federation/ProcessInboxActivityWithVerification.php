@@ -88,11 +88,6 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
 
             if (($this->activity['type'] ?? null) === 'Delete') {
                 if (! $this->validateDeleteOrigin($verifiedActor)) {
-                    Log::warning('Delete activity origin mismatch', [
-                        'activity_id' => $this->activity['id'] ?? null,
-                        'actor' => $verifiedActor->uri ?? $verifiedActor->domain ?? 'unknown',
-                    ]);
-
                     return;
                 }
             }
