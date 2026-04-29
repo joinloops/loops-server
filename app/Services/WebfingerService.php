@@ -78,7 +78,8 @@ class WebfingerService
             return null;
         }
 
-        $webfingerUrl = "https://{$parsed['domain']}/.well-known/webfinger?resource=acct:".urlencode($resource);
+        $acctResource = 'acct:'.ltrim(preg_replace('/^acct:/', '', $resource), '@');
+        $webfingerUrl = "https://{$parsed['domain']}/.well-known/webfinger?resource=".urlencode($acctResource);
 
         try {
             $response = Http::timeout(10)
