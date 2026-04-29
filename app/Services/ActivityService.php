@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Activity;
 use App\Models\InstanceActor;
 use App\Models\Profile;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class ActivityService
@@ -162,6 +163,18 @@ class ActivityService
         return null;
     }
 
+    protected function extractRawActivity(array $activity): ?array
+    {
+        Arr::forget($activity, '@context');
+        Arr::forget($activity, 'to');
+        Arr::forget($activity, 'cc');
+        Arr::forget($activity, 'bcc');
+        Arr::forget($activity, 'contentMap');
+        Arr::forget($activity, 'atomUri');
+
+        return $activity;
+    }
+
     /**
      * Store an activity in the database
      */
@@ -176,7 +189,7 @@ class ActivityService
                 'cc' => $activityData['cc'] ?? null,
                 'bcc' => $activityData['bcc'] ?? null,
                 'payload' => $this->extractContent($activityData),
-                'raw_activity' => $activityData,
+                'raw_activity' => $this->extractRawActivity($activityData),
                 'processed' => false,
             ]
         );
