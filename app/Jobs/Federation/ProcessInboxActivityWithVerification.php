@@ -97,6 +97,12 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
                 }
             }
 
+            if (! ($verifiedActor instanceof Profile)) {
+                $verifiedActor = isset($verifiedActor->uri)
+                    ? Profile::where('uri', $verifiedActor->uri)->first()
+                    : null;
+            }
+
             if ($this->isUserInbox && $this->targetActor) {
                 ProcessInboxActivity::dispatch($this->activity, $verifiedActor, $this->targetActor)
                     ->onQueue('activitypub-in');
@@ -203,6 +209,11 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
                 Log::info('Accepting Delete despite missing actor (likely deleted)', [
                     'actor' => $actorUrl,
                 ]);
+
+                $existing = Profile::where('uri', $actorUrl)->first();
+                if ($existing) {
+                    return ['valid' => true, 'actor' => $existing];
+                }
 
                 return ['valid' => true, 'actor' => (object) ['uri' => $actorUrl, 'domain' => $originDomain]];
             }
