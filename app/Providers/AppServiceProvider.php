@@ -117,7 +117,7 @@ class AppServiceProvider extends ServiceProvider
             // }
 
             return [
-                Limit::perMinute(5)->by($user->id),
+                Limit::perMinute(15)->by($user->id),
             ];
         });
 
