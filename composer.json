@@ -31,7 +31,7 @@
         "bacon/bacon-qr-code": "^3.0",
         "dansup/klipy-php": "1.1.0",
         "firebase/php-jwt": "^7.0",
-        "intervention/image-laravel": "^1.5",
+        "intervention/image-laravel": "^4.0",
         "laravel/framework": "^12.0",
         "laravel/horizon": "^5.33",
         "laravel/passport": "^13.0",
