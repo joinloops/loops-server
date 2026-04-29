@@ -43,7 +43,9 @@ class AnnounceHandler extends BaseHandler
             $modelObject = $this->findLocalStatus($objectUrl);
 
             if (! $modelObject) {
-                throw new \Exception("Target status not found: {$objectUrl}");
+                DB::commit();
+
+                return;
             }
 
             $modelClass = get_class($modelObject);

@@ -23,7 +23,9 @@ class FollowHandler extends BaseHandler
             $targetProfile = $this->findLocalProfile($targetUrl);
 
             if (! $targetProfile) {
-                throw new \Exception("Target profile not found: {$targetUrl}");
+                DB::commit();
+
+                return;
             }
 
             $targetIsBlocking = UserFilter::whereProfileId($targetProfile->id)->whereAccountId($actor->id)->exists();

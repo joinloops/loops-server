@@ -27,7 +27,9 @@ class LikeHandler extends BaseHandler
             $objectModel = $this->findLocalStatus($objectUrl);
 
             if (! $objectModel) {
-                throw new \Exception("Target status not found: {$objectUrl}");
+                DB::commit();
+
+                return;
             }
 
             $objectClass = get_class($objectModel);
