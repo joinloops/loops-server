@@ -41,7 +41,7 @@
         "lcobucci/jwt": "^5.6",
         "league/flysystem-aws-s3-v3": "^3.0",
         "pbmedia/laravel-ffmpeg": "^8.7",
-        "phpseclib/phpseclib": "3.0.51",
+        "phpseclib/phpseclib": "3.0.52",
         "pragmarx/google2fa-laravel": "^3.0",
         "predis/predis": "^3.2",
         "resend/resend-laravel": "^1.0.0",
