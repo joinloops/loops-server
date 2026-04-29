@@ -86,6 +86,8 @@ class CreateActivityBuilder
                     'mediaType' => 'video/mp4',
                     'url' => $video->mediaUrl(),
                     'name' => $video->alt_text,
+                    'width' => $video->thumbnail_width ?? 720,
+                    'height' => $video->thumbnail_height ?? 1280,
                 ],
             ],
             'likes' => [
