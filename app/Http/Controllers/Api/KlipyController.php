@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\ProfanityFilterService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\App;
 use Klipy\Exceptions\KlipyApiException;
 use Klipy\Laravel\Facades\Klipy;
 
@@ -19,20 +19,23 @@ class KlipyController extends Controller
         abort_unless(! empty(config('klipy.api_key')), 400, 'Klipy API key missing');
         $user = $request->user();
         abort_unless((bool) $user->can_comment, 400, 'Cannot access this resource');
+        $validated = $request->validate([
+            'page' => 'sometimes|integer|min:1',
+            'limit' => 'sometimes|integer|min:1|max:50',
+        ]);
         $type = $this->resolveType($type);
+        $page = $validated['page'] ?? 1;
+        $limit = $validated['limit'] ?? 24;
+        $locale = App::currentLocale();
 
-        $key = "loops:klipy:trending:{$type}:locale-en";
+        $response = Klipy::$type()->trending(
+            perPage: $limit,
+            page: $page,
+            locale: $locale,
+            customerId: $user->id,
+        );
 
-        $payload = Cache::remember($key, now()->addHours(2), function () use ($type) {
-            $response = Klipy::$type()->trending(
-                perPage: 50,
-                page: 1,
-                locale: 'en',
-                customerId: 1,
-            );
-
-            return $this->normalize($response->raw);
-        });
+        $payload = $this->normalize($response->raw);
 
         return response()->json($payload);
     }
@@ -42,6 +45,10 @@ class KlipyController extends Controller
         abort_unless(! empty(config('klipy.api_key')), 400, 'Klipy API key missing');
         $user = $request->user();
         abort_unless((bool) $user->can_comment, 400, 'Cannot access this resource');
+        $validated = $request->validate([
+            'page' => 'sometimes|integer|min:1',
+            'limit' => 'sometimes|integer|min:1|max:50',
+        ]);
         $type = $this->resolveType($type);
 
         $query = trim((string) $request->input('q', ''));
@@ -54,22 +61,20 @@ class KlipyController extends Controller
         }
 
         $userId = $request->user()->id;
-        $queryHash = md5($query);
-
-        $key = "loops:klipy:search:{$type}:{$userId}:{$queryHash}";
+        $page = $validated['page'] ?? 1;
+        $limit = $validated['limit'] ?? 24;
+        $locale = App::currentLocale();
 
         try {
-            $payload = Cache::remember($key, now()->addHours(12), function () use ($type, $userId, $query) {
-                $response = Klipy::$type()->search(
-                    query: $query,
-                    perPage: 50,
-                    page: 1,
-                    locale: 'en',
-                    customerId: $userId,
-                );
+            $response = Klipy::$type()->search(
+                query: $query,
+                perPage: $limit,
+                page: $page,
+                locale: $locale,
+                customerId: $userId,
+            );
 
-                return $this->normalize($response->raw);
-            });
+            $payload = $this->normalize($response->raw);
         } catch (KlipyApiException $e) {
             return response()->json([
                 'message' => 'Klipy search failed.',
