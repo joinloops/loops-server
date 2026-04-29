@@ -333,11 +333,17 @@ class CreateValidator extends BaseValidator
                 throw new \Exception("Failed to fetch remote object '{$inReplyToUrl}'.");
             }
 
-            if (empty($remoteObject['inReplyTo'])) {
+            if (! isset($remoteObject['inReplyTo']) || empty($remoteObject['inReplyTo'])) {
                 throw new \Exception("Remote object '{$inReplyToUrl}' is not a reply, chain terminated.");
             }
 
-            $this->validateReplyChain($remoteObject['inReplyTo'], $depth + 1);
+            $replyTo = $remoteObject['inReplyTo'];
+
+            if (is_array($replyTo) && isset($replyTo['id'])) {
+                $replyTo = $replyTo['id'];
+            }
+
+            $this->validateReplyChain($replyTo, $depth + 1);
 
         } catch (\Exception $e) {
             if (config('logging.dev_log')) {
