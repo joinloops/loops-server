@@ -13,7 +13,7 @@ return [
 
     'timeout' => 3600,
 
-    'log_channel' => env('LOG_CHANNEL', 'stack'),   // set to false to completely disable logging
+    'log_channel' => env('FFMPEG_LOG_CHANNEL', false),
 
     'temporary_files_root' => env('FFMPEG_TEMPORARY_FILES_ROOT', sys_get_temp_dir()),
 
