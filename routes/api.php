@@ -105,7 +105,7 @@ Route::prefix('api/v1/auth')
             ->name('auth.force-password.cancel');
     });
 
-Route::middleware(['auth:web'])
+Route::middleware(['auth:web,api'])
     ->prefix('api/v1/klipy')
     ->whereIn('type', ['gifs', 'stickers', 'memes', 'clips'])
     ->group(function () {
