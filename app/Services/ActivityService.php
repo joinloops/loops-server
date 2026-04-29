@@ -172,9 +172,9 @@ class ActivityService
             [
                 'type' => $activityData['type'] ?? 'Unknown',
                 'profile_id' => $actor->id,
-                'to' => $activityData['to'] ?? [],
-                'cc' => $activityData['cc'] ?? [],
-                'bcc' => $activityData['bcc'] ?? [],
+                'to' => $activityData['to'] ?? null,
+                'cc' => $activityData['cc'] ?? null,
+                'bcc' => $activityData['bcc'] ?? null,
                 'payload' => $this->extractContent($activityData),
                 'raw_activity' => $activityData,
                 'processed' => false,
