@@ -32,12 +32,12 @@ class KlipyMediaSelector
     private function chainFor(string $type, array $item): array
     {
         return match ($type) {
-            'gifs' => ['webm', 'mp4', 'full'],
+            'gifs' => ['mp4', 'full'],
             'stickers' => $this->isAnimatedSticker($item)
-                            ? ['webm', 'mp4', 'preview', 'full']
+                            ? ['mp4', 'preview', 'full']
                             : ['preview', 'full'],
             'memes' => ['preview', 'full'],
-            'clips' => ['mp4', 'webm', 'full', 'preview'],
+            'clips' => ['mp4', 'full', 'preview'],
             default => throw new RuntimeException("Unknown Klipy type: {$type}"),
         };
     }
