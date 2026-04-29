@@ -63,6 +63,7 @@ class Activity extends Model
 
     protected $casts = [
         'payload' => 'array',
+        'raw_activity' => 'array',
         'processed' => 'boolean',
         'created_at' => 'datetime',
     ];
