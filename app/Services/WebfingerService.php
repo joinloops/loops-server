@@ -129,7 +129,7 @@ class WebfingerService
             return null;
         }
 
-        if (app(SanitizeService::class)->url($actorUrl, true) == false) {
+        if (app(SanitizeService::class)->url($actorUrl, true) === false) {
             return null;
         }
 
@@ -137,7 +137,7 @@ class WebfingerService
     }
 
     /**
-     * Find or create a remote actor from webfinger
+     * Find or create a remote instance actor from webfinger
      */
     public function findOrCreateRemoteInstanceActor(string $resource): ?InstanceActor
     {
@@ -157,7 +157,7 @@ class WebfingerService
             return null;
         }
 
-        if (app(SanitizeService::class)->url($actorUrl, true) == false) {
+        if (app(SanitizeService::class)->url($actorUrl, true) === false) {
             return null;
         }
 
