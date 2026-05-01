@@ -29,7 +29,7 @@
         "@tiptap/vue-3": "^3.22.4",
         "@unhead/vue": "^3.1.0",
         "@vitejs/plugin-vue": "^6.0.6",
-        "@vueuse/core": "^14.2.1",
+        "@vueuse/core": "^14.3.0",
         "@xmldom/xmldom": ">=0.9.10",
         "autoprefixer": "^10.5.0",
         "axios": "1.15.2",
