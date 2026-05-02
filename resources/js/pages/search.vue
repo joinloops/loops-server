@@ -132,6 +132,8 @@
                     </div>
 
                     <div v-if="activeTab === 'top'" class="space-y-8">
+                        <PendingRemoteVideoCard v-if="pendingVideo" :pending="pendingVideo" />
+
                         <section v-if="searchResults.users?.length > 0">
                             <div class="flex items-center justify-between mb-4">
                                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -183,7 +185,8 @@
                                 !searchResults.videos?.length &&
                                 !searchResults.hashtags?.length &&
                                 !showRemoteLookupCta &&
-                                !remoteLookupLoading
+                                !remoteLookupLoading &&
+                                !pendingVideo
                             "
                             class="text-center py-12"
                         >
@@ -211,11 +214,17 @@
                     </div>
 
                     <div v-else-if="activeTab === 'videos'">
+                        <PendingRemoteVideoCard
+                            v-if="pendingVideo"
+                            :pending="pendingVideo"
+                            class="mb-6"
+                        />
+
                         <VideosGrid
                             v-if="searchResults.videos?.length > 0"
                             :videos="searchResults.videos"
                         />
-                        <div v-else class="text-center py-12">
+                        <div v-else-if="!pendingVideo && !loading" class="text-center py-12">
                             <div class="text-gray-500 dark:text-gray-400 mb-4 text-sm">
                                 {{ $t('nav.noResultsFound') }}
                             </div>
@@ -228,7 +237,7 @@
                             v-if="searchResults.hashtags?.length > 0"
                             :hashtags="searchResults.hashtags"
                         />
-                        <div v-else class="text-center py-12">
+                        <div v-else-if="!loading" class="text-center py-12">
                             <div class="text-gray-500 dark:text-gray-400 mb-4 text-sm">
                                 {{ $t('nav.noResultsFound') }}
                             </div>
@@ -241,7 +250,7 @@
                             v-if="searchResults.starter_kits?.length > 0"
                             :kits="searchResults.starter_kits"
                         />
-                        <div v-else class="text-center py-12">
+                        <div v-else-if="!loading" class="text-center py-12">
                             <div class="text-gray-500 dark:text-gray-400 mb-4 text-sm">
                                 {{ $t('nav.noResultsFound') }}
                             </div>
@@ -287,6 +296,8 @@ import {
     ExclamationTriangleIcon
 } from '@heroicons/vue/24/outline'
 import StarterKitsGrid from '@/components/Search/StarterKitsGrid.vue'
+import PendingRemoteVideoCard from '@/components/Search/PendingRemoteVideoCard.vue'
+const VALID_TABS = ['top', 'users', 'videos', 'tags', 'starter_kits']
 
 const route = useRoute()
 const router = useRouter()
@@ -305,14 +316,25 @@ const {
     error,
     hasMore,
     remoteLookupLoading,
-    showRemoteLookupCta
+    showRemoteLookupCta,
+    pendingVideo
 } = storeToRefs(searchStore)
 
-const { performSearch, setActiveTab, loadMore, setSearchQuery, performRemoteLookup } = searchStore
+const {
+    performSearch,
+    setActiveTab,
+    loadMore,
+    setSearchQuery,
+    performRemoteLookup,
+    stopPollingPendingVideo
+} = searchStore
 
 const handleQueryUpdate = (query) => {
     setSearchQuery(query)
     router.push({ query: { q: query, tab: activeTab.value } })
+    if (query?.trim()) {
+        performSearch()
+    }
 }
 
 const handleTabChange = async (tab) => {
@@ -394,6 +416,7 @@ watch(
     () => route.query.q,
     (newQuery) => {
         if (newQuery && newQuery !== searchQuery.value) {
+            stopPollingPendingVideo()
             setSearchQuery(newQuery)
             handleSearch()
         }
@@ -403,6 +426,10 @@ watch(
 watch(
     () => route.query.tab,
     async (newTab) => {
+        if (!VALID_TABS.includes(newTab)) {
+            return
+        }
+
         if (newTab && newTab !== activeTab.value) {
             await setActiveTab(newTab)
         }
@@ -436,8 +463,13 @@ onMounted(() => {
 
     if (queryParam) {
         setSearchQuery(queryParam)
-        setActiveTab(tabParam)
-        handleSearch()
+
+        if (tabParam !== 'top' && tabParam !== activeTab.value) {
+            setActiveTab(tabParam)
+        } else {
+            setActiveTab(tabParam)
+            handleSearch()
+        }
     }
 
     if (activeTab.value !== 'top') {
@@ -449,5 +481,6 @@ onMounted(() => {
 
 onUnmounted(() => {
     cleanupObserver()
+    stopPollingPendingVideo()
 })
 </script>

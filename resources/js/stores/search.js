@@ -3,13 +3,18 @@ import axios from '~/plugins/axios'
 import { ref } from 'vue'
 import { useQueryClient } from '@tanstack/vue-query'
 
+const POLL_INTERVAL_MS = 10000
+const MAX_POLL_ATTEMPTS = 60
+const VALID_TABS = ['top', 'users', 'videos', 'tags', 'starter_kits']
+
 export const useSearchStore = defineStore('search', () => {
     const searchQuery = ref('')
     const activeTab = ref('top')
     const searchResults = ref({
         hashtags: [],
         users: [],
-        videos: []
+        videos: [],
+        starter_kits: []
     })
     const loading = ref(false)
     const loadingMore = ref(false)
@@ -18,6 +23,11 @@ export const useSearchStore = defineStore('search', () => {
     const nextCursor = ref(null)
     const remoteLookupLoading = ref(false)
     const showRemoteLookupCta = ref(false)
+    const pendingVideo = ref(null)
+    let activeRequestId = 0
+
+    let pollTimerId = null
+    let pollAttempts = 0
 
     const setSearchQuery = (query) => {
         searchQuery.value = query
@@ -25,6 +35,9 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     const setActiveTab = async (tab) => {
+        if (!VALID_TABS.includes(tab)) {
+            return
+        }
         const previousTab = activeTab.value
         activeTab.value = tab
         nextCursor.value = null
@@ -48,10 +61,78 @@ export const useSearchStore = defineStore('search', () => {
         return webfingerPattern.test(trimmed)
     }
 
+    const stopPollingPendingVideo = () => {
+        if (pollTimerId) {
+            clearTimeout(pollTimerId)
+            pollTimerId = null
+        }
+        pollAttempts = 0
+    }
+
+    const pollPendingVideo = async () => {
+        if (!pendingVideo.value?.ap_id) {
+            stopPollingPendingVideo()
+            return
+        }
+
+        pollAttempts++
+
+        if (pollAttempts > MAX_POLL_ATTEMPTS) {
+            stopPollingPendingVideo()
+            error.value = 'Video is taking longer than expected to process. Try again in a moment.'
+            pendingVideo.value = null
+            return
+        }
+
+        const axiosInstance = axios.getAxiosInstance()
+
+        try {
+            const response = await axiosInstance.get('/api/v1/search/remote/status', {
+                params: { ap_id: pendingVideo.value.ap_id }
+            })
+
+            const { status, video } = response.data
+
+            if (status === 'ready' && video) {
+                searchResults.value.videos = [video]
+                pendingVideo.value = null
+                stopPollingPendingVideo()
+                return
+            }
+
+            if (status === 'unavailable') {
+                stopPollingPendingVideo()
+                error.value = 'This video is not available'
+                pendingVideo.value = null
+                return
+            }
+        } catch (err) {
+            if (err.response?.status === 422) {
+                stopPollingPendingVideo()
+                pendingVideo.value = null
+                error.value = err.response?.data?.message || 'Invalid request'
+                return
+            }
+            console.warn('Pending video poll failed, will retry:', err.message)
+        }
+
+        pollTimerId = setTimeout(pollPendingVideo, POLL_INTERVAL_MS)
+    }
+
+    const startPollingPendingVideo = () => {
+        stopPollingPendingVideo()
+        pollTimerId = setTimeout(pollPendingVideo, POLL_INTERVAL_MS)
+    }
+
     const performSearch = async (append = false) => {
         if (!searchQuery.value.trim()) {
             error.value = 'Please enter a search query'
             return
+        }
+
+        if (!append) {
+            stopPollingPendingVideo()
+            pendingVideo.value = null
         }
 
         if (append) {
@@ -61,6 +142,10 @@ export const useSearchStore = defineStore('search', () => {
             nextCursor.value = null
             showRemoteLookupCta.value = false
         }
+
+        const requestId = ++activeRequestId
+        const requestQuery = searchQuery.value
+        const requestTab = activeTab.value
 
         error.value = null
         const axiosInstance = axios.getAxiosInstance()
@@ -74,52 +159,64 @@ export const useSearchStore = defineStore('search', () => {
                 params.cursor = nextCursor.value
             }
 
-            if (activeTab.value !== 'top') {
-                params.type = activeTab.value === 'tags' ? 'hashtags' : activeTab.value
+            if (requestTab !== 'top') {
+                params.type = requestTab === 'tags' ? 'hashtags' : requestTab
             }
 
             const response = await axiosInstance.get('/api/v1/search', { params })
 
+            if (
+                requestId !== activeRequestId ||
+                requestQuery !== searchQuery.value ||
+                requestTab !== activeTab.value
+            ) {
+                return
+            }
+
             const data = response.data
 
             if (append) {
-                if (activeTab.value === 'users') {
+                if (requestTab === 'users') {
                     searchResults.value.users = [
                         ...searchResults.value.users,
                         ...(data.data.users || [])
                     ]
-                } else if (activeTab.value === 'videos') {
+                } else if (requestTab === 'videos') {
                     searchResults.value.videos = [
                         ...searchResults.value.videos,
                         ...(data.data.videos || [])
                     ]
-                } else if (activeTab.value === 'tags') {
+                } else if (requestTab === 'tags') {
                     searchResults.value.hashtags = [
                         ...searchResults.value.hashtags,
                         ...(data.data.hashtags || [])
                     ]
-                } else if (activeTab.value === 'starter_kits') {
+                } else if (requestTab === 'starter_kits') {
                     searchResults.value.starter_kits = [
                         ...searchResults.value.starter_kits,
                         ...(data.data.starter_kits || [])
                     ]
                 }
             } else {
-                if (activeTab.value === 'users') {
-                    searchResults.value.users = data.data.users || []
-                } else if (activeTab.value === 'videos') {
-                    searchResults.value.videos = data.data.videos || []
-                } else if (activeTab.value === 'tags') {
-                    searchResults.value.hashtags = data.data.hashtags || []
-                } else if (activeTab.value === 'starter_kits') {
-                    searchResults.value.starter_kits = data.data.starter_kits || []
-                } else {
+                loading.value = true
+                nextCursor.value = null
+                showRemoteLookupCta.value = false
+
+                if (activeTab.value === 'top') {
                     searchResults.value = {
-                        hashtags: data.data.hashtags || [],
-                        users: data.data.users || [],
-                        videos: data.data.videos || [],
-                        starter_kits: data.data.starter_kits || []
+                        hashtags: [],
+                        users: [],
+                        videos: [],
+                        starter_kits: []
                     }
+                } else if (activeTab.value === 'users') {
+                    searchResults.value.users = []
+                } else if (activeTab.value === 'videos') {
+                    searchResults.value.videos = []
+                } else if (activeTab.value === 'tags') {
+                    searchResults.value.hashtags = []
+                } else if (activeTab.value === 'starter_kits') {
+                    searchResults.value.starter_kits = []
                 }
             }
 
@@ -136,11 +233,14 @@ export const useSearchStore = defineStore('search', () => {
                 showRemoteLookupCta.value = true
             }
         } catch (err) {
+            if (requestId !== activeRequestId) return
             console.error('Search error:', err)
             error.value = err.response?.data?.message || 'Failed to perform search'
         } finally {
-            loading.value = false
-            loadingMore.value = false
+            if (requestId === activeRequestId) {
+                loading.value = false
+                loadingMore.value = false
+            }
         }
     }
 
@@ -149,9 +249,15 @@ export const useSearchStore = defineStore('search', () => {
             return
         }
 
+        stopPollingPendingVideo()
+        pendingVideo.value = null
         remoteLookupLoading.value = true
         showRemoteLookupCta.value = false
         error.value = null
+
+        const requestId = ++activeRequestId
+        const requestQuery = searchQuery.value
+        const requestTab = activeTab.value
 
         const axiosInstance = axios.getAxiosInstance()
         try {
@@ -159,12 +265,32 @@ export const useSearchStore = defineStore('search', () => {
                 q: searchQuery.value
             })
 
+            if (
+                requestId !== activeRequestId ||
+                requestQuery !== searchQuery.value ||
+                requestTab !== activeTab.value
+            ) {
+                return
+            }
+
             const data = response.data.data
 
             const users = data.users || []
             const videos = data.videos || []
             const hashtags = data.hashtags || []
             const starterKits = data.starter_kits || []
+            const pending = data.pending || null
+
+            if (pending && pending.type === 'video') {
+                searchResults.value.users = []
+                searchResults.value.videos = []
+                searchResults.value.hashtags = []
+                searchResults.value.starter_kits = []
+                pendingVideo.value = pending
+                activeTab.value = 'videos'
+                startPollingPendingVideo()
+                return
+            }
 
             const hasResults =
                 users.length || videos.length || hashtags.length || starterKits.length
@@ -189,10 +315,16 @@ export const useSearchStore = defineStore('search', () => {
                 activeTab.value = 'tags'
             }
         } catch (err) {
+            if (requestId !== activeRequestId) return
             console.error('Remote lookup error:', err)
-            error.value = err.response?.data?.message || 'Failed to lookup remote content'
+            error.value =
+                err.response?.data?.error?.message ||
+                err.response?.data?.message ||
+                'Failed to lookup remote content'
         } finally {
-            remoteLookupLoading.value = false
+            if (requestId === activeRequestId) {
+                remoteLookupLoading.value = false
+            }
         }
     }
 
@@ -200,7 +332,6 @@ export const useSearchStore = defineStore('search', () => {
         if (!hasMore.value || loadingMore.value || loading.value || activeTab.value === 'top') {
             return
         }
-
         await performSearch(true)
     }
 
@@ -208,7 +339,6 @@ export const useSearchStore = defineStore('search', () => {
         const axiosInstance = axios.getAxiosInstance()
         try {
             await axiosInstance.post(`/api/v1/account/follow/${userId}`)
-
             const user = searchResults.value.users.find((u) => u.id === userId)
             if (user) {
                 user.is_following = true
@@ -218,10 +348,8 @@ export const useSearchStore = defineStore('search', () => {
                 const queryClient = useQueryClient()
                 queryClient.invalidateQueries({ queryKey: ['following-feed'] })
             } catch (e) {}
-
             return { success: true }
         } catch (err) {
-            console.error('Follow error:', err)
             return {
                 success: false,
                 error: err.response?.data?.message || 'Failed to follow user'
@@ -233,7 +361,6 @@ export const useSearchStore = defineStore('search', () => {
         const axiosInstance = axios.getAxiosInstance()
         try {
             await axiosInstance.post(`/api/v1/account/unfollow/${userId}`)
-
             const user = searchResults.value.users.find((u) => u.id === userId)
             if (user) {
                 user.is_following = false
@@ -243,10 +370,8 @@ export const useSearchStore = defineStore('search', () => {
                 const queryClient = useQueryClient()
                 queryClient.invalidateQueries({ queryKey: ['following-feed'] })
             } catch (e) {}
-
             return { success: true }
         } catch (err) {
-            console.error('Unfollow error:', err)
             return {
                 success: false,
                 error: err.response?.data?.message || 'Failed to unfollow user'
@@ -255,6 +380,7 @@ export const useSearchStore = defineStore('search', () => {
     }
 
     const clearSearch = () => {
+        stopPollingPendingVideo()
         searchQuery.value = ''
         searchResults.value = {
             hashtags: [],
@@ -267,6 +393,7 @@ export const useSearchStore = defineStore('search', () => {
         hasMore.value = false
         showRemoteLookupCta.value = false
         remoteLookupLoading.value = false
+        pendingVideo.value = null
     }
 
     return {
@@ -279,12 +406,14 @@ export const useSearchStore = defineStore('search', () => {
         hasMore,
         remoteLookupLoading,
         showRemoteLookupCta,
+        pendingVideo,
 
         setSearchQuery,
         setActiveTab,
         performSearch,
         loadMore,
         performRemoteLookup,
+        stopPollingPendingVideo,
         isRemoteQuery,
         followUser,
         unfollowUser,

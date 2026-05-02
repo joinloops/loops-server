@@ -159,9 +159,10 @@ Route::prefix('api')->group(function () {
 
     // Search
     Route::get('/v1/search', [SearchController::class, 'search'])->middleware(['auth:web,api', 'throttle:searchV1']);
-    Route::post('/v1/search/remote', [SearchController::class, 'remoteLookup'])->middleware(['auth:web,api', 'throttle:searchV1']);
+    Route::post('/v1/search/remote', [SearchController::class, 'remoteLookup'])->middleware(['auth:web,api', 'throttle:searchV1Remote']);
     Route::post('/v1/search/users', [SearchController::class, 'getUsers'])->middleware(['auth:web,api', 'throttle:autocomplete']);
     Route::post('/v1/intents/follow/account', [IntentsController::class, 'getFollowAccount'])->middleware(['auth:web,api', 'throttle:followIntents']);
+    Route::get('/v1/search/remote/status', [SearchController::class, 'remoteVideoStatus'])->middleware(['auth:web,api', 'throttle:searchV1Status']);
 
     // Feeds
     Route::get('/v0/user/self', [AccountController::class, 'selfAccountInfo'])->middleware('auth:web,api');

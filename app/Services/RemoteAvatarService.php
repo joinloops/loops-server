@@ -33,6 +33,8 @@ class RemoteAvatarService
         $profileAvatar = ProfileAvatar::firstOrNew(['profile_id' => $profile->id]);
 
         if ($profileAvatar->exists && ! $profileAvatar->shouldRefetch()) {
+            $profile->update(['last_fetched_at' => now()]);
+
             return $profileAvatar;
         }
 
@@ -100,6 +102,8 @@ class RemoteAvatarService
         ]);
 
         $profileAvatar->save();
+
+        $profile->update(['last_fetched_at' => now()]);
 
         AvatarService::remote($profile->id, true);
 

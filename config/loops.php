@@ -103,6 +103,10 @@ return [
         'enabled' => env('LOOPS_CHROMAPRINT_ENABLED', false),
     ],
 
+    'remote_search' => [
+        'monthly_video_limit' => env('LOOPS_REMSEARCH_MONTHLY_VID_LIMIT', 30),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Local Domains (Same-Server Instances)

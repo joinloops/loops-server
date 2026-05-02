@@ -3,7 +3,7 @@
         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4"
     >
         <router-link
-            v-for="video in videos"
+            v-for="video in videosWithHid"
             :to="`/v/${video.hid}?by=${video.account.username}`"
             :key="video.id"
             class="group cursor-pointer"
@@ -79,8 +79,10 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { HeartIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline'
 import { useUtils } from '@/composables/useUtils'
+import { useHashids } from '@/composables/useHashids'
 
 const props = defineProps({
     videos: {
@@ -90,4 +92,12 @@ const props = defineProps({
 })
 
 const { formatNumber } = useUtils()
+const { encodeHashid } = useHashids()
+
+const videosWithHid = computed(() =>
+    props.videos.map((video) => ({
+        ...video,
+        hid: video.hid || encodeHashid(String(video.id))
+    }))
+)
 </script>

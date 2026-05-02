@@ -217,6 +217,7 @@ class Profile extends Model
         'discoverable' => 'boolean',
         'updated_at' => 'datetime',
         'manuallyApprovesFollowers' => 'boolean',
+        'last_fetched_at' => 'datetime',
     ];
 
     public function videos(): HasMany

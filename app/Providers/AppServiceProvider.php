@@ -103,6 +103,30 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('searchV1Remote', function (Request $request) {
+            $user = $request->user();
+            if ($user->is_admin) {
+                return;
+            }
+
+            return [
+                Limit::perMinute(10)->by('minute:'.$user->id),
+                Limit::perDay(100)->by('day:'.$user->id),
+            ];
+        });
+
+        RateLimiter::for('searchV1Status', function (Request $request) {
+            $user = $request->user();
+            if ($user->is_admin) {
+                return;
+            }
+
+            return [
+                Limit::perMinute(10)->by('minute:'.$user->id),
+                Limit::perDay(500)->by('day:'.$user->id),
+            ];
+        });
+
         RateLimiter::for('curated-apply', function ($request) {
             return [
                 Limit::perHour(10)->by($request->ip()),
@@ -112,9 +136,9 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('klipy', function ($request) {
             $user = $request->user();
-            // if ($user->is_admin) {
-            //     return;
-            // }
+            if ($user->is_admin) {
+                return;
+            }
 
             return [
                 Limit::perMinute(15)->by($user->id),

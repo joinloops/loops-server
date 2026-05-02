@@ -579,7 +579,10 @@ const handleSearch = (query) => {
     if (query.trim()) {
         router.push({
             path: '/search',
-            query: { q: query }
+            query: {
+                q: query,
+                tab: route.query.tab || 'top'
+            }
         })
         if (isMobile.value) {
             closeMobileDrawer()

@@ -343,4 +343,9 @@ class Video extends Model
     {
         return $this->morphMany(QuoteAuthorization::class, 'quotable');
     }
+
+    public function remoteSearchImports(): MorphMany
+    {
+        return $this->morphMany(RemoteSearchImport::class, 'searchable');
+    }
 }

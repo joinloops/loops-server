@@ -1,6 +1,5 @@
 <template>
     <div class="w-full">
-        <!-- Desktop/Expanded View -->
         <div v-if="isMobile || !isCollapsed" class="relative">
             <i
                 class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-slate-500 text-lg pointer-events-none"
@@ -27,7 +26,6 @@
             </button>
         </div>
 
-        <!-- Collapsed View (Icon Only) -->
         <button
             v-else
             @click="handleCollapsedClick"
@@ -81,7 +79,7 @@ const handleSearch = () => {
 const clearSearch = () => {
     searchQuery.value = ''
     if (route.path === '/search') {
-        router.push('/search')
+        router.push('/')
     }
 }
 

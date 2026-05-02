@@ -4,8 +4,10 @@ namespace App\Jobs\Federation;
 
 use App\Federation\Audience;
 use App\Models\Profile;
+use App\Models\RemoteSearchImport;
 use App\Models\Video;
 use App\Services\SanitizeService;
+use App\Services\VideoService;
 use Carbon\Carbon;
 use Exception;
 use FFMpeg\Format\Video\X264;
@@ -43,17 +45,20 @@ class ProcessRemoteVideoJob implements ShouldBeUnique, ShouldQueue
 
     protected array $attachment;
 
+    protected $remoteSearchImportId;
+
     const STATUS_PROCESSING = 1;
 
     const STATUS_PUBLISHED = 2;
 
     const STATUS_FAILED = 3;
 
-    public function __construct(int $profileId, array $object, array $attachment)
+    public function __construct(int $profileId, array $object, array $attachment, ?int $remoteSearchImportId = null)
     {
         $this->profileId = $profileId;
         $this->object = $object;
         $this->attachment = $attachment;
+        $this->remoteSearchImportId = $remoteSearchImportId;
     }
 
     /**
@@ -124,6 +129,16 @@ class ProcessRemoteVideoJob implements ShouldBeUnique, ShouldQueue
                 $video->syncMentionsFromCaption();
             }
 
+            VideoService::deleteMediaData($video->id);
+
+            if ($this->remoteSearchImportId) {
+                RemoteSearchImport::where('id', $this->remoteSearchImportId)
+                    ->whereNull('searchable_id')
+                    ->update([
+                        'searchable_id' => $video->id,
+                        'searchable_type' => $video->getMorphClass(),
+                    ]);
+            }
         } catch (Throwable $e) {
             $this->handleFailure($e, $video, $remoteUrl);
         } finally {

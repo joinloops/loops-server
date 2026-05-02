@@ -93,6 +93,7 @@ declare module 'vue' {
     NotificationStarterKitHoverCard: typeof import('./components/Notification/NotificationStarterKitHoverCard.vue')['default']
     NotificationSystemItem: typeof import('./components/Notification/NotificationSystemItem.vue')['default']
     PageSkeleton: typeof import('./components/Layout/PageSkeleton.vue')['default']
+    PendingRemoteVideoCard: typeof import('./components/Search/PendingRemoteVideoCard.vue')['default']
     PlaylistAddVideoModal: typeof import('./components/Studio/PlaylistAddVideoModal.vue')['default']
     PlaylistModal: typeof import('./components/Studio/PlaylistModal.vue')['default']
     ProfileHeader: typeof import('./components/Profile/ProfileHeader.vue')['default']

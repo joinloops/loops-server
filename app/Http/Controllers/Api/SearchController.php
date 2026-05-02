@@ -2,15 +2,21 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\RemoteSearchLimitException;
+use App\Federation\Validators\NoteWithVideoAttachmentValidator;
 use App\Http\Controllers\Api\Traits\ApiHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SearchRequest;
 use App\Http\Resources\ProfileResource;
 use App\Http\Resources\SearchResultResource;
 use App\Http\Resources\StarterKitResource;
+use App\Http\Resources\VideoResource;
+use App\Jobs\Federation\FetchRemoteAvatarJob;
+use App\Jobs\Federation\ProcessRemoteVideoJob;
 use App\Jobs\StarterKit\FetchRemoteStarterKitMedia;
 use App\Models\Hashtag;
 use App\Models\Profile;
+use App\Models\RemoteSearchImport;
 use App\Models\StarterKit;
 use App\Models\UserFilter;
 use App\Models\Video;
@@ -18,6 +24,7 @@ use App\Services\ActivityPubService;
 use App\Services\HashidService;
 use App\Services\SanitizeService;
 use App\Services\StarterKitService;
+use App\Services\VideoService;
 use App\Services\WebfingerService;
 use App\Support\CursorToken;
 use Illuminate\Http\Request;
@@ -609,6 +616,42 @@ class SearchController extends Controller
         $query = trim($validated['q']);
         $currentUserId = $request->user()->profile_id;
 
+        if (app(SanitizeService::class)->isLocalObject($query)) {
+            $res = $this->resolveUrl($request, $query, $currentUserId);
+
+            $videos = [];
+            $users = [];
+
+            if ($res['type'] === 'video') {
+                $videos = [new VideoResource($res['data'])];
+            }
+
+            if ($res['type'] === 'user') {
+                $users = [$res['data']];
+            }
+
+            return response()->json([
+                'data' => [
+                    'hashtags' => [],
+                    'users' => $users,
+                    'videos' => $videos,
+                    'starter_kits' => [],
+                ],
+                'links' => [
+                    'first' => null,
+                    'last' => null,
+                    'prev' => null,
+                    'next' => null,
+                ],
+                'meta' => [
+                    'path' => $request->url(),
+                    'per_page' => 10,
+                    'next_cursor' => null,
+                    'prev_cursor' => null,
+                ],
+            ]);
+        }
+
         $validUrl = app(SanitizeService::class)->url($query, true, false);
 
         abort_if(! $validUrl, 403, 'Invalid url');
@@ -663,10 +706,42 @@ class SearchController extends Controller
                 'type' => null,
                 'data' => null,
                 'error' => 'Could not resolve this URL',
-            ]);
+            ], 404);
         }
 
         return response()->json($result);
+    }
+
+    public function remoteVideoStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'ap_id' => 'required|string|url|max:500',
+        ]);
+
+        $url = app(SanitizeService::class)->url($validated['ap_id'], true);
+
+        if (! $url) {
+            return response()->json(['status' => 'unavailable'], 404);
+        }
+
+        $currentUserId = $request->user()->profile_id;
+
+        $video = Video::published()->where('ap_id', $validated['ap_id'])->first();
+
+        if (! $video) {
+            return response()->json(['status' => 'pending']);
+        }
+
+        if ($this->isBlocked($video->profile_id, $currentUserId)) {
+            return response()->json(['status' => 'unavailable'], 404);
+        }
+
+        VideoService::deleteMediaData($video->id);
+
+        return response()->json([
+            'status' => 'ready',
+            'video' => new VideoResource($video),
+        ]);
     }
 
     protected function resolveUrl(Request $request, string $url, int $currentUserId): ?array
@@ -815,8 +890,11 @@ class SearchController extends Controller
             return match ($type) {
                 'Person' => $this->handleRemoteActor($request, $response, $url, $currentUserId),
                 'FeaturedCollection' => $this->handleRemoteFeaturedCollection($request, $response, $url),
+                'Note' => $this->handleRemoteNote($request, $response, $url, $currentUserId),
                 default => null,
             };
+        } catch (\App\Exceptions\RemoteSearchLimitException $e) {
+            throw $e;
         } catch (\Exception $e) {
             Log::warning('Remote URL resolve failed', [
                 'url' => $url,
@@ -825,6 +903,91 @@ class SearchController extends Controller
 
             return null;
         }
+
+    }
+
+    protected function handleRemoteNote($request, array $data, string $url, int $currentUserId): ?array
+    {
+        $windowDays = 30;
+        $limit = (int) config('loops.remote_search.monthly_video_limit', 30);
+
+        $videoQuery = RemoteSearchImport::forProfile($currentUserId)
+            ->ofType((new Video)->getMorphClass())
+            ->withinDays($windowDays);
+
+        $videoCount = (clone $videoQuery)->count();
+
+        if ($videoCount >= $limit) {
+            $oldest = (clone $videoQuery)
+                ->orderBy('created_at')
+                ->first();
+
+            $availableAt = $oldest?->created_at
+                ?->addDays($windowDays)
+                ?->toIso8601String();
+
+            throw new RemoteSearchLimitException(
+                resource: 'video',
+                limit: $limit,
+                current: $videoCount,
+                windowDays: $windowDays,
+                availableAt: $availableAt,
+            );
+        }
+
+        $validator = app(NoteWithVideoAttachmentValidator::class);
+
+        try {
+            $validator->validate($data);
+        } catch (\Exception $e) {
+            throw $e;
+        }
+
+        $profile = app(Profile::class)->findOrCreateFromUrl($data['attributedTo']);
+
+        if (! $profile || $this->isBlocked($profile->id, $currentUserId)) {
+            return null;
+        }
+
+        if (! $profile->last_fetched_at || $profile->last_fetched_at->lt(now()->subDays(30))) {
+            FetchRemoteAvatarJob::dispatch($profile)->onQueue('actor-update');
+        }
+
+        $video = Video::published()->where('ap_id', $data['id'])->first();
+
+        if (! $video) {
+            $import = RemoteSearchImport::create([
+                'profile_id' => $currentUserId,
+                'search_url' => $url,
+                'searchable_type' => (new Video)->getMorphClass(),
+            ]);
+
+            ProcessRemoteVideoJob::dispatch($profile->id, $data, $data['attachment'][0], $import->id)->onQueue('remote-video');
+
+            return [
+                'data' => [
+                    'hashtags' => [],
+                    'users' => [],
+                    'videos' => [],
+                    'starter_kits' => [],
+                    'pending' => [
+                        'type' => 'video',
+                        'ap_id' => $data['id'],
+                        'profile' => new ProfileResource($profile),
+                        'submitted_at' => now()->toIso8601String(),
+                    ],
+                ],
+            ];
+        }
+
+        return [
+            'data' => [
+                'hashtags' => [],
+                'users' => [],
+                'videos' => [new VideoResource($video)],
+                'starter_kits' => [],
+            ],
+        ];
     }
 
     protected function handleRemoteActor($request, array $data, string $url, int $currentUserId): ?array
