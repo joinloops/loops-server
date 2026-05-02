@@ -51,7 +51,7 @@
                 >
                     {{
                         notification.actor.local
-                            ? notification.actor.name
+                            ? (notification.actor.name ?? notification.actor.username)
                             : notification.actor.username
                     }}
                 </span>
