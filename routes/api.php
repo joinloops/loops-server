@@ -154,7 +154,10 @@ Route::prefix('api')->group(function () {
     Route::delete('/v1/studio/playlists/{playlist}/videos/{video}', [PlaylistController::class, 'removeVideo'])->middleware('auth:web,api');
     Route::put('/v1/studio/playlists/{playlist}/reorder', [PlaylistController::class, 'reorder'])->middleware('auth:web,api');
     Route::get('/v1/studio/analytics/views', [StudioAnalyticsController::class, 'videoViews'])->middleware('auth:web,api');
+    Route::get('/v1/studio/analytics/comments', [StudioAnalyticsController::class, 'comments'])->middleware('auth:web,api');
     Route::get('/v1/studio/analytics/followers', [StudioAnalyticsController::class, 'newFollowers'])->middleware('auth:web,api');
+    Route::get('/v1/studio/analytics/likes', [StudioAnalyticsController::class, 'likes'])->middleware('auth:web,api');
+    Route::get('/v1/studio/analytics/shares', [StudioAnalyticsController::class, 'shares'])->middleware('auth:web,api');
     Route::get('/v1/studio/analytics/links', [StudioAnalyticsController::class, 'profileLinks'])->middleware('auth:web,api');
 
     // Search
