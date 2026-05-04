@@ -123,6 +123,7 @@ declare module 'vue' {
     SparklesAltIcon: typeof import('./components/Icons/SparklesAltIcon.vue')['default']
     Spinner: typeof import('./components/Spinner.vue')['default']
     StarterKitsGrid: typeof import('./components/Search/StarterKitsGrid.vue')['default']
+    StatCard: typeof import('./components/Studio/StatCard.vue')['default']
     StatusBadge: typeof import('./components/Admin/StatusBadge.vue')['default']
     StatusEditModal: typeof import('./components/Status/StatusEditModal.vue')['default']
     StudioHeader: typeof import('./components/Layout/StudioHeader.vue')['default']
