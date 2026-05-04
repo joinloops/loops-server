@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class VideoService
 {
-    const CACHE_KEY = 'api:s:video:v1:';
+    const CACHE_KEY = 'api:s:video:v1.1:';
 
     public static function totalUserCount($pid, $onlyPublished = true, $refresh = false)
     {
@@ -44,6 +44,19 @@ class VideoService
 
         $res = collect(self::getMediaData($id));
         $filtered = $res->only(['id', 'hid', 'likes', 'comments', 'bookmarks', 'shares']);
+        $merged = $filtered->merge(['profile_id' => (string) $res['account']['id']]);
+
+        return $merged->all();
+    }
+
+    public static function getCompactStatsAndMedia($id, $clear = false)
+    {
+        if ($clear) {
+            Cache::forget(self::CACHE_KEY.$id);
+        }
+
+        $res = collect(self::getMediaData($id));
+        $filtered = $res->only(['id', 'hid', 'likes', 'comments', 'bookmarks', 'shares', 'views', 'media']);
         $merged = $filtered->merge(['profile_id' => (string) $res['account']['id']]);
 
         return $merged->all();
@@ -87,6 +100,7 @@ class VideoService
                 'captionLinked' => $video->caption ? AutoLinkerService::link($video->caption) : null,
                 'url' => $video->shareUrl(),
                 'likes' => $video->likes,
+                'views' => $video->views,
                 'shares' => $video->shares,
                 'comments' => $video->comment_state === 4 ? $video->comments : 0,
                 'bookmarks' => $video->bookmarks,

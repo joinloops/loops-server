@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\ProfileLink;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -85,19 +86,35 @@ class StudioService
 
         $latestPost = null;
         if ($latest) {
-            $likes = DB::table('video_likes')
-                ->where('video_id', $latest->id)
-                ->count();
-
-            $comments = DB::table('comments')
-                ->where('video_id', $latest->id)
-                ->count()
-                + DB::table('comment_replies')
-                    ->where('video_id', $latest->id)
-                    ->count();
-
             $latestPost = VideoService::getCompactStats($latest->id, true);
         }
+
+        $topLinks = ProfileLink::where('profile_id', $profileId)
+            ->orderByDesc('click_count')
+            ->limit(3)
+            ->get()
+            ->map(fn ($link) => [
+                'id' => (string) $link->id,
+                'url' => $link->url,
+                'title' => $link->url,
+                'clicks' => (int) $link->click_count,
+            ])
+            ->values();
+
+        $recentPosts = DB::table('videos')
+            ->where('status', 2)
+            ->where('profile_id', $profileId)
+            ->orderByDesc('created_at')
+            ->limit(6)
+            ->select('id')
+            ->get()
+            ->map(fn ($v) => VideoService::getCompactStatsAndMedia($v->id))
+            ->values();
+
+        $totalPosts = DB::table('videos')
+            ->whereIn('status', [1, 2])
+            ->where('profile_id', $profileId)
+            ->count();
 
         return [
             'range' => $range,
@@ -114,6 +131,9 @@ class StudioService
                 'change_pct' => $this->pctChange($previousLikes, $currentLikes),
             ],
             'latest_post' => $latestPost,
+            'top_links' => $topLinks,
+            'recent_posts' => $recentPosts,
+            'total_posts' => $totalPosts,
         ];
     }
 

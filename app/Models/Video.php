@@ -188,6 +188,7 @@ class Video extends Model
             'bookmarks' => 'integer',
             'contains_ai' => 'boolean',
             'contains_ad' => 'boolean',
+            'views' => 'integer',
             'federated_at' => 'datetime',
             'last_fetched_at' => 'datetime',
             'audio_allow_reuse' => 'boolean',
