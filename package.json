@@ -57,7 +57,7 @@
         "vue-router": "^5.0.6"
     },
     "devDependencies": {
-        "@eslint/css": "^1.1.0",
+        "@eslint/css": "^1.2.0",
         "@eslint/js": "^10.0.1",
         "@types/fs-extra": "^11.0.4",
         "@types/video.js": "^7.3.58",
