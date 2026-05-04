@@ -31,6 +31,7 @@ use App\Services\FollowerService;
 use App\Services\LinkLimitService;
 use App\Services\NotificationService;
 use App\Services\PushTokenCacheService;
+use App\Services\StudioService;
 use App\Services\SystemMessageService;
 use App\Services\UserActivityService;
 use App\Services\UserAuditLogService;
@@ -876,6 +877,7 @@ class AccountController extends Controller
         $links = $profile->profileLinks()->orderBy('position')->get();
 
         app(UserAuditLogService::class)->logAccountDeleteProfileLink($user, ['old' => $oldLinks, 'new' => $profile->links]);
+        app(StudioService::class)->forgetSummary($profile->id);
 
         return $this->data([
             'id' => (string) $profile->id,
@@ -1045,6 +1047,8 @@ class AccountController extends Controller
         $links = $profile->profileLinks()->orderBy('position')->get();
 
         app(UserAuditLogService::class)->logAccountAddProfileLink($user, ['old' => $oldLinks, 'new' => $profile->links]);
+
+        app(StudioService::class)->forgetSummary($profile->id);
 
         $res = [
             'id' => (string) $profile->id,
