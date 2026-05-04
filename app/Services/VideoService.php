@@ -36,6 +36,19 @@ class VideoService
         return Cache::forget(self::CACHE_KEY.$id);
     }
 
+    public static function getCompactStats($id, $clear = false)
+    {
+        if ($clear) {
+            Cache::forget(self::CACHE_KEY.$id);
+        }
+
+        $res = collect(self::getMediaData($id));
+        $filtered = $res->only(['id', 'hid', 'likes', 'comments', 'bookmarks', 'shares']);
+        $merged = $filtered->merge(['profile_id' => (string) $res['account']['id']]);
+
+        return $merged->all();
+    }
+
     public static function getMediaData($id, $clear = false)
     {
         if ($clear) {
@@ -74,7 +87,9 @@ class VideoService
                 'captionLinked' => $video->caption ? AutoLinkerService::link($video->caption) : null,
                 'url' => $video->shareUrl(),
                 'likes' => $video->likes,
-                'comments' => $video->comments,
+                'shares' => $video->shares,
+                'comments' => $video->comment_state === 4 ? $video->comments : 0,
+                'bookmarks' => $video->bookmarks,
                 'is_sensitive' => $video->is_sensitive,
                 'created_at' => $video->created_at->format('c'),
                 'updated_at' => $video->updated_at->format('c'),

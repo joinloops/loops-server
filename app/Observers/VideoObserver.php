@@ -6,6 +6,7 @@ use App\Models\Profile;
 use App\Models\Video;
 use App\Services\AccountService;
 use App\Services\AtomFeedService;
+use App\Services\StudioService;
 
 class VideoObserver
 {
@@ -65,5 +66,6 @@ class VideoObserver
         $count = Video::published()->where('profile_id', $profileId)->count();
         Profile::where('id', $profileId)->update(['video_count' => $count]);
         AccountService::del($profileId);
+        app(StudioService::class)->forgetSummary($profileId);
     }
 }

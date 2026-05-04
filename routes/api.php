@@ -159,6 +159,7 @@ Route::prefix('api')->group(function () {
     Route::get('/v1/studio/analytics/likes', [StudioAnalyticsController::class, 'likes'])->middleware('auth:web,api');
     Route::get('/v1/studio/analytics/shares', [StudioAnalyticsController::class, 'shares'])->middleware('auth:web,api');
     Route::get('/v1/studio/analytics/links', [StudioAnalyticsController::class, 'profileLinks'])->middleware('auth:web,api');
+    Route::get('/v1/studio/analytics/summary', [StudioAnalyticsController::class, 'summary'])->middleware('auth:web,api');
 
     // Search
     Route::get('/v1/search', [SearchController::class, 'search'])->middleware(['auth:web,api', 'throttle:searchV1']);

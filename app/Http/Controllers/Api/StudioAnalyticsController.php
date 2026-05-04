@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Api\Traits\ApiHelpers;
 use App\Http\Controllers\Controller;
 use App\Models\ProfileLink;
+use App\Models\Video;
+use App\Services\StudioService;
 use Carbon\Carbon;
 use Closure;
 use Illuminate\Http\Request;
@@ -12,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class StudioAnalyticsController extends Controller
 {
+    use ApiHelpers;
+
     private const VALID_RANGES = [7, 30, 60];
 
     private const MAX_RANGE = 60;
@@ -20,6 +25,10 @@ class StudioAnalyticsController extends Controller
 
     public function videoViews(Request $request)
     {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
         $profileId = $request->user()->profile_id;
         $range = $this->resolveRange($request);
 
@@ -48,6 +57,10 @@ class StudioAnalyticsController extends Controller
 
     public function newFollowers(Request $request)
     {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
         $profileId = $request->user()->profile_id;
         $range = $this->resolveRange($request);
 
@@ -75,6 +88,10 @@ class StudioAnalyticsController extends Controller
 
     public function comments(Request $request)
     {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
         $profileId = $request->user()->profile_id;
         $range = $this->resolveRange($request);
 
@@ -119,6 +136,10 @@ class StudioAnalyticsController extends Controller
 
     public function likes(Request $request)
     {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
         $profileId = $request->user()->profile_id;
         $range = $this->resolveRange($request);
 
@@ -147,6 +168,10 @@ class StudioAnalyticsController extends Controller
 
     public function shares(Request $request)
     {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
         $profileId = $request->user()->profile_id;
         $range = $this->resolveRange($request);
 
@@ -173,8 +198,25 @@ class StudioAnalyticsController extends Controller
         return response()->json($payload);
     }
 
+    public function summary(Request $request)
+    {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
+        $profileId = $request->user()->profile_id;
+
+        $payload = app(StudioService::class)->getSummary($profileId);
+
+        return response()->json($payload);
+    }
+
     public function profileLinks(Request $request)
     {
+        if ($request->user()->cannot('create', Video::class)) {
+            return $this->error('You are not authorized to perform this action.');
+        }
+
         $profileId = $request->user()->profile_id;
 
         $res = ProfileLink::whereProfileId($profileId)
@@ -186,7 +228,7 @@ class StudioAnalyticsController extends Controller
         ]);
     }
 
-    private function resolveRange(Request $request): int
+    private function resolveRange(Request $request, int $default = 30): int
     {
         $request->validate([
             'range' => ['nullable', 'integer', 'in:'.implode(',', self::VALID_RANGES)],
