@@ -1,7 +1,7 @@
 <template>
     <div
         v-if="isOpen && isMobile"
-        class="fixed inset-0 bg-black/80 z-50 lg:hidden"
+        class="fixed h-screen inset-0 bg-black/80 z-50 lg:hidden"
         @click="closeMobile"
     />
 
