@@ -32,7 +32,7 @@
         "@vueuse/core": "^14.3.0",
         "@xmldom/xmldom": ">=0.9.10",
         "autoprefixer": "^10.5.0",
-        "axios": "1.15.2",
+        "axios": "1.16.0",
         "boxicons": "^2.1.4",
         "date-fns": "^4.1.0",
         "echarts": "^6.0.0",
