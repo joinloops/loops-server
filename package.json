@@ -65,7 +65,7 @@
         "@vue/eslint-config-typescript": "^14.7.0",
         "esbuild": "^0.28.0",
         "eslint": "^10.2.0",
-        "eslint-plugin-vue": "^10.9.0",
+        "eslint-plugin-vue": "^10.9.1",
         "flatted": ">=3.4.2",
         "follow-redirects": ">=1.16.0",
         "globals": "^17.5.0",
