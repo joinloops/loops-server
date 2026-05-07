@@ -361,7 +361,7 @@ class ObjectController extends Controller
         $kit = StarterKit::active()->findOrFail($kit);
         $account = StarterKitAccount::approved()->whereStarterKitId($kit->id)->whereProfileId($pid)->firstOrFail();
 
-        return StarterKitActivityBuilder::buildAccountItem($account);
+        return response(StarterKitActivityBuilder::buildAccountItem($account))->header('Content-Type', 'application/activity+json');
     }
 
     public function showStarterKitAccountAttestation(Request $request, $kit, $id)
@@ -371,7 +371,7 @@ class ObjectController extends Controller
         $kit = StarterKit::active()->findOrFail($kit);
         $account = StarterKitAccount::approved()->whereStarterKitId($kit->id)->findOrFail($id);
 
-        return StarterKitActivityBuilder::buildAccountAttestation($account, $kit);
+        return response(StarterKitActivityBuilder::buildAccountAttestation($account, $kit))->header('Content-Type', 'application/activity+json');
     }
 
     /**
