@@ -43,7 +43,7 @@
         "laravel-vite-plugin": "^2.1",
         "markdown-it": ">=14.1.1",
         "md-editor-v3": "^6.5.0",
-        "mediabunny": "^1.43.0",
+        "mediabunny": "^1.44.1",
         "pinia": "^3.0.4",
         "postcss": "^8.5.13",
         "sass": "^1.99.0",
