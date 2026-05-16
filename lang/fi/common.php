@@ -335,6 +335,7 @@ return [
     'signIntoYourAccountToContinue' => 'Kirjaudu sisään tilillesi jatkaaksesi',
     'signUp' => 'Rekisteröidy',
     'skipForNow' => 'Ohita toistaiseksi',
+    'slowDownAMoment' => 'Slow down a moment',
     'someFieldsHaveBeenUpdatedAndAreWaitingForModeratorApproval' => 'Some fields have been updated and are waiting for moderator approval',
     'somethingWentWrong' => 'Jokin meni pieleen',
     'somethingWentWrongPleaseTryAgain' => 'Something went wrong. Please try again.',
@@ -453,4 +454,5 @@ return [
     'youveAlreadyDeclinedTheInvitationTo' => 'You\'ve already declined the invitation to',
     'youveBeenAddedToAStarterKit' => 'You\'ve been added to a Starter Kit',
     'youveCreatedTheMaximumOf' => 'You\'ve created the maximum of',
+    'youveHitTheSearchLimitWellTryAgainAutomatically' => 'You\'ve hit the search limit. We\'ll try again automatically.',
 ];
