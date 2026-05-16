@@ -335,6 +335,7 @@ return [
     'signIntoYourAccountToContinue' => 'Увійдіть у свій обліковий запис, щоб продовжити',
     'signUp' => 'Реєстрація',
     'skipForNow' => 'Поки що пропустити',
+    'slowDownAMoment' => 'Slow down a moment',
     'someFieldsHaveBeenUpdatedAndAreWaitingForModeratorApproval' => 'Some fields have been updated and are waiting for moderator approval',
     'somethingWentWrong' => 'Щось пішло не так',
     'somethingWentWrongPleaseTryAgain' => 'Something went wrong. Please try again.',
@@ -453,4 +454,5 @@ return [
     'youveAlreadyDeclinedTheInvitationTo' => 'Ви вже відхилили запрошення',
     'youveBeenAddedToAStarterKit' => 'Вас додано в початковий набір',
     'youveCreatedTheMaximumOf' => 'Ви створили максимум з',
+    'youveHitTheSearchLimitWellTryAgainAutomatically' => 'You\'ve hit the search limit. We\'ll try again automatically.',
 ];
