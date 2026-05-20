@@ -78,6 +78,8 @@ return [
     'playlist' => 'Wiedergabeliste',
     'playlistName' => 'Name der Wiedergabeliste',
     'playlists' => 'Wiedergabelisten',
+    'playlistsDisabledByAdmin' => 'Playlists have been disabled by an administrator. If you believe this is an error, please contact support.',
+    'playlistsUnavailable' => 'Playlists Unavailable',
     'posts' => 'Beiträge',
     'recommended' => 'Empfohlen:',
     'removeFromPlaylist' => 'Aus Wiedergabeliste entfernen',
