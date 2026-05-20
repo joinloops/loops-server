@@ -78,6 +78,8 @@ return [
     'playlist' => 'Playlist',
     'playlistName' => 'Playlist Name',
     'playlists' => 'Playlists',
+    'playlistsDisabledByAdmin' => 'Playlists have been disabled by an administrator. If you believe this is an error, please contact support.',
+    'playlistsUnavailable' => 'Playlists Unavailable',
     'posts' => 'Posts',
     'recommended' => 'Recommended:',
     'removeFromPlaylist' => 'Remove from playlist',
