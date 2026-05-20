@@ -78,6 +78,8 @@ return [
     'playlist' => 'Lista de reproducción',
     'playlistName' => 'Nombre de la lista de reproducción',
     'playlists' => 'Listas de reproducción',
+    'playlistsDisabledByAdmin' => 'Playlists have been disabled by an administrator. If you believe this is an error, please contact support.',
+    'playlistsUnavailable' => 'Playlists Unavailable',
     'posts' => 'Publicaciones',
     'recommended' => 'Recomendado:',
     'removeFromPlaylist' => 'Eliminar de la lista de reproducción',
