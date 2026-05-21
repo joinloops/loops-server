@@ -33,7 +33,7 @@
         return '<a href="' . e(url('/tag/' . $m[1])) . '" target="_blank" rel="noopener">#' . e($m[1]) . '</a>';
     }, $captionHtml);
     $captionHtml = preg_replace_callback('/@([A-Za-z0-9_\.]+)/', function ($m) {
-        return '<a href="' . e(url('/' . $m[1])) . '" target="_blank" rel="noopener">@' . e($m[1]) . '</a>';
+        return '<a href="' . e(url('/@' . $m[1])) . '" target="_blank" rel="noopener">@' . e($m[1]) . '</a>';
     }, $captionHtml);
 @endphp
 
