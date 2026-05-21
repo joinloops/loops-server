@@ -296,7 +296,7 @@ class VideoController extends Controller
         }
         $video->caption = $updatedCaption;
         $video->can_download = $request->has('can_download') ? $request->boolean('can_download') : false;
-        $video->can_embed = $canEmbed && $request->has('can_embed') ? $request->boolean('can_embed') : false;
+        $video->can_embed = $canEmbed && $request->has('can_embed') ? $request->boolean('can_embed') : $video->can_embed;
         $video->comment_state = $request->has('can_comment') ? ($request->boolean('can_comment') ? 4 : 0) : 0;
         $video->is_pinned = $request->has('is_pinned') ? $request->boolean('is_pinned') : 0;
         $video->pinned_order = $request->has('is_pinned') ? Video::whereStatus(2)->whereProfileId($pid)->whereIsPinned(true)->count() + 1 : 0;
