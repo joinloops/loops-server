@@ -29,6 +29,12 @@ class EmbedController extends Controller
 
         $res = VideoService::getMediaData($video->id);
 
+        if (! $res) {
+            return response()->view('embed.unavailable', [
+                'theme' => $theme,
+            ]);
+        }
+        
         if ($video->has_audio && $video->sound_id) {
             $res['audio'] = [
                 'cover' => data_get($res, 'account.avatar', '/storage/avatars/default.jpg'),
