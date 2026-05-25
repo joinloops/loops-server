@@ -240,7 +240,7 @@ return [
     'newStarterKit' => 'Neue Starter-Kits',
     'newVerificationCodeSent' => 'Ein neuer Verifizierungscode wurde an deine E-Mail versendet',
     'next' => 'Weiter',
-    'no' => 'No',
+    'no' => 'Nein',
     'noAccountsAddedYet' => 'Noch keine Konten hinzugefügt',
     'noAccountsFoundFor' => 'Keine Konten gefunden für',
     'noAccountsInThisKitYet' => 'Noch keine Konten in diesem Kit',
