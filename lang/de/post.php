@@ -13,7 +13,7 @@ return [
     'commentsAreDisabledForThisVideo' => 'Kommentare sind für dieses Video deaktiviert',
     'commentsEnabled' => 'Kommentare erlaubt',
     'commentsHaveBeenDisabled' => 'Kommentare wurden deaktiviert',
-    'confirmCancel' => 'Confirm cancel editing',
+    'confirmCancel' => 'Bearbeitungsabbruch bestätigen',
     'confirmCancelEdit' => 'Sind Sie sich sicher, dass Sie die Bearbeitung abbrechen möchten?',
     'copiedExclamation' => 'Kopiert!',
     'copyLink' => 'Link kopieren',
