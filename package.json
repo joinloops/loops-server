@@ -35,7 +35,7 @@
         "autoprefixer": "^10.5.0",
         "axios": "1.16.1",
         "boxicons": "^2.1.4",
-        "date-fns": "^4.2.1",
+        "date-fns": "^4.3.0",
         "echarts": "^6.1.0",
         "emoji-mart-vue-fast": "^15.0.3",
         "feather-icons": "^4.29.2",
