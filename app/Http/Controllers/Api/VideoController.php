@@ -456,7 +456,7 @@ class VideoController extends Controller
             app(LikeService::class)->addVideoLike((string) $video->id, (string) $pid);
 
             if (app(ConfigService::class)->pushNotifications()) {
-                if ($pid != $video->profile_id) {
+                if ($pid != $video->profile_id && ! $video->uri) {
                     SendPushNotificationJob::dispatch_newVideoLike(
                         profileId: $video->profile_id,
                         videoId: $video->id,
