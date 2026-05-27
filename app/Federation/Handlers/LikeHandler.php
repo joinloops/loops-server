@@ -11,6 +11,7 @@ use App\Models\Profile;
 use App\Models\UserFilter;
 use App\Models\Video;
 use App\Models\VideoLike;
+use App\Services\ConfigService;
 use App\Services\HashidService;
 use App\Services\NotificationService;
 use App\Services\SanitizeService;
@@ -77,7 +78,7 @@ class LikeHandler extends BaseHandler
                     SendPushNotificationJob::dispatch_newVideoLike(
                         profileId: $statusOwnerId,
                         videoId: $objectModel->id,
-                        actorId: $actor,
+                        actorId: $actor->id,
                     );
                 }
                 
