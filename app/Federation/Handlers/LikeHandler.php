@@ -2,6 +2,7 @@
 
 namespace App\Federation\Handlers;
 
+use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Models\Comment;
 use App\Models\CommentLike;
 use App\Models\CommentReply;
@@ -11,6 +12,7 @@ use App\Models\UserFilter;
 use App\Models\Video;
 use App\Models\VideoLike;
 use App\Services\HashidService;
+use App\Services\NotificationService;
 use App\Services\SanitizeService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -70,7 +72,15 @@ class LikeHandler extends BaseHandler
                     return $existingLike;
                 }
                 $like = $this->createVideoLike($actor, $objectModel, $activity);
-
+                
+                if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newVideoLike(
+                        profileId: $statusOwnerId,
+                        videoId: $objectModel->id,
+                        actorId: $actor,
+                    );
+                }
+                
                 $this->updateVideoLikeCount($objectModel);
 
             } elseif ($objectClass === Comment::class) {
