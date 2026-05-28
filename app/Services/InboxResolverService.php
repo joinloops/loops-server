@@ -23,7 +23,10 @@ class InboxResolverService
             ->join('profiles', 'profiles.id', '=', 'followers.profile_id')
             ->leftJoin('instances', 'instances.domain', '=', 'profiles.domain')
             ->whereNotNull('profiles.inbox_url')
-            ->where('instances.is_blocked', false)
+            ->where(function ($q) {
+                $q->whereNull('instances.is_blocked')
+                    ->orWhere('instances.is_blocked', false);
+            })
             ->select([
                 'profiles.id as profile_id',
                 DB::raw('COALESCE(profiles.shared_inbox_url, profiles.inbox_url) as inbox'),
@@ -80,7 +83,10 @@ class InboxResolverService
             ->leftJoin('instances', 'instances.domain', '=', 'profiles.domain')
             ->where('profiles.local', false)
             ->whereNotNull('profiles.inbox_url')
-            ->where('instances.is_blocked', false)
+            ->where(function ($q) {
+                $q->whereNull('instances.is_blocked')
+                    ->orWhere('instances.is_blocked', false);
+            })
             ->select([
                 'profiles.id as profile_id',
                 DB::raw('COALESCE(profiles.shared_inbox_url, profiles.inbox_url) as inbox'),
