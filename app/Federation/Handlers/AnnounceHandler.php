@@ -2,6 +2,7 @@
 
 namespace App\Federation\Handlers;
 
+use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\CommentReplyRepost;
@@ -10,6 +11,7 @@ use App\Models\Profile;
 use App\Models\UserFilter;
 use App\Models\Video;
 use App\Models\VideoRepost;
+use App\Services\ConfigService;
 use App\Services\NotificationService;
 use App\Services\SanitizeService;
 use Illuminate\Support\Facades\DB;
@@ -81,6 +83,14 @@ class AnnounceHandler extends BaseHandler
                         $actor->id
                     );
                     NotificationService::clearUnreadCount($video->profile_id);
+                    
+                    if (app(ConfigService::class)->pushNotifications()) {
+                        SendPushNotificationJob::dispatch_newRepost(
+                            profileId: $video->profile_id,
+                            videoId: $video->id,
+                            actorId: $actor->id,
+                        );
+                    }
                 }
 
             } elseif ($modelClass === 'App\Models\Comment') {
