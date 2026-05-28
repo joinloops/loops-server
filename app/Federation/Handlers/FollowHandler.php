@@ -3,9 +3,11 @@
 namespace App\Federation\Handlers;
 
 use App\Jobs\Federation\DeliverAcceptActivity;
+use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Models\Follower;
 use App\Models\Profile;
 use App\Models\UserFilter;
+use App\Services\ConfigService;
 use App\Services\NotificationService;
 use App\Services\SanitizeService;
 use Illuminate\Support\Facades\DB;
@@ -67,6 +69,13 @@ class FollowHandler extends BaseHandler
             DB::commit();
 
             NotificationService::newFollower($targetProfile->id, $actor->id);
+
+            if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newFollow(
+                        profileId: $targetProfile->id,
+                        actorId: $actor->id,
+                    );
+                }
 
             if (config('logging.dev_log')) {
                 Log::info('Successfully handled Follow activity', [
