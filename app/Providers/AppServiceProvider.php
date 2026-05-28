@@ -94,7 +94,7 @@ class AppServiceProvider extends ServiceProvider
                 return [
                     Limit::perMinute($perMinute)->by("m:$actor")->response($tooMany),
                     Limit::perHour($perHour)->by("h:$actor")->response($tooMany),
-                    Limit::perHour($perDay)->by("d:$actor")->response($tooMany),
+                    Limit::perDay($perDay)->by("d:$actor")->response($tooMany),
                 ];
             };
 
