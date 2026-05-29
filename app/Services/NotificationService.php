@@ -70,7 +70,8 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
-        if (app(ConfigService::class)->pushNotifications()) {
+        $video = Video::with('profile_id')->find($vid);
+        if (app(ConfigService::class)->pushNotifications() && $uid != $video->profile_id && ! $video->uri) {
             SendPushNotificationJob::dispatch_newVideoLike(
                 profileId: $uid,
                 videoId: $vid,
@@ -287,14 +288,6 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
-        if (app(ConfigService::class)->pushNotifications()) {
-                    SendPushNotificationJob::dispatch_newVideoCommentReply(
-                        profileId: $uid,
-                        videoId: $vid,
-                        actorId: $pid,
-                        commentId: $cid,
-                    );
-        }
         return $res;
     }
 
@@ -310,6 +303,15 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newVideoCommentReply(
+                        profileId: $uid,
+                        videoId: $vid,
+                        actorId: $pid,
+                        commentId: $cid,
+                    );
+        }
+        
         return $res;
     }
 
