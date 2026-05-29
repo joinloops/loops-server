@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Models\Notification;
 use App\Models\StarterKit;
+use App\Models\Video;
 use App\Services\ConfigService;
 use Illuminate\Support\Facades\Cache;
 
@@ -70,8 +71,8 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
-        $video = Video::with('profile_id')->find($vid);
-        if (app(ConfigService::class)->pushNotifications() && $uid != $video->profile_id && ! $video->uri) {
+        $video = Video::find($vid);
+        if (app(ConfigService::class)->pushNotifications() && $pid != $video->profile_id && ! $video->uri) {
             SendPushNotificationJob::dispatch_newVideoLike(
                 profileId: $uid,
                 videoId: $vid,
