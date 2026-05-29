@@ -72,9 +72,9 @@ class NotificationService
 
         if (app(ConfigService::class)->pushNotifications()) {
             SendPushNotificationJob::dispatch_newVideoLike(
-                profileId: $pid,
+                profileId: $uid,
                 videoId: $vid,
-                actorId: $uid,
+                actorId: $pid,
                 );
         }
         
@@ -165,6 +165,12 @@ class NotificationService
 
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newFollow(
+                        profileId: $uid,
+                        actorId: $pid,
+                    );
+        }
         return $res;
     }
 
@@ -233,9 +239,9 @@ class NotificationService
 
         if (app(ConfigService::class)->pushNotifications()) {
             SendPushNotificationJob::dispatch_newVideoComment(
-                profileId: $pid,
+                profileId: $uid,
                 videoId: $vid,
-                actorId: $uid,
+                actorId: $pid,
                 commentId: $cid,
             );
         }
@@ -283,9 +289,9 @@ class NotificationService
 
         if (app(ConfigService::class)->pushNotifications()) {
                     SendPushNotificationJob::dispatch_newVideoCommentReply(
-                        profileId: $pid,
+                        profileId: $uid,
                         videoId: $vid,
-                        actorId: $uid,
+                        actorId: $pid,
                         commentId: $cid,
                     );
         }
@@ -334,6 +340,13 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+                        SendPushNotificationJob::dispatch_newRepost(
+                            profileId: $uid,
+                            videoId: $vid,
+                            actorId: $pid,
+                        );
+        }
         return $res;
     }
 
