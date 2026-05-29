@@ -30,7 +30,7 @@ use App\Jobs\Federation\DeliverUndoCommentLikeActivity;
 use App\Jobs\Federation\DeliverUndoCommentReplyLikeActivity;
 use App\Jobs\Federation\DeliverUndoVideoLikeActivity;
 use App\Jobs\Federation\DeliverVideoLikeActivity;
-use App\Jobs\PushNotifications\SendPushNotificationJob;
+//use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Jobs\Video\VideoCustomThumbnailJob;
 use App\Jobs\Video\VideoOptimizeJob;
 use App\Jobs\Video\VideoProcessingCompleteJob;
