@@ -79,7 +79,7 @@ class NotificationService
                 actorId: $pid,
                 );
         }
-        
+
         return $res;
     }
 
@@ -173,6 +173,7 @@ class NotificationService
                         actorId: $pid,
                     );
         }
+
         return $res;
     }
 
@@ -247,7 +248,7 @@ class NotificationService
                 commentId: $cid,
             );
         }
-        
+
         return $res;
     }
 
@@ -312,7 +313,7 @@ class NotificationService
                         commentId: $cid,
                     );
         }
-        
+
         return $res;
     }
 
@@ -350,6 +351,7 @@ class NotificationService
                             actorId: $pid,
                         );
         }
+
         return $res;
     }
 
