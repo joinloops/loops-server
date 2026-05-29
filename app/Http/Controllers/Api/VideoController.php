@@ -455,7 +455,7 @@ class VideoController extends Controller
 
             app(LikeService::class)->addVideoLike((string) $video->id, (string) $pid);
 
-            if (app(ConfigService::class)->pushNotifications()) {
+            /*if (app(ConfigService::class)->pushNotifications()) {
                 if ($pid != $video->profile_id && ! $video->uri) {
                     SendPushNotificationJob::dispatch_newVideoLike(
                         profileId: $video->profile_id,
@@ -463,7 +463,7 @@ class VideoController extends Controller
                         actorId: $pid,
                     );
                 }
-            }
+            }*/
 
             if ($video->uri) {
                 $config = app(ConfigService::class);
@@ -635,7 +635,7 @@ class VideoController extends Controller
                 app(FederationDispatcher::class)->dispatchCommentReplyCreation($comment);
             }
 
-            if ($config->pushNotifications()) {
+            /*if ($config->pushNotifications()) {
                 if ($pid != $parent->profile_id && $pid != $video->profile_id) {
                     SendPushNotificationJob::dispatch_newVideoCommentReply(
                         profileId: $parent->profile_id,
@@ -644,7 +644,7 @@ class VideoController extends Controller
                         commentId: $comment->id,
                     );
                 }
-            }
+            }*/
         } else {
             $comment = new Comment;
             $comment->video_id = $vid;
@@ -661,7 +661,7 @@ class VideoController extends Controller
                 app(FederationDispatcher::class)->dispatchCommentCreation($comment);
             }
 
-            if ($config->pushNotifications()) {
+            /*if ($config->pushNotifications()) {
                 if ($pid != $video->profile_id) {
                     SendPushNotificationJob::dispatch_newVideoComment(
                         profileId: $video->profile_id,
@@ -670,7 +670,7 @@ class VideoController extends Controller
                         commentId: $comment->id,
                     );
                 }
-            }
+            }*/
         }
 
         $video->recalculateCommentsCount();
@@ -729,14 +729,14 @@ class VideoController extends Controller
         if ($config->federation()) {
             app(FederationDispatcher::class)->dispatchCommentCreation($comment);
         }
-        if ($config->pushNotifications() && $pid != $video->profile_id) {
+        /*if ($config->pushNotifications() && $pid != $video->profile_id) {
             SendPushNotificationJob::dispatch_newVideoComment(
                 profileId: $video->profile_id,
                 videoId: $video->id,
                 actorId: $pid,
                 commentId: $comment->id,
             );
-        }
+        }*/
 
         CommentKlipyMediaShareTriggerJob::dispatch((string) $klipyId, $type, (string) $user->id);
 
