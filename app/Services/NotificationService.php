@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Models\Notification;
 use App\Models\StarterKit;
+use App\Services\ConfigService;
 use Illuminate\Support\Facades\Cache;
 
 class NotificationService
@@ -68,6 +70,14 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+            SendPushNotificationJob::dispatch_newVideoLike(
+                profileId: $pid,
+                videoId: $vid,
+                actorId: $uid,
+                );
+        }
+        
         return $res;
     }
 
@@ -221,6 +231,15 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+            SendPushNotificationJob::dispatch_newVideoComment(
+                profileId: $pid,
+                videoId: $vid,
+                actorId: $uid,
+                commentId: $cid,
+            );
+        }
+        
         return $res;
     }
 
@@ -262,6 +281,14 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newVideoCommentReply(
+                        profileId: $pid,
+                        videoId: $vid,
+                        actorId: $uid,
+                        commentId: $cid,
+                    );
+        }
         return $res;
     }
 
