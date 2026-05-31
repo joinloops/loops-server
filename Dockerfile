@@ -46,8 +46,9 @@ RUN chown -R www-data:www-data /var/www/html \
     && find /var/www/html -type d -exec chmod 755 {} \; \
     && chmod -R ug+rwx /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Install composer dependencies (no-dev recommended for production)
-RUN composer install --no-ansi --no-interaction --no-dev --optimize-autoloader
+# Install composer dependencies 
+## TODO add "--no-dev" for production. Currently breaks due to Pail.
+RUN composer install --no-ansi --no-interaction --optimize-autoloader
 
 # Copy Node.js binaries/libraries from node stage
 COPY --from=node /usr/local/bin /usr/local/bin
