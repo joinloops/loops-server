@@ -199,6 +199,8 @@ class Video extends Model
             'last_fetched_at' => 'datetime',
             'audio_allow_reuse' => 'boolean',
             'has_hidden_comments' => 'boolean',
+            'thumbnail_width' => 'integer',
+            'thumbnail_height' => 'integer',
         ];
     }
 
