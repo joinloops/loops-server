@@ -116,6 +116,7 @@ class FeedService
         $videos = Video::published()
             ->where('is_sensitive', false)
             ->where('is_local', true)
+            ->where('created_at', '>', now()->subDays(93))
             ->orderBy('videos.likes', 'desc')
             ->limit($limit)
             ->get();
