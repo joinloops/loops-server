@@ -255,11 +255,6 @@ class ObjectController extends Controller
             if ($video && $video->is_local && $video->visibility === 1) {
                 abort_if($video->profile->status != 1, 403, 'Resource is not available');
 
-                // @phpstan-ignore-next-line
-                if ($video->visibility !== 1) {
-                    return $this->activityPubError('You do not have permission to access this resource.', 403);
-                }
-
                 return [
                     '@context' => 'https://www.w3.org/ns/activitystreams',
                     'id' => $video->permalink('/likes'),
