@@ -1,5 +1,4 @@
 import { storeToRefs } from 'pinia'
-import { computed } from 'vue'
 import { useEditHistoryStore } from '@/stores/editHistory'
 
 export function useEditHistory() {
