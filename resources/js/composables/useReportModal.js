@@ -23,7 +23,7 @@ const selectedCategory = ref(null)
 const additionalText = ref('')
 
 export function useReportModal() {
-    const { alertModal, confirmModal } = useAlertModal()
+    const { alertModal } = useAlertModal()
     const { t } = useI18n()
 
     const REPORT_CATEGORIES = computed(() => [
