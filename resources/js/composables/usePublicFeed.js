@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/vue-query'
-import { computed } from 'vue'
 import { fetchPublicFeedPage } from '~/api/publicFeed'
 
 export const usePublicFeed = () => {
