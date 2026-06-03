@@ -110,7 +110,7 @@ class SearchController extends Controller
                 ->select(['id', 'profile_id', 'caption', 'likes', 'status', 'visibility', 'created_at'])
                 ->where('status', 2)
                 ->where('visibility', 1)
-                ->where('caption', 'like', '%'.$like)
+                ->where('caption', 'like', $like)
                 ->orderByDesc('likes')
                 ->orderByDesc('id')
                 ->cursorPaginate(
@@ -881,8 +881,8 @@ class SearchController extends Controller
             if (isset($match['hash'])) {
                 $hashId = HashidService::safeDecode($match['hash']);
                 $video = $hashId ? Video::published()->find($hashId) : null;
-            } elseif (isset($match['id'], $match['profile_id'])) {
-                $video = Video::published()->whereProfileId($match['profile_id'])->find($match['id']);
+            } elseif (isset($match['id'], $match['profileId'])) {
+                $video = Video::published()->whereProfileId($match['profileId'])->find($match['id']);
             }
 
             if ($video) {
