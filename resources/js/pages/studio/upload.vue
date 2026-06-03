@@ -1366,7 +1366,6 @@ const checkVideoResolution = async (file) => {
             const duration = video.duration
 
             const aspectRatio = width / height
-            let orientation = 'portrait'
 
             if (aspectRatio < 0.95) {
                 orientation = 'portrait'
