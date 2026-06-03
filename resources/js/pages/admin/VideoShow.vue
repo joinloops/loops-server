@@ -1369,7 +1369,7 @@ const formatValue = (val) => {
     return String(val)
 }
 
-const statusBadge = computed(() => statusBadgeStyles[profile.value?.status] || defaultBadge)
+const statusBadge = computed(() => statusBadgeStyles[video.value?.status] || defaultBadge)
 
 const statusBadgeClasses = computed(() => {
     const status = video.value?.status
