@@ -1,5 +1,4 @@
 import { useInfiniteQuery } from '@tanstack/vue-query'
-import { ref } from 'vue'
 
 export function useNotifications() {
     const fetchNotifications = async ({ pageParam = null }) => {
