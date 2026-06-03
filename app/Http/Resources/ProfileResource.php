@@ -41,7 +41,7 @@ class ProfileResource extends JsonResource
             'name' => $this->name ?? 'user'.$this->id,
             'avatar' => $avatarUrl,
             'username' => $this->username,
-            'is_owner' => false,
+            'is_owner' => (string) $request->user()?->profile_id === (string) $this->id,
             'local' => (bool) $this->local,
             'bio' => $this->bio ?? '',
             'post_count' => $this->video_count,
