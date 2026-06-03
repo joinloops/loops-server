@@ -639,7 +639,7 @@ class SearchController extends Controller
         $query = trim($validated['q']);
         $currentUserId = $request->user()->profile_id;
 
-        $isWebfinger = str_starts_with($query, '@') && substr_count($query, '@') == 2;
+        $isWebfinger = (bool) preg_match( '/^@[\w.-]+@(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$/i' , $query );  # Matches @user@domain.ext (not @user@domain without FQDN)
 
         if ($isWebfinger) {
             $res = app(WebfingerService::class)->lookup($query);
