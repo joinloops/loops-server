@@ -166,7 +166,7 @@ class SearchController extends Controller
                 ->select(['id', 'profile_id', 'caption', 'likes', 'status', 'visibility', 'created_at'])
                 ->where('status', 2)
                 ->where('visibility', 1)
-                ->where('caption', 'like', '%'.$like)
+                ->where('caption', 'like', $like)
                 ->orderByDesc('likes')
                 ->orderByDesc('id')
                 ->cursorPaginate(
@@ -239,7 +239,7 @@ class SearchController extends Controller
                     ->where('visibility', 1)
                     ->where(function ($q) use ($like) {
                         $q->where('title', 'like', $like)
-                            ->orWhere('description', 'like', '%'.$like);
+                            ->orWhere('description', 'like', $like);
                     })
                     ->orderByDesc('approved_accounts')
                     ->orderByDesc('id')
@@ -811,7 +811,7 @@ class SearchController extends Controller
             return response()->json(['status' => 'unavailable'], 404);
         }
 
-        VideoService::deleteMediaData($video->id);
+        // VideoService::deleteMediaData($video->id);  //Wat?
 
         return response()->json([
             'status' => 'ready',
@@ -1089,6 +1089,10 @@ class SearchController extends Controller
     protected function handleRemoteFeaturedCollection($request, array $data, string $url): ?array
     {
         $kit = $this->importRemoteStarterKit($data, $url);
+
+        if (! $kit) {
+            return null;
+        }
 
         return [
             'data' => [
