@@ -56,7 +56,7 @@ COPY --from=node /usr/local/lib /usr/local/lib
 
 # Install npm dependencies and build assets
 ENV NODE_ENV="production"
-RUN npm install
+RUN npm install --include=dev
 RUN npm run build
 
 USER www-data
