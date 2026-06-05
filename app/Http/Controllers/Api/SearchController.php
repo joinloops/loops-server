@@ -409,7 +409,7 @@ class SearchController extends Controller
 
     protected function isRemoteQuery(string $query): bool
     {
-        if (preg_match('/^@?[a-zA-Z0-9_]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $query)) {
+        if (preg_match('/^@?[a-zA-Z0-9_-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/', $query)) {
             return true;
         }
 
@@ -698,10 +698,6 @@ class SearchController extends Controller
             ]);
         }
 
-        $validUrl = app(SanitizeService::class)->url($query, true, false);
-
-        abort_if(! $validUrl, 403, 'Invalid url');
-
         if (! filter_var($query, FILTER_VALIDATE_URL)) {
             $cleanQuery = Str::of($query)->startsWith('@') ? Str::substr($query, 1) : $query;
 
@@ -744,6 +740,14 @@ class SearchController extends Controller
                 ],
             ]);
         }
+
+        // URLs are validated against SSRF/sanitize rules before resolving.
+        // Bare fediverse handles (user@domain) are resolved via webfinger in the
+        // branch above and must skip this gate — url() requires an https:// URL,
+        // so a handle would otherwise 403 "Invalid url" before it can resolve.
+        $validUrl = app(SanitizeService::class)->url($query, true, false);
+
+        abort_if(! $validUrl, 403, 'Invalid url');
 
         $result = $this->resolveUrl($request, $query, $currentUserId);
 
