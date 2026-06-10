@@ -21,8 +21,8 @@ trait HasSyncHashtagsFromCaption
             $normalizedTags[] = $normalized;
 
             $hashtag = Hashtag::firstOrCreate(
-                ['name_normalized' => $normalized, 'name' => $tag],
-                ['can_autolink' => true]
+                ['name_normalized' => $normalized],
+                ['name' => $tag, 'can_autolink' => true]
             );
 
             if ($hashtag->can_autolink) {
