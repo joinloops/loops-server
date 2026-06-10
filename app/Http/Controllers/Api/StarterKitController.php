@@ -235,8 +235,8 @@ class StarterKitController extends Controller
 
             foreach ($tagNames as $index => $name) {
                 $hashtag = Hashtag::firstOrCreate(
-                    ['name_normalized' => strtolower($name), 'name' => $name],
-                    ['can_autolink' => true]
+                    ['name_normalized' => strtolower($name)],
+                    ['name' => $name, 'can_autolink' => true]
                 );
 
                 StarterKitTag::create([
@@ -1108,8 +1108,8 @@ class StarterKitController extends Controller
 
         $hashtagIds = $tagNames->map(function ($name, $index) {
             $hashtag = Hashtag::firstOrCreate(
-                ['name_normalized' => strtolower($name), 'name' => $name],
-                ['can_autolink' => true]
+                ['name_normalized' => strtolower($name)],
+                ['name' => $name, 'can_autolink' => true]
             );
 
             return ['id' => $hashtag->id, 'order' => $index];
