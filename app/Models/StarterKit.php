@@ -610,8 +610,8 @@ class StarterKit extends Model
 
         if ($topicTagName) {
             $hashtag = Hashtag::firstOrCreate(
-                ['name_normalized' => strtolower($topicTagName), 'name' => $topicTagName],
-                ['can_autolink' => true]
+                ['name_normalized' => strtolower($topicTagName)],
+                ['name' => $topicTagName, 'can_autolink' => true]
             );
 
             StarterKitTag::create([
@@ -635,8 +635,8 @@ class StarterKit extends Model
                 }
 
                 $hashtag = Hashtag::firstOrCreate(
-                    ['name_normalized' => strtolower($name), 'name' => $name],
-                    ['can_autolink' => true]
+                    ['name_normalized' => strtolower($name)],
+                    ['name' => $name, 'can_autolink' => true]
                 );
 
                 StarterKitTag::create([
