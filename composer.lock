@@ -6111,16 +6111,16 @@
         },
         {
             "name": "spatie/laravel-backup",
-            "version": "10.2.2",
+            "version": "10.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-backup.git",
-                "reference": "fd8ae12e6a8401dd4de6d3beb5f37d9a627064f3"
+                "reference": "c026344f7e26321d6e1d214cd3e566ce5c54715d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-backup/zipball/fd8ae12e6a8401dd4de6d3beb5f37d9a627064f3",
-                "reference": "fd8ae12e6a8401dd4de6d3beb5f37d9a627064f3",
+                "url": "https://api.github.com/repos/spatie/laravel-backup/zipball/c026344f7e26321d6e1d214cd3e566ce5c54715d",
+                "reference": "c026344f7e26321d6e1d214cd3e566ce5c54715d",
                 "shasum": ""
             },
             "require": {
@@ -6195,7 +6195,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-backup/issues",
-                "source": "https://github.com/spatie/laravel-backup/tree/10.2.2"
+                "source": "https://github.com/spatie/laravel-backup/tree/10.3.0"
             },
             "funding": [
                 {
@@ -6207,7 +6207,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2026-06-01T22:44:58+00:00"
+            "time": "2026-06-10T08:25:59+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
