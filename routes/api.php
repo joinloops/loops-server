@@ -34,6 +34,10 @@ use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CheckoutController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\VendorController;
+use App\Http\Controllers\Api\CommerceAnalyticsController;
+use App\Http\Controllers\Api\AffiliateController;
+use App\Http\Controllers\Api\LiveCommerceController;
+use App\Http\Controllers\Api\AutoStoreController;
 use App\Http\Controllers\AppleAuthController;
 use App\Http\Controllers\AtomFeedController;
 use App\Http\Controllers\Auth\AccountSwitcherController;
@@ -437,6 +441,24 @@ Route::prefix('api')->group(function () {
     Route::get('/v1/commerce/vendor/admin', [VendorController::class, 'adminIndex'])->middleware('auth:web,api');
     Route::post('/v1/commerce/vendor/admin/{id}/verify', [VendorController::class, 'adminVerify'])->middleware('auth:web,api');
 
+    // ── Commerce: Analytics ──
+    Route::prefix('/v1/commerce/analytics')->middleware('auth:web,api')->group(function () {
+        Route::get('/overview', [CommerceAnalyticsController::class, 'overview']);
+        Route::get('/revenue', [CommerceAnalyticsController::class, 'revenue']);
+        Route::get('/products', [CommerceAnalyticsController::class, 'products']);
+        Route::get('/vendor-performance', [CommerceAnalyticsController::class, 'vendorPerformance']);
+        Route::get('/ai-accuracy', [CommerceAnalyticsController::class, 'aiAccuracy']);
+    });
+
+    // ── Commerce: Affiliate ──
+    Route::prefix('/v1/commerce/affiliate')->group(function () {
+        Route::post('/create', [AffiliateController::class, 'createLink'])->middleware('auth:web,api');
+        Route::get('/my-links', [AffiliateController::class, 'myLinks'])->middleware('auth:web,api');
+        Route::get('/dashboard', [AffiliateController::class, 'dashboard'])->middleware('auth:web,api');
+        Route::get('/admin', [AffiliateController::class, 'adminIndex'])->middleware('auth:web,api');
+        Route::get('/track/{code}', [AffiliateController::class, 'trackClick']);
+    });
+
     // Curated Onboarding
     Route::get('/v1/onboarding/config', [CuratedOnboardingController::class, 'config']);
     Route::prefix('/v1/onboarding')->group(function () {
@@ -625,3 +647,20 @@ Route::prefix('/ap')->middleware([AuthorizedFetch::class])->group(function () {
     Route::get('kit/{kit}/attestation/{id}', [ObjectController::class, 'showStarterKitAccountAttestation'])->middleware(AuthorizedFetch::class);
     Route::get('users/{profileId}/quote_authorizations/{authId}', [ObjectController::class, 'getQuoteAuthorization'])->middleware(AuthorizedFetch::class);
 });
+
+    // ── Commerce: Live Commerce ──
+    Route::get('/v1/commerce/live-streams', [LiveCommerceController::class, 'listStreams']);
+    Route::get('/v1/commerce/live-streams/active', [LiveCommerceController::class, 'getActiveStreams']);
+    Route::get('/v1/commerce/live-streams/{id}', [LiveCommerceController::class, 'getStream']);
+    Route::post('/v1/commerce/live-streams', [LiveCommerceController::class, 'createStream'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/live-streams/{id}/start', [LiveCommerceController::class, 'startStream'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/live-streams/{id}/end', [LiveCommerceController::class, 'endStream'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/live-streams/{id}/products', [LiveCommerceController::class, 'addProductToStream'])->middleware('auth:web,api');
+    Route::delete('/v1/commerce/live-streams/{id}/products/{productId}', [LiveCommerceController::class, 'removeProductFromStream'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/live-streams/{id}/viewer-count', [LiveCommerceController::class, 'updateViewerCount']);
+    Route::post('/v1/commerce/live-streams/{id}/chat', [LiveCommerceController::class, 'recordChatMessage'])->middleware('auth:web,api');
+
+    // ── Commerce: Auto Store ──
+    Route::post('/v1/commerce/auto-store/generate', [AutoStoreController::class, 'generate'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/auto-store/bulk-create', [AutoStoreController::class, 'bulkCreate'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/auto-store/categories', [AutoStoreController::class, 'suggestCategories']);
