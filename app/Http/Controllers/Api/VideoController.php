@@ -35,6 +35,7 @@ use App\Jobs\Video\VideoCustomThumbnailJob;
 use App\Jobs\Video\VideoOptimizeJob;
 use App\Jobs\Video\VideoProcessingCompleteJob;
 use App\Jobs\Video\VideoThumbnailJob;
+use App\Jobs\Video\DetectVideoProductsJob;
 use App\Models\Comment;
 use App\Models\CommentCaptionEdit;
 use App\Models\CommentLike;
@@ -217,11 +218,13 @@ class VideoController extends Controller
                 VideoCustomThumbnailJob::withChain([
                     new VideoOptimizeJob($model),
                     new VideoProcessingCompleteJob($model),
+                    new DetectVideoProductsJob($model),
                 ])->dispatch($model);
             } else {
                 VideoThumbnailJob::withChain([
                     new VideoOptimizeJob($model),
                     new VideoProcessingCompleteJob($model),
+                    new DetectVideoProductsJob($model),
                 ])->dispatch($model);
             }
 

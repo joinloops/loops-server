@@ -39,6 +39,21 @@
                     }}</span>
                 </button>
 
+                <!-- Cart Button -->
+                <button
+                    v-if="authStore.isAuthenticated"
+                    @click="openCart"
+                    class="relative hidden lg:flex items-center text-gray-600 dark:text-slate-400 hover:text-[#F02C56] dark:hover:text-[#F02C56] p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 cursor-pointer transition-colors"
+                >
+                    <i class="bx bx-cart text-[22px]"></i>
+                    <span
+                        v-if="cartCount > 0"
+                        class="absolute -top-0.5 -right-0.5 flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-[#F02C56] rounded-full"
+                    >
+                        {{ displayCount(cartCount) }}
+                    </span>
+                </button>
+
                 <div v-if="!authStore.isAuthenticated" class="hidden lg:flex items-center">
                     <ThemeToggleButton class="mr-1" />
 
@@ -125,6 +140,12 @@
             </div>
         </div>
     </div>
+
+    <CartDrawer
+        :show="cartOpen"
+        @close="closeCart"
+        @checkout-success="onCheckoutSuccess"
+    />
 </template>
 
 <script setup>
@@ -135,6 +156,8 @@ import { useAuthStore } from '@/stores/auth'
 import { useNotificationStore } from '~/stores/notifications'
 import { useUtils } from '@/composables/useUtils'
 import { useI18n } from 'vue-i18n'
+import axios from 'axios'
+import CartDrawer from '@/components/Commerce/CartDrawer.vue'
 const { t } = useI18n()
 
 const emit = defineEmits(['toggleMobileDrawer', 'openLogin'])
@@ -151,6 +174,32 @@ const searchQuery = ref('')
 const showDropdown = ref(false)
 const showMobileSearch = ref(false)
 const mobileSearchInput = ref(null)
+const cartOpen = ref(false)
+const cartCount = ref(0)
+
+async function fetchCartCount() {
+    try {
+        const { data } = await axios.get('/api/v1/commerce/cart/count')
+        cartCount.value = data.count || 0
+    } catch (e) {
+        if (e.response?.status !== 401) {
+            console.warn('Failed to fetch cart count:', e)
+        }
+    }
+}
+
+function openCart() {
+    cartOpen.value = true
+}
+
+function closeCart() {
+    cartOpen.value = false
+}
+
+function onCheckoutSuccess() {
+    cartOpen.value = false
+    fetchCartCount()
+}
 
 const appLogoUrl = () => {
     return appConfig.branding.logo || `/nav-logo.png`
@@ -177,6 +226,7 @@ const closeMobileSearch = () => {
 }
 
 onMounted(() => {
+    fetchCartCount()
     // searchStore.loadRecentSearches()
 
     document.addEventListener('mouseup', (e) => {

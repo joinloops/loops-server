@@ -23,6 +23,8 @@ import '../sass/next.css'
 
 const app = createApp(App)
 
+import TikTokLayout from '@/layouts/TikTokLayout.vue'
+
 app.component('AdminLayout', AdminLayout)
 app.component('BlankLayout', BlankLayout)
 app.component('FeedLayout', FeedLayout)
@@ -30,6 +32,7 @@ app.component('FullLayout', FullLayout)
 app.component('MainLayout', MainLayout)
 app.component('SettingsLayout', SettingsLayout)
 app.component('StudioLayout', StudioLayout)
+app.component('TikTokLayout', TikTokLayout)
 
 app.config.globalProperties.$appConfig = window.appConfig
 app.provide('appConfig', window.appConfig)

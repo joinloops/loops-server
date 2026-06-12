@@ -51,4 +51,14 @@ return [
         'key_id' => env('APPLE_KEY_ID'),
         'private_key_path' => env('APPLE_PRIVATE_KEY_PATH'),
     ],
+
+    'loops_ai' => [
+        'url' => env('LOOPS_AI_URL', 'http://loops-ai:8500'),
+    ],
+    'stripe' => [
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
 ];

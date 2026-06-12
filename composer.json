@@ -47,6 +47,7 @@
         "resend/resend-laravel": "^1.0.0",
         "spatie/laravel-backup": "^10.2",
         "stevebauman/purify": "^6.3",
+        "stripe/stripe-php": "^20.2",
         "symfony/http-client": "^7.3",
         "symfony/http-foundation": "7.3.7",
         "symfony/mailgun-mailer": "^7.3"

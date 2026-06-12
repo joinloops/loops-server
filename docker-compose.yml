@@ -50,7 +50,7 @@ services:
     container_name: loops-app
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "225:8080"
     env_file:
       - .env
     environment:
@@ -70,6 +70,7 @@ services:
       AUTORUN_LARAVEL_ROUTE_CACHE: "true"
       AUTORUN_LARAVEL_VIEW_CACHE: "true"
       AUTORUN_LARAVEL_CONFIG_CACHE: "true"
+      LOOPS_AI_URL: "http://172.22.0.1:8500"
     volumes:
       - ./storage:/var/www/html/storage
       - ./bootstrap/cache:/var/www/html/bootstrap/cache

@@ -17,13 +17,13 @@ const router = createRouter({
             path: '/feed/for-you',
             name: 'feedForYouPage',
             component: () => import('~/pages/feed/for-you.vue'),
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: false }
         },
         {
             path: '/feed/following',
             name: 'feedFollowingPage',
             component: () => import('~/pages/feed/following.vue'),
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: false }
         },
         {
             path: '/explore',
@@ -59,7 +59,7 @@ const router = createRouter({
             path: '/search',
             name: 'search',
             component: () => import('~/pages/search.vue'),
-            meta: { requiresAuth: true }
+            meta: { requiresAuth: false }
         },
         {
             path: '/starter-kits',
@@ -149,7 +149,7 @@ const router = createRouter({
             path: '/sounds/:id',
             name: 'soundsPage',
             component: () => import('~/pages/sounds/index.vue'),
-            meta: { requiresAuth: true, params: true }
+            meta: { requiresAuth: false, params: true }
         },
         {
             path: '/@:id',

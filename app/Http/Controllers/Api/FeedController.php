@@ -42,13 +42,23 @@ class FeedController extends Controller
     public function getForYouFeed(Request $request)
     {
         $user = $request->user();
-        if ($user->cannot('viewAny', [Video::class])) {
-            return $this->error('Please finish setting up your account', 403);
+        if ($user) {
+            if ($user->cannot('viewAny', [Video::class])) {
+                return $this->error('Please finish setting up your account', 403);
+            }
+            app(UserActivityService::class)->markActive($user);
+            FeedService::enforcePaginationLimit($request);
+            $hideAi = $user->hide_ai;
+            $feed = FeedService::getVideoFeed($user->profile_id, 5, $hideAi);
+        } else {
+            // Guest: return public trending feed
+            FeedService::enforcePaginationLimit($request);
+            $feed = Video::published()
+                ->where('videos.visibility', 1)
+                ->orderBy('videos.created_at', 'desc')
+                ->cursorPaginate(5)
+                ->withQueryString();
         }
-        app(UserActivityService::class)->markActive($user);
-        FeedService::enforcePaginationLimit($request);
-        $hideAi = $user->hide_ai;
-        $feed = FeedService::getVideoFeed($user->profile_id, 5, $hideAi);
 
         return VideoResource::collection($feed);
     }

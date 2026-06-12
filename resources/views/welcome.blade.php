@@ -27,6 +27,12 @@
     window._navi = @json(App\Services\PageService::getActiveSideLinks());
     window.appCaptcha = @json(App\Services\FrontendService::getCaptchaData());
     </script>
+    <script src="/device-id.js" defer></script>
+    <script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js');
+    }
+    </script>
 </head>
 
 <body class="bg-white dark:bg-slate-950">

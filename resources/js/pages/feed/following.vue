@@ -1,5 +1,5 @@
 <template>
-    <FeedLayout>
+    <TikTokLayout>
         <SnapScrollFeed
             v-if="!isEmpty"
             key="following-feed"
@@ -15,10 +15,10 @@
             @interaction="onUserInteraction"
         />
 
-        <div v-else class="flex flex-col items-center justify-center min-h-screen px-6 py-12">
+        <div v-else class="flex flex-col items-center justify-center min-h-screen bg-black px-6 py-12">
             <div class="text-center mb-8">
                 <div
-                    class="w-24 h-24 mx-auto mb-6 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center"
+                    class="w-24 h-24 mx-auto mb-6 bg-gray-800 rounded-full flex items-center justify-center"
                 >
                     <svg
                         class="w-12 h-12 text-gray-400"
@@ -34,10 +34,10 @@
                         />
                     </svg>
                 </div>
-                <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+                <h3 class="text-xl font-semibold text-white mb-2">
                     No Posts Yet
                 </h3>
-                <p class="text-gray-600 dark:text-gray-400 max-w-sm mx-auto">
+                <p class="text-gray-400 max-w-sm mx-auto">
                     You're not following anyone yet. Follow some accounts to see their posts in your
                     feed!
                 </p>
@@ -61,17 +61,17 @@
             />
         </div>
 
-        <div v-if="isLoading" class="flex items-center justify-center min-h-screen">
+        <div v-if="isLoading" class="flex items-center justify-center min-h-screen bg-black">
             <Spinner />
         </div>
-    </FeedLayout>
+    </TikTokLayout>
 </template>
 
 <script setup>
 import { inject, computed, ref } from 'vue'
 import { useFollowingFeed } from '~/composables/useFollowingFeed'
-import FeedLayout from '~/layouts/FeedLayout.vue'
 import { useFeedInteraction } from '~/composables/useFeedInteraction'
+import TikTokLayout from '~/layouts/TikTokLayout.vue'
 import SnapScrollFeed from '~/components/Feed/SnapScrollFeed.vue'
 import VideoPlayer from '~/components/Feed/VideoPlayer.vue'
 import SuggestedAccountsCarousel from '~/components/SuggestedAccountsCarousel.vue'
@@ -84,8 +84,6 @@ const accountsFollowed = ref(0)
 const { hasInteracted, handleFirstInteraction, globalMuted } = useFeedInteraction()
 
 const { data: feedData, allPosts, isEmpty, isLoading, loadMore, refetch } = useFollowingFeed()
-
-const authenticatedFeed = useFollowingFeed()
 
 const getVideoProps = (post, index) => ({
     'video-id': post.id,
@@ -115,9 +113,7 @@ const getVideoProps = (post, index) => ({
 const getVideoKey = (post) => post.id
 
 const onVideoVisible = (index) => {}
-
 const onVideoHidden = (index) => {}
-
 const onUserInteraction = () => {
     handleFirstInteraction()
 }

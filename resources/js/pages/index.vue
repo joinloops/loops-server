@@ -1,5 +1,5 @@
 <template>
-    <FeedLayout>
+    <TikTokLayout>
         <SnapScrollFeed
             key="local-feed"
             :feed-data="feedData"
@@ -14,35 +14,19 @@
             @interaction="onUserInteraction"
         />
         <HideCommentConfirmModal />
-    </FeedLayout>
+    </TikTokLayout>
 </template>
 
 <script setup>
-import { inject, computed, shallowRef, watch } from 'vue'
-import { useFeed } from '~/composables/useFeed'
+import { inject, computed } from 'vue'
 import { usePublicFeed } from '~/composables/usePublicFeed'
 import { useFeedInteraction } from '~/composables/useFeedInteraction'
-import FeedLayout from '~/layouts/FeedLayout.vue'
+import TikTokLayout from '~/layouts/TikTokLayout.vue'
 import SnapScrollFeed from '~/components/Feed/SnapScrollFeed.vue'
 import VideoPlayer from '~/components/Feed/VideoPlayer.vue'
 
-const authStore = inject('authStore')
-
-const activeFeed = shallowRef(null)
-
 const { hasInteracted, handleFirstInteraction, globalMuted } = useFeedInteraction()
-
-watch(
-    () => authStore.authenticated,
-    (isAuthenticated, _, onCleanup) => {
-        activeFeed.value = isAuthenticated ? useFeed() : usePublicFeed()
-    },
-    { immediate: true }
-)
-
-const feedData = computed(() => {
-    return activeFeed.value
-})
+const feedData = usePublicFeed()
 
 const getVideoProps = (post, index) => ({
     'video-id': post.id,
@@ -72,9 +56,7 @@ const getVideoProps = (post, index) => ({
 const getVideoKey = (post) => post.id
 
 const onVideoVisible = (index) => {}
-
 const onVideoHidden = (index) => {}
-
 const onUserInteraction = () => {
     handleFirstInteraction()
 }

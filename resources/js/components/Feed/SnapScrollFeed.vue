@@ -1,7 +1,6 @@
 <template>
     <div
         class="scroll-container"
-        :class="{ 'mobile-navbar-padding': isMobileView }"
         style="scroll-snap-type: y mandatory"
         @scroll="handleScroll"
         ref="scrollContainerRef"

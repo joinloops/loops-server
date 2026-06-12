@@ -28,6 +28,12 @@ use App\Http\Controllers\Api\VideoController;
 use App\Http\Controllers\Api\VideoPlaylistController;
 use App\Http\Controllers\Api\VideoSoundController;
 use App\Http\Controllers\Api\WebPublicController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CommerceVideoController;
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\CheckoutController;
+use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\VendorController;
 use App\Http\Controllers\AppleAuthController;
 use App\Http\Controllers\AtomFeedController;
 use App\Http\Controllers\Auth\AccountSwitcherController;
@@ -185,7 +191,7 @@ Route::prefix('api')->group(function () {
     Route::get('/v1/studio/analytics/summary', [StudioAnalyticsController::class, 'summary'])->middleware('auth:web,api');
 
     // Search
-    Route::get('/v1/search', [SearchController::class, 'search'])->middleware(['auth:web,api', 'throttle:searchV1']);
+    Route::get('/v1/search', [SearchController::class, 'search'])->middleware(['throttle:searchV1']);
     Route::post('/v1/search/remote', [SearchController::class, 'remoteLookup'])->middleware(['auth:web,api', 'throttle:searchV1Remote']);
     Route::post('/v1/search/users', [SearchController::class, 'getUsers'])->middleware(['auth:web,api', 'throttle:autocomplete']);
     Route::post('/v1/intents/follow/account', [IntentsController::class, 'getFollowAccount'])->middleware(['auth:web,api', 'throttle:followIntents']);
@@ -193,7 +199,7 @@ Route::prefix('api')->group(function () {
 
     // Feeds
     Route::get('/v0/user/self', [AccountController::class, 'selfAccountInfo'])->middleware('auth:web,api');
-    Route::get('/v0/feed/for-you', [FeedController::class, 'getForYouFeed'])->middleware('auth:web,api');
+    Route::get('/v0/feed/for-you', [FeedController::class, 'getForYouFeed'])->middleware('throttle:api');
     Route::get('/web/feed', [WebPublicController::class, 'getFeed'])->middleware('throttle:api');
 
     // Web Accounts
@@ -328,8 +334,8 @@ Route::prefix('api')->group(function () {
 
     // Global Feeds
     // Note: the for-you feed will be deprecated in a future release, in favour of the local feed
-    Route::get('/v1/feed/for-you', [FeedController::class, 'getForYouFeed'])->middleware('auth:web,api');
-    Route::get('/v1/feed/local', [FeedController::class, 'getForYouFeed'])->middleware('auth:web,api');
+    Route::get('/v1/feed/for-you', [FeedController::class, 'getForYouFeed'])->middleware('throttle:api');
+    Route::get('/v1/feed/local', [FeedController::class, 'getForYouFeed'])->middleware('throttle:api');
     Route::get('/v1/feed/following', [FeedController::class, 'getFollowingFeed'])->middleware('auth:web,api');
 
     Route::get('/v0/feed/recommended', [ForYouFeedController::class, 'index'])->middleware('auth:web,api');
@@ -390,6 +396,46 @@ Route::prefix('api')->group(function () {
     Route::post('/v1/app/preferences', [UserPreferencesController::class, 'update'])->middleware(['auth:web,api']);
 
     Route::get('/v2026.3/pmt/{tokenId}', [PrivateMediaTokenController::class, 'show'])->name('media.private.show')->middleware(['auth:web,api']);
+
+    // ── Commerce: Products ──
+    Route::get('/v1/commerce/products', [ProductController::class, 'index']);
+    Route::get('/v1/commerce/products/search', [ProductController::class, 'search']);
+    Route::post('/v1/commerce/products', [ProductController::class, 'store'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/products/{id}', [ProductController::class, 'show']);
+    Route::put('/v1/commerce/products/{id}', [ProductController::class, 'update'])->middleware('auth:web,api');
+    Route::delete('/v1/commerce/products/{id}', [ProductController::class, 'destroy'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/products/{id}/link-video', [ProductController::class, 'linkVideo'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/products/by-video/{videoId}', [CommerceVideoController::class, 'getVideoProducts']);
+
+    // ── Commerce: Cart ──
+    Route::get('/v1/commerce/cart', [CartController::class, 'index'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/cart/count', [CartController::class, 'count'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/cart/add', [CartController::class, 'add'])->middleware('auth:web,api');
+    Route::put('/v1/commerce/cart/{cartId}', [CartController::class, 'update'])->middleware('auth:web,api');
+    Route::delete('/v1/commerce/cart/{cartId}', [CartController::class, 'remove'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/cart/clear', [CartController::class, 'clear'])->middleware('auth:web,api');
+
+    // ── Commerce: Checkout & Orders ──
+    Route::post('/v1/commerce/checkout', [CheckoutController::class, 'checkout'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/orders', [CheckoutController::class, 'orders'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/orders/{id}', [CheckoutController::class, 'show'])->middleware('auth:web,api');
+
+    // ── Commerce: Stripe Payment ──
+    Route::post('/v1/commerce/payment/create-checkout-session', [PaymentController::class, 'createCheckoutSession'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/payment/webhook', [PaymentController::class, 'handleWebhook'])->name('stripe.webhook');
+    Route::get('/v1/commerce/payment/success/{orderId}', [PaymentController::class, 'success'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/payment/cancel/{orderId}', [PaymentController::class, 'cancel'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/payment/refund/{orderId}', [PaymentController::class, 'refund'])->middleware('auth:web,api');
+
+    // ── Commerce: Vendors ──
+    Route::post('/v1/commerce/vendor/register', [VendorController::class, 'register'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/vendor', [VendorController::class, 'show'])->middleware('auth:web,api');
+    Route::put('/v1/commerce/vendor', [VendorController::class, 'update'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/vendor/dashboard', [VendorController::class, 'dashboard'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/vendor/products', [VendorController::class, 'products'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/vendor/orders', [VendorController::class, 'orders'])->middleware('auth:web,api');
+    Route::get('/v1/commerce/vendor/admin', [VendorController::class, 'adminIndex'])->middleware('auth:web,api');
+    Route::post('/v1/commerce/vendor/admin/{id}/verify', [VendorController::class, 'adminVerify'])->middleware('auth:web,api');
 
     // Curated Onboarding
     Route::get('/v1/onboarding/config', [CuratedOnboardingController::class, 'config']);
