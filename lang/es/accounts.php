@@ -1,15 +1,15 @@
 <?php
 
 return [
-    'addAnother' => 'Add another account',
-    'addingAnotherAccount' => 'Adding another account',
-    'confirmLogoutAll' => 'Sign out of all linked accounts on this device?',
-    'confirmRemove' => 'Remove :username from this device? You\'ll need to sign in again to switch back.',
-    'logoutAll' => 'Sign out all accounts',
-    'maxReached' => 'Maximum of :max accounts reached',
-    'removeAccount' => 'Remove from this device',
-    'signedInAs' => 'Signed in as',
-    'signOut' => 'Sign out of account',
-    'switchAccount' => 'Switch account',
-    'youCanSwitchAnytime' => 'You can switch back to your other accounts at any time.',
+    'addAnother' => 'Añadir otra cuenta',
+    'addingAnotherAccount' => 'Añadiendo otra cuenta',
+    'confirmLogoutAll' => '¿Deseas cerrar sesión en todas las cuentas vinculadas a este dispositivo?',
+    'confirmRemove' => '¿Deseas eliminar :username de este dispositivo? Tendrás que volver a iniciar sesión para recuperar el acceso.',
+    'logoutAll' => 'Cerrar sesión en todas las cuentas',
+    'maxReached' => 'Se ha alcanzado el límite máximo de :max cuentas',
+    'removeAccount' => 'Eliminar de este dispositivo',
+    'signedInAs' => 'Iniciado sesión como',
+    'signOut' => 'Cerrar sesión',
+    'switchAccount' => 'Cambiar de cuenta',
+    'youCanSwitchAnytime' => 'Puedes volver a tus otras cuentas en cualquier momento.',
 ];
