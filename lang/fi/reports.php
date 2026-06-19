@@ -2,7 +2,7 @@
 
 return [
     'error' => [
-        'default' => 'An unexpected error occurred',
+        'default' => 'Tapahtui odottamaton virhe',
         'title' => 'Report Error',
     ],
     'success' => [
