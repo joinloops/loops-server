@@ -31,6 +31,7 @@ services:
     environment:
       #REDIS_ARGS: "--save 3600 1000 --appendonly yes --requirepass ${REDIS_PASSWORD}"  ## Save Redis to disk every hour & Write the logs to disk using AOF
       REDIS_ARGS: "--appendonly yes --requirepass ${REDIS_PASSWORD}"
+    command: sh -c "exec redis-server $$REDIS_ARGS"
     volumes:
       - ./redis-data:/data
     healthcheck:
