@@ -11,6 +11,7 @@ return [
     'developers' => 'Розробники',
     'federation' => 'Федерація',
     'forYou' => 'Для Вас',
+    'getTheApp' => 'Get the app',
     'help' => 'Допомога',
     'home' => 'Головна',
     'join' => 'Приєднатися',
