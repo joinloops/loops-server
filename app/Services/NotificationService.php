@@ -2,8 +2,11 @@
 
 namespace App\Services;
 
+use App\Jobs\PushNotifications\SendPushNotificationJob;
 use App\Models\Notification;
 use App\Models\StarterKit;
+use App\Models\Video;
+use App\Services\ConfigService;
 use Illuminate\Support\Facades\Cache;
 
 class NotificationService
@@ -67,6 +70,15 @@ class NotificationService
             'profile_id' => $pid,
         ]);
         self::clearUnreadCount($uid);
+
+        $video = Video::find($vid);
+        if (app(ConfigService::class)->pushNotifications() && $pid != $video->profile_id && ! $video->uri) {
+            SendPushNotificationJob::dispatch_newVideoLike(
+                profileId: $uid,
+                videoId: $vid,
+                actorId: $pid,
+                );
+        }
 
         return $res;
     }
@@ -155,6 +167,13 @@ class NotificationService
 
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newFollow(
+                        profileId: $uid,
+                        actorId: $pid,
+                    );
+        }
+
         return $res;
     }
 
@@ -221,6 +240,15 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+            SendPushNotificationJob::dispatch_newVideoComment(
+                profileId: $uid,
+                videoId: $vid,
+                actorId: $pid,
+                commentId: $cid,
+            );
+        }
+
         return $res;
     }
 
@@ -277,6 +305,15 @@ class NotificationService
         ]);
         self::clearUnreadCount($uid);
 
+        if (app(ConfigService::class)->pushNotifications()) {
+                    SendPushNotificationJob::dispatch_newVideoCommentReply(
+                        profileId: $uid,
+                        videoId: $vid,
+                        actorId: $pid,
+                        commentId: $cid,
+                    );
+        }
+
         return $res;
     }
 
@@ -306,6 +343,14 @@ class NotificationService
             'profile_id' => $pid,
         ]);
         self::clearUnreadCount($uid);
+
+        if (app(ConfigService::class)->pushNotifications()) {
+                        SendPushNotificationJob::dispatch_newRepost(
+                            profileId: $uid,
+                            videoId: $vid,
+                            actorId: $pid,
+                        );
+        }
 
         return $res;
     }
