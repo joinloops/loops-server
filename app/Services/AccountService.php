@@ -83,6 +83,7 @@ class AccountService
         return [
             'id' => (string) $res['id'],
             'name' => $res['name'],
+            'display_name' => $res['name'],
             'username' => $res['username'],
             'avatar' => $res['avatar'],
         ];
