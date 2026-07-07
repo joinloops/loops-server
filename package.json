@@ -16,7 +16,7 @@
         "@headlessui/vue": "^1.7.23",
         "@heroicons/vue": "^2.2.0",
         "@mdi/font": "^7.4.47",
-        "@tailwindcss/postcss": "^4.3.1",
+        "@tailwindcss/postcss": "^4.3.2",
         "@tailwindcss/vite": "^4.3.2",
         "@tanstack/vue-query": "^5.101.2",
         "@tiptap/extension-bold": "^3.27.0",
