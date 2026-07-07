@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdminSetting;
 use App\Models\User;
 use App\Services\AccountService;
 use App\Services\AppleAuthService;
@@ -48,6 +49,10 @@ class AppleAuthController extends Controller
 
         if ($user && in_array($user->status, [7, 8])) {
             $this->onboardDeactivatedAccount($user);
+        }
+
+        if (! $user && AdminSetting::where('key', 'general.openRegistration')->whereRaw("JSON_EXTRACT(value, '$') = false")->exists()) {
+            return response()->json(['error' => 'Registration is closed, please try again later'], 401);
         }
 
         do {
