@@ -451,16 +451,16 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.13.30",
+            "version": "v0.13.31",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "e727d2ac2a7561528f90296226788727937f9a28"
+                "reference": "422c759a26395933be308aec5eeeeae0f78229cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/e727d2ac2a7561528f90296226788727937f9a28",
-                "reference": "e727d2ac2a7561528f90296226788727937f9a28",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/422c759a26395933be308aec5eeeeae0f78229cf",
+                "reference": "422c759a26395933be308aec5eeeeae0f78229cf",
                 "shasum": ""
             },
             "require": {
@@ -520,7 +520,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.13.30"
+                "source": "https://github.com/dedoc/scramble/tree/v0.13.31"
             },
             "funding": [
                 {
@@ -528,7 +528,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-26T16:57:26+00:00"
+            "time": "2026-07-07T14:30:53+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -1924,16 +1924,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v13.18.1",
+            "version": "v13.19.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "7d66044819e269f05924793a6800022dc181d850"
+                "reference": "514502b38e11bd676ecf83b271c9452cc7500f16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/7d66044819e269f05924793a6800022dc181d850",
-                "reference": "7d66044819e269f05924793a6800022dc181d850",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/514502b38e11bd676ecf83b271c9452cc7500f16",
+                "reference": "514502b38e11bd676ecf83b271c9452cc7500f16",
                 "shasum": ""
             },
             "require": {
@@ -2144,7 +2144,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2026-07-02T18:35:20+00:00"
+            "time": "2026-07-07T14:13:33+00:00"
         },
         {
             "name": "laravel/horizon",
