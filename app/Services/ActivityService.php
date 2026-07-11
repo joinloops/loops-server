@@ -21,22 +21,10 @@ class ActivityService
         $type = $activityData['type'] ?? null;
         $mapping = $this->getMapType($type);
 
-        if (! $target && $type !== 'Announce') {
-            if (config('logging.dev_ap_log')) {
-                Log::warning('Activity missing a local target', [
-                    'type' => $type,
-                    'actor' => $actor->uri,
-                    'activity' => $activityData['id'] ?? null,
-                ]);
-            }
-
-            return;
-        }
-
         if (! $mapping) {
             $ignoredTypes = ['EmojiReact', 'View', 'Question'];
 
-            if (in_array($type, $ignoredTypes)) {
+            if (in_array($type, $ignoredTypes, true)) {
                 return;
             }
 
@@ -45,20 +33,24 @@ class ActivityService
                     'actor' => $actor->uri,
                     'activity' => $activityData['id'] ?? null,
                 ]);
+
                 throw new \Exception("Unknown activity type: {$type}");
-            } else {
-                return;
             }
+
+            return;
         }
 
-        $activity = $this->storeActivity($activityData, $actor);
+        $activity = $actor instanceof Profile
+            ? $this->storeActivity($activityData, $actor)
+            : null;
 
         if (isset($mapping['validator'])) {
             $validator = app($mapping['validator']);
+
             try {
                 $validator->validate($activityData);
             } catch (\Exception $e) {
-                $activity->markAsProcessed();
+                $activity?->markAsProcessed();
 
                 if (config('logging.dev_ap_log')) {
                     Log::warning("Activity validation failed: {$e->getMessage()}", [
@@ -76,19 +68,26 @@ class ActivityService
 
         try {
             $handler = app($mapping['handler']);
-            $result = $handler->handle($activityData, $actor, $target);
 
-            $activity->markAsProcessed();
+            $result = $handler->handle(
+                $activityData,
+                $actor,
+                $target
+            );
+
+            $activity?->markAsProcessed();
 
             return $result;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             if (config('logging.dev_ap_log')) {
                 Log::error('Failed to process activity', [
                     'type' => $type,
                     'actor' => $actor->uri,
                     'error' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString(),
                 ]);
             }
+
             throw $e;
         }
     }
@@ -215,13 +214,17 @@ class ActivityService
     /**
      * Store an activity in the database
      */
-    protected function storeActivity(array $activityData, Profile|InstanceActor $actor): Activity
-    {
+    protected function storeActivity(
+        array $activityData,
+        Profile $actor
+    ): Activity {
         return Activity::firstOrCreate(
-            ['activity_id' => $activityData['id']],
+            [
+                'activity_id' => $activityData['id'],
+            ],
             [
                 'type' => $activityData['type'] ?? 'Unknown',
-                'profile_id' => $actor instanceof Profile ? $actor->id : null,
+                'profile_id' => $actor->id,
                 'to' => $activityData['to'] ?? null,
                 'cc' => $activityData['cc'] ?? null,
                 'bcc' => $activityData['bcc'] ?? null,
