@@ -535,10 +535,7 @@ class AnnounceHandler extends BaseHandler
             'type' => 'Create',
             'actor' => $actorUri,
             'published' => $object['published'] ?? now()->toIso8601ZuluString(),
-
-            'to' => $object['to']
-                ?? ['https://www.w3.org/ns/activitystreams#Public'],
-
+            'to' => $object['to'] ?? [],
             'cc' => $object['cc'] ?? [],
             'object' => $object,
         ];

@@ -40,12 +40,57 @@ class CreateValidator extends BaseValidator
 
         $object = $activity['object'];
 
+        if (
+            empty($object['id']) ||
+            ! is_string($object['id']) ||
+            ! app(SanitizeService::class)->url($object['id'], true, false)
+        ) {
+            throw new \Exception('Create activity object must contain a valid id URI.');
+        }
+
         if (app(SanitizeService::class)->isLocalObject($object['id'])) {
-            throw new \Exception('Invalid create activity origin.');
+            throw new \Exception('Invalid Create activity origin.');
         }
 
         if (empty($object['type']) || $object['type'] !== 'Note') {
             throw new \Exception("Create activity 'object' type must be 'Note'. Got '{$object['type']}'.");
+        }
+
+        $attributedTo = $object['attributedTo'] ?? null;
+
+        if (is_array($attributedTo)) {
+            if (isset($attributedTo['id']) && is_string($attributedTo['id'])) {
+                $attributedTo = $attributedTo['id'];
+            } else {
+                $attributedTo = collect($attributedTo)
+                    ->map(function ($actor) {
+                        if (is_string($actor)) {
+                            return $actor;
+                        }
+
+                        if (
+                            is_array($actor) &&
+                            isset($actor['id']) &&
+                            is_string($actor['id'])
+                        ) {
+                            return $actor['id'];
+                        }
+
+                    })
+                    ->filter()
+                    ->first();
+            }
+        }
+
+        if (! is_string($attributedTo) || ! app(SanitizeService::class)->url($attributedTo, true)) {
+            throw new \Exception('Create activity object must contain a valid attributedTo actor.');
+        }
+
+        if (
+            rtrim($attributedTo, '/') !==
+            rtrim($activity['actor'], '/')
+        ) {
+            throw new \Exception('Create activity actor does not match object attributedTo.');
         }
 
         $hasVideoAttachment = $this->hasVideoAttachment($object);
@@ -93,11 +138,7 @@ class CreateValidator extends BaseValidator
             throw new \Exception("Unable to extract domain from actor URL: '{$actorUrl}'.");
         }
 
-        $instance = Instance::where('domain', $actorDomain)->first();
-
-        if (! $instance) {
-            throw new \Exception("Unknown instance '{$actorDomain}'. Video posts are only accepted from known instances.");
-        }
+        $instance = Instance::firstOrCreate(['domain' => strtolower($actorDomain)]);
 
         if (! $instance->allow_video_posts) {
             throw new \Exception("Instance '{$actorDomain}' is not allowed to post videos.");

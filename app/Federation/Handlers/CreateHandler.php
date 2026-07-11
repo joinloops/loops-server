@@ -18,21 +18,28 @@ use Illuminate\Support\Facades\Log;
 
 class CreateHandler extends BaseHandler
 {
-    public function handle(array $activity, Profile $actor, Profile $target)
-    {
+    public function handle(
+        array $activity,
+        Profile $actor,
+        ?Profile $target = null
+    ) {
         $object = $activity['object'];
 
-        $targetIsBlocking = UserFilter::whereProfileId($target->id)->whereAccountId($actor->id)->exists();
+        if ($target) {
+            $targetIsBlocking = UserFilter::whereProfileId($target->id)
+                ->whereAccountId($actor->id)
+                ->exists();
 
-        if ($targetIsBlocking) {
-            if (config('logging.dev_log')) {
-                Log::info('Target is blocking actor', [
-                    'actor' => $actor->id,
-                    'target' => $target->id,
-                ]);
+            if ($targetIsBlocking) {
+                if (config('logging.dev_log')) {
+                    Log::info('Target is blocking actor', [
+                        'actor' => $actor->id,
+                        'target' => $target->id,
+                    ]);
+                }
+
+                return;
             }
-
-            return;
         }
 
         try {
