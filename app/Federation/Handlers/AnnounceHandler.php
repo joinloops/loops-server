@@ -6,10 +6,12 @@ use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\CommentReplyRepost;
 use App\Models\CommentRepost;
+use App\Models\InstanceActor;
 use App\Models\Profile;
 use App\Models\UserFilter;
 use App\Models\Video;
 use App\Models\VideoRepost;
+use App\Services\ActivityService;
 use App\Services\NotificationService;
 use App\Services\SanitizeService;
 use Illuminate\Support\Facades\DB;
@@ -17,8 +19,12 @@ use Illuminate\Support\Facades\Log;
 
 class AnnounceHandler extends BaseHandler
 {
-    public function handle(array $activity, Profile $actor, ?Profile $target = null)
+    public function handle(array $activity, Profile|InstanceActor $actor, ?Profile $target = null)
     {
+        if ($actor instanceof InstanceActor) {
+            return $this->handleInstanceAnnounce($activity, $actor, $target);
+        }
+
         $objectUrl = $activity['object'];
 
         try {
@@ -263,5 +269,329 @@ class AnnounceHandler extends BaseHandler
     private function updateVideoShareCount(Video $video): void
     {
         $video->increment('shares');
+    }
+
+    private function handleInstanceAnnounce(
+        array $activity,
+        InstanceActor $actor,
+        ?Profile $target = null
+    ) {
+        $object = $activity['object'] ?? null;
+
+        if (! is_string($object) && ! is_array($object)) {
+            return;
+        }
+
+        if (
+            is_string($object) &&
+            app(SanitizeService::class)->isLocalObject($object)
+        ) {
+            if (config('logging.dev_log')) {
+                Log::info('Ignored relay echo of local object', [
+                    'actor' => $actor->uri,
+                    'activity_id' => $activity['id'] ?? null,
+                    'object' => $object,
+                ]);
+            }
+
+            return;
+        }
+
+        $objectData = is_array($object)
+            ? $object
+            : app(ActivityService::class)
+                ->fetchRemoteActivity($object);
+
+        if (! is_array($objectData)) {
+            if (config('logging.dev_log')) {
+                Log::warning('Could not fetch relay announced object', [
+                    'actor' => $actor->uri,
+                    'activity_id' => $activity['id'] ?? null,
+                    'object' => $object,
+                ]);
+            }
+
+            return;
+        }
+
+        if (($objectData['type'] ?? null) === 'Create') {
+            return $this->processRelayedCreate(
+                $objectData,
+                $target
+            );
+        }
+
+        return $this->processRelayedObject(
+            $objectData,
+            $target
+        );
+    }
+
+    private function processRelayedCreate(
+        array $create,
+        ?Profile $target = null
+    ) {
+        $object = $create['object'] ?? null;
+
+        if (is_string($object)) {
+            $objectUrl = $object;
+
+            try {
+                $object = app(ActivityService::class)
+                    ->fetchRemoteActivity($objectUrl);
+            } catch (\Throwable $exception) {
+                if (config('logging.dev_log')) {
+                    Log::warning('Failed to fetch relayed Create object', [
+                        'activity_id' => $create['id'] ?? null,
+                        'object' => $objectUrl,
+                        'error' => $exception->getMessage(),
+                    ]);
+                }
+
+                return null;
+            }
+        }
+
+        if (! is_array($object)) {
+            if (config('logging.dev_log')) {
+                Log::warning('Relayed Create does not contain a valid object', [
+                    'activity_id' => $create['id'] ?? null,
+                ]);
+            }
+
+            return null;
+        }
+
+        $actorReference = $create['actor']
+            ?? $object['attributedTo']
+            ?? $object['actor']
+            ?? null;
+
+        [$actorUri, $actorData] = $this->extractRelayedActor(
+            $actorReference
+        );
+
+        if (! $actorUri) {
+            if (config('logging.dev_log')) {
+                Log::warning('Could not determine actor for relayed Create', [
+                    'activity_id' => $create['id'] ?? null,
+                    'object_id' => $object['id'] ?? null,
+                ]);
+            }
+
+            return null;
+        }
+
+        if (app(SanitizeService::class)->isLocalObject($actorUri)) {
+            if (config('logging.dev_log')) {
+                Log::info('Ignored relayed Create attributed to local actor', [
+                    'activity_id' => $create['id'] ?? null,
+                    'actor' => $actorUri,
+                ]);
+            }
+
+            return null;
+        }
+
+        try {
+            $originalActor = app(Profile::class)->findOrCreateFromUrl(
+                url: $actorUri,
+                actorData: $actorData,
+            );
+        } catch (\Throwable $exception) {
+            if (config('logging.dev_log')) {
+                Log::warning('Failed to resolve actor for relayed Create', [
+                    'activity_id' => $create['id'] ?? null,
+                    'actor' => $actorUri,
+                    'error' => $exception->getMessage(),
+                ]);
+            }
+
+            return null;
+        }
+
+        if (! $originalActor || $originalActor->local) {
+            if (config('logging.dev_log')) {
+                Log::warning('Relayed Create actor could not be resolved', [
+                    'activity_id' => $create['id'] ?? null,
+                    'actor' => $actorUri,
+                ]);
+            }
+
+            return null;
+        }
+
+        $objectId = isset($object['id']) && is_string($object['id'])
+            ? $object['id']
+            : null;
+
+        if (
+            ! isset($create['id']) ||
+            ! is_string($create['id']) ||
+            $create['id'] === ''
+        ) {
+            if (! $objectId) {
+                if (config('logging.dev_log')) {
+                    Log::warning('Relayed Create and object are both missing IDs', [
+                        'actor' => $actorUri,
+                    ]);
+                }
+
+                return null;
+            }
+
+            $create['id'] = $objectId.'#relay-create';
+        }
+
+        $create['type'] = 'Create';
+        $create['actor'] = $originalActor->uri;
+        $create['object'] = $object;
+
+        $create['to'] = $create['to']
+            ?? $object['to']
+            ?? ['https://www.w3.org/ns/activitystreams#Public'];
+
+        $create['cc'] = $create['cc']
+            ?? $object['cc']
+            ?? [];
+
+        if (
+            ! isset($create['audience']) &&
+            isset($object['audience'])
+        ) {
+            $create['audience'] = $object['audience'];
+        }
+
+        if (
+            ! isset($create['published']) &&
+            isset($object['published'])
+        ) {
+            $create['published'] = $object['published'];
+        }
+
+        if (config('logging.dev_log')) {
+            Log::info('Processing relayed Create as original actor', [
+                'activity_id' => $create['id'],
+                'object_id' => $objectId,
+                'actor' => $originalActor->uri,
+                'target' => $target?->id,
+            ]);
+        }
+
+        return app(ActivityService::class)->processIncomingActivity(
+            $create,
+            $originalActor,
+            $target
+        );
+    }
+
+    private function processRelayedObject(
+        array $object,
+        ?Profile $target = null
+    ) {
+        if (($object['type'] ?? null) === 'Create') {
+            return $this->processRelayedCreate(
+                $object,
+                $target
+            );
+        }
+
+        $objectId = $object['id'] ?? null;
+
+        if (! is_string($objectId) || $objectId === '') {
+            if (config('logging.dev_log')) {
+                Log::warning('Relayed object is missing its canonical ID', [
+                    'type' => $object['type'] ?? null,
+                ]);
+            }
+
+            return null;
+        }
+
+        $actorReference = $object['attributedTo']
+            ?? $object['actor']
+            ?? null;
+
+        [$actorUri] = $this->extractRelayedActor(
+            $actorReference
+        );
+
+        if (! $actorUri) {
+            if (config('logging.dev_log')) {
+                Log::warning('Could not determine actor for relayed object', [
+                    'object_id' => $objectId,
+                    'type' => $object['type'] ?? null,
+                ]);
+            }
+
+            return null;
+        }
+
+        $create = [
+            '@context' => $object['@context']
+                ?? 'https://www.w3.org/ns/activitystreams',
+
+            'id' => $objectId.'#relay-create',
+            'type' => 'Create',
+            'actor' => $actorUri,
+            'published' => $object['published'] ?? now()->toIso8601ZuluString(),
+
+            'to' => $object['to']
+                ?? ['https://www.w3.org/ns/activitystreams#Public'],
+
+            'cc' => $object['cc'] ?? [],
+            'object' => $object,
+        ];
+
+        if (isset($object['audience'])) {
+            $create['audience'] = $object['audience'];
+        }
+
+        return $this->processRelayedCreate(
+            $create,
+            $target
+        );
+    }
+
+    private function extractRelayedActor(mixed $reference): array
+    {
+        if (is_string($reference) && trim($reference) !== '') {
+            return [trim($reference), null];
+        }
+
+        if (! is_array($reference)) {
+            return [null, null];
+        }
+
+        if (
+            isset($reference['id']) &&
+            is_string($reference['id']) &&
+            trim($reference['id']) !== ''
+        ) {
+            return [
+                trim($reference['id']),
+                $reference,
+            ];
+        }
+
+        foreach ($reference as $actor) {
+            if (is_string($actor) && trim($actor) !== '') {
+                return [trim($actor), null];
+            }
+
+            if (
+                is_array($actor) &&
+                isset($actor['id']) &&
+                is_string($actor['id']) &&
+                trim($actor['id']) !== ''
+            ) {
+                return [
+                    trim($actor['id']),
+                    $actor,
+                ];
+            }
+        }
+
+        return [null, null];
     }
 }

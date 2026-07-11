@@ -13,10 +13,25 @@ class ActivityService
     /**
      * Process an incoming activity
      */
-    public function processIncomingActivity(array $activityData, Profile|InstanceActor $actor, Profile $target)
-    {
+    public function processIncomingActivity(
+        array $activityData,
+        Profile|InstanceActor $actor,
+        ?Profile $target = null
+    ) {
         $type = $activityData['type'] ?? null;
         $mapping = $this->getMapType($type);
+
+        if (! $target && $type !== 'Announce') {
+            if (config('logging.dev_ap_log')) {
+                Log::warning('Activity missing a local target', [
+                    'type' => $type,
+                    'actor' => $actor->uri,
+                    'activity' => $activityData['id'] ?? null,
+                ]);
+            }
+
+            return;
+        }
 
         if (! $mapping) {
             $ignoredTypes = ['EmojiReact', 'View', 'Question'];
@@ -36,7 +51,7 @@ class ActivityService
             }
         }
 
-        $activity = $this->storeActivity($activityData, $actor, $target);
+        $activity = $this->storeActivity($activityData, $actor);
 
         if (isset($mapping['validator'])) {
             $validator = app($mapping['validator']);
@@ -200,13 +215,13 @@ class ActivityService
     /**
      * Store an activity in the database
      */
-    protected function storeActivity(array $activityData, Profile|InstanceActor $actor, Profile $target): Activity
+    protected function storeActivity(array $activityData, Profile|InstanceActor $actor): Activity
     {
         return Activity::firstOrCreate(
             ['activity_id' => $activityData['id']],
             [
                 'type' => $activityData['type'] ?? 'Unknown',
-                'profile_id' => $actor->id,
+                'profile_id' => $actor instanceof Profile ? $actor->id : null,
                 'to' => $activityData['to'] ?? null,
                 'cc' => $activityData['cc'] ?? null,
                 'bcc' => $activityData['bcc'] ?? null,

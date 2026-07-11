@@ -462,152 +462,55 @@ class ProcessSharedInboxActivity implements ShouldQueue
             return;
         }
 
-        if (! in_array($type, ['Create', 'Announce', 'Update'], true)) {
-            return;
-        }
+        if (in_array($type, ['Create', 'Announce', 'Update'], true)) {
+            $recipients = $this->extractRecipients();
+            $localTargets = $this->findLocalTargets($recipients);
 
-        $recipients = $this->extractRecipients();
-        $localTargets = $this->findLocalTargets($recipients);
+            if ($localTargets->isNotEmpty()) {
+                $chunkSize = config(
+                    'loops.federation.inbox_dispatch_chunk_size',
+                    100
+                );
 
-        if (
-            $localTargets->isEmpty() &&
-            $this->isPublicActivity($this->activity)
-        ) {
-            $localTargets = $this->findRelayTargetsFromObject();
-        }
-
-        if ($localTargets->isNotEmpty()) {
-            $chunkSize = config(
-                'loops.federation.inbox_dispatch_chunk_size',
-                100
-            );
-
-            $localTargets->chunk($chunkSize)->each(function ($chunk) {
-                foreach ($chunk as $target) {
-                    ProcessInboxActivity::dispatch(
-                        $this->activity,
-                        $this->actor,
-                        $target
-                    )->onQueue('activitypub-in');
+                $localTargets->chunk($chunkSize)->each(function ($chunk) {
+                    foreach ($chunk as $target) {
+                        ProcessInboxActivity::dispatch(
+                            $this->activity,
+                            $this->actor,
+                            $target
+                        )->onQueue('activitypub-in');
+                    }
+                });
+            } elseif ($type === 'Announce' && $this->isPublicActivity($this->activity)) {
+                ProcessInboxActivity::dispatch(
+                    $this->activity,
+                    $this->actor,
+                    null
+                )->onQueue('activitypub-in');
+            } else {
+                if (config('logging.dev_log')) {
+                    Log::info('Relay activity had no valid local targets', [
+                        'relay' => $relay->relay_url,
+                        'activity_id' => $this->activity['id'] ?? null,
+                        'type' => $type,
+                        'recipients' => $recipients,
+                    ]);
                 }
-            });
-        }
-
-        $relay->incrementReceived();
-
-        if (config('logging.dev_log')) {
-            Log::info('Processed relay activity', [
-                'relay' => $relay->relay_url,
-                'type' => $type,
-                'targets' => $localTargets->count(),
-                'recipient_targets' => $recipients,
-            ]);
-        }
-    }
-
-    /**
-     * Resolve the announced object's original actor and find local users
-     * following that actor.
-     */
-    protected function findRelayTargetsFromObject()
-    {
-        $object = $this->activity['object'] ?? null;
-
-        if (! is_string($object) && ! is_array($object)) {
-            return collect();
-        }
-
-        if (
-            is_string($object) &&
-            app(SanitizeService::class)->isLocalObject($object)
-        ) {
-            if (config('logging.dev_log')) {
-                Log::info('Ignored relay echo of local object', [
-                    'activity_id' => $this->activity['id'] ?? null,
-                    'object' => $object,
-                ]);
             }
 
-            return collect();
-        }
+            $relay->incrementReceived();
 
-        try {
-            $objectData = is_array($object)
-                ? $object
-                : app(\App\Services\ActivityPubService::class)
-                    ->get($object);
-        } catch (\Throwable $exception) {
             if (config('logging.dev_log')) {
-                Log::warning('Unable to fetch announced relay object', [
-                    'activity_id' => $this->activity['id'] ?? null,
-                    'object' => $object,
-                    'error' => $exception->getMessage(),
+                Log::info('Processed relay activity', [
+                    'relay' => $relay->relay_url,
+                    'type' => $type,
+                    'targets' => $localTargets->count(),
+                    'instance_wide' => $localTargets->isEmpty()
+                        && $type === 'Announce'
+                        && $this->isPublicActivity($this->activity),
                 ]);
             }
-
-            return collect();
         }
-
-        if (! is_array($objectData)) {
-            return collect();
-        }
-
-        if (! $this->isPublicActivity($objectData)) {
-            if (config('logging.dev_log')) {
-                Log::warning('Ignored non-public object announced by relay', [
-                    'activity_id' => $this->activity['id'] ?? null,
-                    'object_id' => $objectData['id'] ?? $object,
-                ]);
-            }
-
-            return collect();
-        }
-
-        $actorUri = $this->extractAttributedActor($objectData);
-
-        if (! $actorUri) {
-            if (config('logging.dev_log')) {
-                Log::warning('Could not determine actor for announced relay object', [
-                    'activity_id' => $this->activity['id'] ?? null,
-                    'object_id' => $objectData['id'] ?? $object,
-                ]);
-            }
-
-            return collect();
-        }
-
-        $remoteProfile = Profile::where('uri', $actorUri)
-            ->where('local', false)
-            ->first();
-
-        if (! $remoteProfile || ! $remoteProfile->followers_url) {
-            $remoteProfile = app(Profile::class)->findOrCreateFromUrl(
-                url: $actorUri,
-                actorData: null,
-                forceRefresh: (bool) $remoteProfile,
-            );
-        }
-
-        if (
-            ! $remoteProfile ||
-            $remoteProfile->local ||
-            ! $remoteProfile->followers_url
-        ) {
-            if (config('logging.dev_log')) {
-                Log::info('Unable to resolve relay object actor profile', [
-                    'activity_id' => $this->activity['id'] ?? null,
-                    'actor' => $actorUri,
-                    'profile_found' => (bool) $remoteProfile,
-                    'followers_url' => $remoteProfile?->followers_url,
-                ]);
-            }
-
-            return collect();
-        }
-
-        return $this->findLocalTargets([
-            $remoteProfile->followers_url,
-        ]);
     }
 
     protected function extractAttributedActor(array $object): ?string
