@@ -4,6 +4,7 @@ namespace App\Jobs\Federation;
 
 use App\Federation\Handlers\DeleteHandler;
 use App\Federation\Validators\DeleteValidator;
+use App\Models\InstanceActor;
 use App\Models\Profile;
 use App\Services\SanitizeService;
 use Illuminate\Bus\Queueable;
@@ -482,9 +483,35 @@ class ProcessSharedInboxActivity implements ShouldQueue
                     }
                 });
             } elseif ($type === 'Announce' && $this->isPublicActivity($this->activity)) {
+                $relayActor = $this->actor;
+
+                if (! $relayActor instanceof InstanceActor) {
+                    $relayActorUrl = $this->activity['actor'] ?? null;
+
+                    if (is_array($relayActorUrl)) {
+                        $relayActorUrl = $relayActorUrl['id'] ?? null;
+                    }
+
+                    if (is_string($relayActorUrl)) {
+                        $relayActor = InstanceActor::where('uri', $relayActorUrl)->first();
+                    }
+                }
+
+                if (! $relayActor instanceof InstanceActor) {
+                    if (config('logging.dev_log')) {
+                        Log::error('Unable to process relay activity: instance actor not found', [
+                            'relay' => $relay->relay_url,
+                            'relay_actor_url' => $this->activity['actor'] ?? null,
+                            'activity_id' => $this->activity['id'] ?? null,
+                        ]);
+                    }
+
+                    return;
+                }
+
                 ProcessInboxActivity::dispatch(
                     $this->activity,
-                    $this->actor,
+                    $relayActor,
                     null
                 )->onQueue('activitypub-in');
             } else {

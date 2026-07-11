@@ -64,40 +64,47 @@ class ProcessInboxActivity implements ShouldQueue
      */
     public function handle(ActivityService $activityService)
     {
-        if (config('logging.dev_log')) {
-            Log::info('Processing incoming activity', [
-                'type' => $this->activity['type'] ?? 'unknown',
-                'actor' => $this->actor->uri ?? $this->actor->username,
-                'id' => $this->activity['id'] ?? null,
-            ]);
-        }
-
         if (! $this->actor) {
             if (config('logging.dev_log')) {
-                Log::error('Failed to process activity', [
+                Log::error('Failed to process activity: missing actor', [
                     'type' => $this->activity['type'] ?? 'unknown',
-                    'actor' => $this->actor ?? 'missing or invalid actor',
                     'id' => $this->activity['id'] ?? null,
+                    'target' => $this->target?->id,
                 ]);
             }
 
             return;
         }
 
-        try {
-            $result = $activityService->processIncomingActivity($this->activity, $this->actor, $this->target);
+        if (config('logging.dev_log')) {
+            Log::info('Processing incoming activity', [
+                'type' => $this->activity['type'] ?? 'unknown',
+                'actor' => $this->actorIdentifier(),
+                'id' => $this->activity['id'] ?? null,
+                'target' => $this->target?->id,
+                'instance_wide' => $this->target === null,
+            ]);
+        }
 
-            return $result;
-        } catch (\Exception $e) {
+        try {
+            return $activityService->processIncomingActivity(
+                $this->activity,
+                $this->actor,
+                $this->target
+            );
+        } catch (\Throwable $exception) {
             if (config('logging.dev_log')) {
                 Log::error('Failed to process activity', [
                     'type' => $this->activity['type'] ?? 'unknown',
-                    'actor' => $this->actor->uri ?? $this->actor->username,
-                    'error' => $e->getMessage(),
-                    'trace' => $e->getTraceAsString(),
+                    'actor' => $this->actorIdentifier(),
+                    'activity_id' => $this->activity['id'] ?? null,
+                    'target' => $this->target?->id,
+                    'error' => $exception->getMessage(),
+                    'trace' => $exception->getTraceAsString(),
                 ]);
             }
-            throw $e;
+
+            throw $exception;
         }
     }
 
@@ -109,10 +116,22 @@ class ProcessInboxActivity implements ShouldQueue
         if (config('logging.dev_log')) {
             Log::error('Inbox activity processing failed permanently', [
                 'type' => $this->activity['type'] ?? 'unknown',
-                'actor' => $this->actor->uri ?? $this->actor->username,
+                'actor' => $this->actorIdentifier(),
                 'activity_id' => $this->activity['id'] ?? null,
+                'target' => $this->target?->id,
                 'error' => $exception->getMessage(),
             ]);
         }
+    }
+
+    protected function actorIdentifier(): string
+    {
+        if (! $this->actor) {
+            return 'missing or invalid actor';
+        }
+
+        return $this->actor->uri
+            ?? $this->actor->username
+            ?? get_class($this->actor).':'.$this->actor->getKey();
     }
 }
