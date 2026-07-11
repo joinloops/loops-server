@@ -123,4 +123,16 @@ return [
     |
     */
     'local_domains' => env('LOOPS_LOCAL_DOMAINS', ''),
+
+    'relay' => [
+        'fanout' => [
+            'min_followers' => env('LOOPS_RELAY_MIN_FOLLOWERS') !== null
+                ? (int) env('LOOPS_RELAY_MIN_FOLLOWERS')
+                : null,
+
+            'min_account_age_days' => env('LOOPS_RELAY_MIN_ACCOUNT_AGE_DAYS') !== null
+                ? (int) env('LOOPS_RELAY_MIN_ACCOUNT_AGE_DAYS')
+                : null,
+        ],
+    ],
 ];

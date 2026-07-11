@@ -128,18 +128,23 @@ class RelayService
 
     public function deliverToRelays(Profile $actor, array $activity): void
     {
-        $relays = RelaySubscription::where('status', 'active')
+        if (! $this->isEligibleForRelayFanout($actor)) {
+            return;
+        }
+
+        $relays = RelaySubscription::query()
+            ->where('status', 'active')
             ->where('send_public_posts', true)
             ->get();
 
         foreach ($relays as $relay) {
             try {
                 $inboxUrl = $relay->getInbox();
+
                 if (! $inboxUrl) {
                     continue;
                 }
 
-                // Deliver as the original actor, not the instance actor
                 $this->deliverActivityAsUser($actor, $inboxUrl, $activity);
                 $relay->incrementSent();
 
@@ -147,17 +152,44 @@ class RelayService
                     Log::debug('Activity delivered to relay', [
                         'relay' => $relay->relay_url,
                         'activity_type' => $activity['type'] ?? 'unknown',
+                        'actor_id' => $actor->id,
                     ]);
                 }
             } catch (Exception $e) {
                 if (config('logging.dev_log')) {
                     Log::error('Failed to deliver to relay', [
                         'relay' => $relay->relay_url,
+                        'actor_id' => $actor->id,
                         'error' => $e->getMessage(),
                     ]);
                 }
             }
         }
+    }
+
+    private function isEligibleForRelayFanout(Profile $profile): bool
+    {
+        $minFollowers = config('loops.relay.fanout.min_followers');
+        $minAccountAgeDays = config('loops.relay.fanout.min_account_age_days');
+
+        if (
+            $minFollowers !== null
+            && (int) $profile->followers < (int) $minFollowers
+        ) {
+            return false;
+        }
+
+        if (
+            $minAccountAgeDays !== null
+            && (
+                ! $profile->created_at
+                || $profile->created_at->isAfter(now()->subDays((int) $minAccountAgeDays))
+            )
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     public function isFromRelay(string $actorUrl): ?RelaySubscription
