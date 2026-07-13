@@ -47,7 +47,7 @@
         "md-editor-v3": "^6.5.3",
         "mediabunny": "^1.50.8",
         "pinia": "^3.0.4",
-        "postcss": "^8.5.16",
+        "postcss": "^8.5.18",
         "sass": "^1.100.0",
         "tailwindcss": "^4.3.2",
         "video.js": "^8.23.9",
