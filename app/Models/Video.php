@@ -395,14 +395,24 @@ class Video extends Model
 
     protected function afterSyncHashtagsFromCaption(array $normalizedTags): void
     {
-        $containsAi = in_array('ai', $normalizedTags, true);
-        $containsAd = ! empty(array_intersect(['ad', 'sponsored'], $normalizedTags));
+        $updates = [];
 
-        if ($this->contains_ai !== $containsAi || $this->contains_ad !== $containsAd) {
-            $this->updateQuietly([
-                'contains_ai' => $containsAi,
-                'contains_ad' => $containsAd,
-            ]);
+        if (
+            ! $this->contains_ai &&
+            in_array('ai', $normalizedTags, true)
+        ) {
+            $updates['contains_ai'] = true;
+        }
+
+        if (
+            ! $this->contains_ad &&
+            ! empty(array_intersect(['ad', 'sponsored'], $normalizedTags))
+        ) {
+            $updates['contains_ad'] = true;
+        }
+
+        if ($updates !== []) {
+            $this->updateQuietly($updates);
         }
     }
 }
