@@ -48,11 +48,18 @@ class ProfileModPermissionRequest extends FormRequest
         ];
     }
 
+    /**
+     * @return 'enforce_ai_label'|'enforce_ad_label'|'enforce_nsfw_label'
+     */
     public function labelKey(): string
     {
+        /** @var 'enforce_ai_label'|'enforce_ad_label'|'enforce_nsfw_label' */
         return array_keys($this->only(array_keys(self::LABELS)))[0];
     }
 
+    /**
+     * @return 'contains_ai'|'contains_ad'|'is_sensitive'
+     */
     public function videoColumn(): string
     {
         return self::LABELS[$this->labelKey()];
