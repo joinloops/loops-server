@@ -946,8 +946,7 @@
                                     <pre
                                         class="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed text-gray-800 dark:text-gray-200"
                                     >
-                                {{ selectedEmailEntry.value.message_body }}</pre
-                                    >
+                                {{ selectedEmailEntry.value.message_body }}</pre>
                                 </div>
                             </div>
                         </div>
