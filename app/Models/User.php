@@ -180,7 +180,11 @@ class User extends Authenticatable implements OAuthenticatable
         'hide_ai',
         'hide_sensitive',
         'can_embed',
+        'can_dm',
         'can_playlist',
+        'enforce_ai_label',
+        'enforce_ad_label',
+        'enforce_nsfw_label',
     ];
 
     protected $hidden = [
@@ -220,7 +224,11 @@ class User extends Authenticatable implements OAuthenticatable
         'register_source',
         'must_change_password',
         'can_embed',
+        'can_dm',
         'can_playlist',
+        'enforce_ai_label',
+        'enforce_ad_label',
+        'enforce_nsfw_label',
     ];
 
     protected function casts(): array
@@ -244,6 +252,10 @@ class User extends Authenticatable implements OAuthenticatable
             'can_comment' => 'boolean',
             'can_embed' => 'boolean',
             'can_playlist' => 'boolean',
+            'can_dm' => 'boolean',
+            'enforce_ai_label' => 'boolean',
+            'enforce_ad_label' => 'boolean',
+            'enforce_nsfw_label' => 'boolean',
         ];
     }
 

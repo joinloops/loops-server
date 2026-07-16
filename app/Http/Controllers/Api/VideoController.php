@@ -131,6 +131,9 @@ class VideoController extends Controller
         $s3Path = null;
         $thumbnailPath = null;
         $canEmbed = (bool) $request->user()->can_embed;
+        $enforceAi = (bool) $request->user()->enforce_ai_label;
+        $enforceAd = (bool) $request->user()->enforce_ad_label;
+        $enforceNsfw = (bool) $request->user()->enforce_nsfw_label;
 
         try {
             DB::beginTransaction();
@@ -139,15 +142,15 @@ class VideoController extends Controller
             $model->profile_id = $pid;
             $model->caption = app(SanitizeService::class)->cleanPlainText($request->description);
             $model->size_kb = intval($videoMeta['size']);
-            $model->is_sensitive = $request->filled('is_sensitive') ? (bool) $request->boolean('is_sensitive') : false;
+            $model->is_sensitive = $enforceNsfw || $request->boolean('is_sensitive');
             $model->comment_state = $request->filled('comment_state') ? ($request->input('comment_state') == 4 ? 4 : 0) : 4;
             $model->can_download = $request->filled('can_download') ? $request->boolean('can_download') : false;
             $model->can_embed = $canEmbed && $request->filled('can_embed') ? $request->boolean('can_embed') : false;
             $model->can_duet = $request->filled('can_duet') ? $request->boolean('can_duet') : false;
             $model->can_stitch = $request->filled('can_stitch') ? $request->boolean('can_stitch') : false;
             $model->alt_text = $request->filled('alt_text') ? app(SanitizeService::class)->cleanPlainText($request->alt_text) : null;
-            $model->contains_ai = $request->filled('contains_ai') ? $request->boolean('contains_ai') : false;
-            $model->contains_ad = $request->filled('contains_ad') ? $request->boolean('contains_ad') : false;
+            $model->contains_ai = $enforceAi || $request->boolean('contains_ai');
+            $model->contains_ad = $enforceAd || $request->boolean('contains_ad');
             $model->lang = $request->filled('lang') ? $request->input('lang') : null;
             // @phpstan-ignore-next-line
             $model->media_metadata = $videoMeta;
@@ -317,6 +320,7 @@ class VideoController extends Controller
         }
         $video->is_edited = true;
         $video->save();
+        $video->refresh();
         $video->syncHashtagsFromCaption();
         $video->syncMentionsFromCaption();
         VideoService::deleteMediaData($video->id);

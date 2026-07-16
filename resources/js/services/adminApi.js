@@ -353,6 +353,10 @@ export const profilesApi = {
         return await apiClient.post(`/api/v1/admin/profiles/${id}/permissions`, data)
     },
 
+    async updateProfileModPermissions(id, data) {
+        return await apiClient.post(`/api/v1/admin/profiles/${id}/mod-permissions`, data)
+    },
+
     async updateProfileNotes(id, data) {
         return await apiClient.post(`/api/v1/admin/profiles/${id}/admin_note`, data)
     },

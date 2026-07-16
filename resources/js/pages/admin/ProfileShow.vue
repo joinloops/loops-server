@@ -407,6 +407,21 @@
                             ]"
                         >
                             <PermissionTile
+                                v-for="perm in modConfig"
+                                :key="perm.key"
+                                :icon="perm.icon"
+                                :label="perm.label"
+                                :description="perm.description"
+                                :enabled="!!profile[perm.key]"
+                                :disabled="
+                                    (perm?.localOnly && !profile.local) ||
+                                    profile.is_admin ||
+                                    isModPermissionSaving(perm.key)
+                                "
+                                @toggle="requestModPermission(perm.key)"
+                            />
+
+                            <PermissionTile
                                 v-for="perm in permissionConfig"
                                 :key="perm.key"
                                 :icon="perm.icon"
@@ -991,6 +1006,16 @@
             @close="showResetPasswordModal = false"
             @reset="handleResetPassword"
         />
+
+        <AdminModPermissionModal
+            :show="modPermissionModal.show"
+            :permission="modPermissionModal.perm"
+            :profile="profile"
+            :enabling="modPermissionModal.enabling"
+            :saving="modPermissionModal.saving"
+            @close="closeModPermissionModal"
+            @confirm="confirmModPermission"
+        />
     </div>
 </template>
 
@@ -1057,6 +1082,7 @@ import {
 import DropdownDivider from '@/components/DropdownDivider.vue'
 import AdminSendEmailModal from '@/components/Admin/AdminSendEmailModal.vue'
 import AdminResetPasswordModal from '@/components/Admin/AdminResetPasswordModal.vue'
+import AdminModPermissionModal from '@/components/Admin/AdminModPermissionModal.vue'
 
 const { formatDate, formatNumber, formatTimeAgo } = useUtils()
 const { confirmModal } = useAlertModal()
@@ -1101,9 +1127,17 @@ const bioExpanded = ref(false)
 const bioNeedsClamp = ref(false)
 
 const savingPermissions = ref(new Set())
+const savingModPermissions = ref(new Set())
 let fetchToken = 0
 let bioResizeObserver = null
 let savedNotesTimer = null
+
+const modPermissionModal = ref({
+    show: false,
+    perm: null,
+    enabling: false,
+    saving: false
+})
 
 const statusBadgeStyles = {
     active: 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300',
@@ -1148,6 +1182,27 @@ const permissionConfig = [
         localOnly: true,
         description: 'Allow video embeds',
         icon: CodeBracketIcon
+    }
+]
+
+const modConfig = [
+    {
+        key: 'enforce_ai_label',
+        label: 'AI Auto-Label',
+        description: 'Enforce AI label on posts',
+        icon: ExclamationTriangleIcon
+    },
+    {
+        key: 'enforce_ad_label',
+        label: 'Ad Auto-Label',
+        description: 'Enforce Ad label on posts',
+        icon: ExclamationTriangleIcon
+    },
+    {
+        key: 'enforce_nsfw_label',
+        label: 'NSFW Auto-Label',
+        description: 'Enforce NSFW on posts',
+        icon: ExclamationTriangleIcon
     }
 ]
 
@@ -2119,6 +2174,7 @@ const handleResetPassword = async (payload) => {
 }
 
 const isPermissionSaving = (key) => savingPermissions.value.has(key)
+const isModPermissionSaving = (key) => savingModPermissions.value.has(key)
 
 const togglePermission = async (key) => {
     if (isPermissionSaving(key)) return
@@ -2138,6 +2194,52 @@ const togglePermission = async (key) => {
         const updated = new Set(savingPermissions.value)
         updated.delete(key)
         savingPermissions.value = updated
+    }
+}
+
+const requestModPermission = (key) => {
+    if (isModPermissionSaving(key)) return
+    const perm = modConfig.find((p) => p.key === key)
+    if (!perm) return
+
+    modPermissionModal.value = {
+        show: true,
+        perm,
+        enabling: !profile.value[key],
+        saving: false
+    }
+}
+
+const closeModPermissionModal = () => {
+    if (modPermissionModal.value.saving) return
+    modPermissionModal.value = { show: false, perm: null, enabling: false, saving: false }
+}
+
+const confirmModPermission = async ({ key, value, applyToExisting }) => {
+    if (!key || isModPermissionSaving(key)) return
+    const previous = !!profile.value[key]
+
+    modPermissionModal.value.saving = true
+    profile.value[key] = value
+    savingModPermissions.value = new Set([...savingModPermissions.value, key])
+
+    const payload = { [key]: value }
+    if (applyToExisting) {
+        payload.apply_to_existing = true
+    }
+
+    try {
+        await profilesApi.updateProfileModPermissions(profile.value.id, payload)
+        await fetchAuditLog(profile.value.id)
+        modPermissionModal.value = { show: false, perm: null, enabling: false, saving: false }
+    } catch (error) {
+        profile.value[key] = previous
+        modPermissionModal.value.saving = false
+        console.error('Error updating mod permission:', error)
+    } finally {
+        const updated = new Set(savingModPermissions.value)
+        updated.delete(key)
+        savingModPermissions.value = updated
     }
 }
 

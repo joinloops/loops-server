@@ -486,6 +486,7 @@ Route::prefix('api')->group(function () {
         Route::post('/reports/{id}/mark-as-ai-and-ad', [AdminController::class, 'reportMarkAsAiAndAd'])->middleware('auth:web,api');
         Route::post('/reports/{id}/video-delete', [AdminController::class, 'reportDeleteVideo'])->middleware('auth:web,api');
         Route::get('/profiles/{id}', [AdminController::class, 'profileShow'])->middleware('auth:web,api');
+        Route::post('/profiles/{id}/mod-permissions', [AdminController::class, 'profileModPermissionUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/permissions', [AdminController::class, 'profilePermissionUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/admin_note', [AdminController::class, 'profileAdminNoteUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/suspend', [AdminController::class, 'profileSuspend'])->middleware('auth:web,api');

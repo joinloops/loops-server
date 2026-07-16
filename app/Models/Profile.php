@@ -207,6 +207,10 @@ class Profile extends Model
         'hide_ai',
         'hide_sensitive',
         'can_playlist',
+        'can_dm',
+        'enforce_ai_label',
+        'enforce_ad_label',
+        'enforce_nsfw_label',
     ];
 
     protected $guarded = [];
@@ -228,12 +232,16 @@ class Profile extends Model
         'can_create_starter_kits' => 'boolean',
         'can_use_starter_kits' => 'boolean',
         'can_report' => 'boolean',
+        'can_dm' => 'boolean',
         'discoverable' => 'boolean',
         'updated_at' => 'datetime',
         'starter_kit_state' => 'integer',
         'manuallyApprovesFollowers' => 'boolean',
         'last_fetched_at' => 'datetime',
         'has_playlists' => 'boolean',
+        'enforce_ai_label' => 'boolean',
+        'enforce_ad_label' => 'boolean',
+        'enforce_nsfw_label' => 'boolean',
     ];
 
     public function videos(): HasMany

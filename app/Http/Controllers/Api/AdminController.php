@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Traits\ApiHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AdminResetProfilePasswordRequest;
 use App\Http\Requests\AdminSendProfileEmailRequest;
+use App\Http\Requests\ProfileModPermissionRequest;
 use App\Http\Requests\StoreAdminInviteRequest;
 use App\Http\Resources\AdminAuditLogResource;
 use App\Http\Resources\AdminBlockedTermResource;
@@ -509,6 +510,9 @@ class AdminController extends Controller
         $res['can_use_starter_kits'] = (bool) $profile->can_use_starter_kits;
         $res['can_report'] = (bool) $profile->can_report;
         $res['can_playlist'] = (bool) $profile->can_playlist;
+        $res['enforce_ai_label'] = (bool) $profile->enforce_ai_label;
+        $res['enforce_ad_label'] = (bool) $profile->enforce_ad_label;
+        $res['enforce_nsfw_label'] = (bool) $profile->enforce_nsfw_label;
         $res['updated_at'] = $profile->updated_at;
 
         return $this->data($res);
@@ -567,6 +571,69 @@ class AdminController extends Controller
         $profile->update($validated);
 
         app(AdminAuditLogService::class)->logProfileAdminPermissionUpdate($request->user(), $profile, ['old' => $oldValues, 'new' => $validated]);
+
+        return $this->success();
+    }
+
+    public function profileModPermissionUpdate(ProfileModPermissionRequest $request, $id)
+    {
+        $profile = Profile::find($id);
+
+        if (! $profile) {
+            return $this->error('Profile not found', 404);
+        }
+
+        $key = $request->labelKey();
+        $column = $request->videoColumn();
+        $value = $request->boolean($key);
+        $applyToExisting = $request->boolean('apply_to_existing');
+
+        $user = null;
+
+        if ($profile->local) {
+            $user = User::whereProfileId($profile->id)->first();
+
+            if (! $user) {
+                return $this->error('User account not found', 404);
+            }
+
+            if ($user->is_admin) {
+                return $this->error('Cannot modify an admin account', 403);
+            }
+        }
+
+        $old = (bool) $profile->{$key};
+
+        if ($old === $value && ! $applyToExisting) {
+            return $this->success();
+        }
+
+        $backfilled = null;
+
+        DB::transaction(function () use ($profile, $user, $key, $column, $value, $applyToExisting, &$backfilled) {
+            $profile->update([$key => $value]);
+
+            if ($user) {
+                $user->update([$key => $value]);
+            }
+
+            if ($applyToExisting) {
+                $backfilled = Video::where('profile_id', $profile->id)
+                    ->where(fn ($q) => $q->where($column, false)->orWhereNull($column))
+                    ->update([$column => true, 'updated_at' => now()]);
+            }
+        });
+
+        app(AdminAuditLogService::class)->logProfileAdminPermissionUpdate(
+            $request->user(),
+            $profile,
+            [
+                'old' => [$key => $old],
+                'new' => [$key => $value],
+                'apply_to_existing' => $applyToExisting,
+                'backfilled_count' => $backfilled,
+            ]
+        );
 
         return $this->success();
     }
