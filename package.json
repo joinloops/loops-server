@@ -22,7 +22,7 @@
         "@tiptap/extension-bold": "^3.28.0",
         "@tiptap/extension-character-count": "^3.27.4",
         "@tiptap/extension-document": "^3.27.2",
-        "@tiptap/extension-history": "^3.27.2",
+        "@tiptap/extension-history": "^3.28.0",
         "@tiptap/extension-italic": "^3.27.4",
         "@tiptap/extension-link": "^3.28.0",
         "@tiptap/extension-paragraph": "^3.28.0",
