@@ -70,8 +70,7 @@
                                     <strong class="font-semibold">{{
                                         formatNumber(profile?.post_count || 0)
                                     }}</strong>
-                                    existing videos by @{{ profile?.username }}. This runs in the
-                                    background and cannot be undone automatically.
+                                    existing videos by @{{ profile?.username }}.
                                 </span>
                             </span>
                         </label>
