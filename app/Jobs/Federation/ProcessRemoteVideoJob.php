@@ -167,6 +167,9 @@ class ProcessRemoteVideoJob implements ShouldBeUnique, ShouldQueue
         $video->remote_media_url = $this->attachment['url'];
         $video->created_at = $this->extractPublishedDate($this->object);
         $video->updated_at = now();
+        $video->is_sensitive = $profile->enforce_nsfw_label || (bool) ($this->object['sensitive'] ?? false);
+        $video->contains_ai = $profile->enforce_ai_label;
+        $video->contains_ad = $profile->enforce_ad_label;
 
         if (isset($this->object['url'])) {
             $video->uri = is_string($this->object['url']) ? $this->object['url'] : null;
