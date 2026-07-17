@@ -44,7 +44,7 @@
         "highlight.js": "^11.11.1",
         "laravel-vite-plugin": "^2.1",
         "markdown-it": ">=14.3.0",
-        "md-editor-v3": "^6.5.3",
+        "md-editor-v3": "^6.5.4",
         "mediabunny": "^1.50.8",
         "pinia": "^4.0.2",
         "postcss": "^8.5.16",
