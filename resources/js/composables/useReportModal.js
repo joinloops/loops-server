@@ -154,13 +154,6 @@ export function useReportModal() {
         return String(id) !== currentProfileId.value
     })
 
-    function resetReportModal() {
-        currentStep.value = 1
-        selectedCategory.value = null
-        additionalText.value = ''
-        isSubmitting.value = false
-    }
-
     function goToNextReportStep() {
         if (canProceedToNextStep.value) {
             currentStep.value = 2
