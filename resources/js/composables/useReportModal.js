@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, inject } from 'vue'
 import axios from '~/plugins/axios'
 import { useAlertModal } from '@/composables/useAlertModal.js'
 import { useI18n } from 'vue-i18n'
@@ -21,10 +21,15 @@ const reportContentId = ref('')
 const reportRoutePath = ref('')
 const selectedCategory = ref(null)
 const additionalText = ref('')
+const reportAccount = ref(null)
+const isBlocking = ref(false)
+const blockDone = ref(false)
+const blockError = ref('')
 
 export function useReportModal() {
     const { alertModal } = useAlertModal()
     const { t } = useI18n()
+    const authStore = inject('authStore')
 
     const REPORT_CATEGORIES = computed(() => [
         {
@@ -109,18 +114,45 @@ export function useReportModal() {
         return false
     })
 
-    function openReportModal(type, contentId, routePath) {
+    function openReportModal(type, contentId, routePath, account = null) {
+        resetReportModal()
         reportType.value = type
         reportContentId.value = contentId
         reportRoutePath.value = routePath
+        reportAccount.value = account
         isOpen.value = true
-        resetReportModal()
     }
 
     function closeReportModal() {
+        const shouldReload = blockDone.value
         isOpen.value = false
         resetReportModal()
+
+        if (shouldReload) {
+            window.location.reload()
+        }
     }
+
+    function resetReportModal() {
+        currentStep.value = 1
+        selectedCategory.value = null
+        additionalText.value = ''
+        isSubmitting.value = false
+        isBlocking.value = false
+        blockDone.value = false
+        blockError.value = ''
+    }
+
+    const currentProfileId = computed(() => {
+        const id = authStore?.user?.id
+        return id == null ? null : String(id)
+    })
+
+    const canBlock = computed(() => {
+        const id = reportAccount.value?.id
+        if (!id || !currentProfileId.value) return false
+        return String(id) !== currentProfileId.value
+    })
 
     function resetReportModal() {
         currentStep.value = 1
@@ -136,7 +168,7 @@ export function useReportModal() {
     }
 
     function goToPreviousReportStep() {
-        if (currentStep.value > 1) {
+        if (currentStep.value === 2) {
             currentStep.value = 1
         }
     }
@@ -145,36 +177,42 @@ export function useReportModal() {
         selectedCategory.value = category
     }
 
+    async function blockAccount() {
+        if (!canBlock.value || isBlocking.value || blockDone.value) return
+
+        isBlocking.value = true
+        blockError.value = ''
+
+        try {
+            await axiosInstance.post(`/api/v1/account/block/${reportAccount.value.id}`)
+            blockDone.value = true
+        } catch (error) {
+            blockError.value = error.response?.data?.message
+            console.error('Error blocking account:', error)
+        } finally {
+            isBlocking.value = false
+        }
+    }
+
     async function submitReport() {
         if (!canProceedToNextStep.value) return
 
         isSubmitting.value = true
 
         try {
-            const reportData = {
+            await axiosInstance.post('/api/v1/report', {
                 type: reportType.value,
                 id: reportContentId.value,
                 key: selectedCategory.value.key,
                 path: reportRoutePath.value,
                 comment: additionalText.value || null
-            }
+            })
 
-            await axiosInstance
-                .post('/api/v1/report', reportData)
-                .then((res) => {
-                    closeReportModal()
-                })
-                .finally(() => {
-                    alertModal(t('reports.success.title'), t('reports.success.message'))
-                })
+            currentStep.value = 3
         } catch (error) {
+            const msg = error.response?.data?.message
             closeReportModal()
-
-            let msg = t('reports.error.default')
-            if (error.response?.data?.message) {
-                msg = error.response.data.message
-            }
-            alertModal(t('reports.error.title') || 'Error', msg)
+            alertModal('Error', msg)
             console.error('Error submitting report:', error)
         } finally {
             isSubmitting.value = false
@@ -195,6 +233,12 @@ export function useReportModal() {
         canProceedToNextStep,
 
         REPORT_CATEGORIES,
+        reportAccount,
+        isBlocking,
+        blockDone,
+        blockError,
+        canBlock,
+        blockAccount,
 
         openReportModal,
         closeReportModal,
