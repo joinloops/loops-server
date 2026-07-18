@@ -65,6 +65,6 @@ class ExploreService
             }
 
             return app(AccountService::class)->get($profileId);
-        })->take(18)->values();
+        })->take(11)->values();
     }
 }
