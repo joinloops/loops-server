@@ -32,7 +32,7 @@
         "@vitejs/plugin-vue": "^6.0.8",
         "@vueuse/core": "^14.3.0",
         "@xmldom/xmldom": ">=0.9.10",
-        "autoprefixer": "^10.5.2",
+        "autoprefixer": "^10.5.4",
         "axios": "1.18.1",
         "boxicons": "^2.1.4",
         "date-fns": "^4.4.0",
