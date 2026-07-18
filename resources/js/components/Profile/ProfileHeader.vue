@@ -507,7 +507,11 @@ const toggleMenu = () => {
 }
 
 const handleReport = () => {
-    openReportModal('profile', profile.id, window.location.href)
+    openReportModal('profile', profile.id, window.location.href, {
+        id: profile.id,
+        username: profile.username,
+        is_owner: profile.id === authStore.profile?.id
+    })
     showMenu.value = false
 }
 

@@ -12,6 +12,7 @@ use App\Models\Profile;
 use App\Models\Report;
 use App\Models\StarterKit;
 use App\Models\Video;
+use App\Models\VideoSound;
 use App\Services\AdminDashboardService;
 use App\Services\UserActivityService;
 
@@ -88,6 +89,12 @@ class ReportController extends Controller
             Report::firstOrCreate([
                 'reporter_profile_id' => $pid,
                 'reported_starter_kit_id' => $kit->id,
+            ], $extra);
+        } elseif ($type === 'sound') {
+            $kit = VideoSound::findOrFail($id);
+            Report::firstOrCreate([
+                'reporter_profile_id' => $pid,
+                'reported_sound_id' => $id,
             ], $extra);
         }
 

@@ -159,11 +159,20 @@ function onShare() {
 }
 
 const handleReport = async () => {
-    if (authStore.isAuthenticated) {
-        await openReportModal('sound', props.id, window.location.href)
-    } else {
+    if (!authStore.isAuthenticated) {
         authStore.openAuthModal('login')
+        closeMenu()
+        return
     }
+
+    const accountId = props.originalVideo?.account?.id
+
+    await openReportModal('sound', props.id, window.location.href, {
+        id: accountId,
+        username: props.originalVideo?.account?.username,
+        is_owner: String(accountId) === String(authStore?.id)
+    })
+
     closeMenu()
 }
 </script>

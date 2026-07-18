@@ -8,6 +8,7 @@ use App\Models\Hashtag;
 use App\Models\Report;
 use App\Models\StarterKit;
 use App\Models\Video;
+use App\Models\VideoSound;
 use App\Services\AccountService;
 use App\Services\ReportService;
 use Illuminate\Http\Request;
@@ -65,6 +66,10 @@ class ReportResource extends JsonResource
             $contentType = 'starter_kit';
             $kit = StarterKit::find($this->reported_starter_kit_id);
             $contentPreview = $kit ? (new AdminStarterKitResource($kit))->toArray(request()) : [];
+        } elseif ($this->reported_sound_id) {
+            $contentType = 'sound';
+            $sound = VideoSound::find($this->reported_sound_id);
+            $contentPreview = $sound ? (new VideoSoundResource($sound))->toArray(request()) : [];
         }
 
         return [

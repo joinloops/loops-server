@@ -1,7 +1,15 @@
 <?php
 
 return [
+    'block' => [
+        'action' => 'Block account',
+        'blocked' => 'You blocked :username',
+        'blocking' => 'Blocking...',
+        'description' => 'They will not be able to find your profile or videos, and you will not see theirs. They will not be notified.',
+        'title' => 'Block :username?',
+    ],
     'error' => [
+        'blockFailed' => 'We could not block this account, please try again',
         'default' => 'An unexpected error occurred',
         'title' => 'Report Error',
     ],

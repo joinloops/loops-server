@@ -644,6 +644,34 @@
                         </div>
 
                         <div
+                            v-else-if="report.content_type === 'sound' && report.content_preview"
+                            class="space-y-3"
+                        >
+                            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                                <h3 class="text-lg text-gray-900 dark:text-white font-bold mb-1">
+                                    Untitled Sound
+                                </h3>
+
+                                <div
+                                    class="flex items-center gap-2 mt-2 text-xs text-gray-500 dark:text-gray-400"
+                                >
+                                    <router-link :to="`/sounds/${report.content_preview.id}`"
+                                        >by @{{
+                                            report.content_preview.original_video.account.username
+                                        }}</router-link
+                                    >
+                                    <span>•</span>
+                                    <span
+                                        >{{
+                                            formatCount(report.content_preview.usage_count)
+                                        }}
+                                        uses</span
+                                    >
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
                             v-else-if="
                                 report.content_type === 'starter_kit' && report.content_preview
                             "

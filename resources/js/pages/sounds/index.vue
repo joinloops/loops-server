@@ -156,6 +156,7 @@
         </div>
 
         <GuestAuthPromptModal :show="showGuestModal" @close="showGuestModal = false" />
+        <ReportModal />
     </MainLayout>
 </template>
 
@@ -167,6 +168,7 @@ import { useRoute } from 'vue-router'
 import { useUtils } from '@/composables/useUtils'
 import SoundsHeader from '@/components/Sounds/SoundsHeader.vue'
 import GuestAuthPromptModal from '@/components/Tag/GuestAuthPromptModal.vue'
+import ReportModal from '@/components/ReportModal.vue'
 
 const id = ref()
 const route = useRoute()
@@ -231,8 +233,6 @@ const setupIntersectionObserver = () => {
 
     observer.observe(loadMoreTrigger.value)
 }
-
-// Remove the watch on allVideos - we'll set up observer after initial fetch
 
 watch(
     () => route.params.id,

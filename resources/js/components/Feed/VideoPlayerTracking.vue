@@ -974,7 +974,11 @@ const onHidden = () => {
 }
 
 const handleReport = () => {
-    openReportModal('video', props.videoId, window.location.href)
+    openReportModal('video', props.videoId, window.location.href, {
+        id: props.profileId,
+        username: props.username,
+        is_owner: props.profileId === authStore.profile?.id
+    })
     showMenu.value = false
 }
 

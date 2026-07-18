@@ -844,7 +844,11 @@ const handleReport = () => {
         authStore.openAuthModal('login')
         return
     }
-    openReportModal('comment', props.comment.id, window.location.href)
+    openReportModal('comment', props.comment.id, window.location.href, {
+        id: props.comment.id,
+        username: props.comment.account?.username,
+        is_owner: props.comment.is_owner
+    })
     showDropdown.value = false
 }
 

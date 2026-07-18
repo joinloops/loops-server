@@ -435,6 +435,7 @@ const props = defineProps({
     commentCount: { type: Number, default: 0 },
     index: { type: Number, default: 0 },
     isSensitive: { type: Boolean, default: false },
+    repostedBy: { type: Object, default: null },
     altText: { type: String, default: '' }
 })
 
@@ -913,7 +914,11 @@ const onHidden = () => {
     pause()
 }
 const handleReport = () => {
-    openReportModal('video', props.videoId, window.location.href)
+    openReportModal('video', props.videoId, window.location.href, {
+        id: props.profileId,
+        username: props.username,
+        is_owner: props.profileId === authStore.profile?.id
+    })
     showMenu.value = false
 }
 

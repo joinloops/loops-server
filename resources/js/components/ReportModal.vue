@@ -184,6 +184,85 @@
                                     </button>
                                 </div>
                             </div>
+
+                            <div v-if="currentStep === 3">
+                                <div class="text-center">
+                                    <div
+                                        class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/30"
+                                    >
+                                        <i
+                                            class="bx bx-check text-[28px] text-green-600 dark:text-green-400"
+                                        />
+                                    </div>
+                                    <h3
+                                        class="mt-4 text-lg font-medium text-gray-900 dark:text-white"
+                                    >
+                                        {{ t('reports.success.title') }}
+                                    </h3>
+                                    <p
+                                        class="mt-2 text-sm text-gray-600 dark:text-gray-400"
+                                        v-html="t('reports.success.message')"
+                                    ></p>
+                                </div>
+
+                                <div
+                                    v-if="canBlock"
+                                    class="mt-6 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                                >
+                                    <div v-if="!blockDone">
+                                        <p
+                                            class="text-sm font-medium text-gray-900 dark:text-white"
+                                        >
+                                            {{
+                                                t('reports.block.title', {
+                                                    username: reportAccount.username
+                                                })
+                                            }}
+                                        </p>
+                                        <p class="mt-1 text-xs text-gray-600 dark:text-gray-400">
+                                            {{ t('reports.block.description') }}
+                                        </p>
+
+                                        <p v-if="blockError" class="mt-2 text-xs text-red-500">
+                                            {{ blockError }}
+                                        </p>
+
+                                        <button
+                                            @click="blockAccount"
+                                            :disabled="isBlocking"
+                                            class="mt-3 w-full px-4 py-2.5 border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 font-medium rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                                        >
+                                            {{
+                                                isBlocking
+                                                    ? t('reports.block.blocking')
+                                                    : t('reports.block.action')
+                                            }}
+                                        </button>
+                                    </div>
+
+                                    <div v-else class="flex items-center space-x-2">
+                                        <i
+                                            class="bx bx-check text-[20px] text-green-600 dark:text-green-400"
+                                        />
+                                        <p class="text-sm text-gray-700 dark:text-gray-300">
+                                            {{
+                                                t('reports.block.blocked', {
+                                                    username: reportAccount.username
+                                                })
+                                            }}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="mt-6 flex justify-end">
+                                    <button
+                                        @click="closeReportModal"
+                                        class="px-6 py-3 bg-[#F02C56] text-white font-medium rounded-lg hover:bg-[#F02C56]/80 transition-colors cursor-pointer"
+                                    >
+                                        {{ t('common.done') }}
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </Transition>
@@ -202,16 +281,22 @@ const {
     currentStep,
     isSubmitting,
     reportType,
+    reportAccount,
     selectedCategory,
     additionalText,
     requiresTextInput,
     canProceedToNextStep,
+    canBlock,
+    isBlocking,
+    blockDone,
+    blockError,
     REPORT_CATEGORIES,
     closeReportModal,
     goToNextReportStep,
     goToPreviousReportStep,
     selectCategory,
-    submitReport
+    submitReport,
+    blockAccount
 } = useReportModal()
 
 function getTextareaPlaceholder() {
