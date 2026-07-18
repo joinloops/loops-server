@@ -235,7 +235,6 @@ class AdminSettingsController extends Controller
             ],
         ]);
 
-        /** @var UploadedFile $file */
         $file = $validated['logo'];
 
         $disk = Storage::disk('public');
