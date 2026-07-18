@@ -384,12 +384,12 @@ class WebPublicController extends Controller
         }
 
         if ($guest) {
-            $tags = VideoHashtag::whereHashtagId($tag->id)->orderByDesc('id')->limit(30)->get();
+            $tags = VideoHashtag::whereHashtagId($tag->id)->orderByDesc('id')->limit(9)->get();
 
             return VideoHashtagResource::collection($tags)->additional([
                 'meta' => [
                     'total_results' => $tag->count,
-                    'limit' => 30,
+                    'limit' => 9,
                     'next_cursor' => null,
                     'has_more' => false,
                     'is_guest' => true,
