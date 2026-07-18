@@ -17,7 +17,7 @@
         "@heroicons/vue": "^2.2.0",
         "@mdi/font": "^7.4.47",
         "@tailwindcss/postcss": "^4.3.3",
-        "@tailwindcss/vite": "^4.3.2",
+        "@tailwindcss/vite": "^4.3.3",
         "@tanstack/vue-query": "^5.101.2",
         "@tiptap/extension-bold": "^3.28.0",
         "@tiptap/extension-character-count": "^3.27.4",
