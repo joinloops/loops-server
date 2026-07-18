@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\File;
+use Intervention\Image\Format;
 use Intervention\Image\Laravel\Facades\Image;
 
 #[ExcludeAllRoutesFromDocs]
@@ -225,32 +226,38 @@ class AdminSettingsController extends Controller
 
     public function updateLogo(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'logo' => [
                 'required',
-                File::types(['jpg', 'png', 'jpeg'])
+                File::types(['jpg', 'jpeg', 'png'])
                     ->min('1kb')
                     ->max('2mb'),
             ],
         ]);
 
-        $files = Storage::disk('public')->allFiles('branding');
+        /** @var UploadedFile $file */
+        $file = $validated['logo'];
 
-        Storage::disk('public')->delete($files);
+        $disk = Storage::disk('public');
 
-        $file = $request->file('logo');
+        $oldFiles = $disk->allFiles('branding');
 
-        $img = Image::read($file)
+        $encoded = Image::decode($file)
             ->cover(500, 500)
-            ->toPng(interlaced: true);
+            ->encodeUsingFormat(
+                Format::PNG,
+                interlaced: true,
+            );
 
-        $filename = 'logo'.'_'.time().Str::random(8).'.png';
-
+        $filename = 'logo_'.Str::uuid().'.png';
         $path = 'branding/'.$filename;
 
-        Storage::disk('public')->put($path, (string) $img);
+        if (! $disk->put($path, (string) $encoded)) {
+            throw new \RuntimeException('Unable to store the uploaded logo.');
+        }
 
         $url = '/storage/'.$path;
+
         AdminSetting::set(
             'branding.logo',
             $url,
@@ -258,9 +265,16 @@ class AdminSettingsController extends Controller
             true,
             'Logo'
         );
+
         (new SettingsFileService)->flush();
 
-        return $this->data(['logo_url' => $url]);
+        if ($oldFiles !== []) {
+            $disk->delete($oldFiles);
+        }
+
+        return $this->data([
+            'logo_url' => $url,
+        ]);
     }
 
     public function handleSubmitToServerList()

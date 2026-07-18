@@ -12,7 +12,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Intervention\Image\Encoders\WebpEncoder;
+use Intervention\Image\Alignment;
+use Intervention\Image\Format;
 use Intervention\Image\Laravel\Facades\Image;
 
 class FetchRemoteStarterKitMedia implements ShouldQueue
@@ -118,7 +119,7 @@ class FetchRemoteStarterKitMedia implements ShouldQueue
             }
 
             $config = self::MEDIA_CONFIG[$type];
-            $image = Image::read($body);
+            $image = Image::decode($body);
 
             $image = $this->cropToAspectRatio(
                 $image,
@@ -131,7 +132,7 @@ class FetchRemoteStarterKitMedia implements ShouldQueue
                 height: $config['max_height']
             );
 
-            $encoded = $image->encode(new WebpEncoder(quality: 85));
+            $encoded = $image->encodeUsingFormat(Format::WEBP, quality: 85);
 
             $filename = "{$type}-".Str::random(14).'.webp';
             $path = "starterkit/{$kit->id}/{$filename}";
@@ -166,11 +167,11 @@ class FetchRemoteStarterKitMedia implements ShouldQueue
         if ($targetHeight > $height) {
             $targetWidth = (int) ($height * $ratioW / $ratioH);
 
-            return $image->crop($targetWidth, $height, position: 'center');
+            return $image->crop($targetWidth, $height, alignment: Alignment::CENTER);
         }
 
         if ($targetHeight < $height) {
-            return $image->crop($width, $targetHeight, position: 'center');
+            return $image->crop($width, $targetHeight, alignment: Alignment::CENTER);
         }
 
         return $image;

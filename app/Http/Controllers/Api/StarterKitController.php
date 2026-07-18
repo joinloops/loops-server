@@ -31,6 +31,7 @@ use App\Services\UserFilterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Format;
 use Intervention\Image\Laravel\Facades\Image;
 
 class StarterKitController extends Controller
@@ -930,9 +931,9 @@ class StarterKitController extends Controller
                 Storage::disk('s3')->delete($starterKit->icon_path);
             }
 
-            $encoded = Image::read($request->file('icon'))
+            $encoded = Image::decode($request->file('icon'))
                 ->cover(400, 400)
-                ->toWebp(quality: 85);
+                ->encodeUsingFormat(Format::WEBP, quality: 85);
 
             $rand = random_int(1, 99999);
             $path = 'starterkit/'.$starterKit->id.'/icon-'.$rand.'.webp';
@@ -953,9 +954,9 @@ class StarterKitController extends Controller
                 ], 422);
             }
 
-            $encoded = Image::read($request->file('icon'))
+            $encoded = Image::decode($request->file('icon'))
                 ->cover(400, 400)
-                ->toWebp(quality: 85);
+                ->encodeUsingFormat(Format::WEBP, quality: 85);
 
             $path = 'starterkit/'.$starterKit->id.'/pending-icon-'.Str::random(32).'.webp';
             Storage::disk('s3')->put($path, $encoded, 'private');
@@ -1020,9 +1021,9 @@ class StarterKitController extends Controller
                 Storage::disk('s3')->delete($starterKit->header_path);
             }
 
-            $encoded = Image::read($request->file('header'))
+            $encoded = Image::decode($request->file('header'))
                 ->cover(1500, 600)
-                ->toWebp(quality: 85);
+                ->encodeUsingFormat(Format::WEBP, quality: 85);
 
             $rand = random_int(1, 99999);
             $path = 'starterkit/'.$starterKit->id.'/header-'.$rand.'.webp';
@@ -1043,9 +1044,9 @@ class StarterKitController extends Controller
                 ], 422);
             }
 
-            $encoded = Image::read($request->file('header'))
+            $encoded = Image::decode($request->file('header'))
                 ->cover(1500, 600)
-                ->toWebp(quality: 85);
+                ->encodeUsingFormat(Format::WEBP, quality: 85);
 
             $path = 'starterkit/'.$starterKit->id.'/pending-header-'.Str::random(32).'.webp';
             Storage::disk('s3')->put($path, $encoded, 'private');

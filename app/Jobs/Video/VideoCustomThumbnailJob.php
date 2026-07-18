@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Format;
 use Intervention\Image\Laravel\Facades\Image;
 
 class VideoCustomThumbnailJob implements ShouldQueue
@@ -39,11 +40,15 @@ class VideoCustomThumbnailJob implements ShouldQueue
                 throw new \Exception('Failed to read thumbnail from S3');
             }
 
-            $image = Image::read($contents);
+            $image = Image::decodeBinary($contents);
             $image->cover(1080, 1920);
 
             $tempPath = sys_get_temp_dir().'/'.uniqid($this->video->id.'_thumb_').'.webp';
-            $image->toWebp(quality: 95, strip: true)->save($tempPath);
+            $image->encodeUsingFormat(
+                Format::WEBP,
+                quality: 95,
+                strip: true,
+            )->save($tempPath);
 
             $pid = $this->video->profile_id;
             $fileName = 'thumb_'.Str::random(8).'.webp';
