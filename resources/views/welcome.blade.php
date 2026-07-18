@@ -9,7 +9,7 @@
     <link rel="icon" href="{{ url('/favicon.ico') }}" sizes="32x32">
     <link rel="icon shortcut" href="{{ url('/favicon.svg') }}" type="image/svg+xml">
     <link rel="apple-touch-icon" href="{{ url('/apple-touch-icon.png') }}">
-    <meta name="app-version" content="{{ Vite::manifestHash() }}">
+    <meta name="app-version" content="{{ \App\Services\ViteService::get() }}">
     @preloadFont('boxicons')
 
     <link rel="preload" href="{{ url('/fonts/dm-sans-300-normal-latin-b9df6239.woff2') }}" as="font" type="font/woff2" crossorigin>

@@ -35,12 +35,12 @@ use App\Services\ReportService;
 use App\Services\StarterKitService;
 use App\Services\SystemMessageService;
 use App\Services\UserFilterService;
+use App\Services\ViteService;
 use App\Support\CursorToken;
 use Dedoc\Scramble\Attributes\ExcludeRouteFromDocs;
 use Dedoc\Scramble\Attributes\PathParameter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 
 class WebPublicController extends Controller
@@ -688,7 +688,7 @@ class WebPublicController extends Controller
     #[ExcludeRouteFromDocs]
     public function viteManifestHash(Request $request)
     {
-        return response()->json(['version' => Vite::manifestHash()])->header('Cache-Control', 'no-store');
+        return response()->json(['version' => ViteService::get()])->header('Cache-Control', 'no-store');
     }
 
     #[ExcludeRouteFromDocs]

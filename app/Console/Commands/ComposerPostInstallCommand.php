@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Services\BootstrapService;
 use App\Services\PageService;
 use App\Services\SettingsFileService;
+use App\Services\ViteService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -33,6 +34,7 @@ class ComposerPostInstallCommand extends Command
         try {
             DB::connection()->getPdo();
 
+            ViteService::get(true);
             Cache::forget('version_check_result');
             app(SettingsFileService::class)->flush();
             BootstrapService::ensureBoottimeEnvironment();

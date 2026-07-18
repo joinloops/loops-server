@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ config('app.name', 'Loops') }}</title>
+    <meta name="app-version" content="{{ \App\Services\ViteService::get() }}">
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-white dark:bg-gray-950">

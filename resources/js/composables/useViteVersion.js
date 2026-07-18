@@ -21,7 +21,7 @@ export function useViteVersion() {
         }
     })
 
-    setInterval(check, 5 * 60 * 1000)
+    setInterval(check, 15 * 60 * 1000)
 
     return { updateAvailable, reload: () => location.reload() }
 }
