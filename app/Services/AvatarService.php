@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Intervention\Image\Format;
 use Intervention\Image\Laravel\Facades\Image;
 
 class AvatarService
@@ -132,14 +133,14 @@ class AvatarService
             throw new \RuntimeException("avatars-temp directory is not writable: {$dirPath}");
         }
 
-        $image = Image::read($avatarFile);
+        $image = Image::decode($avatarFile);
 
         if ($coordinates && isset($coordinates['left'], $coordinates['top'], $coordinates['width'], $coordinates['height'])) {
             $image->crop(
                 width: (int) round($coordinates['width']),
                 height: (int) round($coordinates['height']),
-                offset_x: (int) round($coordinates['left']),
-                offset_y: (int) round($coordinates['top'])
+                x: (int) round($coordinates['left']),
+                y: (int) round($coordinates['top'])
             );
 
             $image->scaleDown(width: 300, height: 300);
@@ -147,7 +148,7 @@ class AvatarService
             $image->cover(300, 300);
         }
 
-        $image->toWebp(quality: 95, strip: true)->save($tempPath);
+        $image->encodeUsingFormat(Format::WEBP, quality: 95, strip: true)->save($tempPath);
 
         return $tempPath;
     }
