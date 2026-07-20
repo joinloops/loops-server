@@ -54,7 +54,7 @@ class DmMessageController extends Controller
             'conversation_id' => 'required_without:recipient_id|nullable|integer',
             'recipient_id' => 'required_without:conversation_id|nullable|integer|exists:profiles,id',
             'type' => 'required|in:text,loop_share',
-            'body' => 'required_if:type,text|nullable|string|max:2000',
+            'body' => 'required_if:type,text|nullable|string|max:500',
             'video_id' => 'required_if:type,loop_share|nullable|integer|exists:videos,id',
         ]);
 
