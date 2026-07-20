@@ -27,6 +27,8 @@ class DmMessageController extends Controller
 
     public function index(Request $request, int $conversationId)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $request->validate([
             'limit' => 'sometimes|integer|min:1|max:50',
         ]);
@@ -99,6 +101,8 @@ class DmMessageController extends Controller
 
     public function storeMedia(StoreDmMediaRequest $request)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $data = $request->validated();
 
         $sender = Profile::findOrFail($request->user()->profile_id);
