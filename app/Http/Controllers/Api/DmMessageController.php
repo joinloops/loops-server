@@ -63,7 +63,8 @@ class DmMessageController extends Controller
 
         $restricted = $sender->created_at->gt(now()->subDays($minAccountAgeDays)) || (int) $sender->followers < $minFollowers;
         if ($restricted && isset($data['recipient_id'])) {
-            abort_unless(app(FollowerService::class)->follows($data['recipient_id'], $sender->id), 403, 'You do not have permission for this action');
+            $exempt = app(FollowerService::class)->follows($data['recipient_id'], $sender->id) && app(FollowerService::class)->follows($sender->id, $data['recipient_id']);
+            abort_unless($exempt, 403, 'You do not have permission for this action');
         }
 
         if (filled($data['conversation_id'] ?? null)) {

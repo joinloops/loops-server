@@ -54,6 +54,12 @@ class DirectMessageService
 
     public function send(Profile $sender, Profile $recipient, array $payload): Message
     {
+        abort_unless(
+            $this->canInitiateConversation($sender, $recipient),
+            403,
+            'You do not have permission for this action'
+        );
+
         abort_unless($this->canMessage($sender, $recipient), 403, 'You cannot message this account.');
 
         $message = DB::transaction(function () use ($sender, $recipient, $payload) {
@@ -289,6 +295,33 @@ class DirectMessageService
         }
 
         $message->forceFill(['entities' => ['media' => $entities]])->save();
+    }
+
+    public function isRestrictedSender(Profile $sender): bool
+    {
+        $minAccountAgeDays = (int) config('loops.dm.compose.min_account_age_days');
+        $minFollowers = (int) config('loops.dm.compose.min_followers');
+
+        return $sender->created_at->gt(now()->subDays($minAccountAgeDays))
+            || (int) $sender->followers < $minFollowers;
+    }
+
+    protected function canInitiateConversation(Profile $sender, Profile $recipient): bool
+    {
+        if (! $this->isRestrictedSender($sender)) {
+            return true;
+        }
+
+        $conversationExists = Conversation::where(
+            'participants_hash',
+            Conversation::dmHash($sender->id, $recipient->id)
+        )->exists();
+
+        if ($conversationExists) {
+            return true;
+        }
+
+        return $this->follows($sender, $recipient) && $this->follows($recipient, $sender);
     }
 
     protected function ensureParticipant(Conversation $conversation, int $profileId, string $initialState): ConversationParticipant

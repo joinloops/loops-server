@@ -121,6 +121,11 @@ class DmConversationController extends Controller
                         ->from('followers as follower_check')
                         ->whereColumn('follower_check.profile_id', 'profiles.id')
                         ->where('follower_check.following_id', $currentUserId);
+                })->whereExists(function ($sub) use ($currentUserId) {
+                    $sub->select('id')
+                        ->from('followers as following_check')
+                        ->whereColumn('following_check.following_id', 'profiles.id')
+                        ->where('following_check.profile_id', $currentUserId);
                 });
             })
             ->where('profiles.username', 'like', $escapedQuery.'%')

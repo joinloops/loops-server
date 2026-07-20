@@ -130,7 +130,7 @@
                 >
                     {{
                         restricted
-                            ? 'No matches in your followers. Some accounts can only message people who follow them.'
+                            ? 'No mutual followers matched. Some accounts, like yours, can only message mutuals.'
                             : 'No people found. Try a full address like user@server.tld.'
                     }}
                 </p>
