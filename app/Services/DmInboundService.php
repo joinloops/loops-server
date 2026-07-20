@@ -70,10 +70,10 @@ class DmInboundService
             return null;
         }
 
-        if (! $this->sameOrigin($objectId, $sender->remote_url)) {
+        if (! $this->sameOrigin($objectId, $this->senderUri($sender))) {
             $this->log('Dropped DM create: object origin does not match sender', [
                 'object_id' => $objectId,
-                'sender' => $sender->remote_url,
+                'sender' => $this->senderUri($sender),
             ]);
 
             return null;
@@ -124,7 +124,7 @@ class DmInboundService
             return null;
         }
 
-        $pattern = '/^@'.preg_quote($recipient->username, '/').'(@[A-Za-z0-9\.\-]+)?[[:space:]]+/iu';
+        $pattern = '/^@[[:space:]]?'.preg_quote($recipient->username, '/').'(@[A-Za-z0-9\.\-]+)?[[:space:]]+/iu';
         $stripped = preg_replace($pattern, '', $body, 1);
 
         if (! is_string($stripped)) {
@@ -148,7 +148,7 @@ class DmInboundService
         $object = $activity['object'] ?? null;
         $objectId = is_string($object) ? $object : (is_array($object) ? ($object['id'] ?? null) : null);
 
-        if (! is_string($objectId) || ! $this->sameOrigin($objectId, $sender->remote_url)) {
+        if (! is_string($objectId) || ! $this->sameOrigin($objectId, $this->senderUri($sender))) {
             return false;
         }
 
@@ -175,7 +175,7 @@ class DmInboundService
             return;
         }
 
-        if (! $this->sameOrigin($objectId, $sender->remote_url)) {
+        if (! $this->sameOrigin($objectId, $this->senderUri($sender))) {
             return;
         }
 
@@ -204,13 +204,14 @@ class DmInboundService
     {
         $locals = [];
         $unresolvedOthers = 0;
+        $senderUri = $this->senderUri($sender);
 
         foreach ($this->recipients($activity) as $uri) {
             if (in_array($uri, self::PUBLIC_URIS, true)) {
                 continue;
             }
 
-            if ($sender->remote_url && strcasecmp($uri, $sender->remote_url) === 0) {
+            if ($senderUri && strcasecmp($uri, $senderUri) === 0) {
                 continue;
             }
 
@@ -344,6 +345,11 @@ class DmInboundService
         $text = trim($this->sanitize->cleanHtmlWithSpacing($html));
 
         return $text === '' ? null : Str::limit($text, 5000);
+    }
+
+    protected function senderUri(Profile $sender): ?string
+    {
+        return $sender->uri ?? $sender->remote_url ?? null;
     }
 
     protected function sameOrigin(?string $a, ?string $b): bool
