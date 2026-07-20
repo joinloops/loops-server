@@ -47,8 +47,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline'
 import { useDmStore } from '@/stores/dm'
 import { useDmSocket } from '@/composables/useDmSocket'
-import DmConversationList from '@/components/dm/DmConversationList.vue'
-import DmThread from '@/components/dm/DmThread.vue'
+import DmConversationList from '@/components/Dm/DmConversationList.vue'
+import DmThread from '@/components/Dm/DmThread.vue'
 import MainLayout from '@/layouts/MainLayout.vue'
 
 const route = useRoute()

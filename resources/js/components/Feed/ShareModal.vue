@@ -235,8 +235,8 @@ import {
     ArrowUpOnSquareIcon,
     RssIcon
 } from '@heroicons/vue/24/outline'
-import DmQuickShare from '~/components/dm/DmQuickShare.vue'
-import DmShareModal from '~/components/dm/DmShareModal.vue'
+import DmQuickShare from '~/components/Dm/DmQuickShare.vue'
+import DmShareModal from '~/components/Dm/DmShareModal.vue'
 
 const props = defineProps({
     url: {
