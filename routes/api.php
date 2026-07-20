@@ -409,23 +409,24 @@ Route::prefix('api')->group(function () {
     });
 
     Route::prefix('v1/dm')->group(function () {
-        Route::get('/suggested-recipients', [DmConversationController::class, 'suggested']);
-        Route::get('/conversations', [DmConversationController::class, 'index']);
-        Route::get('/conversations/{id}', [DmConversationController::class, 'show']);
-        Route::post('/conversations/{id}/read', [DmConversationController::class, 'read']);
-        Route::post('/conversations/{id}/accept', [DmConversationController::class, 'accept']);
-        Route::post('/conversations/{id}/decline', [DmConversationController::class, 'decline']);
-        Route::post('/conversations/{id}/mute', [DmConversationController::class, 'mute']);
-        Route::post('/conversations/{id}/unmute', [DmConversationController::class, 'unmute']);
-        Route::post('/conversations/{id}/hide', [DmConversationController::class, 'hide']);
-        Route::post('/conversations/{id}/unhide', [DmConversationController::class, 'unhide']);
-        Route::post('/search', [DmConversationController::class, 'search']);
+        Route::get('/suggested-recipients', [DmConversationController::class, 'suggested'])->middleware(['auth:web,api']);
+        Route::get('/conversations', [DmConversationController::class, 'index'])->middleware(['auth:web,api']);
+        Route::get('/conversations/{id}', [DmConversationController::class, 'show'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/read', [DmConversationController::class, 'read'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/accept', [DmConversationController::class, 'accept'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/decline', [DmConversationController::class, 'decline'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/mute', [DmConversationController::class, 'mute'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/unmute', [DmConversationController::class, 'unmute'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/hide', [DmConversationController::class, 'hide'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/unhide', [DmConversationController::class, 'unhide'])->middleware(['auth:web,api']);
+        Route::post('/search', [DmConversationController::class, 'search'])->middleware(['auth:web,api']);
 
-        Route::get('/conversations/{id}/messages', [DmMessageController::class, 'index']);
-        Route::post('/messages', [DmMessageController::class, 'store']);
-        Route::post('/messages/media', [DmMessageController::class, 'storeMedia']);
-        Route::delete('/messages/{id}', [DmMessageController::class, 'destroy']);
+        Route::get('/conversations/{id}/messages', [DmMessageController::class, 'index'])->middleware(['auth:web,api']);
+        Route::post('/messages', [DmMessageController::class, 'store'])->middleware(['auth:web,api']);
+        Route::post('/messages/media', [DmMessageController::class, 'storeMedia'])->middleware(['auth:web,api']);
+        Route::delete('/messages/{id}', [DmMessageController::class, 'destroy'])->middleware(['auth:web,api']);
     });
+
     // Admin
     Route::prefix('/v1/admin')->middleware(['auth:web,api', AdminOnlyAccess::class])->group(function () {
 
