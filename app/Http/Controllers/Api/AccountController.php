@@ -1163,6 +1163,13 @@ class AccountController extends Controller
         return $this->data($res);
     }
 
+    public function getDmStatus(Request $request)
+    {
+        $profile = $request->user()->profile;
+
+        return $this->data(['state' => $profile->dm_privacy]);
+    }
+
     public function getStarterKitsStatus(Request $request)
     {
         $profile = $request->user()->profile;
@@ -1179,6 +1186,23 @@ class AccountController extends Controller
         };
 
         return $this->data(['state' => $state, 'state_int' => $profile->starter_kit_state ?? 5]);
+    }
+
+    public function updateDmStatus(Request $request)
+    {
+        $validated = $request->validate([
+            'state' => 'required|string|in:off,following,everyone',
+        ]);
+
+        $state = $request->input('state');
+        $user = $request->user();
+        $profile = $user->profile;
+
+        app(UserAuditLogService::class)->logAccountDmSettings($user, ['old' => $profile->dm_privacy, 'new' => $validated['state']]);
+
+        $profile->update(['dm_privacy' => $validated['state']]);
+
+        return $this->data(['state' => $state]);
     }
 
     public function updateStarterKitsStatus(Request $request)

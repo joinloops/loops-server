@@ -189,6 +189,8 @@
     "useDevicePixelRatio": true,
     "useDevicesList": true,
     "useDisplayMedia": true,
+    "useDmSocket": true,
+    "useDmStore": true,
     "useDocumentVisibility": true,
     "useDraggable": true,
     "useDropZone": true,

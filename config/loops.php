@@ -135,4 +135,11 @@ return [
                 : null,
         ],
     ],
+
+    'dm' => [
+        'compose' => [
+            'min_account_age_days' => env('LOOPS_DM_MINACCOUNTAGEDAYS', 90),
+            'min_followers' => env('LOOPS_DM_FOLLOWERS', 10),
+        ],
+    ],
 ];

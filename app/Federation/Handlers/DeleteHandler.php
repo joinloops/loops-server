@@ -7,6 +7,7 @@ use App\Models\CommentReply;
 use App\Models\Profile;
 use App\Models\StarterKitAccount;
 use App\Models\Video;
+use App\Services\DmInboundService;
 use App\Services\StarterKitService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -175,6 +176,17 @@ class DeleteHandler extends BaseHandler
 
             if (config('logging.dev_log')) {
                 Log::info('Successfully handled Delete comment_reply activity', [
+                    'object_url' => $objectUrl,
+                    'activity_id' => $activity['id'] ?? 'unknown',
+                ]);
+            }
+
+            return true;
+        }
+
+        if ($actor && app(DmInboundService::class)->handleDelete($activity, $actor)) {
+            if (config('logging.dev_log')) {
+                Log::info('Successfully handled Delete direct message activity', [
                     'object_url' => $objectUrl,
                     'activity_id' => $activity['id'] ?? 'unknown',
                 ]);

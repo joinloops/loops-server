@@ -7,6 +7,7 @@ use App\Models\CommentReply;
 use App\Models\Instance;
 use App\Models\Video;
 use App\Services\ActivityPubService;
+use App\Services\DmInboundService;
 use App\Services\HashidService;
 use App\Services\SanitizeService;
 use Illuminate\Support\Facades\Http;
@@ -91,6 +92,12 @@ class CreateValidator extends BaseValidator
             rtrim($activity['actor'], '/')
         ) {
             throw new \Exception('Create activity actor does not match object attributedTo.');
+        }
+
+        if (app(DmInboundService::class)->isDirectNote($activity)) {
+            $this->validateDirectMessage($activity['actor']);
+
+            return;
         }
 
         $hasVideoAttachment = $this->hasVideoAttachment($object);
@@ -388,6 +395,26 @@ class CreateValidator extends BaseValidator
 
         } catch (\Exception $e) {
             return;
+        }
+    }
+
+    /**
+     * Validates a direct message Note.
+     *
+     * @throws \Exception if the instance is not allowed to send DMs.
+     */
+    private function validateDirectMessage(string $actorUrl): void
+    {
+        $actorDomain = parse_url($actorUrl, PHP_URL_HOST);
+
+        if (! $actorDomain) {
+            throw new \Exception("Unable to extract domain from actor URL: '{$actorUrl}'.");
+        }
+
+        $instance = Instance::firstOrCreate(['domain' => strtolower($actorDomain)]);
+
+        if ($instance->is_blocked) {
+            throw new \Exception("Instance '{$actorDomain}' is not allowed to send direct messages.");
         }
     }
 }

@@ -66,11 +66,6 @@ const goBack = () => {
 }
 
 const handleSubmit = () => {
-    console.log('Submitted report:', {
-        videoId: props.videoId,
-        reasonKey: selectedOption.value.key,
-        reasonMessage: selectedOption.value.message
-    })
     if (props.menuModelValue !== undefined) {
         emit('update:menuModelValue', false)
     }

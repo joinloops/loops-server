@@ -164,6 +164,16 @@ class UserAuditLogService
         ]);
     }
 
+    public function logAccountDmSettings(
+        User|int $user,
+        array $changedFields = [],
+    ): UserAuditLog {
+        return $this->log($user, 'dm_state', [
+            'old' => $changedFields['old'],
+            'new' => $changedFields['new'],
+        ]);
+    }
+
     public function logAccountAddProfileLink(
         User|int $user,
         array $changedFields = [],

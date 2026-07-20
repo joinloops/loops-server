@@ -12,6 +12,8 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AppController;
+use App\Http\Controllers\Api\DmConversationController;
+use App\Http\Controllers\Api\DmMessageController;
 use App\Http\Controllers\Api\DuetController;
 use App\Http\Controllers\Api\ExploreController;
 use App\Http\Controllers\Api\FeedController;
@@ -271,7 +273,9 @@ Route::prefix('api')->group(function () {
     // App
     Route::post('/v1/app/logout', [AppController::class, 'handleLogout'])->middleware(['auth:web,api']);
 
+    Route::get('/v1/account/settings/dm/status', [AccountController::class, 'getDmStatus'])->middleware(['auth:web,api']);
     Route::get('/v1/account/settings/starter-kits/status', [AccountController::class, 'getStarterKitsStatus'])->middleware(['auth:web,api']);
+    Route::post('/v1/account/settings/dm/update', [AccountController::class, 'updateDmStatus'])->middleware(['auth:web,api']);
     Route::post('/v1/account/settings/starter-kits/update', [AccountController::class, 'updateStarterKitsStatus'])->middleware(['auth:web,api']);
     Route::post('/v1/starter-kits/compose/search/accounts', [StarterKitController::class, 'accountSearch'])->middleware(['auth:web,api']);
     Route::post('/v1/starter-kits/compose/search/hashtags', [StarterKitController::class, 'hashtagSearch'])->middleware(['auth:web,api']);
@@ -404,6 +408,24 @@ Route::prefix('api')->group(function () {
         Route::post('complete', [CuratedOnboardingController::class, 'completeOnboarding'])->middleware(['throttle:3,1']);
     });
 
+    Route::prefix('v1/dm')->group(function () {
+        Route::get('/suggested-recipients', [DmConversationController::class, 'suggested']);
+        Route::get('/conversations', [DmConversationController::class, 'index']);
+        Route::get('/conversations/{id}', [DmConversationController::class, 'show']);
+        Route::post('/conversations/{id}/read', [DmConversationController::class, 'read']);
+        Route::post('/conversations/{id}/accept', [DmConversationController::class, 'accept']);
+        Route::post('/conversations/{id}/decline', [DmConversationController::class, 'decline']);
+        Route::post('/conversations/{id}/mute', [DmConversationController::class, 'mute']);
+        Route::post('/conversations/{id}/unmute', [DmConversationController::class, 'unmute']);
+        Route::post('/conversations/{id}/hide', [DmConversationController::class, 'hide']);
+        Route::post('/conversations/{id}/unhide', [DmConversationController::class, 'unhide']);
+        Route::post('/search', [DmConversationController::class, 'search']);
+
+        Route::get('/conversations/{id}/messages', [DmMessageController::class, 'index']);
+        Route::post('/messages', [DmMessageController::class, 'store']);
+        Route::post('/messages/media', [DmMessageController::class, 'storeMedia']);
+        Route::delete('/messages/{id}', [DmMessageController::class, 'destroy']);
+    });
     // Admin
     Route::prefix('/v1/admin')->middleware(['auth:web,api', AdminOnlyAccess::class])->group(function () {
 

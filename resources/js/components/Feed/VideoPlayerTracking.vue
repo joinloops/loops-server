@@ -175,7 +175,12 @@
                             </div>
 
                             <div class="flex flex-col items-center text-white hover:text-red-500">
-                                <ShareModal :url="shareUrl">
+                                <ShareModal
+                                    :url="shareUrl"
+                                    :username="username"
+                                    type="video"
+                                    :video-id="videoId"
+                                >
                                     <button class="mobile-interaction-btn" @click.stop>
                                         <i class="bx bx-share text-[24px] sm:text-[28px]"></i>
                                     </button>
@@ -296,7 +301,12 @@
                         <div
                             class="flex flex-col items-center text-dark hover:text-red-500 dark:text-white cursor-pointer"
                         >
-                            <ShareModal type="video" :username="username" :url="shareUrl">
+                            <ShareModal
+                                :username="username"
+                                type="video"
+                                :video-id="videoId"
+                                :url="shareUrl"
+                            >
                                 <button>
                                     <i class="bx bx-share text-[30px]"></i>
                                 </button>

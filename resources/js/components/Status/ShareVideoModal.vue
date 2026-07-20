@@ -31,6 +31,8 @@
                     </div>
 
                     <div class="overflow-y-auto p-5 space-y-5">
+                        <DmQuickShare v-if="videoId" :video-id="videoId" @more="openDmSearch" />
+
                         <div>
                             <label
                                 class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 block"
@@ -199,6 +201,15 @@
             </div>
         </Transition>
     </Teleport>
+
+    <Teleport to="body">
+        <DmShareModal
+            v-if="showDmModal"
+            :video="{ id: videoId, url }"
+            @close="showDmModal = false"
+            @sent="showDmModal = false"
+        />
+    </Teleport>
 </template>
 
 <script setup>
@@ -211,11 +222,14 @@ import {
     CheckIcon,
     ArrowUpOnSquareIcon
 } from '@heroicons/vue/24/outline'
+import DmQuickShare from '@/components/Dm/DmQuickShare.vue'
+import DmShareModal from '@/components/Dm/DmShareModal.vue'
 
 const props = defineProps({
     modelValue: { type: Boolean, default: false },
     url: { type: String, required: true },
-    shareText: { type: String, default: 'Check out this loop' }
+    shareText: { type: String, default: 'Check out this loop' },
+    videoId: { type: [String, Number], default: null }
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -228,6 +242,7 @@ const serverInput = ref('')
 const serverError = ref('')
 const serverInputRef = ref(null)
 const rememberedServer = ref(false)
+const showDmModal = ref(false)
 
 const fediversePlatforms = [
     {
@@ -345,6 +360,11 @@ const activePlatformPlaceholder = computed(() => {
 
 const close = () => {
     emit('update:modelValue', false)
+}
+
+const openDmSearch = () => {
+    showDmModal.value = true
+    close()
 }
 
 watch(

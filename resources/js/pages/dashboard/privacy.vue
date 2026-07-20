@@ -5,6 +5,45 @@
                 {{ $t('settings.privacy') }}
             </h1>
             <hr class="border-gray-300 dark:border-gray-700" />
+            <section class="my-8">
+                <h2 class="tracking-tight font-light mb-2 dark:text-gray-300">Direct Messages</h2>
+                <label class="block text-sm font-light text-gray-700 dark:text-gray-300 mb-3">
+                    Who can direct message you?
+                </label>
+                <div
+                    class="bg-white dark:bg-gray-900 lg:rounded-xl lg:border border-gray-200 dark:border-gray-800 p-1 lg:p-6"
+                >
+                    <div>
+                        <div class="space-y-2 grid lg:grid-cols-2 lg:space-x-4">
+                            <label
+                                v-for="option in dmVisibilityOptions"
+                                :key="option.value"
+                                class="flex items-center gap-3 py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer transition-colors border-2"
+                                :class="
+                                    form.dmVisibility === option.value
+                                        ? 'border-blue-500 bg-blue-50 dark:bg-blue-950/30'
+                                        : 'bg-gray-50 dark:bg-gray-800 border-transparent'
+                                "
+                            >
+                                <input
+                                    type="radio"
+                                    :value="option.value"
+                                    v-model="form.dmVisibility"
+                                    class="mt-0.5 w-4 h-4 text-blue-600 focus:ring-blue-500"
+                                />
+                                <div class="flex-1">
+                                    <div class="font-medium text-gray-900 dark:text-white">
+                                        {{ option.label }}
+                                    </div>
+                                    <div class="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                                        {{ option.description }}
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <section class="my-8">
                 <h2 class="tracking-tight font-light mb-2 dark:text-gray-300">Starter Kits</h2>
@@ -101,7 +140,8 @@ import axios from '~/plugins/axios'
 const axiosInstance = axios.getAxiosInstance()
 
 const form = ref({
-    visibility: null
+    visibility: null,
+    dmVisibility: null
 })
 
 watch(
@@ -116,10 +156,25 @@ watch(
     }
 )
 
+watch(
+    () => form.value.dmVisibility,
+    async (newVal, oldVal) => {
+        if (oldVal === null) return
+        try {
+            await axiosInstance.post('/api/v1/account/settings/dm/update', {
+                state: newVal
+            })
+        } catch {}
+    }
+)
+
 const fetchPrivacyData = async () => {
     try {
         await axiosInstance.get('/api/v1/account/settings/starter-kits/status').then((res) => {
             form.value.visibility = res.data.data.state_int
+        })
+        await axiosInstance.get('/api/v1/account/settings/dm/status').then((res) => {
+            form.value.dmVisibility = res.data.data.state
         })
     } catch {}
 }
@@ -159,6 +214,24 @@ const visibilityOptions = [
         value: 6,
         label: 'Auto-Allow Everyone',
         description: 'Anyone (local and remote) can add you to starter kits automatically'
+    }
+]
+
+const dmVisibilityOptions = [
+    {
+        value: 'off',
+        label: 'Off',
+        description: 'Nobody can message you'
+    },
+    {
+        value: 'following',
+        label: 'Accounts that follow me',
+        description: 'People that follow you can message you'
+    },
+    {
+        value: 'everyone',
+        label: 'Everyone',
+        description: 'Anyone can message you'
     }
 ]
 

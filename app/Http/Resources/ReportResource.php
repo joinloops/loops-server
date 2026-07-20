@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Comment;
 use App\Models\CommentReply;
+use App\Models\Conversation;
 use App\Models\Hashtag;
 use App\Models\Report;
 use App\Models\StarterKit;
@@ -70,6 +71,10 @@ class ReportResource extends JsonResource
             $contentType = 'sound';
             $sound = VideoSound::find($this->reported_sound_id);
             $contentPreview = $sound ? (new VideoSoundResource($sound))->toArray(request()) : [];
+        } elseif ($this->reported_conversation_id) {
+            $contentType = 'dm';
+            $convo = Conversation::find($this->reported_conversation_id);
+            $contentPreview = $convo ? (new AdminConversationResource($convo))->toArray(request()) : [];
         }
 
         return [

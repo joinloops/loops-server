@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreReportRequest;
 use App\Models\Comment;
 use App\Models\CommentReply;
+use App\Models\Conversation;
 use App\Models\Hashtag;
 use App\Models\Profile;
 use App\Models\Report;
@@ -95,6 +96,14 @@ class ReportController extends Controller
             Report::firstOrCreate([
                 'reporter_profile_id' => $pid,
                 'reported_sound_id' => $id,
+            ], $extra);
+        } elseif ($type === 'conversation') {
+            $convo = Conversation::findOrFail($id);
+            $participant = $convo->participantFor($pid);
+            abort_if(! $participant, 403, 'You do not have permission to report this.');
+            Report::firstOrCreate([
+                'reporter_profile_id' => $pid,
+                'reported_conversation_id' => $id,
             ], $extra);
         }
 

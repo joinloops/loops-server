@@ -34,6 +34,7 @@ use Laravel\Passport\HasApiTokens;
  * @property int $can_create_starter_kits
  * @property int $can_use_starter_kits
  * @property int $can_embed
+ * @property int $can_dm
  * @property int $can_report
  * @property int $can_playlist
  * @property int $hide_ai

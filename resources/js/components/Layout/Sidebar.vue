@@ -390,6 +390,11 @@ const isActive = (path) => {
     if (path === '/starter-kits' && route.path.startsWith('/starter-kits')) {
         return true
     }
+
+    if (path === '/messages' && route.path.startsWith('/messages')) {
+        return true
+    }
+
     return route.path === path
 }
 
@@ -428,22 +433,22 @@ const mainLinks = computed(() => {
             //     icon: 'bx bx-globe'
             // },
             {
+                id: isMobile.value ? 'studio' : 'upload',
+                name: isMobile.value ? 'Analytics' : t('nav.upload'),
+                path: isMobile.value ? '/studio/' : `/studio/upload`,
+                icon: isMobile.value ? 'bx bx-trending-up' : 'bx bx-video-plus'
+            },
+            {
                 id: 'activity',
                 name: t('nav.activity'),
                 path: `/notifications`,
                 icon: 'bx bx-bell'
             },
-            // {
-            //     id: 'messages',
-            //     name: 'Messages',
-            //     path: `/notifications`,
-            //     icon: 'bx bx-message-dots'
-            // },
             {
-                id: isMobile.value ? 'studio' : 'upload',
-                name: isMobile.value ? 'Analytics' : t('nav.upload'),
-                path: isMobile.value ? '/studio/' : `/studio/upload`,
-                icon: isMobile.value ? 'bx bx-trending-up' : 'bx bx-video-plus'
+                id: 'messages',
+                name: 'Messages',
+                path: `/messages`,
+                icon: 'bx bx-message-dots'
             },
             {
                 id: 'profile',
@@ -471,14 +476,14 @@ const mainLinks = computed(() => {
             })
         }
 
-        if (appConfig.starterKits) {
-            links.splice(4, 0, {
-                id: 'starterKits',
-                name: t('common.starterKits'),
-                path: `/starter-kits`,
-                icon: 'bx bx-book-add'
-            })
-        }
+        // if (appConfig.starterKits) {
+        //     links.splice(4, 0, {
+        //         id: 'starterKits',
+        //         name: t('common.starterKits'),
+        //         path: `/starter-kits`,
+        //         icon: 'bx bx-book-add'
+        //     })
+        // }
 
         const userCustomPages = filterNavItemsByLocation('side_menu_user')
         const allCustomPages = filterNavItemsByLocation('side_menu_all')
@@ -511,15 +516,6 @@ const mainLinks = computed(() => {
             }
         ]
 
-        if (appConfig.starterKits) {
-            links.push({
-                id: 'starterKits',
-                name: t('common.starterKits'),
-                path: `/starter-kits`,
-                icon: 'bx bx-book-add'
-            })
-        }
-
         const guestCustomPages = filterNavItemsByLocation('side_menu_guest')
         const allCustomPages = filterNavItemsByLocation('side_menu_all')
 
@@ -548,6 +544,13 @@ const footerLinks = computed(() => {
         { name: t('nav.privacy'), path: '/privacy' },
         { name: t('nav.terms'), path: '/terms' }
     ]
+
+    if (appConfig.starterKits) {
+        links.splice(7, 0, {
+            name: t('common.starterKits'),
+            path: `/starter-kits`
+        })
+    }
 
     let customFooterItems = []
 

@@ -176,6 +176,18 @@ const router = createRouter({
             meta: { requiresAuth: false }
         },
         {
+            path: '/messages',
+            name: 'messagesPage',
+            component: () => import('~/pages/Messages.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
+            path: '/messages/:id',
+            name: 'messagesThreadPage',
+            component: () => import('~/pages/Messages.vue'),
+            meta: { requiresAuth: true, params: true }
+        },
+        {
             path: '/about',
             name: 'About',
             component: DynamicPage,

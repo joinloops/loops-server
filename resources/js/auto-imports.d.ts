@@ -178,6 +178,8 @@ declare global {
     const useDevicePixelRatio: typeof import('@vueuse/core').useDevicePixelRatio
     const useDevicesList: typeof import('@vueuse/core').useDevicesList
     const useDisplayMedia: typeof import('@vueuse/core').useDisplayMedia
+    const useDmSocket: typeof import('./composables/useDmSocket.js').useDmSocket
+    const useDmStore: typeof import('./stores/dm.js').useDmStore
     const useDocumentVisibility: typeof import('@vueuse/core').useDocumentVisibility
     const useDraggable: typeof import('@vueuse/core').useDraggable
     const useDropZone: typeof import('@vueuse/core').useDropZone
@@ -598,6 +600,10 @@ declare module 'vue' {
         >
         readonly useDevicesList: UnwrapRef<(typeof import('@vueuse/core'))['useDevicesList']>
         readonly useDisplayMedia: UnwrapRef<(typeof import('@vueuse/core'))['useDisplayMedia']>
+        readonly useDmSocket: UnwrapRef<
+            (typeof import('./composables/useDmSocket.js'))['useDmSocket']
+        >
+        readonly useDmStore: UnwrapRef<(typeof import('./stores/dm.js'))['useDmStore']>
         readonly useDocumentVisibility: UnwrapRef<
             (typeof import('@vueuse/core'))['useDocumentVisibility']
         >

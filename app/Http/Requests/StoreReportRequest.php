@@ -30,7 +30,7 @@ class StoreReportRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => 'required|in:video,profile,comment,reply,hashtag,starter_kit,sound',
+            'type' => 'required|in:video,profile,comment,reply,hashtag,starter_kit,sound,conversation',
             'id' => 'required|string',
             'key' => 'required|integer|min:1009|max:1026',
             'comment' => 'sometimes|nullable|string|min:1|max:500',

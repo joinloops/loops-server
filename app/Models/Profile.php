@@ -59,6 +59,8 @@ use Illuminate\Support\Facades\DB;
  * @property int $can_use_starter_kits
  * @property int $can_report
  * @property int $can_playlist
+ * @property int $can_dm
+ * @property string $dm_privacy
  * @property int $hide_ai
  * @property int $hide_sensitive
  * @property int $manuallyApprovesFollowers
@@ -211,6 +213,7 @@ class Profile extends Model
         'enforce_ai_label',
         'enforce_ad_label',
         'enforce_nsfw_label',
+        'dm_privacy',
     ];
 
     protected $guarded = [];
@@ -699,6 +702,7 @@ class Profile extends Model
             'domain' => $domain,
             'shared_inbox_url' => $sharedInbox ?? null,
             'starter_kit_state' => $starterKitState,
+            'dm_privacy' => 'everyone',
         ])->save();
 
         return $actor;

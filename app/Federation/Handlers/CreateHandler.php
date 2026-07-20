@@ -9,6 +9,7 @@ use App\Models\CommentReply;
 use App\Models\Profile;
 use App\Models\UserFilter;
 use App\Models\Video;
+use App\Services\DmInboundService;
 use App\Services\HashidService;
 use App\Services\SanitizeService;
 use App\Services\UserFilterService;
@@ -40,6 +41,22 @@ class CreateHandler extends BaseHandler
 
                 return;
             }
+        }
+
+        $inbound = app(DmInboundService::class);
+
+        if ($inbound->isDirectNote($activity, $actor)) {
+            $result = $inbound->handleCreate($activity, $actor);
+
+            if (config('logging.dev_log')) {
+                Log::info('Handled direct message Create activity', [
+                    'actor' => $actor->username,
+                    'object_id' => $object['id'] ?? 'unknown',
+                    'delivered' => $result !== null,
+                ]);
+            }
+
+            return $result;
         }
 
         try {

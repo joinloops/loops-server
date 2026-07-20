@@ -41,6 +41,8 @@
                         </div>
 
                         <div class="flex-1 min-h-0 overflow-y-auto p-5 space-y-5">
+                            <DmQuickShare v-if="dmShare" v-bind="dmShare" @more="openDmSearch" />
+
                             <div>
                                 <label
                                     class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 block"
@@ -209,11 +211,20 @@
                 </div>
             </Transition>
         </Teleport>
+
+        <Teleport to="body">
+            <DmShareModal
+                v-if="showDmModal"
+                :video="dmVideo"
+                @close="showDmModal = false"
+                @sent="showDmModal = false"
+            />
+        </Teleport>
     </div>
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch, nextTick, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import {
     XMarkIcon,
@@ -224,6 +235,8 @@ import {
     ArrowUpOnSquareIcon,
     RssIcon
 } from '@heroicons/vue/24/outline'
+import DmQuickShare from '~/components/dm/DmQuickShare.vue'
+import DmShareModal from '~/components/dm/DmShareModal.vue'
 
 const props = defineProps({
     url: {
@@ -238,6 +251,10 @@ const props = defineProps({
         type: String,
         default: 'video',
         validator: (v) => ['video', 'profile', 'atom'].includes(v)
+    },
+    videoId: {
+        type: [String, Number],
+        default: null
     },
     enabled: {
         type: Array,
@@ -266,6 +283,7 @@ const serverInput = ref('')
 const serverError = ref('')
 const serverInputRef = ref(null)
 const rememberedServer = ref(false)
+const showDmModal = ref(false)
 
 const title = computed(() => {
     if (props.type === 'profile') return t('common.shareThisAccount')
@@ -299,6 +317,16 @@ const shareText = computed(() => {
     }
     return props.username ? `Check out @${props.username}'s loop` : 'Check out this loop'
 })
+
+const dmShareByType = computed(() => ({
+    video: props.videoId ? { videoId: props.videoId } : null,
+    profile: null,
+    atom: null
+}))
+
+const dmShare = computed(() => dmShareByType.value[props.type] ?? null)
+
+const dmVideo = computed(() => (props.videoId ? { id: props.videoId, url: props.url } : null))
 
 const fediversePlatforms = [
     {
@@ -423,6 +451,11 @@ const open = () => {
 
 const close = () => {
     isOpen.value = false
+}
+
+const openDmSearch = () => {
+    showDmModal.value = true
+    close()
 }
 
 watch(isOpen, (val) => {
