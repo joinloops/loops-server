@@ -141,13 +141,27 @@
             </div>
 
             <div class="border-t border-slate-200 px-4 py-3 dark:border-slate-800">
-                <textarea
-                    v-model="body"
-                    rows="2"
-                    maxlength="2000"
-                    :placeholder="video ? 'Add a message (optional)' : 'Write a message'"
-                    class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-slate-700"
-                />
+                <div class="relative">
+                    <textarea
+                        v-model="body"
+                        rows="2"
+                        :maxlength="MAX_BODY_LENGTH"
+                        :placeholder="video ? 'Add a message (optional)' : 'Write a message'"
+                        class="w-full resize-none rounded-xl border border-slate-200 bg-slate-50 px-3.5 pb-7 pt-2.5 pr-16 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:text-slate-100 dark:focus:border-slate-700"
+                    />
+
+                    <span
+                        class="pointer-events-none absolute bottom-2.5 right-3 text-xs tabular-nums"
+                        :class="
+                            body.length >= MAX_BODY_LENGTH
+                                ? 'font-medium text-[#F02C56]'
+                                : 'text-slate-400 dark:text-slate-500'
+                        "
+                        aria-live="polite"
+                    >
+                        {{ body.length }}/{{ MAX_BODY_LENGTH }}
+                    </span>
+                </div>
                 <button
                     type="button"
                     :disabled="sending || !selected.length || (!video && !body.trim())"
@@ -184,6 +198,7 @@ const emit = defineEmits(['close', 'sent'])
 const store = useDmStore()
 
 const MAX_SELECTED = 5
+const MAX_BODY_LENGTH = 500
 
 const query = ref('')
 const results = ref([])
