@@ -10,6 +10,7 @@ use App\Models\ConversationParticipant;
 use App\Models\Message;
 use App\Models\Profile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -143,16 +144,36 @@ class DirectMessageService
         }
 
         if ($this->isBlocked($sender, $recipient)) {
+            if (config('logging.dev_log')) {
+                Log::info('[DM] receive dropped: blocked', [
+                    'sender' => $sender->id,
+                    'recipient' => $recipient->id,
+                ]);
+            }
+
             return null;
         }
 
         $privacy = $this->dmPrivacySetting($recipient);
 
         if ($privacy === 'off') {
+            if (config('logging.dev_log')) {
+                Log::info('[DM] receive dropped: recipient DMs are off', [
+                    'recipient' => $recipient->id,
+                ]);
+            }
+
             return null;
         }
 
         if ($privacy === 'following' && ! $this->follows($recipient, $sender)) {
+            if (config('logging.dev_log')) {
+                Log::info('[DM] receive dropped: recipient only accepts DMs from follows', [
+                    'sender' => $sender->id,
+                    'recipient' => $recipient->id,
+                ]);
+            }
+
             return null;
         }
 
@@ -182,6 +203,14 @@ class DirectMessageService
                 && $conversation->messages()->where('profile_id', $sender->id)->count()
                     >= self::INBOUND_REQUEST_SOFT_CAP
             ) {
+                if (config('logging.dev_log')) {
+                    Log::info('[DM] receive dropped: pending request soft cap reached', [
+                        'sender' => $sender->id,
+                        'recipient' => $recipient->id,
+                        'conversation' => $conversation->id,
+                    ]);
+                }
+
                 return;
             }
 
@@ -306,7 +335,7 @@ class DirectMessageService
 
     protected function isRemote(Profile $profile): bool
     {
-        return $profile->local === false;
+        return $profile->local == false;
     }
 
     protected function isBlocked(Profile $a, Profile $b): bool

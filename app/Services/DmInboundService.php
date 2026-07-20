@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\DmMedia;
 use App\Models\Message;
 use App\Models\Profile;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -64,30 +65,47 @@ class DmInboundService
         $objectId = is_array($object) ? ($object['id'] ?? null) : null;
 
         if (! is_array($object) || ! is_string($objectId)) {
+            $this->log('Dropped DM create: missing object or object id');
+
             return null;
         }
 
         if (! $this->sameOrigin($objectId, $sender->remote_url)) {
+            $this->log('Dropped DM create: object origin does not match sender', [
+                'object_id' => $objectId,
+                'sender' => $sender->remote_url,
+            ]);
+
             return null;
         }
 
         if (Message::withTrashed()->where('ap_object_uri', $objectId)->exists()) {
+            $this->log('Skipped DM create: duplicate object', ['object_id' => $objectId]);
+
             return null;
         }
 
         [$locals, $unresolvedOthers] = $this->resolveRecipients($activity, $sender);
 
         if (count($locals) !== 1 || $unresolvedOthers > 0) {
-            // todo
+            // 1:1 only in v1: multi-recipient direct notes are dropped
+            $this->log('Dropped DM create: not a resolvable 1:1', [
+                'object_id' => $objectId,
+                'local_recipients' => count($locals),
+                'other_recipients' => $unresolvedOthers,
+            ]);
+
             return null;
         }
 
         $recipient = $locals[0];
 
-        $body = $this->htmlToText($object['content'] ?? null);
+        $body = $this->stripLeadingMention($this->htmlToText($object['content'] ?? null), $recipient);
         $media = $this->mapAttachments($object, $sender);
 
         if ($body === null && ! $media) {
+            $this->log('Dropped DM create: no content or attachments', ['object_id' => $objectId]);
+
             return null;
         }
 
@@ -100,12 +118,37 @@ class DmInboundService
         ]);
     }
 
+    protected function stripLeadingMention(?string $body, Profile $recipient): ?string
+    {
+        if ($body === null) {
+            return null;
+        }
+
+        $pattern = '/^@'.preg_quote($recipient->username, '/').'(@[A-Za-z0-9\.\-]+)?[[:space:]]+/iu';
+        $stripped = preg_replace($pattern, '', $body, 1);
+
+        if (! is_string($stripped)) {
+            return $body;
+        }
+
+        $stripped = trim($stripped);
+
+        return $stripped === '' ? $body : $stripped;
+    }
+
+    protected function log(string $message, array $context = []): void
+    {
+        if (config('logging.dev_log')) {
+            Log::info('[DmInbound] '.$message, $context);
+        }
+    }
+
     public function handleDelete(array $activity, Profile $sender): bool
     {
         $object = $activity['object'] ?? null;
         $objectId = is_string($object) ? $object : (is_array($object) ? ($object['id'] ?? null) : null);
 
-        if (! is_string($objectId) || ! $this->sameOrigin($objectId, $sender->uri)) {
+        if (! is_string($objectId) || ! $this->sameOrigin($objectId, $sender->remote_url)) {
             return false;
         }
 
