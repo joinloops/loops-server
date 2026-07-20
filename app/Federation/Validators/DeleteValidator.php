@@ -61,10 +61,11 @@ class DeleteValidator extends BaseValidator
             throw new \Exception('Delete activity "object" URI is invalid.');
         }
 
-        $isOwner = ($objectUrl === $activity['actor']) || str_starts_with($objectUrl, $activity['actor'].'/');
+        $actorHost = strtolower((string) parse_url($activity['actor'], PHP_URL_HOST));
+        $objectHost = strtolower((string) parse_url($objectUrl, PHP_URL_HOST));
 
-        if (! $isOwner) {
-            throw new \Exception("Delete activity actor '{$activity['actor']}' does not appear to be the owner of the object '{$objectUrl}'.");
+        if ($actorHost === '' || $actorHost !== $objectHost) {
+            throw new \Exception("Delete activity actor '{$activity['actor']}' does not share an origin with the object '{$objectUrl}'.");
         }
 
         if ($this->isLocalObject($objectUrl)) {
