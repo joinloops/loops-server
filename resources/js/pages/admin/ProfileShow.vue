@@ -1182,6 +1182,13 @@ const permissionConfig = [
         localOnly: true,
         description: 'Allow video embeds',
         icon: CodeBracketIcon
+    },
+    {
+        key: 'can_dm',
+        label: 'Direct Message',
+        localOnly: false,
+        description: 'Allow direct messages',
+        icon: ChatBubbleBottomCenterIcon
     }
 ]
 

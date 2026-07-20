@@ -506,6 +506,7 @@ class AdminController extends Controller
         $res['can_follow'] = (bool) $profile->can_follow;
         $res['can_like'] = (bool) $profile->can_like;
         $res['can_report'] = (bool) $profile->can_report;
+        $res['can_dm'] = (bool) $profile->can_dm;
         $res['can_create_starter_kits'] = (bool) $profile->can_create_starter_kits;
         $res['can_use_starter_kits'] = (bool) $profile->can_use_starter_kits;
         $res['can_report'] = (bool) $profile->can_report;
@@ -530,6 +531,7 @@ class AdminController extends Controller
             'can_create_starter_kits' => 'sometimes|boolean',
             'can_use_starter_kits' => 'sometimes|boolean',
             'can_playlist' => 'sometimes|boolean',
+            'can_dm' => 'sometimes|boolean',
         ]);
 
         $userValidated = $request->validate([
@@ -542,6 +544,7 @@ class AdminController extends Controller
             'can_create_starter_kits' => 'sometimes|boolean',
             'can_use_starter_kits' => 'sometimes|boolean',
             'can_playlist' => 'sometimes|boolean',
+            'can_dm' => 'sometimes|boolean',
         ]);
 
         $profile = Profile::find($id);
@@ -550,7 +553,7 @@ class AdminController extends Controller
             return $this->error('Ooops!');
         }
 
-        $oldValues = $profile->only(['can_upload', 'can_follow', 'can_comment', 'can_like', 'can_share', 'can_report', 'can_create_starter_kits', 'can_use_starter_kits', 'can_playlist']);
+        $oldValues = $profile->only(['can_upload', 'can_follow', 'can_comment', 'can_like', 'can_share', 'can_report', 'can_create_starter_kits', 'can_use_starter_kits', 'can_playlist', 'can_dm']);
 
         if ($profile->local) {
             if ($profile->user && $profile->user->is_admin) {
