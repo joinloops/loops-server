@@ -48,14 +48,6 @@ class CreateHandler extends BaseHandler
         if ($inbound->isDirectNote($activity, $actor)) {
             $result = $inbound->handleCreate($activity, $actor);
 
-            if (config('logging.dev_log')) {
-                Log::info('Handled direct message Create activity', [
-                    'actor' => $actor->username,
-                    'object_id' => $object['id'] ?? 'unknown',
-                    'delivered' => $result !== null,
-                ]);
-            }
-
             return $result;
         }
 

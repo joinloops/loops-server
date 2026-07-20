@@ -185,13 +185,6 @@ class DeleteHandler extends BaseHandler
         }
 
         if ($actor && app(DmInboundService::class)->handleDelete($activity, $actor)) {
-            if (config('logging.dev_log')) {
-                Log::info('Successfully handled Delete direct message activity', [
-                    'object_url' => $objectUrl,
-                    'activity_id' => $activity['id'] ?? 'unknown',
-                ]);
-            }
-
             return true;
         }
 

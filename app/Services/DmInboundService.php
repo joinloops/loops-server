@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\DmMedia;
 use App\Models\Message;
 use App\Models\Profile;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -65,36 +64,20 @@ class DmInboundService
         $objectId = is_array($object) ? ($object['id'] ?? null) : null;
 
         if (! is_array($object) || ! is_string($objectId)) {
-            $this->log('Dropped DM create: missing object or object id');
-
             return null;
         }
 
         if (! $this->sameOrigin($objectId, $this->senderUri($sender))) {
-            $this->log('Dropped DM create: object origin does not match sender', [
-                'object_id' => $objectId,
-                'sender' => $this->senderUri($sender),
-            ]);
-
             return null;
         }
 
         if (Message::withTrashed()->where('ap_object_uri', $objectId)->exists()) {
-            $this->log('Skipped DM create: duplicate object', ['object_id' => $objectId]);
-
             return null;
         }
 
         [$locals, $unresolvedOthers] = $this->resolveRecipients($activity, $sender);
 
         if (count($locals) !== 1 || $unresolvedOthers > 0) {
-            // 1:1 only in v1: multi-recipient direct notes are dropped
-            $this->log('Dropped DM create: not a resolvable 1:1', [
-                'object_id' => $objectId,
-                'local_recipients' => count($locals),
-                'other_recipients' => $unresolvedOthers,
-            ]);
-
             return null;
         }
 
@@ -104,8 +87,6 @@ class DmInboundService
         $media = $this->mapAttachments($object, $sender);
 
         if ($body === null && ! $media) {
-            $this->log('Dropped DM create: no content or attachments', ['object_id' => $objectId]);
-
             return null;
         }
 
@@ -134,13 +115,6 @@ class DmInboundService
         $stripped = trim($stripped);
 
         return $stripped === '' ? $body : $stripped;
-    }
-
-    protected function log(string $message, array $context = []): void
-    {
-        if (config('logging.dev_log')) {
-            Log::info('[DmInbound] '.$message, $context);
-        }
     }
 
     public function handleDelete(array $activity, Profile $sender): bool
