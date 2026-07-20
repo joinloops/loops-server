@@ -19,6 +19,8 @@ class DmConversationController extends Controller
 
     public function index(Request $request)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $request->validate([
             'filter' => 'sometimes|in:primary,requests,hidden',
             'limit' => 'sometimes|integer|min:1|max:40',
@@ -67,6 +69,8 @@ class DmConversationController extends Controller
 
     public function show(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $participant = $this->participantOrFail($request, $id);
         $participant->conversation->load(['lastMessage.sender', 'lastMessage.video']);
 
@@ -157,6 +161,8 @@ class DmConversationController extends Controller
 
     public function read(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $request->validate([
             'message_id' => 'sometimes|integer',
         ]);
@@ -175,6 +181,8 @@ class DmConversationController extends Controller
 
     public function accept(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $participant = $this->participantOrFail($request, $id);
 
         abort_unless($participant->state === ConversationParticipant::STATE_REQUEST, 422, 'Not a pending request.');
@@ -190,6 +198,8 @@ class DmConversationController extends Controller
 
     public function decline(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $participant = $this->participantOrFail($request, $id);
 
         abort_unless($participant->state === ConversationParticipant::STATE_REQUEST, 422, 'Not a pending request.');
@@ -204,6 +214,8 @@ class DmConversationController extends Controller
 
     public function mute(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $this->participantOrFail($request, $id)->update(['muted_at' => now()]);
 
         return response()->json(['muted' => true]);
@@ -211,6 +223,8 @@ class DmConversationController extends Controller
 
     public function unmute(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $this->participantOrFail($request, $id)->update(['muted_at' => null]);
 
         return response()->json(['muted' => false]);
@@ -218,6 +232,8 @@ class DmConversationController extends Controller
 
     public function hide(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $this->participantOrFail($request, $id)->update(['hidden_at' => now()]);
 
         return response()->json(['hidden' => true]);
@@ -225,6 +241,8 @@ class DmConversationController extends Controller
 
     public function unhide(Request $request, int $id)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $participant = $this->participantOrFail($request, $id);
         $participant->update(['hidden_at' => null]);
 
@@ -237,6 +255,8 @@ class DmConversationController extends Controller
 
     public function suggested(Request $request)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $profileId = $request->user()->profile_id;
         $limit = 12;
 
