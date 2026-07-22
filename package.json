@@ -76,7 +76,7 @@
         "prettier": "^3.8.4",
         "pusher-js": "^8.5.0",
         "typescript": "^6.0.3",
-        "typescript-eslint": "^8.64.0",
+        "typescript-eslint": "^8.65.0",
         "unplugin-auto-import": "^21.0.0",
         "unplugin-vue-components": "^32.1.0",
         "vue-eslint-parser": "^10.4.1",
