@@ -30,6 +30,7 @@ export const useProfileStore = defineStore('profile', {
         hasAtom: false,
         hasAtomUrl: null,
         links: [],
+        acceptsDms: null,
         playlists: [],
         playlistsNextCursor: null,
         followersNextCursor: null,
@@ -86,6 +87,7 @@ export const useProfileStore = defineStore('profile', {
                 this.isSelf = res.data.data.is_owner
                 this.hasAtom = res.data.data?.has_atom
                 this.hasAtomUrl = res.data.data?.has_atom_url
+                this.acceptsDms = res.data.data?.accepts_dms
                 this.manuallyApprovesFollowers = res.data.data?.manually_approves_followers
                 this.posts = []
             } catch (error) {
@@ -209,6 +211,7 @@ export const useProfileStore = defineStore('profile', {
                 this.isSelf = res.data.data.is_owner
                 this.hasAtom = res.data.data?.has_atom
                 this.hasAtomUrl = res.data.data?.has_atom_url
+                this.acceptsDms = res.data.data?.accepts_dms
                 this.manuallyApprovesFollowers = res.data.data?.manually_approves_followers
             } catch (error) {
                 console.error('Error fetching profile:', error)
@@ -341,6 +344,7 @@ export const useProfileStore = defineStore('profile', {
                 this.allLikes = res.likes_count
                 this.followingCount = res.following_count
                 this.followerCount = res.follower_count
+                this.acceptsDms = res?.accepts_dms
                 await nextTick()
                 await this.getProfileState(this.id)
                 try {
@@ -444,6 +448,19 @@ export const useProfileStore = defineStore('profile', {
             }
         },
 
+        async getOrCreateDmConversation() {
+            const axiosInstance = axios.getAxiosInstance()
+            try {
+                const response = await axiosInstance.post('/api/v1/dm/conversations/lookup', {
+                    participant_id: this.id
+                })
+                return response.data.data
+            } catch (error) {
+                console.error('Error fetching conversation:', error)
+                throw error
+            }
+        },
+
         async getBookmarkedPosts() {
             const axiosInstance = axios.getAxiosInstance()
             try {
@@ -540,6 +557,7 @@ export const useProfileStore = defineStore('profile', {
             this.bookmarkedPosts = []
             this.bookmarkedPostsCursor = null
             this.hasMoreBookmarkedPosts = false
+            this.acceptsDms = null
             this.manuallyApprovesFollowers = null
         }
     },

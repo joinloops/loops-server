@@ -140,6 +140,22 @@
                                     {{ t('common.unfollow') }}
                                 </button>
                             </template>
+
+                            <button
+                                v-if="
+                                    profile.acceptsDms &&
+                                    profile.id !== authStore.getUser.id &&
+                                    !profile.relationship.blocking
+                                "
+                                @click="handleMessage"
+                                :disabled="isMessagingLoading"
+                                type="button"
+                                class="flex items-center gap-2 rounded-xl py-[5px] px-4 sm:px-6 text-sm sm:text-[15px] font-semibold border hover:bg-gray-100 dark:text-slate-400 dark:border-slate-500 dark:hover:bg-slate-900 cursor-pointer disabled:opacity-60 disabled:cursor-wait"
+                            >
+                                <Spinner v-if="isMessagingLoading" size="xs" />
+                                <ChatBubbleOvalLeftIcon v-else class="w-4 h-4" />
+                                <div>Message</div>
+                            </button>
                         </template>
 
                         <button
@@ -416,7 +432,8 @@ import {
     ArrowTopRightOnSquareIcon,
     RssIcon,
     IdentificationIcon,
-    CheckCircleIcon
+    CheckCircleIcon,
+    ChatBubbleOvalLeftIcon
 } from '@heroicons/vue/24/outline'
 import RemoteFollowModal from './RemoteFollowModal.vue'
 
@@ -445,6 +462,7 @@ const bioExpanded = ref(false)
 const bioOverflowing = ref(false)
 const bioCollapsedHeight = ref(0)
 const bioFullHeight = ref(0)
+const isMessagingLoading = ref(false)
 
 let resizeObserver = null
 
@@ -513,6 +531,22 @@ const handleReport = () => {
         is_owner: profile.id === authStore.profile?.id
     })
     showMenu.value = false
+}
+
+const handleMessage = async () => {
+    if (isMessagingLoading.value) return
+    isMessagingLoading.value = true
+
+    try {
+        const conversation = await profile.getOrCreateDmConversation()
+        router.push(`/messages/${conversation.id}`)
+    } catch (error) {
+        const msg =
+            error.response?.data?.message || 'Unable to start a conversation with this account.'
+        await alertModal('Message unavailable', msg)
+    } finally {
+        isMessagingLoading.value = false
+    }
 }
 
 const handleUndoFollowRequest = async () => {

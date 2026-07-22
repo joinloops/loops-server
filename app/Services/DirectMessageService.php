@@ -277,6 +277,41 @@ class DirectMessageService
         );
     }
 
+    public function getOrCreateConversation(Profile $sender, Profile $recipient): Conversation
+    {
+        abort_unless(
+            $this->canInitiateConversation($sender, $recipient),
+            403,
+            'You do not have permission for this action'
+        );
+
+        abort_unless($this->canMessage($sender, $recipient), 403, 'You cannot message this account.');
+
+        return DB::transaction(function () use ($sender, $recipient) {
+            $conversation = $this->findOrCreateDm($sender, $recipient);
+
+            $senderParticipant = $this->ensureParticipant(
+                $conversation,
+                $sender->id,
+                ConversationParticipant::STATE_ACTIVE
+            );
+            $senderParticipant->forceFill([
+                'state' => ConversationParticipant::STATE_ACTIVE,
+                'hidden_at' => null,
+            ])->save();
+
+            $this->ensureParticipant(
+                $conversation,
+                $recipient->id,
+                $this->follows($recipient, $sender)
+                    ? ConversationParticipant::STATE_ACTIVE
+                    : ConversationParticipant::STATE_REQUEST
+            );
+
+            return $conversation->load(['participants.profile']);
+        });
+    }
+
     /**
      * @param  list<DmMediaAttributes>  $mediaList
      */

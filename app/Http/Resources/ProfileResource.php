@@ -53,6 +53,7 @@ class ProfileResource extends JsonResource
             'manually_approves_followers' => $this->manuallyApprovesFollowers,
             'links' => $this->links ?? [],
             'has_playlists' => $this->has_playlists,
+            'accepts_dms' => $this->dm_privacy != 'off',
             'is_admin' => $this->user_id ? $this->when(
                 $this->relationLoaded('user'),
                 fn () => (bool) $this->user?->is_admin

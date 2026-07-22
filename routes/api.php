@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AppController;
+use App\Http\Controllers\Api\ConversationLookupController;
 use App\Http\Controllers\Api\DmConversationController;
 use App\Http\Controllers\Api\DmMessageController;
 use App\Http\Controllers\Api\DuetController;
@@ -411,6 +412,7 @@ Route::prefix('api')->group(function () {
     Route::prefix('v1/dm')->group(function () {
         Route::get('/suggested-recipients', [DmConversationController::class, 'suggested'])->middleware(['auth:web,api']);
         Route::get('/conversations', [DmConversationController::class, 'index'])->middleware(['auth:web,api']);
+        Route::post('/conversations/lookup', [ConversationLookupController::class, 'lookupOrCreate'])->middleware(['auth:web,api']);
         Route::get('/conversations/{id}', [DmConversationController::class, 'show'])->middleware(['auth:web,api']);
         Route::post('/conversations/{id}/read', [DmConversationController::class, 'read'])->middleware(['auth:web,api']);
         Route::post('/conversations/{id}/accept', [DmConversationController::class, 'accept'])->middleware(['auth:web,api']);

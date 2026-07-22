@@ -33,6 +33,7 @@ class UsernameService
             'security', 'dmca', 'copyright',
 
             'verified', 'official', 'real', 'authentic',
+            'message', 'messages',
         ];
     }
 
