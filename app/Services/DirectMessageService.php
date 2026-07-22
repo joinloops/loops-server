@@ -9,6 +9,7 @@ use App\Models\Conversation;
 use App\Models\ConversationParticipant;
 use App\Models\Message;
 use App\Models\Profile;
+use App\Models\Video;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -107,6 +108,10 @@ class DirectMessageService
                 'body' => $payload['body'] ?? null,
                 'video_id' => $payload['video_id'] ?? null,
             ]);
+
+            if (isset($payload['video_id'])) {
+                Video::where('id', $payload['video_id'])->increment('shares');
+            }
 
             $message->forceFill([
                 'ap_object_uri' => $this->ap->objectUri($message),
