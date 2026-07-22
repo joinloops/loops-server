@@ -30,85 +30,128 @@
                     <div
                         class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4"
                     >
-                        <router-link
-                            v-for="video in currentVideos"
-                            :to="`/v/${video.hid}?by=${video.account.username}`"
-                            :key="video.id"
-                            class="group cursor-pointer"
-                        >
-                            <div
-                                class="relative aspect-[9/16] overflow-hidden bg-white dark:bg-gray-900 rounded-xl hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300"
+                        <template v-for="(video, index) in currentVideos" :key="video.id">
+                            <router-link
+                                :to="`/v/${video.hid}?by=${video.account.username}`"
+                                class="group cursor-pointer"
                             >
-                                <img
-                                    :src="video.media.thumbnail"
-                                    :alt="video.title || video.caption"
-                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                    loading="lazy"
-                                />
-
                                 <div
-                                    class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300"
-                                ></div>
+                                    class="relative aspect-[9/16] overflow-hidden bg-white dark:bg-gray-900 rounded-xl hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300"
+                                >
+                                    <img
+                                        :src="video.media.thumbnail"
+                                        :alt="video.title || video.caption"
+                                        class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                                        loading="lazy"
+                                    />
 
-                                <div class="absolute top-3 left-3">
-                                    <span
-                                        class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
-                                    >
-                                        <HeartIcon class="h-4 w-4" />
-                                        {{ formatNumber(video.likes) }}
-                                    </span>
-                                </div>
-
-                                <div class="absolute top-3 right-3">
-                                    <span
-                                        class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
-                                    >
-                                        <ChatBubbleOvalLeftIcon class="h-4 w-4" />
-                                        {{ formatNumber(video.comments || 0) }}
-                                    </span>
-                                </div>
-
-                                <div class="absolute bottom-0 left-0 right-0 p-3">
                                     <div
-                                        v-if="video.caption || video.title"
-                                        class="text-white text-xs line-clamp-2 font-medium"
+                                        class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300"
+                                    ></div>
+
+                                    <div class="absolute top-3 left-3">
+                                        <span
+                                            class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
+                                        >
+                                            <HeartIcon class="h-4 w-4" />
+                                            {{ formatNumber(video.likes) }}
+                                        </span>
+                                    </div>
+
+                                    <div class="absolute top-3 right-3">
+                                        <span
+                                            class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
+                                        >
+                                            <ChatBubbleOvalLeftIcon class="h-4 w-4" />
+                                            {{ formatNumber(video.comments || 0) }}
+                                        </span>
+                                    </div>
+
+                                    <div class="absolute bottom-0 left-0 right-0 p-3">
+                                        <div
+                                            v-if="video.caption || video.title"
+                                            class="text-white text-xs line-clamp-2 font-medium"
+                                        >
+                                            {{ video.caption || video.title }}
+                                        </div>
+                                    </div>
+
+                                    <div
+                                        class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                                     >
-                                        {{ video.caption || video.title }}
+                                        <div
+                                            class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                                        >
+                                            <svg
+                                                class="w-6 h-6 text-white ml-1"
+                                                fill="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path d="M8 5v14l11-7z" />
+                                            </svg>
+                                        </div>
                                     </div>
                                 </div>
 
+                                <div class="mt-2 px-1">
+                                    <div class="flex items-center gap-2 min-w-0 mb-1.5">
+                                        <Avatar
+                                            :src="video.account.avatar"
+                                            :width="20"
+                                            class="flex-shrink-0"
+                                        />
+                                        <span
+                                            class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate"
+                                        >
+                                            {{ video.account.username }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </router-link>
+
+                            <router-link
+                                v-if="index === starterKitIndex"
+                                to="/starter-kits"
+                                class="group col-span-2 cursor-pointer"
+                            >
                                 <div
-                                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                    class="relative h-full overflow-hidden rounded-xl bg-gradient-to-br from-[#ff6467] to-[#a3123a] hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300 flex flex-col items-center justify-center text-center p-6 sm:p-8"
                                 >
                                     <div
-                                        class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
-                                    >
-                                        <svg
-                                            class="w-6 h-6 text-white ml-1"
-                                            fill="currentColor"
-                                            viewBox="0 0 24 24"
+                                        class="absolute -top-10 -left-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"
+                                    ></div>
+                                    <div
+                                        class="absolute -bottom-12 -right-8 w-48 h-48 bg-white/10 rounded-full blur-2xl"
+                                    ></div>
+
+                                    <div class="relative flex flex-col items-center">
+                                        <div
+                                            class="w-12 h-12 bg-white/15 backdrop-blur-sm rounded-full flex items-center justify-center mb-4"
                                         >
-                                            <path d="M8 5v14l11-7z" />
-                                        </svg>
+                                            <UserGroupIcon class="h-6 w-6 text-white" />
+                                        </div>
+
+                                        <h3 class="text-white text-xl sm:text-2xl font-bold mb-2">
+                                            Find your people
+                                        </h3>
+
+                                        <p
+                                            class="text-white/80 text-xs sm:text-sm leading-relaxed mb-5 max-w-[30ch]"
+                                        >
+                                            Explore Starter Kits to find accounts and people to
+                                            follow by interests or topic
+                                        </p>
+
+                                        <span
+                                            class="inline-flex items-center gap-1.5 bg-white text-[#F02C56] px-4 py-2 rounded-full text-sm font-semibold group-hover:scale-105 transition-transform duration-300"
+                                        >
+                                            Explore Starter Kits
+                                            <ArrowRightIcon class="h-4 w-4" />
+                                        </span>
                                     </div>
                                 </div>
-                            </div>
-
-                            <div class="mt-2 px-1">
-                                <div class="flex items-center gap-2 min-w-0 mb-1.5">
-                                    <Avatar
-                                        :src="video.account.avatar"
-                                        :width="20"
-                                        class="flex-shrink-0"
-                                    />
-                                    <span
-                                        class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate"
-                                    >
-                                        {{ video.account.username }}
-                                    </span>
-                                </div>
-                            </div>
-                        </router-link>
+                            </router-link>
+                        </template>
                     </div>
 
                     <div v-if="loadingMore" class="flex justify-center py-8">
@@ -140,7 +183,12 @@
 <script setup>
 import { onMounted, onUnmounted, inject, ref, watch, nextTick } from 'vue'
 import { storeToRefs } from 'pinia'
-import { HeartIcon, ChatBubbleOvalLeftIcon } from '@heroicons/vue/24/outline'
+import {
+    HeartIcon,
+    ChatBubbleOvalLeftIcon,
+    UserGroupIcon,
+    ArrowRightIcon
+} from '@heroicons/vue/24/outline'
 import { useUtils } from '@/composables/useUtils'
 import GuestAuthPromptModal from '@/components/Tag/GuestAuthPromptModal.vue'
 import ExploreHeader from '@/components/Explore/ExploreHeader.vue'
@@ -164,6 +212,13 @@ const {
 } = storeToRefs(exploreStore)
 
 const { fetchHashtags, setActiveHashtag, loadMore } = exploreStore
+
+const starterKitIndex = ref(0)
+
+const randomizeStarterKitIndex = () => {
+    const count = Math.min(12, currentVideos.value.length)
+    starterKitIndex.value = count > 0 ? Math.floor(Math.random() * count) : 0
+}
 
 const handleLoadMore = () => {
     if (!authStore.authenticated) {
@@ -214,6 +269,7 @@ watch(activeHashtag, () => {
 
 watch(loading, async (newLoading, oldLoading) => {
     if (oldLoading && !newLoading) {
+        randomizeStarterKitIndex()
         await nextTick()
         setTimeout(() => {
             setupIntersectionObserver()
@@ -223,6 +279,10 @@ watch(loading, async (newLoading, oldLoading) => {
 
 onMounted(() => {
     fetchHashtags()
+
+    if (currentVideos.value.length > 0) {
+        randomizeStarterKitIndex()
+    }
 
     setTimeout(() => {
         setupIntersectionObserver()
