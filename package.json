@@ -75,7 +75,7 @@
         "laravel-echo": "^2.4.0",
         "prettier": "^3.9.6",
         "pusher-js": "^8.5.0",
-        "typescript": "^6.0.3",
+        "typescript": "^7.0.2",
         "typescript-eslint": "^8.65.0",
         "unplugin-auto-import": "^21.0.0",
         "unplugin-vue-components": "^32.1.0",
