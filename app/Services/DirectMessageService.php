@@ -75,12 +75,23 @@ class DirectMessageService
                 'hidden_at' => null,
             ])->save();
 
+            $recipientState = match ($recipient->dm_privacy) {
+                'off' => false,
+                'following' => $this->follows($recipient, $sender)
+                    ? ConversationParticipant::STATE_ACTIVE
+                    : ConversationParticipant::STATE_REQUEST,
+                'everyone' => ConversationParticipant::STATE_ACTIVE,
+                default => false,
+            };
+
+            if ($recipientState === false) {
+                abort(403, 'Message not deliverable.');
+            }
+
             $recipientParticipant = $this->ensureParticipant(
                 $conversation,
                 $recipient->id,
-                $this->follows($recipient, $sender)
-                    ? ConversationParticipant::STATE_ACTIVE
-                    : ConversationParticipant::STATE_REQUEST
+                $recipientState
             );
 
             if (
@@ -175,12 +186,23 @@ class DirectMessageService
                 'hidden_at' => null,
             ])->save();
 
+            $recipientState = match ($recipient->dm_privacy) {
+                'off' => false,
+                'following' => $this->follows($recipient, $sender)
+                    ? ConversationParticipant::STATE_ACTIVE
+                    : ConversationParticipant::STATE_REQUEST,
+                'everyone' => ConversationParticipant::STATE_ACTIVE,
+                default => false,
+            };
+
+            if (! $recipientState) {
+                return;
+            }
+
             $recipientParticipant = $this->ensureParticipant(
                 $conversation,
                 $recipient->id,
-                $this->follows($recipient, $sender)
-                    ? ConversationParticipant::STATE_ACTIVE
-                    : ConversationParticipant::STATE_REQUEST
+                $recipientState
             );
 
             if (
@@ -300,12 +322,23 @@ class DirectMessageService
                 'hidden_at' => null,
             ])->save();
 
+            $recipientState = match ($recipient->dm_privacy) {
+                'off' => false,
+                'following' => $this->follows($recipient, $sender)
+                    ? ConversationParticipant::STATE_ACTIVE
+                    : ConversationParticipant::STATE_REQUEST,
+                'everyone' => ConversationParticipant::STATE_ACTIVE,
+                default => false,
+            };
+
+            if ($recipientState === false) {
+                return;
+            }
+
             $this->ensureParticipant(
                 $conversation,
                 $recipient->id,
-                $this->follows($recipient, $sender)
-                    ? ConversationParticipant::STATE_ACTIVE
-                    : ConversationParticipant::STATE_REQUEST
+                $recipientState
             );
 
             return $conversation->load(['participants.profile']);
