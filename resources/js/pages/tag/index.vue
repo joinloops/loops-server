@@ -25,18 +25,33 @@
                             <div
                                 class="relative aspect-[9/16] overflow-hidden bg-white dark:bg-gray-900 rounded-xl hover:shadow-2xl dark:hover:shadow-gray-900/50 transition-all duration-300"
                             >
+                                <div
+                                    v-if="video.is_sensitive"
+                                    class="absolute inset-0 bg-black/60 rounded-md flex flex-col items-center justify-center z-2"
+                                >
+                                    <EyeSlashIcon class="w-12 h-12 text-white mb-2" />
+                                    <span class="text-white text-sm font-medium mb-1">
+                                        {{ $t('post.sensitiveContent') }}
+                                    </span>
+                                </div>
+
                                 <img
+                                    v-else
                                     :src="video.media.thumbnail"
                                     :alt="video.caption"
                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     loading="lazy"
+                                    onerror="
+                                        this.src = '/storage/videos/video-placeholder.jpg'
+                                        this.onerror = null
+                                    "
                                 />
 
                                 <div
                                     class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-80 group-hover:opacity-60 transition-opacity duration-300"
                                 ></div>
 
-                                <div class="absolute top-3 left-3">
+                                <div class="absolute top-3 left-3 z-10">
                                     <span
                                         class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
                                     >
@@ -45,7 +60,7 @@
                                     </span>
                                 </div>
 
-                                <div class="absolute top-3 right-3">
+                                <div class="absolute top-3 right-3 z-10">
                                     <span
                                         class="bg-black/10 backdrop-blur-sm px-2 py-1 rounded-full flex gap-1.5 items-center text-white text-xs font-medium"
                                     >
@@ -54,7 +69,7 @@
                                     </span>
                                 </div>
 
-                                <div class="absolute bottom-0 left-0 right-0 p-3">
+                                <div class="absolute bottom-0 left-0 right-0 p-3 z-10">
                                     <div
                                         v-if="video.caption"
                                         class="mt-2 text-white text-xs line-clamp-2 font-medium"
@@ -64,13 +79,13 @@
                                 </div>
 
                                 <div
-                                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                                    class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
                                 >
                                     <div
                                         class="w-14 h-14 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
                                     >
                                         <svg
-                                            class="w-6 h-6 text-white ml-1"
+                                            class="w-6 h-6 text-white"
                                             fill="currentColor"
                                             viewBox="0 0 24 24"
                                         >
