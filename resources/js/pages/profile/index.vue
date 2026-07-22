@@ -17,7 +17,10 @@
 
             <ProfilePlaylists v-if="playlists && playlists.length" :playlists="playlists" />
 
-            <div v-if="show" class="mt-4 grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3">
+            <div
+                v-if="show"
+                class="mt-4 grid xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3"
+            >
                 <div v-for="post in displayPosts" :key="post.id">
                     <ProfileVideoCard :post="post" />
                 </div>
