@@ -3,11 +3,11 @@
         <button
             v-bind="$attrs"
             :disabled="loading || disabled"
-            :class="[buttonClasses, sizeClasses]"
+            :class="[buttonClasses, sizeClasses, shadowClasses]"
             :type="type"
-            class="relative overflow-hidden transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:scale-100 cursor-pointer disabled:cursor-not-allowed group"
+            class="group relative cursor-pointer overflow-hidden transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed disabled:scale-100"
         >
-            <div v-if="loading" class="absolute inset-0 bg-current opacity-10 animate-pulse"></div>
+            <div v-if="loading" class="absolute inset-0 animate-pulse bg-current opacity-10"></div>
 
             <div class="relative flex items-center justify-center space-x-2">
                 <svg
@@ -26,6 +26,7 @@
                         stroke="currentColor"
                         stroke-width="4"
                     ></circle>
+
                     <path
                         class="opacity-75"
                         fill="currentColor"
@@ -39,7 +40,7 @@
             </div>
 
             <div
-                class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"
+                class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full"
             ></div>
         </button>
     </component>
@@ -51,6 +52,7 @@ import { computed } from 'vue'
 export default {
     name: 'AnimatedButton',
     inheritAttrs: false,
+
     props: {
         variant: {
             type: String,
@@ -66,16 +68,39 @@ export default {
                     'primaryGradient'
                 ].includes(value)
         },
+
         size: {
             type: String,
             default: 'md',
             validator: (value) => ['xs', 'sm', 'md', 'lg'].includes(value)
         },
-        loading: { type: Boolean, default: false },
-        disabled: { type: Boolean, default: false },
-        type: { type: String, default: 'button' },
-        pill: { type: Boolean, default: false }
+
+        loading: {
+            type: Boolean,
+            default: false
+        },
+
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+
+        type: {
+            type: String,
+            default: 'button'
+        },
+
+        pill: {
+            type: Boolean,
+            default: false
+        },
+
+        shadowless: {
+            type: Boolean,
+            default: false
+        }
     },
+
     setup(props) {
         const sizeClasses = computed(() => {
             const rounded = props.pill ? 'rounded-full' : null
@@ -83,10 +108,13 @@ export default {
             switch (props.size) {
                 case 'xs':
                     return `px-3 py-1.5 text-xs ${rounded ?? 'rounded-md'}`
+
                 case 'sm':
                     return `px-4 py-2 text-sm ${rounded ?? 'rounded-md'}`
+
                 case 'lg':
                     return `px-8 py-3.5 text-base ${rounded ?? 'rounded-xl'}`
+
                 case 'md':
                 default:
                     return `px-6 py-3 text-sm ${rounded ?? 'rounded-lg'}`
@@ -97,14 +125,32 @@ export default {
             switch (props.size) {
                 case 'xs':
                     return 'h-3 w-3'
+
                 case 'sm':
                     return 'h-4 w-4'
+
                 case 'lg':
                     return 'h-6 w-6'
+
                 case 'md':
                 default:
                     return 'h-5 w-5'
             }
+        })
+
+        const shadowClasses = computed(() => {
+            if (props.shadowless) {
+                return ''
+            }
+
+            if (props.variant === 'primaryGradient') {
+                return [
+                    'shadow-[0_0_28px_rgba(255,99,71,0.35)]',
+                    'hover:shadow-[0_0_50px_rgba(255,99,71,0.55)]'
+                ].join(' ')
+            }
+
+            return ''
         })
 
         const buttonClasses = computed(() => {
@@ -121,18 +167,19 @@ export default {
                         'focus:ring-[#F02C56]',
                         'disabled:bg-opacity-50 disabled:opacity-50'
                     ].join(' ')
+
                 case 'primaryGradient':
                     return [
                         baseClasses,
                         'bg-[linear-gradient(130deg,#ff6347_0%,#ff1478_100%)]',
-                        'shadow-[0_0_28px_rgba(255,99,71,0.35)]',
-                        'hover:shadow-[0_0_50px_rgba(255,99,71,0.55)]',
                         'text-white',
                         'focus:ring-[#ff6347]',
                         'disabled:opacity-50'
                     ].join(' ')
+
                 case 'secondary':
-                    return `${baseClasses} bg-gray-600 dark:bg-gray-500 text-white hover:bg-gray-700 dark:hover:bg-gray-600 focus:ring-gray-500 dark:focus:ring-gray-400 disabled:bg-gray-400 dark:disabled:bg-gray-600 disabled:opacity-50`
+                    return `${baseClasses} bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500 disabled:bg-gray-400 disabled:opacity-50 dark:bg-gray-500 dark:hover:bg-gray-600 dark:focus:ring-gray-400 dark:disabled:bg-gray-600`
+
                 case 'light':
                     return `${baseClasses}
                         bg-gray-100 dark:bg-gray-800
@@ -141,25 +188,37 @@ export default {
                         active:bg-gray-300 dark:active:bg-gray-600
                         focus:ring-gray-300 dark:focus:ring-gray-600
                         disabled:opacity-50`
+
                 case 'outline':
-                    return `${baseClasses} border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:ring-gray-500 dark:focus:ring-gray-400 disabled:opacity-50`
+                    return `${baseClasses} border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-500 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 dark:focus:ring-gray-400`
+
                 case 'primaryOutline':
                     return `${baseClasses}
                         border border-[#F02C56]
-                        text-[#F02C56]
-                        bg-transparent dark:bg-transparent
-                        hover:bg-[#F02C56]/10 dark:hover:bg-[#F02C56]/20
+                        bg-transparent text-[#F02C56]
+                        hover:bg-[#F02C56]/10
                         active:bg-[#F02C56]/20
                         focus:ring-[#F02C56]
-                        disabled:opacity-50 disabled:border-opacity-50 disabled:text-opacity-50`
+                        disabled:border-opacity-50
+                        disabled:text-opacity-50
+                        disabled:opacity-50
+                        dark:bg-transparent
+                        dark:hover:bg-[#F02C56]/20`
+
                 case 'ghost':
-                    return `${baseClasses} text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 focus:ring-gray-500 dark:focus:ring-gray-400 disabled:opacity-50`
+                    return `${baseClasses} text-gray-700 hover:bg-gray-100 focus:ring-gray-500 disabled:opacity-50 dark:text-gray-300 dark:hover:bg-gray-800 dark:focus:ring-gray-400`
+
                 default:
                     return baseClasses
             }
         })
 
-        return { buttonClasses, sizeClasses, spinnerClasses }
+        return {
+            buttonClasses,
+            sizeClasses,
+            spinnerClasses,
+            shadowClasses
+        }
     }
 }
 </script>

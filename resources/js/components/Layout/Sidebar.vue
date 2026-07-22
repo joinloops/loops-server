@@ -138,6 +138,20 @@
                         />
                     </router-link>
                 </template>
+                <div v-if="authStore.getUser" class="hidden md:block mt-2 px-2">
+                    <AnimatedButton
+                        variant="primaryGradient"
+                        class="flex-1 w-full"
+                        pill
+                        @click="router.push('/studio/upload')"
+                        shadowless
+                    >
+                        <div class="flex gap-2 items-center text-lg">
+                            <ArrowUpTrayIcon class="size-6" />
+                            Upload
+                        </div>
+                    </AnimatedButton>
+                </div>
 
                 <div class="hidden relative">
                     <button
@@ -318,7 +332,7 @@ import { useAlertModal } from '@/composables/useAlertModal.js'
 import AnimatedButton from '../AnimatedButton.vue'
 import SparklesAltIcon from '../Icons/SparklesAltIcon.vue'
 import AccountSwitcher from '../Auth/AccountSwitcher.vue'
-import { SunIcon, MoonIcon, LanguageIcon } from '@heroicons/vue/24/outline'
+import { SunIcon, MoonIcon, LanguageIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 const { t } = useI18n()
 const { isLanguagePickerOpen, openLanguagePicker, closeLanguagePicker } = useLanguagePicker()
 const props = defineProps({
@@ -426,18 +440,6 @@ const mainLinks = computed(() => {
                 path: '/explore',
                 icon: 'bx bx-compass'
             },
-            // {
-            //     id: 'network',
-            //     name: 'Network',
-            //     path: '/feed/network',
-            //     icon: 'bx bx-globe'
-            // },
-            {
-                id: isMobile.value ? 'studio' : 'upload',
-                name: isMobile.value ? 'Analytics' : t('nav.upload'),
-                path: isMobile.value ? '/studio/' : `/studio/upload`,
-                icon: isMobile.value ? 'bx bx-trending-up' : 'bx bx-video-plus'
-            },
             {
                 id: 'activity',
                 name: t('nav.activity'),
@@ -458,15 +460,6 @@ const mainLinks = computed(() => {
             }
         ]
 
-        if (authStore.getUser && isLargeScreen.value) {
-            links.splice(5, 0, {
-                id: 'desktop-studio',
-                name: 'Analytics',
-                path: '/studio',
-                icon: 'bx bx-trending-up'
-            })
-        }
-
         if (appConfig.fyf) {
             links.splice(2, 0, {
                 id: 'forYou',
@@ -475,15 +468,6 @@ const mainLinks = computed(() => {
                 icon: 'sparkles'
             })
         }
-
-        // if (appConfig.starterKits) {
-        //     links.splice(4, 0, {
-        //         id: 'starterKits',
-        //         name: t('common.starterKits'),
-        //         path: `/starter-kits`,
-        //         icon: 'bx bx-book-add'
-        //     })
-        // }
 
         const userCustomPages = filterNavItemsByLocation('side_menu_user')
         const allCustomPages = filterNavItemsByLocation('side_menu_all')
@@ -540,7 +524,6 @@ const footerLinks = computed(() => {
         { name: t('nav.developers'), path: 'https://joinloops.org/developers', external: true },
         { name: 'DMCA', path: '/dmca' },
         { name: t('nav.getTheApp'), path: '/download-the-app' },
-        // { name: t('nav.help'), path: '/help-center' },
         { name: t('nav.privacy'), path: '/privacy' },
         { name: t('nav.terms'), path: '/terms' }
     ]

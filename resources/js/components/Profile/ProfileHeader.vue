@@ -141,6 +141,15 @@
                                 </button>
                             </template>
 
+                            <router-link
+                                v-if="profile.id == authStore.getUser.id"
+                                to="/studio"
+                                class="flex items-center gap-2 sm:gap-3 rounded-xl py-[5px] px-4 sm:px-6 text-sm sm:text-[15px] font-semibold border border-gray-300 hover:bg-gray-100 dark:text-slate-400 dark:border-slate-500 dark:hover:bg-slate-900 cursor-pointer"
+                            >
+                                <span class="bx bx-trending-up"></span>
+                                My Analytics
+                            </router-link>
+
                             <button
                                 v-if="
                                     profile.acceptsDms &&
