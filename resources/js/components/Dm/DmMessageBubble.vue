@@ -28,68 +28,85 @@
         </button>
 
         <div :class="['max-w-[75%]', message.pending ? 'opacity-60' : '']" :title="timeTitle">
-            <a
+            <div
                 v-if="message.type === 'loop_share' && video"
-                :href="video.url"
                 :class="[
-                    'block overflow-hidden rounded-2xl bg-slate-900 transition hover:opacity-90',
+                    'overflow-hidden rounded-2xl',
+                    own
+                        ? 'rounded-br-md bg-[#F02C56]'
+                        : 'rounded-bl-md bg-slate-100 dark:bg-slate-800',
                     videoPortrait ? 'w-44' : 'w-72 max-w-full'
                 ]"
             >
-                <div class="relative" :style="{ aspectRatio: videoAspect }">
-                    <img
-                        v-if="videoThumb"
-                        :src="videoThumb"
-                        alt=""
-                        :class="[
-                            'absolute inset-0 h-full w-full object-cover',
-                            video.is_sensitive ? 'scale-110 blur-2xl' : ''
-                        ]"
-                    />
-                    <div
-                        v-else
-                        class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-950"
-                    />
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <span
-                            class="flex h-11 w-11 items-center justify-center rounded-full bg-black/50"
-                        >
-                            <PlayIcon class="h-5 w-5 translate-x-px text-white" />
-                        </span>
-                    </div>
-                    <span
-                        v-if="video.is_sensitive"
-                        class="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white"
-                    >
-                        Sensitive
-                    </span>
-                    <span
-                        v-if="videoDuration"
-                        class="absolute right-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white"
-                    >
-                        {{ videoDuration }}
-                    </span>
-                    <div
-                        v-if="video.account"
-                        class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pb-2 pt-6"
-                    >
-                        <div class="flex items-center gap-1.5">
-                            <img
-                                v-if="video.account.avatar"
-                                :src="video.account.avatar"
-                                alt=""
-                                class="h-4 w-4 rounded-full object-cover"
-                            />
-                            <span class="truncate text-xs font-medium text-white">
-                                @{{ video.account.username }}
+                <a :href="video.url" class="block bg-slate-900 transition hover:opacity-90">
+                    <div class="relative" :style="{ aspectRatio: videoAspect }">
+                        <img
+                            v-if="videoThumb"
+                            :src="videoThumb"
+                            alt=""
+                            :class="[
+                                'absolute inset-0 h-full w-full object-cover',
+                                video.is_sensitive ? 'scale-110 blur-2xl' : ''
+                            ]"
+                        />
+                        <div
+                            v-else
+                            class="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-950"
+                        />
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span
+                                class="flex h-11 w-11 items-center justify-center rounded-full bg-black/50"
+                            >
+                                <PlayIcon class="h-5 w-5 translate-x-px text-white" />
                             </span>
                         </div>
-                        <p v-if="video.caption" class="mt-0.5 truncate text-[11px] text-white/80">
-                            {{ video.caption }}
-                        </p>
+                        <span
+                            v-if="video.is_sensitive"
+                            class="absolute left-2 top-2 rounded-full bg-black/60 px-2 py-0.5 text-[10px] font-medium text-white"
+                        >
+                            Sensitive
+                        </span>
+                        <span
+                            v-if="videoDuration"
+                            class="absolute right-2 top-2 rounded bg-black/60 px-1.5 py-0.5 text-[10px] font-medium text-white"
+                        >
+                            {{ videoDuration }}
+                        </span>
+                        <div
+                            v-if="video.account"
+                            class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pb-2 pt-6"
+                        >
+                            <div class="flex items-center gap-1.5">
+                                <img
+                                    v-if="video.account.avatar"
+                                    :src="video.account.avatar"
+                                    alt=""
+                                    class="h-4 w-4 rounded-full object-cover"
+                                />
+                                <span class="truncate text-xs font-medium text-white">
+                                    @{{ video.account.username }}
+                                </span>
+                            </div>
+                            <p
+                                v-if="video.caption"
+                                class="mt-0.5 truncate text-[11px] text-white/80"
+                            >
+                                {{ video.caption }}
+                            </p>
+                        </div>
                     </div>
+                </a>
+
+                <div
+                    v-if="message.body"
+                    :class="[
+                        'whitespace-pre-wrap break-words px-3.5 py-2 text-sm',
+                        own ? 'text-white' : 'text-slate-900 dark:text-slate-100'
+                    ]"
+                >
+                    {{ message.body }}
                 </div>
-            </a>
+            </div>
 
             <div
                 v-if="hasMedia || hasCaption"
@@ -163,18 +180,6 @@
                 </div>
             </div>
 
-            <div
-                v-if="message.body && message.type === 'loop_share'"
-                :class="[
-                    'mt-1 whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-sm',
-                    own
-                        ? 'rounded-br-md bg-[#F02C56] text-white'
-                        : 'rounded-bl-md bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100'
-                ]"
-            >
-                {{ message.body }}
-            </div>
-
             <button
                 v-if="message.failed"
                 type="button"
@@ -229,7 +234,7 @@ const deletable = computed(
 
 const hasMedia = computed(() => Boolean(props.message.media?.length))
 const hasCaption = computed(
-    () => Boolean(props.message.body) && props.message.type !== 'loop_share'
+    () => Boolean(props.message.body) && (props.message.type !== 'loop_share' || !video.value)
 )
 
 const video = computed(() => props.message.video ?? null)
