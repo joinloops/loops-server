@@ -45,7 +45,7 @@ class DmConversationResource extends JsonResource
                 'id' => (string) $profile->id,
                 'username' => $profile->username,
                 'name' => $profile->name ?? $profile->username,
-                'avatar' => $profile->avatar ?? null,
+                'avatar' => $profile->avatar ?? url('/storage/avatars/default.jpg'),
                 'domain' => $profile->domain,
                 'is_remote' => $profile->domain !== null,
             ] : null,
