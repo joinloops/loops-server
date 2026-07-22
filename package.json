@@ -73,7 +73,7 @@
         "follow-redirects": ">=1.16.0",
         "globals": "^17.7.0",
         "laravel-echo": "^2.4.0",
-        "prettier": "^3.8.4",
+        "prettier": "^3.9.6",
         "pusher-js": "^8.5.0",
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.65.0",
