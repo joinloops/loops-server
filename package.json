@@ -28,7 +28,7 @@
         "@tiptap/extension-paragraph": "3.28.0",
         "@tiptap/extension-text": "3.28.0",
         "@tiptap/vue-3": "3.28.0",
-        "@unhead/vue": "^3.2.1",
+        "@unhead/vue": "^3.2.2",
         "@vitejs/plugin-vue": "^6.0.8",
         "@vueuse/core": "^14.3.0",
         "@xmldom/xmldom": ">=0.9.10",
