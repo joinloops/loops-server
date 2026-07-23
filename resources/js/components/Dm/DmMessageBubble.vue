@@ -6,6 +6,10 @@
                 :src="avatarUser.avatar"
                 :alt="avatarUser.username"
                 class="h-7 w-7 rounded-full object-cover"
+                onerror="
+                    this.src = '/storage/avatars/default.jpg'
+                    this.onerror = null
+                "
             />
             <div
                 v-else-if="showAvatar"
