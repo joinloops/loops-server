@@ -1970,16 +1970,16 @@
         },
         {
             "name": "intervention/image-laravel",
-            "version": "4.1.0",
+            "version": "4.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Intervention/image-laravel.git",
-                "reference": "0688e8acb303d31336cee52a34eae32781bb7726"
+                "reference": "8a8bd2c7bb4a9aa2b046ff066fd1cd44b1de0da2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Intervention/image-laravel/zipball/0688e8acb303d31336cee52a34eae32781bb7726",
-                "reference": "0688e8acb303d31336cee52a34eae32781bb7726",
+                "url": "https://api.github.com/repos/Intervention/image-laravel/zipball/8a8bd2c7bb4a9aa2b046ff066fd1cd44b1de0da2",
+                "reference": "8a8bd2c7bb4a9aa2b046ff066fd1cd44b1de0da2",
                 "shasum": ""
             },
             "require": {
@@ -2034,7 +2034,7 @@
             ],
             "support": {
                 "issues": "https://github.com/Intervention/image-laravel/issues",
-                "source": "https://github.com/Intervention/image-laravel/tree/4.1.0"
+                "source": "https://github.com/Intervention/image-laravel/tree/4.1.1"
             },
             "funding": [
                 {
@@ -2050,7 +2050,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2026-07-16T14:17:52+00:00"
+            "time": "2026-07-22T15:00:50+00:00"
         },
         {
             "name": "laravel/framework",
