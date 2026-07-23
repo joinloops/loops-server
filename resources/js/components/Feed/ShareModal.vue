@@ -43,7 +43,7 @@
                         <div class="flex-1 min-h-0 overflow-y-auto p-5 space-y-5">
                             <DmQuickShare v-if="dmShare" v-bind="dmShare" @more="openDmSearch" />
 
-                            <div>
+                            <div v-if="type === 'atom'">
                                 <label
                                     class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2 block"
                                 >
@@ -75,137 +75,182 @@
                                 </p>
                             </div>
 
-                            <AnimatedButton
-                                v-if="type !== 'atom' && canNativeShare"
-                                variant="light"
-                                pill
-                                @click="nativeShare"
-                                class="w-full mb-5 cursor-pointer"
-                            >
-                                <div class="flex items-center gap-2">
-                                    <ArrowUpOnSquareIcon class="w-4 h-4" />
-                                    Share to other
-                                </div>
-                            </AnimatedButton>
-
-                            <div v-if="type !== 'atom'">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <GlobeAltIcon
-                                        class="w-4 h-4 text-gray-500 dark:text-gray-400"
-                                    />
+                            <template v-else>
+                                <div>
                                     <label
-                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide"
+                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 block"
+                                    >
+                                        Share to
+                                    </label>
+                                    <div class="-mx-1 flex gap-3 overflow-x-auto px-1 py-1">
+                                        <button
+                                            type="button"
+                                            class="flex w-14 shrink-0 cursor-pointer flex-col items-center gap-1.5"
+                                            aria-label="Copy link"
+                                            @click="copyLink"
+                                        >
+                                            <div
+                                                :class="[
+                                                    'flex h-12 w-12 items-center justify-center rounded-full transition',
+                                                    copied
+                                                        ? 'bg-[#F02C56] text-white'
+                                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700'
+                                                ]"
+                                            >
+                                                <CheckIcon v-if="copied" class="h-5 w-5" />
+                                                <LinkIcon v-else class="h-5 w-5" />
+                                            </div>
+                                            <span
+                                                class="w-full truncate text-center text-[10px] text-gray-700 dark:text-gray-300"
+                                            >
+                                                {{ copied ? 'Copied' : 'Copy link' }}
+                                            </span>
+                                        </button>
+
+                                        <a
+                                            v-for="platform in filteredExternalPlatforms"
+                                            :key="platform.id"
+                                            :href="platform.url(url, shareText)"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            class="flex w-14 shrink-0 flex-col items-center gap-1.5"
+                                        >
+                                            <div
+                                                class="flex h-12 w-12 items-center justify-center rounded-full text-white transition hover:opacity-90"
+                                                :style="{ backgroundColor: platform.color }"
+                                            >
+                                                <svg
+                                                    class="h-5 w-5"
+                                                    fill="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                    aria-hidden="true"
+                                                >
+                                                    <path :d="platform.icon" />
+                                                </svg>
+                                            </div>
+                                            <span
+                                                class="w-full truncate text-center text-[10px] text-gray-700 dark:text-gray-300"
+                                            >
+                                                {{ platform.name }}
+                                            </span>
+                                        </a>
+
+                                        <button
+                                            v-if="canNativeShare"
+                                            type="button"
+                                            class="flex w-14 shrink-0 cursor-pointer flex-col items-center gap-1.5"
+                                            aria-label="Share to other"
+                                            @click="nativeShare"
+                                        >
+                                            <div
+                                                class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700"
+                                            >
+                                                <ArrowUpOnSquareIcon class="h-5 w-5" />
+                                            </div>
+                                            <span
+                                                class="w-full truncate text-center text-[10px] text-gray-700 dark:text-gray-300"
+                                            >
+                                                Other
+                                            </span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label
+                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 block"
                                     >
                                         Share to your fediverse server
                                     </label>
-                                </div>
-
-                                <div class="grid grid-cols-2 gap-2">
-                                    <button
-                                        v-for="platform in fediversePlatforms"
-                                        :key="platform.id"
-                                        @click="selectPlatform(platform.id)"
-                                        class="flex flex-col items-center gap-1.5 p-3 rounded-lg border transition-colors cursor-pointer"
-                                        :class="
-                                            activePlatform === platform.id
-                                                ? 'border-[#F02C56] bg-[#F02C56]/5'
-                                                : 'border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-800'
-                                        "
-                                    >
-                                        <img :src="platform.logo" class="w-8 h-8 flex-shrink-0" />
-                                        <span
-                                            class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate w-full text-center"
+                                    <div class="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
+                                        <button
+                                            v-for="platform in fediversePlatforms"
+                                            :key="platform.id"
+                                            type="button"
+                                            class="flex w-14 shrink-0 cursor-pointer flex-col items-center gap-1.5"
+                                            :aria-label="`Share via ${platform.name}`"
+                                            @click="selectPlatform(platform.id)"
                                         >
-                                            {{ platform.name }}
-                                        </span>
-                                    </button>
-                                </div>
-
-                                <Transition name="expand">
-                                    <div
-                                        v-if="activePlatform"
-                                        class="mt-3 p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700"
-                                    >
-                                        <label
-                                            class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5 block"
-                                        >
-                                            Your {{ activePlatformName }} server
-                                        </label>
-                                        <form @submit.prevent="submitServer" class="flex gap-2">
-                                            <input
-                                                ref="serverInputRef"
-                                                v-model="serverInput"
-                                                type="text"
-                                                :placeholder="activePlatformPlaceholder"
-                                                class="flex-1 min-w-0 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F02C56]/40 focus:border-[#F02C56]"
-                                                autocomplete="off"
-                                                autocapitalize="off"
-                                                spellcheck="false"
-                                            />
-                                            <button
-                                                type="submit"
-                                                :disabled="!serverInput.trim()"
-                                                class="flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-lg bg-[#F02C56] hover:bg-[#F02C56]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
+                                            <div
+                                                :class="[
+                                                    'flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 transition dark:bg-slate-800',
+                                                    activePlatform === platform.id
+                                                        ? 'ring-2 ring-[#F02C56]'
+                                                        : 'hover:bg-gray-200 dark:hover:bg-slate-700'
+                                                ]"
                                             >
-                                                Open
-                                            </button>
-                                        </form>
-                                        <p v-if="serverError" class="mt-1.5 text-xs text-red-500">
-                                            {{ serverError }}
-                                        </p>
-                                        <p
-                                            v-else-if="rememberedServer"
-                                            class="mt-1.5 text-xs text-gray-500 dark:text-gray-400"
-                                        >
-                                            Using your saved server.
-                                            <button
-                                                type="button"
-                                                @click="forgetServer"
-                                                class="underline hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
+                                                <img
+                                                    :src="platform.logo"
+                                                    class="h-7 w-7 flex-shrink-0"
+                                                    :alt="platform.name"
+                                                />
+                                            </div>
+                                            <span
+                                                class="w-full truncate text-center text-[10px] text-gray-700 dark:text-gray-300"
                                             >
-                                                Forget
-                                            </button>
-                                        </p>
+                                                {{ platform.name }}
+                                            </span>
+                                        </button>
                                     </div>
-                                </Transition>
-                            </div>
 
-                            <div v-if="type !== 'atom' && filteredExternalPlatforms.length">
-                                <label
-                                    class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 block"
-                                >
-                                    Other platforms
-                                </label>
-                                <div class="grid grid-cols-3 gap-2">
-                                    <a
-                                        v-for="platform in filteredExternalPlatforms"
-                                        :key="platform.id"
-                                        :href="platform.url(url, shareText)"
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        class="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-gray-200 dark:border-slate-700 hover:border-gray-300 dark:hover:border-slate-600 hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors"
-                                    >
+                                    <Transition name="expand">
                                         <div
-                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-white flex-shrink-0"
-                                            :style="{ backgroundColor: platform.color }"
+                                            v-if="activePlatform"
+                                            class="mt-3 p-3 rounded-lg bg-gray-50 dark:bg-slate-800 border border-gray-200 dark:border-slate-700"
                                         >
-                                            <svg
-                                                class="w-4 h-4"
-                                                fill="currentColor"
-                                                viewBox="0 0 24 24"
-                                                aria-hidden="true"
+                                            <label
+                                                class="text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1.5 block"
                                             >
-                                                <path :d="platform.icon" />
-                                            </svg>
+                                                Your {{ activePlatformName }} server
+                                            </label>
+                                            <form @submit.prevent="submitServer" class="flex gap-2">
+                                                <input
+                                                    ref="serverInputRef"
+                                                    v-model="serverInput"
+                                                    type="text"
+                                                    :placeholder="activePlatformPlaceholder"
+                                                    class="flex-1 min-w-0 bg-white dark:bg-slate-900 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm text-gray-900 dark:text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#F02C56]/40 focus:border-[#F02C56]"
+                                                    autocomplete="off"
+                                                    autocapitalize="off"
+                                                    spellcheck="false"
+                                                />
+                                                <button
+                                                    type="submit"
+                                                    :disabled="!serverInput.trim()"
+                                                    class="flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-lg bg-[#F02C56] hover:bg-[#F02C56]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white transition-colors cursor-pointer"
+                                                >
+                                                    Open
+                                                </button>
+                                            </form>
+                                            <p
+                                                v-if="serverError"
+                                                class="mt-1.5 text-xs text-red-500"
+                                            >
+                                                {{ serverError }}
+                                            </p>
+                                            <p
+                                                v-else-if="rememberedServer"
+                                                class="mt-1.5 text-xs text-gray-500 dark:text-gray-400"
+                                            >
+                                                Using your saved server.
+                                                <button
+                                                    type="button"
+                                                    @click="forgetServer"
+                                                    class="underline hover:text-gray-700 dark:hover:text-gray-300 cursor-pointer"
+                                                >
+                                                    Forget
+                                                </button>
+                                            </p>
                                         </div>
-                                        <span
-                                            class="text-xs font-medium text-gray-700 dark:text-gray-300 truncate w-full text-center"
-                                        >
-                                            {{ platform.name }}
-                                        </span>
-                                    </a>
+                                    </Transition>
+
+                                    <p
+                                        class="mt-2 text-xs text-gray-500 dark:text-gray-400 leading-relaxed"
+                                    >
+                                        {{ urlHint }}
+                                    </p>
                                 </div>
-                            </div>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -229,10 +274,10 @@ import { useI18n } from 'vue-i18n'
 import {
     XMarkIcon,
     ShareIcon,
-    GlobeAltIcon,
     ClipboardDocumentIcon,
     CheckIcon,
     ArrowUpOnSquareIcon,
+    LinkIcon,
     RssIcon
 } from '@heroicons/vue/24/outline'
 import DmQuickShare from '~/components/Dm/DmQuickShare.vue'
@@ -302,11 +347,11 @@ const urlHint = computed(() => {
         return 'Paste this URL into any RSS or Atom feed reader to subscribe.'
     }
     if (props.type === 'profile') {
-        return `Paste this link into the search bar of any fediverse server (Mastodon, Pixelfed, Loops, etc.) to follow ${
+        return `Paste the link into the search bar of any fediverse server (Mastodon, Pixelfed, Loops, etc.) to follow ${
             props.username ? '@' + props.username : 'this account'
         } natively.`
     }
-    return 'Paste this link into the search bar of any fediverse server (Mastodon, Pixelfed, Loops, etc.) to like, comment, or share natively.'
+    return 'Paste the link into the search bar of any fediverse server (Mastodon, Pixelfed, Loops, etc.) to like, comment, or share natively.'
 })
 
 const shareText = computed(() => {
