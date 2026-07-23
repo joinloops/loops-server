@@ -5,7 +5,7 @@
         >
             Send via DM
         </label>
-        <div class="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
+        <div class="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
             <template v-if="loading && !accounts.length">
                 <div
                     v-for="n in 5"
@@ -46,6 +46,10 @@
                             'h-12 w-12 rounded-full object-cover transition',
                             states[String(account.id)] === 'failed' ? 'ring-2 ring-red-500' : ''
                         ]"
+                        onerror="
+                            this.src = '/storage/avatars/default.jpg'
+                            this.onerror = null
+                        "
                     />
                     <div
                         v-else
