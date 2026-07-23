@@ -123,7 +123,7 @@
             <div v-if="thread.loading && !thread.loaded" class="flex justify-center py-8">
                 <span class="text-xs text-slate-400">Loading messages</span>
             </div>
-            <div class="flex flex-col gap-1">
+            <div class="flex flex-col gap-5">
                 <DmMessageBubble
                     v-for="(message, index) in thread.messages"
                     :key="message.id"
