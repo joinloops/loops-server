@@ -1,10 +1,5 @@
 <template>
     <div v-if="enabled && store.meId">
-        <label
-            class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 block"
-        >
-            Send via DM
-        </label>
         <div class="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
             <template v-if="loading && !accounts.length">
                 <div

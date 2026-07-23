@@ -40,7 +40,7 @@
                             </button>
                         </div>
 
-                        <div class="flex-1 min-h-0 overflow-y-auto p-5 space-y-5">
+                        <div class="flex-1 min-h-0 overflow-y-auto p-5 space-y-2">
                             <DmQuickShare v-if="dmShare" v-bind="dmShare" @more="openDmSearch" />
 
                             <div v-if="type === 'atom'">
@@ -77,11 +77,6 @@
 
                             <template v-else>
                                 <div>
-                                    <label
-                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 block"
-                                    >
-                                        Share to
-                                    </label>
                                     <div class="-mx-1 flex gap-1.5 overflow-x-auto px-1 py-1">
                                         <button
                                             type="button"
@@ -143,7 +138,7 @@
                                             @click="nativeShare"
                                         >
                                             <div
-                                                class="flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700"
+                                                class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-600 transition hover:bg-gray-200 dark:bg-slate-800 dark:text-gray-300 dark:hover:bg-slate-700"
                                             >
                                                 <ArrowUpOnSquareIcon class="h-5 w-5" />
                                             </div>
@@ -157,11 +152,6 @@
                                 </div>
 
                                 <div>
-                                    <label
-                                        class="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 block"
-                                    >
-                                        Share to your fediverse server
-                                    </label>
                                     <div class="-mx-1 flex gap-3 overflow-x-auto px-1 py-1">
                                         <button
                                             v-for="platform in fediversePlatforms"
@@ -243,12 +233,6 @@
                                             </p>
                                         </div>
                                     </Transition>
-
-                                    <p
-                                        class="mt-2 text-xs text-gray-500 dark:text-gray-400 leading-relaxed"
-                                    >
-                                        {{ urlHint }}
-                                    </p>
                                 </div>
                             </template>
                         </div>
