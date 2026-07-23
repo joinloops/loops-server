@@ -51,6 +51,8 @@ class Conversation extends Model
 
     public const TYPE_DM = 'dm';
 
+    public const TYPE_GROUP = 'group';
+
     protected $guarded = [];
 
     protected $casts = [
@@ -94,5 +96,10 @@ class Conversation extends Model
     public static function dmHash(int $a, int $b): string
     {
         return hash('sha256', min($a, $b).':'.max($a, $b));
+    }
+
+    public function isGroup(): bool
+    {
+        return $this->type === self::TYPE_GROUP;
     }
 }

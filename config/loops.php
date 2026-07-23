@@ -137,6 +137,10 @@ return [
     ],
 
     'dm' => [
+        'groups' => [
+            'max_participants' => env('LOOPS_DM_GROUP_CHAT_MAX_PARTICIPANTS', 12),
+        ],
+
         'compose' => [
             'min_account_age_days' => env('LOOPS_DM_MINACCOUNTAGEDAYS', 90),
             'min_followers' => env('LOOPS_DM_FOLLOWERS', 10),

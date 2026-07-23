@@ -24,7 +24,11 @@ class CreateHandler extends BaseHandler
         Profile $actor,
         ?Profile $target = null
     ) {
-        $object = $activity['object'];
+        $inbound = app(DmInboundService::class);
+
+        if ($inbound->isDirectNote($activity, $actor)) {
+            return $inbound->handleCreate($activity, $actor);
+        }
 
         if ($target) {
             $targetIsBlocking = UserFilter::whereProfileId($target->id)
@@ -43,16 +47,10 @@ class CreateHandler extends BaseHandler
             }
         }
 
-        $inbound = app(DmInboundService::class);
-
-        if ($inbound->isDirectNote($activity, $actor)) {
-            $result = $inbound->handleCreate($activity, $actor);
-
-            return $result;
-        }
-
         try {
             DB::beginTransaction();
+
+            $object = $activity['object'];
 
             $hasInReplyTo = ! empty($object['inReplyTo']);
             $hasVideoAttachment = $this->hasVideoAttachment($object);
@@ -84,7 +82,7 @@ class CreateHandler extends BaseHandler
             if (config('logging.dev_log')) {
                 Log::error('Failed to handle Create activity', [
                     'actor' => $actor->username,
-                    'object_id' => $object['id'] ?? 'unknown',
+                    'object_id' => $activity['object']['id'] ?? 'unknown',
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);

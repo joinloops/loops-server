@@ -162,19 +162,18 @@
                         {{ body.length }}/{{ MAX_BODY_LENGTH }}
                     </span>
                 </div>
+
+                <p v-if="selected.length > 1" class="mt-2 text-center text-[11px] text-slate-400">
+                    This starts a group conversation with {{ selected.length }} people.
+                </p>
+
                 <button
                     type="button"
                     :disabled="sending || !selected.length || (!video && !body.trim())"
                     class="mt-2 w-full rounded-full bg-[#F02C56] py-2.5 text-sm font-semibold text-white transition enabled:hover:bg-[#d5264c] disabled:opacity-40"
                     @click="send"
                 >
-                    {{
-                        sending
-                            ? 'Sending'
-                            : selected.length > 1
-                              ? `Send to ${selected.length} people`
-                              : 'Send'
-                    }}
+                    {{ sending ? 'Sending' : selected.length > 1 ? 'Send to group' : 'Send' }}
                 </button>
                 <p class="mt-2 text-center text-[11px] text-slate-400">
                     Messages are not end-to-end encrypted.
@@ -197,7 +196,7 @@ const emit = defineEmits(['close', 'sent'])
 
 const store = useDmStore()
 
-const MAX_SELECTED = 5
+const MAX_SELECTED = 11
 const MAX_BODY_LENGTH = 500
 
 const query = ref('')
@@ -208,6 +207,7 @@ const selected = ref([])
 const body = ref('')
 const sending = ref(false)
 const errors = ref([])
+const createdConversationId = ref(null)
 let timer = null
 
 watch(query, (value) => {
@@ -230,6 +230,10 @@ watch(query, (value) => {
             searching.value = false
         }
     }, 300)
+})
+
+watch(selected, () => {
+    createdConversationId.value = null
 })
 
 function isSelectionLimitReached() {
@@ -260,37 +264,45 @@ async function send() {
     sending.value = true
     errors.value = []
 
-    const outcomes = await Promise.allSettled(
-        selected.value.map((account) =>
-            store.sendMessage({
-                recipientId: account.id,
-                type: props.video ? 'loop_share' : 'text',
-                body: body.value.trim() || null,
-                videoId: props.video?.id ?? null
-            })
-        )
-    )
-
-    const failed = []
-    let firstConversationId = null
-    outcomes.forEach((outcome, index) => {
-        if (outcome.status === 'rejected') {
-            failed.push(selected.value[index])
-        } else if (!firstConversationId) {
-            firstConversationId = outcome.value.conversation_id
-        }
-    })
-
-    sending.value = false
-
-    if (failed.length) {
-        errors.value = failed.map((account) => `Couldn't send to @${account.username}`)
-        selected.value = failed
-        return
+    const messagePayload = {
+        type: props.video ? 'loop_share' : 'text',
+        body: body.value.trim() || null,
+        videoId: props.video?.id ?? null
     }
 
-    emit('sent', selected.value.length === 1 ? firstConversationId : null)
-    emit('close')
+    try {
+        if (selected.value.length === 1 && !createdConversationId.value) {
+            const message = await store.sendMessage({
+                recipientId: selected.value[0].id,
+                ...messagePayload
+            })
+            emit('sent', String(message.conversation_id))
+            emit('close')
+            return
+        }
+
+        let conversationId = createdConversationId.value
+
+        if (!conversationId) {
+            const conversation = await store.createGroup(
+                selected.value.map((account) => account.id)
+            )
+            conversationId = String(conversation.id)
+            createdConversationId.value = conversationId
+        }
+
+        await store.sendMessage({
+            conversationId,
+            ...messagePayload
+        })
+
+        emit('sent', conversationId)
+        emit('close')
+    } catch (err) {
+        errors.value = [err.response?.data?.message ?? "Couldn't send your message."]
+    } finally {
+        sending.value = false
+    }
 }
 
 function onKeydown(event) {

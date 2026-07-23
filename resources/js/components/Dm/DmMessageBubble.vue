@@ -2,11 +2,17 @@
     <div :class="['group flex items-end gap-2', own ? 'justify-end' : 'justify-start']">
         <template v-if="!own">
             <img
-                v-if="showAvatar && participant.avatar"
-                :src="participant.avatar"
-                :alt="participant.username"
+                v-if="showAvatar && avatarUser.avatar"
+                :src="avatarUser.avatar"
+                :alt="avatarUser.username"
                 class="h-7 w-7 rounded-full object-cover"
             />
+            <div
+                v-else-if="showAvatar"
+                class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[10px] font-semibold uppercase text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+            >
+                {{ (avatarUser.username ?? '?').slice(0, 1) }}
+            </div>
             <div v-else class="w-7 shrink-0" />
         </template>
 
@@ -28,6 +34,13 @@
         </button>
 
         <div :class="['max-w-[75%]', message.pending ? 'opacity-60' : '']" :title="timeTitle">
+            <p
+                v-if="showName && senderName"
+                class="mb-0.5 px-1 text-[11px] font-medium text-slate-500 dark:text-slate-400"
+            >
+                {{ senderName }}
+            </p>
+
             <div
                 v-if="message.type === 'loop_share' && video"
                 :class="[
@@ -220,9 +233,18 @@ const props = defineProps({
     message: { type: Object, required: true },
     own: { type: Boolean, default: false },
     showAvatar: { type: Boolean, default: false },
+    showName: { type: Boolean, default: false },
+    sender: { type: Object, default: null },
     participant: { type: Object, default: () => ({}) }
 })
 const emit = defineEmits(['retry', 'delete', 'report'])
+
+const avatarUser = computed(() => props.sender ?? props.participant ?? {})
+
+const senderName = computed(() => {
+    const user = avatarUser.value
+    return user?.name || (user?.username ?? '').split('@')[0] || ''
+})
 
 const deletable = computed(
     () =>

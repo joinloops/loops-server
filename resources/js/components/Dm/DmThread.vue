@@ -12,34 +12,54 @@
                 <ArrowLeftIcon class="h-5 w-5" />
             </button>
 
-            <router-link v-if="participant.avatar" :to="`/@${participant.username}`">
-                <img
-                    :src="participant.avatar"
-                    :alt="participant.username"
-                    class="h-9 w-9 rounded-full object-cover"
-                />
-            </router-link>
-
-            <div
-                v-else
-                class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold uppercase text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+            <button
+                v-if="isGroup"
+                type="button"
+                class="flex min-w-0 flex-1 items-center gap-3 text-left"
+                @click="showInfo = true"
             >
-                {{ (participant.username ?? '?').slice(0, 1) }}
-            </div>
+                <DmGroupAvatar :participants="activeParticipants" size="sm" />
 
-            <div class="min-w-0 flex-1">
-                <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
-                    {{ participant.name || participant.username }}
-                </p>
-                <p class="truncate text-xs">
-                    <router-link
-                        :to="`/@${participant.username}`"
-                        class="text-slate-500 dark:text-slate-400"
-                    >
-                        @{{ participant.username }}
-                    </router-link>
-                </p>
-            </div>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {{ displayName }}
+                    </p>
+                    <p class="truncate text-xs text-slate-500 dark:text-slate-400">
+                        {{ memberCount }} members
+                    </p>
+                </div>
+            </button>
+
+            <template v-else>
+                <router-link v-if="participant.avatar" :to="`/@${participant.username}`">
+                    <img
+                        :src="participant.avatar"
+                        :alt="participant.username"
+                        class="h-9 w-9 rounded-full object-cover"
+                    />
+                </router-link>
+
+                <div
+                    v-else
+                    class="flex h-9 w-9 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold uppercase text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+                >
+                    {{ (participant.username ?? '?').slice(0, 1) }}
+                </div>
+
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        {{ participant.name || participant.username }}
+                    </p>
+                    <p class="truncate text-xs">
+                        <router-link
+                            :to="`/@${participant.username}`"
+                            class="text-slate-500 dark:text-slate-400"
+                        >
+                            @{{ participant.username }}
+                        </router-link>
+                    </p>
+                </div>
+            </template>
 
             <div class="relative">
                 <button
@@ -55,6 +75,14 @@
                     class="absolute right-0 top-10 z-10 w-44 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-lg dark:border-slate-800 dark:bg-slate-900"
                 >
                     <button
+                        v-if="isGroup"
+                        type="button"
+                        class="block w-full px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
+                        @click="openInfo"
+                    >
+                        Group members
+                    </button>
+                    <button
                         type="button"
                         class="block w-full px-4 py-2.5 text-left text-sm text-slate-700 transition hover:bg-slate-50 dark:text-slate-200 dark:hover:bg-slate-800"
                         @click="toggleMute"
@@ -68,18 +96,25 @@
                     >
                         {{ conversation?.hidden ? 'Unhide conversation' : 'Hide conversation' }}
                     </button>
+                    <button
+                        v-if="isGroup"
+                        type="button"
+                        class="block w-full px-4 py-2.5 text-left text-sm text-red-500 transition hover:bg-red-50 dark:hover:bg-red-950/40"
+                        @click="leaveGroup"
+                    >
+                        Leave group
+                    </button>
                 </div>
             </div>
         </div>
 
         <div
-            v-if="participant.is_remote"
+            v-if="federationNotice"
             class="flex items-center gap-2 border-b border-slate-100 px-4 py-2 dark:border-slate-900"
         >
             <GlobeAltIcon class="h-4 w-4 shrink-0 text-slate-400" />
             <p class="text-xs text-slate-500 dark:text-slate-400">
-                This conversation federates to {{ participant.domain }}. Messages are not end-to-end
-                encrypted.
+                {{ federationNotice }}
             </p>
         </div>
 
@@ -95,6 +130,8 @@
                     :message="message"
                     :own="isOwn(message)"
                     :show-avatar="showAvatar(index)"
+                    :show-name="showName(index)"
+                    :sender="senderFor(message.sender_id)"
                     :participant="participant"
                     @retry="onRetry"
                     @delete="onDelete"
@@ -108,7 +145,10 @@
             class="border-t border-slate-200 px-4 py-4 dark:border-slate-800 w-full flex flex-between items-center"
         >
             <div class="flex-1 flex-col shrink-0">
-                <p class="text-sm text-slate-700 dark:text-slate-200">
+                <p v-if="isGroup" class="text-sm text-slate-700 dark:text-slate-200">
+                    You've been added to a group conversation.
+                </p>
+                <p v-else class="text-sm text-slate-700 dark:text-slate-200">
                     {{ participant.name || participant.username }} wants to send you messages.
                 </p>
                 <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">
@@ -128,13 +168,13 @@
                     class="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200 dark:bg-slate-900 dark:text-slate-200 dark:hover:bg-slate-800"
                     @click="decline"
                 >
-                    Decline
+                    {{ isGroup ? 'Leave' : 'Decline' }}
                 </button>
             </div>
         </div>
 
         <div
-            v-else-if="pendingAcceptance"
+            v-else-if="pendingAcceptance && !isGroup"
             class="border-t border-slate-200 px-4 py-4 dark:border-slate-800"
         >
             <p class="text-sm font-medium text-slate-700 dark:text-slate-200">Request sent</p>
@@ -146,6 +186,13 @@
 
         <DmComposer v-else @send="onSend" @send-media="onSendMedia" />
         <ReportModal />
+
+        <DmGroupInfoPanel
+            v-if="showInfo"
+            :conversation-id="conversationId"
+            @close="showInfo = false"
+            @left="emit('left')"
+        />
     </div>
 </template>
 
@@ -153,6 +200,9 @@
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ArrowLeftIcon, EllipsisHorizontalIcon, GlobeAltIcon } from '@heroicons/vue/24/outline'
 import { useDmStore } from '~/stores/dm'
+import { useDmConversation } from '~/composables/useDmConversation'
+import DmGroupAvatar from './DmGroupAvatar.vue'
+import DmGroupInfoPanel from './DmGroupInfoPanel.vue'
 import DmMessageBubble from './DmMessageBubble.vue'
 import DmComposer from './DmComposer.vue'
 import { useReportModal } from '@/composables/useReportModal'
@@ -169,14 +219,26 @@ const store = useDmStore()
 const scroller = ref(null)
 const topSentinel = ref(null)
 const menuOpen = ref(false)
+const showInfo = ref(false)
 const prepending = ref(false)
 let observer = null
 
 const conversation = computed(() => store.conversations[props.conversationId])
 const thread = computed(() => store.thread(props.conversationId))
-const participant = computed(() => conversation.value?.participant ?? {})
+const { isGroup, activeParticipants, displayName, memberCount, remoteDomains, senderFor } =
+    useDmConversation(conversation)
+const participant = computed(() => activeParticipants.value[0] ?? {})
 const isRequest = computed(() => conversation.value?.state === 'request')
 const pendingAcceptance = computed(() => Boolean(conversation.value?.pending_acceptance))
+
+const federationNotice = computed(() => {
+    if (!remoteDomains.value.length) return null
+    const target =
+        remoteDomains.value.length === 1
+            ? remoteDomains.value[0]
+            : `${remoteDomains.value.length} servers`
+    return `This conversation federates to ${target}. Messages are not end-to-end encrypted.`
+})
 
 function isOwn(message) {
     return String(message.sender_id) === String(store.meId)
@@ -188,6 +250,15 @@ function showAvatar(index) {
     if (isOwn(message)) return false
     const next = messages[index + 1]
     return !next || String(next.sender_id) !== String(message.sender_id)
+}
+
+function showName(index) {
+    if (!isGroup.value) return false
+    const messages = thread.value.messages
+    const message = messages[index]
+    if (isOwn(message)) return false
+    const previous = messages[index - 1]
+    return !previous || String(previous.sender_id) !== String(message.sender_id)
 }
 
 function scrollToBottom() {
@@ -310,6 +381,22 @@ async function accept() {
 
 async function decline() {
     await store.decline(props.conversationId)
+    emit('left')
+}
+
+function openInfo() {
+    menuOpen.value = false
+    showInfo.value = true
+}
+
+async function leaveGroup() {
+    menuOpen.value = false
+    const confirmed = await confirmModal(
+        'Leave group',
+        "You'll stop receiving messages from this conversation."
+    )
+    if (!confirmed) return
+    await store.leaveGroup(props.conversationId)
     emit('left')
 }
 

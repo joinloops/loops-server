@@ -189,6 +189,7 @@
     "useDevicePixelRatio": true,
     "useDevicesList": true,
     "useDisplayMedia": true,
+    "useDmConversation": true,
     "useDmSocket": true,
     "useDmStore": true,
     "useDocumentVisibility": true,

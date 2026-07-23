@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\DmConversationResource;
 use App\Http\Resources\DmSearchResource;
+use App\Models\Conversation;
 use App\Models\ConversationParticipant;
 use App\Models\Profile;
+use App\Services\DirectMessageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -199,6 +201,15 @@ class DmConversationController extends Controller
     public function decline(Request $request, int $id)
     {
         abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
+        $profile = $request->user()->profile;
+        $conversation = Conversation::findOrFail($id);
+
+        if ($conversation->isGroup()) {
+            app(DirectMessageService::class)->leaveGroup($profile, $conversation);
+
+            return response()->json(['ok' => true]);
+        }
 
         $participant = $this->participantOrFail($request, $id);
 

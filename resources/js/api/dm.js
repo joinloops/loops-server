@@ -22,5 +22,12 @@ export default {
     send: (payload) => axiosInstance.post('/api/v1/dm/messages', payload),
     sendMedia: (payload) => axiosInstance.post('/api/v1/dm/messages/media', payload),
     deleteMessage: (id) => axiosInstance.delete(`/api/v1/dm/messages/${id}`),
-    searchAccounts: (q) => axiosInstance.post('/api/v1/dm/search', { q })
+    searchAccounts: (q) => axiosInstance.post('/api/v1/dm/search', { q }),
+    createGroup: (profileIds) =>
+        axiosInstance.post('/api/v1/dm/groups', { profile_ids: profileIds }),
+    addParticipants: (id, profileIds) =>
+        axiosInstance.post(`/api/v1/dm/conversations/${id}/participants`, {
+            profile_ids: profileIds
+        }),
+    leaveGroup: (id) => axiosInstance.post(`/api/v1/dm/conversations/${id}/leave`)
 }

@@ -222,6 +222,30 @@ export const useDmStore = defineStore('dm', {
             }
         },
 
+        async createGroup(profileIds) {
+            const { data } = await dmApi.createGroup(profileIds)
+            const conversation = data.data
+            const key = String(conversation.id)
+            this.conversations[key] = conversation
+            if (this.tabs.primary.loaded && !this.tabs.primary.ids.includes(key)) {
+                this.tabs.primary.ids.unshift(key)
+            }
+            return conversation
+        },
+
+        async addParticipants(id, profileIds) {
+            const key = String(id)
+            const { data } = await dmApi.addParticipants(key, profileIds)
+            this.conversations[key] = data.data
+            return data.data
+        },
+
+        async leaveGroup(id) {
+            const key = String(id)
+            await dmApi.leaveGroup(key)
+            this.removeEverywhere(key)
+        },
+
         insertByRecency(tabKey, key) {
             const tab = this.tabs[tabKey]
             if (!tab.loaded || tab.ids.includes(key)) return

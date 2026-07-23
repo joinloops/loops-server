@@ -2,8 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\ConversationParticipant;
 use App\Models\Message;
 use App\Models\Profile;
+use Illuminate\Support\Collection;
 
 class DmActivityPubService
 {
@@ -22,32 +24,66 @@ class DmActivityPubService
         return $profile->inbox_url;
     }
 
-    public function buildNote(Message $message): array
+    /**
+     * Unique personal delivery inboxes for a set of remote profiles.
+     *
+     * @param  Collection<int, Profile>  $profiles
+     * @return list<string>
+     */
+    public function inboxUrls(Collection $profiles): array
+    {
+        return $profiles
+            ->map(fn (Profile $profile) => $profile->inbox_url)
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Every non-left participant except the message author — local AND remote.
+     *
+     * @return Collection<int, Profile>
+     */
+    public function audience(Message $message): Collection
     {
         $conversation = $message->conversation;
-        $sender = $message->sender;
-        $recipient = $conversation->otherParticipant($sender->id)?->profile;
+        $conversation->loadMissing('participants.profile');
 
-        $senderUri = $this->actorUri($sender);
-        $recipientUri = $this->actorUri($recipient);
+        return $conversation->participants
+            ->where('profile_id', '!=', $message->profile_id)
+            ->where('state', '!=', ConversationParticipant::STATE_LEFT)
+            ->map(fn (ConversationParticipant $participant) => $participant->profile)
+            ->filter()
+            ->values();
+    }
+
+    public function buildNote(Message $message): array
+    {
+        $sender = $message->sender;
+        $audience = $this->audience($message);
 
         $note = [
             'id' => $message->ap_object_uri,
             'type' => 'Note',
-            'attributedTo' => $senderUri,
-            'to' => [$recipientUri],
+            'attributedTo' => $this->actorUri($sender),
+            'to' => $audience
+                ->map(fn (Profile $profile) => $this->actorUri($profile))
+                ->values()
+                ->all(),
             'cc' => [],
             'published' => $message->created_at->toAtomString(),
-            'context' => $conversation->context_uri,
-            'conversation' => $conversation->context_uri,
+            'context' => $message->conversation->context_uri,
+            'conversation' => $message->conversation->context_uri,
             'content' => $this->renderContent($message),
-            'tag' => [
-                [
+            'tag' => $audience
+                ->map(fn (Profile $profile) => [
                     'type' => 'Mention',
-                    'href' => $recipientUri,
-                    'name' => '@'.$this->webfinger($recipient),
-                ],
-            ],
+                    'href' => $this->actorUri($profile),
+                    'name' => '@'.$this->webfinger($profile),
+                ])
+                ->values()
+                ->all(),
         ];
 
         $attachments = $message->media->map->toApAttachment()->values()->all();
@@ -60,21 +96,14 @@ class DmActivityPubService
 
     public function buildCreate(Message $message): array
     {
-        $conversation = $message->conversation;
-        $sender = $message->sender;
-        $recipient = $conversation->otherParticipant($sender->id)?->profile;
-
-        $senderUri = $this->actorUri($sender);
-        $recipientUri = $this->actorUri($recipient);
-
         $note = $this->buildNote($message);
 
         return [
             '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => $message->ap_object_uri.'#activity',
             'type' => 'Create',
-            'actor' => $senderUri,
-            'to' => [$recipientUri],
+            'actor' => $this->actorUri($message->sender),
+            'to' => $note['to'],
             'cc' => [],
             'published' => $note['published'],
             'object' => $note,
@@ -83,19 +112,15 @@ class DmActivityPubService
 
     public function buildDelete(Message $message): array
     {
-        $conversation = $message->conversation;
-        $sender = $message->sender;
-        $recipient = $conversation->otherParticipant($sender->id)?->profile;
-
-        $senderUri = $this->actorUri($sender);
-        $recipientUri = $this->actorUri($recipient);
-
         return [
             '@context' => 'https://www.w3.org/ns/activitystreams',
             'id' => $message->ap_object_uri.'#delete',
             'type' => 'Delete',
-            'actor' => $senderUri,
-            'to' => [$recipientUri],
+            'actor' => $this->actorUri($message->sender),
+            'to' => $this->audience($message)
+                ->map(fn (Profile $profile) => $this->actorUri($profile))
+                ->values()
+                ->all(),
             'object' => [
                 'id' => $message->ap_object_uri,
                 'type' => 'Tombstone',

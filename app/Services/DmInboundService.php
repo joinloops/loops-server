@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
-use App\Models\DmMedia;
 use App\Models\Message;
 use App\Models\Profile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 /**
@@ -18,11 +20,19 @@ class DmInboundService
         'Public',
     ];
 
-    public const MAX_ATTACHMENTS = 4;
+    protected const ALLOWED_MEDIA_TYPES = [
+        'image/jpeg' => 'image',
+        'image/png' => 'image',
+        'image/gif' => 'image',
+        'image/webp' => 'image',
+        'video/mp4' => 'video',
+    ];
+
+    public const MAX_MEDIA_ATTACHMENTS = 4;
 
     public function __construct(
-        protected DirectMessageService $dm,
-        protected SanitizeService $sanitize
+        protected DirectMessageService $dms,
+        protected SanitizeService $sanitizer
     ) {}
 
     public function isDirectNote(array $activity, ?Profile $actor = null): bool
@@ -33,20 +43,24 @@ class DmInboundService
             return false;
         }
 
-        $recipients = $this->recipients($activity);
+        $to = Arr::wrap($object['to'] ?? []);
+        $cc = Arr::wrap($object['cc'] ?? []);
+        $audience = array_merge($to, $cc);
 
-        if (! $recipients) {
+        if (empty($to) || empty($audience)) {
             return false;
         }
 
-        $followersUrl = $actor?->getFollowersUrl();
+        foreach ($audience as $uri) {
+            if (! is_string($uri)) {
+                return false;
+            }
 
-        foreach ($recipients as $uri) {
             if (in_array($uri, self::PUBLIC_URIS, true)) {
                 return false;
             }
 
-            if ($followersUrl && strcasecmp(rtrim($uri, '/'), rtrim($followersUrl, '/')) === 0) {
+            if ($actor && $uri === $actor->getFollowersUrl()) {
                 return false;
             }
 
@@ -58,54 +72,83 @@ class DmInboundService
         return true;
     }
 
-    public function handleCreate(array $activity, Profile $sender): ?Message
+    public function handleCreate(array $activity, Profile $actor): ?Message
     {
-        $object = $activity['object'] ?? null;
-        $objectId = is_array($object) ? ($object['id'] ?? null) : null;
+        $object = $activity['object'];
 
-        if (! is_array($object) || ! is_string($objectId)) {
+        $actorUri = rtrim($actor->getActorId(), '/');
+
+        $recipientUris = collect(array_merge(
+            Arr::wrap($object['to'] ?? []),
+            Arr::wrap($object['cc'] ?? [])
+        ))
+            ->filter(fn ($uri) => is_string($uri) && $uri !== '')
+            ->map(fn (string $uri) => rtrim($uri, '/'))
+            ->unique()
+            ->reject(fn (string $uri) => $uri === $actorUri)
+            ->values();
+
+        if ($recipientUris->isEmpty()) {
             return null;
         }
 
-        if (! $this->sameOrigin($objectId, $this->senderUri($sender))) {
+        $max = (int) config('loops.dm.groups.max_participants', 12);
+
+        if ($recipientUris->count() + 1 > $max) {
+            if (config('logging.dev_log')) {
+                Log::info('Dropped inbound DM: too many recipients', [
+                    'actor' => $actor->username,
+                    'object_id' => $object['id'] ?? 'unknown',
+                    'recipient_count' => $recipientUris->count(),
+                ]);
+            }
+
             return null;
         }
 
-        if (Message::withTrashed()->where('ap_object_uri', $objectId)->exists()) {
+        $recipients = $recipientUris
+            ->map(fn (string $uri) => $this->resolveRecipient($uri))
+            ->filter()
+            ->unique('id')
+            ->values();
+
+        if ($recipients->isEmpty()) {
             return null;
         }
 
-        [$locals, $unresolvedOthers] = $this->resolveRecipients($activity, $sender);
+        $payload = [
+            'object_uri' => $object['id'],
+            'context_uri' => $this->extractContext($object),
+            'body' => $this->stripLeadingMentions($this->extractBody($object), $recipients),
+            'media' => $this->extractMedia($object, $actor),
+        ];
 
-        if (count($locals) !== 1 || $unresolvedOthers > 0) {
-            return null;
-        }
-
-        $recipient = $locals[0];
-
-        $body = $this->stripLeadingMention($this->htmlToText($object['content'] ?? null), $recipient);
-        $media = $this->mapAttachments($object, $sender);
-
-        if ($body === null && ! $media) {
-            return null;
-        }
-
-        return $this->dm->receive($sender, $recipient, [
-            'object_uri' => $objectId,
-            'context_uri' => $this->stringOrNull($object['context'] ?? null)
-                ?? $this->stringOrNull($object['conversation'] ?? null),
-            'body' => $body,
-            'media' => $media,
-        ]);
+        return $this->dms->receive($actor, $recipients, $payload);
     }
 
-    protected function stripLeadingMention(?string $body, Profile $recipient): ?string
+    /**
+     * Mastodon prefixes DM content with mentions of the addressed accounts.
+     * Strip any run of leading mentions that match conversation participants,
+     * falling back to the original body when nothing but mentions remains.
+     *
+     * @param  Collection<int, Profile>  $recipients
+     */
+    protected function stripLeadingMentions(?string $body, Collection $recipients): ?string
     {
         if ($body === null) {
             return null;
         }
 
-        $pattern = '/^@[[:space:]]?'.preg_quote($recipient->username, '/').'(@[A-Za-z0-9\.\-]+)?[[:space:]]+/iu';
+        $names = $recipients
+            ->map(fn (Profile $recipient) => preg_quote($recipient->username, '/'))
+            ->filter()
+            ->implode('|');
+
+        if ($names === '') {
+            return $body;
+        }
+
+        $pattern = '/^(?:@[[:space:]]?(?:'.$names.')(?:@[A-Za-z0-9\.\-]+)?[[:space:]]+)+/iu';
         $stripped = preg_replace($pattern, '', $body, 1);
 
         if (! is_string($stripped)) {
@@ -135,7 +178,7 @@ class DmInboundService
             return false;
         }
 
-        $this->dm->deleteMessage($message);
+        $this->dms->deleteMessage($message);
 
         return true;
     }
@@ -174,59 +217,82 @@ class DmInboundService
         // deferred: attachment edits and a realtime update broadcast
     }
 
-    protected function resolveRecipients(array $activity, Profile $sender): array
+    protected function resolveRecipient(string $uri): ?Profile
     {
-        $locals = [];
-        $unresolvedOthers = 0;
-        $senderUri = $this->senderUri($sender);
+        if ($this->sanitizer->isLocalObject($uri)) {
+            $match = $this->sanitizer->matchUrlTemplate(
+                url: $uri,
+                templates: ['/ap/users/{profileId}'],
+                useAppHost: true,
+                constraints: ['profileId' => '\d+']
+            );
 
-        foreach ($this->recipients($activity) as $uri) {
-            if (in_array($uri, self::PUBLIC_URIS, true)) {
-                continue;
+            if ($match && isset($match['profileId'])) {
+                return Profile::where('local', true)
+                    ->where('status', 1)
+                    ->find($match['profileId']);
             }
 
-            if ($senderUri && strcasecmp($uri, $senderUri) === 0) {
-                continue;
-            }
-
-            $local = $this->localProfileFromUri($uri);
-
-            if ($local) {
-                $locals[$local->id] = $local;
-            } else {
-                $unresolvedOthers++;
-            }
+            return null;
         }
 
-        return [array_values($locals), $unresolvedOthers];
+        $known = Profile::where('uri', $uri)->first();
+
+        if ($known) {
+            return $known;
+        }
+
+        return $this->fetchRemoteProfile($uri);
     }
 
-    protected function localProfileFromUri(string $uri): ?Profile
+    protected function fetchRemoteProfile(string $uri): ?Profile
     {
-        if (! $this->sanitize->isLocalObject($uri)) {
+        try {
+            return app(Profile::class)->findOrCreateFromUrl($uri);
+        } catch (\Exception $e) {
+            if (config('logging.dev_log')) {
+                Log::warning('Failed to resolve DM co-recipient', [
+                    'uri' => $uri,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+
+            return null;
+        }
+    }
+
+    protected function extractContext(array $object): ?string
+    {
+        $context = $object['context'] ?? $object['conversation'] ?? null;
+
+        if (is_array($context)) {
+            $context = $context['id'] ?? null;
+        }
+
+        if (! is_string($context) || $context === '' || strlen($context) > 255) {
             return null;
         }
 
-        $match = $this->sanitize->matchUrlTemplate(
-            url: $uri,
-            templates: ['/ap/users/{pId}'],
-            useAppHost: true,
-            constraints: ['pId' => '\d+']
-        );
+        return $context;
+    }
 
-        if (! $match || ! isset($match['pId'])) {
+    protected function extractBody(array $object): ?string
+    {
+        $content = $object['content'] ?? $object['summary'] ?? $object['name'] ?? null;
+
+        if (! is_string($content) || $content === '') {
             return null;
         }
 
-        return Profile::whereNull('domain')
-            ->where('status', 1)
-            ->find($match['pId']);
+        $clean = $this->sanitizer->cleanHtmlWithSpacing($content);
+
+        return $clean !== '' ? $clean : null;
     }
 
     /**
      * @return list<DmMediaAttributes>
      */
-    protected function mapAttachments(array $object, Profile $sender): array
+    protected function extractMedia(array $object, Profile $sender): array
     {
         $attachments = $object['attachment'] ?? [];
 
@@ -234,80 +300,57 @@ class DmInboundService
             return [];
         }
 
-        if (array_is_list($attachments) === false) {
-            $attachments = [$attachments];
-        }
+        $media = [];
 
-        $mapped = [];
-
-        foreach (array_slice($attachments, 0, self::MAX_ATTACHMENTS) as $attachment) {
+        foreach ($attachments as $attachment) {
             if (! is_array($attachment)) {
                 continue;
             }
 
-            $url = $this->attachmentUrl($attachment);
+            $mediaType = $attachment['mediaType'] ?? null;
 
-            if (! $url) {
+            if (! is_string($mediaType) || ! isset(self::ALLOWED_MEDIA_TYPES[$mediaType])) {
                 continue;
             }
 
-            $mime = $this->stringOrNull($attachment['mediaType'] ?? null);
+            $url = $attachment['url'] ?? null;
 
-            $mapped[] = [
-                'profile_id' => $sender->id,
-                'type' => DmMedia::typeFromMime($mime),
-                'mime_type' => $mime,
+            if (is_array($url)) {
+                $url = data_get($url, 'href') ?? data_get($url, '0.href') ?? data_get($url, '0');
+            }
+
+            if (! is_string($url) || ! $this->sanitizer->url($url, true)) {
+                continue;
+            }
+
+            $preview = data_get($attachment, 'icon.url') ?? data_get($attachment, 'preview.url');
+
+            if (! is_string($preview) || ! $this->sanitizer->url($preview, true)) {
+                $preview = null;
+            }
+
+            $media[] = [
+                'profile_id' => (int) $sender->id,
+                'type' => self::ALLOWED_MEDIA_TYPES[$mediaType],
+                'mime_type' => $mediaType,
                 'remote_url' => $url,
-                'width' => $this->intOrNull($attachment['width'] ?? null),
-                'height' => $this->intOrNull($attachment['height'] ?? null),
-                'blurhash' => Str::limit($this->stringOrNull($attachment['blurhash'] ?? null) ?? '', 64, '') ?: null,
-                'description' => Str::limit($this->stringOrNull($attachment['name'] ?? null) ?? '', 1500, '') ?: null,
+                'preview_remote_url' => $preview,
+                'width' => is_numeric($attachment['width'] ?? null) ? (int) $attachment['width'] : null,
+                'height' => is_numeric($attachment['height'] ?? null) ? (int) $attachment['height'] : null,
+                'blurhash' => is_string($attachment['blurhash'] ?? null)
+                    ? (Str::limit($attachment['blurhash'], 64, '') ?: null)
+                    : null,
+                'description' => is_string($attachment['name'] ?? null)
+                    ? (Str::limit($attachment['name'], 1500, '') ?: null)
+                    : null,
             ];
-        }
 
-        return $mapped;
-    }
-
-    protected function attachmentUrl(array $attachment): ?string
-    {
-        $url = $attachment['url'] ?? null;
-
-        if (is_array($url)) {
-            $first = collect($url)->first(fn ($u) => is_array($u) && is_string($u['href'] ?? null));
-            $url = is_array($first) ? $first['href'] : (is_string($url[0] ?? null) ? $url[0] : null);
-        }
-
-        if (! is_string($url)) {
-            return null;
-        }
-
-        return $this->sanitize->url($url, true) ? $url : null;
-    }
-
-    protected function recipients(array $activity): array
-    {
-        $object = is_array($activity['object'] ?? null) ? $activity['object'] : [];
-
-        $sets = [
-            $activity['to'] ?? [],
-            $activity['cc'] ?? [],
-            $activity['audience'] ?? [],
-            $object['to'] ?? [],
-            $object['cc'] ?? [],
-            $object['audience'] ?? [],
-        ];
-
-        $out = [];
-
-        foreach ($sets as $set) {
-            foreach ((array) $set as $uri) {
-                if (is_string($uri) && $uri !== '') {
-                    $out[] = $uri;
-                }
+            if (count($media) >= self::MAX_MEDIA_ATTACHMENTS) {
+                break;
             }
         }
 
-        return array_values(array_unique($out));
+        return $media;
     }
 
     protected function htmlToText(?string $html): ?string
@@ -316,7 +359,7 @@ class DmInboundService
             return null;
         }
 
-        $text = trim($this->sanitize->cleanHtmlWithSpacing($html));
+        $text = trim($this->sanitizer->cleanHtmlWithSpacing($html));
 
         return $text === '' ? null : Str::limit($text, 5000);
     }
@@ -332,16 +375,6 @@ class DmInboundService
         $hostB = strtolower((string) parse_url((string) $b, PHP_URL_HOST));
 
         return $hostA !== '' && $hostA === $hostB;
-    }
-
-    protected function stringOrNull(mixed $value): ?string
-    {
-        return is_string($value) && $value !== '' ? $value : null;
-    }
-
-    protected function intOrNull(mixed $value): ?int
-    {
-        return is_numeric($value) ? (int) $value : null;
     }
 
     protected function parseDate(mixed $value): ?\Illuminate\Support\Carbon

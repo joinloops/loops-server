@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\Traits\ApiHelpers;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreDmMediaRequest;
 use App\Http\Resources\DmMessageResource;
+use App\Models\Conversation;
 use App\Models\ConversationParticipant;
 use App\Models\DmMedia;
 use App\Models\Message;
@@ -70,19 +71,16 @@ class DmMessageController extends Controller
         }
 
         if (filled($data['conversation_id'] ?? null)) {
-            $participant = ConversationParticipant::with('conversation.participants.profile')
-                ->where('conversation_id', $data['conversation_id'])
-                ->where('profile_id', $sender->id)
-                ->firstOrFail();
+            // The conversation is authoritative. Never collapse it to a
+            // recipient: sendMessage() handles both dm and group types.
+            $conversation = $this->resolveConversation($sender, (int) $data['conversation_id']);
 
-            $recipient = $participant->conversation->otherParticipant($sender->id)?->profile;
-
-            abort_if(! $recipient, 422, 'Recipient not found.');
+            $message = $this->service->sendMessage($sender, $conversation, $data);
         } else {
             $recipient = Profile::findOrFail($data['recipient_id']);
-        }
 
-        $message = $this->service->send($sender, $recipient, $data);
+            $message = $this->service->send($sender, $recipient, $data);
+        }
 
         return new DmMessageResource($message);
     }
@@ -106,7 +104,6 @@ class DmMessageController extends Controller
         $data = $request->validated();
 
         $sender = Profile::findOrFail($request->user()->profile_id);
-        $recipient = $this->resolveRecipient($sender, $data);
 
         $body = $data['body'] ?? null;
         $item = $data['item'];
@@ -114,7 +111,7 @@ class DmMessageController extends Controller
 
         $picked = app(KlipyMediaSelector::class)->pick($item, $data['type']);
 
-        $message = $this->service->send($sender, $recipient, [
+        $payload = [
             'type' => Message::TYPE_MEDIA,
             'body' => $body,
             'media' => [[
@@ -131,26 +128,28 @@ class DmMessageController extends Controller
                 'provider' => DmMedia::PROVIDER_KLIPY,
                 'external_id' => $klipyId,
             ]],
-        ]);
+        ];
+
+        if (filled($data['conversation_id'] ?? null)) {
+            $conversation = $this->resolveConversation($sender, (int) $data['conversation_id']);
+
+            $message = $this->service->sendMessage($sender, $conversation, $payload);
+        } else {
+            $recipient = Profile::findOrFail($data['recipient_id']);
+
+            $message = $this->service->send($sender, $recipient, $payload);
+        }
 
         return new DmMessageResource($message);
     }
 
-    protected function resolveRecipient(Profile $sender, array $data): Profile
+    protected function resolveConversation(Profile $sender, int|string $conversationId): Conversation
     {
-        if (filled($data['conversation_id'] ?? null)) {
-            $participant = ConversationParticipant::with('conversation.participants.profile')
-                ->where('conversation_id', $data['conversation_id'])
-                ->where('profile_id', $sender->id)
-                ->firstOrFail();
+        $participant = ConversationParticipant::with('conversation.participants.profile')
+            ->where('conversation_id', $conversationId)
+            ->where('profile_id', $sender->id)
+            ->firstOrFail();
 
-            $recipient = $participant->conversation->otherParticipant($sender->id)?->profile;
-
-            abort_if(! $recipient, 422, 'Recipient not found.');
-
-            return $recipient;
-        }
-
-        return Profile::findOrFail($data['recipient_id']);
+        return $participant->conversation;
     }
 }

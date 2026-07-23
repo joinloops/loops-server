@@ -95,7 +95,7 @@ class CreateValidator extends BaseValidator
         }
 
         if (app(DmInboundService::class)->isDirectNote($activity)) {
-            $this->validateDirectMessage($activity['actor']);
+            $this->validateDirectMessage($activity['actor'], $object);
 
             return;
         }
@@ -401,9 +401,9 @@ class CreateValidator extends BaseValidator
     /**
      * Validates a direct message Note.
      *
-     * @throws \Exception if the instance is not allowed to send DMs.
+     * @throws \Exception if the instance is blocked or the addressing is invalid.
      */
-    private function validateDirectMessage(string $actorUrl): void
+    private function validateDirectMessage(string $actorUrl, array $object): void
     {
         $actorDomain = parse_url($actorUrl, PHP_URL_HOST);
 
@@ -415,6 +415,38 @@ class CreateValidator extends BaseValidator
 
         if ($instance->is_blocked) {
             throw new \Exception("Instance '{$actorDomain}' is not allowed to send direct messages.");
+        }
+
+        $to = $object['to'] ?? [];
+        $cc = $object['cc'] ?? [];
+
+        if (! is_array($to)) {
+            $to = [$to];
+        }
+        if (! is_array($cc)) {
+            $cc = [$cc];
+        }
+
+        $recipients = collect(array_merge($to, $cc))
+            ->filter(fn ($uri) => is_string($uri) && $uri !== '')
+            ->unique()
+            ->reject(fn (string $uri) => rtrim($uri, '/') === rtrim($actorUrl, '/'))
+            ->values();
+
+        if ($recipients->isEmpty()) {
+            throw new \Exception('Direct message must address at least one recipient.');
+        }
+
+        foreach ($recipients as $uri) {
+            if (! app(SanitizeService::class)->url($uri, true)) {
+                throw new \Exception("Direct message recipient URI is invalid: '{$uri}'.");
+            }
+        }
+
+        $max = (int) config('loops.dm.groups.max_participants', 12);
+
+        if ($recipients->count() + 1 > $max) {
+            throw new \Exception("Direct message addresses too many recipients (max {$max}).");
         }
     }
 }

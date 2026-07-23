@@ -42,6 +42,8 @@ declare module 'vue' {
     DmComposer: typeof import('./components/Dm/DmComposer.vue')['default']
     DmConversationList: typeof import('./components/Dm/DmConversationList.vue')['default']
     DmConversationListItem: typeof import('./components/Dm/DmConversationListItem.vue')['default']
+    DmGroupAvatar: typeof import('./components/Dm/DmGroupAvatar.vue')['default']
+    DmGroupInfoPanel: typeof import('./components/Dm/DmGroupInfoPanel.vue')['default']
     DmMessageBubble: typeof import('./components/Dm/DmMessageBubble.vue')['default']
     DmQuickShare: typeof import('./components/Dm/DmQuickShare.vue')['default']
     DmShareModal: typeof import('./components/Dm/DmShareModal.vue')['default']

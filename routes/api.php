@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AppController;
 use App\Http\Controllers\Api\ConversationLookupController;
 use App\Http\Controllers\Api\DmConversationController;
+use App\Http\Controllers\Api\DmGroupController;
 use App\Http\Controllers\Api\DmMessageController;
 use App\Http\Controllers\Api\DuetController;
 use App\Http\Controllers\Api\ExploreController;
@@ -427,6 +428,10 @@ Route::prefix('api')->group(function () {
         Route::post('/messages', [DmMessageController::class, 'store'])->middleware(['auth:web,api']);
         Route::post('/messages/media', [DmMessageController::class, 'storeMedia'])->middleware(['auth:web,api']);
         Route::delete('/messages/{id}', [DmMessageController::class, 'destroy'])->middleware(['auth:web,api']);
+
+        Route::post('/groups', [DmGroupController::class, 'store']);
+        Route::post('/conversations/{id}/participants', [DmGroupController::class, 'addParticipants']);
+        Route::post('/conversations/{id}/leave', [DmGroupController::class, 'leave']);
     });
 
     // Admin
