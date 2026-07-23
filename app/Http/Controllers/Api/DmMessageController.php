@@ -42,7 +42,7 @@ class DmMessageController extends Controller
         $messages = Message::with(['sender', 'video'])
             ->where('conversation_id', $conversationId)
             ->orderByDesc('id')
-            ->cursorPaginate($request->integer('limit', 5));
+            ->cursorPaginate($request->integer('limit', 15));
 
         return DmMessageResource::collection($messages);
     }
