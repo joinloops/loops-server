@@ -69,7 +69,7 @@
         "esbuild": ">=0.28.1",
         "eslint": "^10.7.0",
         "eslint-plugin-vue": "^10.10.0",
-        "flatted": ">=3.4.2",
+        "flatted": ">=3.4.3",
         "follow-redirects": ">=1.16.0",
         "globals": "^17.7.0",
         "laravel-echo": "^2.4.0",
