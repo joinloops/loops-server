@@ -24,12 +24,22 @@
                 :key="account.id"
                 type="button"
                 class="flex w-14 shrink-0 cursor-pointer flex-col items-center gap-1.5"
-                :aria-label="`Send to ${account.username}`"
+                :aria-label="`Send to ${account.name || account.username}`"
                 @click="send(account)"
             >
                 <div class="relative">
+                    <div
+                        v-if="account.kind === 'group'"
+                        :class="[
+                            'rounded-full',
+                            states[String(account.id)] === 'failed' ? 'ring-2 ring-red-500' : ''
+                        ]"
+                    >
+                        <DmGroupAvatar :participants="facepile(account)" />
+                    </div>
+
                     <img
-                        v-if="account.avatar"
+                        v-else-if="account.avatar"
                         :src="account.avatar"
                         :alt="account.username"
                         :class="[
@@ -103,6 +113,7 @@ import { computed, ref, watch } from 'vue'
 import { CheckIcon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline'
 import dmApi from '~/api/dm'
 import { useDmStore } from '~/stores/dm'
+import DmGroupAvatar from './DmGroupAvatar.vue'
 
 const props = defineProps({
     videoId: { type: [String, Number], default: null },
@@ -124,7 +135,7 @@ async function load() {
     loading.value = true
     failed.value = false
     try {
-        const { data } = await dmApi.suggestedRecipients()
+        const { data } = await dmApi.suggestedRecipients({ include_groups: 1 })
         accounts.value = data.data ?? []
     } catch (error) {
         console.error('Failed to load DM suggestions', error)
@@ -144,23 +155,30 @@ watch(
     { immediate: true }
 )
 
+function facepile(account) {
+    const count = Math.max((account.member_count ?? 1) - 1, account.avatars?.length ?? 0, 1)
+    return Array.from({ length: count }, (_, index) => ({
+        id: `${account.id}-${index}`,
+        username: '',
+        avatar: account.avatars?.[index] ?? null
+    }))
+}
+
 async function send(account) {
     const id = String(account.id)
     if (states.value[id] === 'sending' || states.value[id] === 'sent') return
     states.value[id] = 'sending'
+    const payload = props.videoId
+        ? { type: 'loop_share', videoId: props.videoId }
+        : { type: 'text', body: props.shareUrl }
     try {
-        if (props.videoId) {
+        if (account.kind === 'group') {
             await store.sendMessage({
-                recipientId: id,
-                type: 'loop_share',
-                videoId: props.videoId
+                conversationId: String(account.conversation_id),
+                ...payload
             })
         } else {
-            await store.sendMessage({
-                recipientId: id,
-                type: 'text',
-                body: props.shareUrl
-            })
+            await store.sendMessage({ recipientId: id, ...payload })
         }
         states.value[id] = 'sent'
         emit('sent', id)
@@ -173,6 +191,6 @@ function label(account) {
     const state = states.value[String(account.id)]
     if (state === 'sent') return 'Sent'
     if (state === 'failed') return 'Retry'
-    return account.username
+    return account.name || account.username
 }
 </script>

@@ -3,7 +3,8 @@ import axios from '~/plugins/axios'
 const axiosInstance = axios.getAxiosInstance()
 
 export default {
-    suggestedRecipients: () => axiosInstance.get('/api/v1/dm/suggested-recipients'),
+    suggestedRecipients: (params) =>
+        axiosInstance.get('/api/v1/dm/suggested-recipients', { params }),
     conversations: (params) => axiosInstance.get('/api/v1/dm/conversations', { params }),
     conversation: (id) => axiosInstance.get(`/api/v1/dm/conversations/${id}`),
     markRead: (id, messageId) =>

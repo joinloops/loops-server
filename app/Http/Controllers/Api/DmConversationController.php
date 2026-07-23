@@ -269,33 +269,102 @@ class DmConversationController extends Controller
         abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
 
         $profileId = $request->user()->profile_id;
+        $includeGroups = $request->boolean('include_groups');
         $limit = 12;
 
-        $profiles = ConversationParticipant::query()
+        $participants = ConversationParticipant::query()
             ->select('conversation_participants.*', 'conversations.last_message_at as sort_last_message_at')
             ->join('conversations', 'conversations.id', '=', 'conversation_participants.conversation_id')
             ->where('conversation_participants.profile_id', $profileId)
             ->where('conversation_participants.state', ConversationParticipant::STATE_ACTIVE)
             ->whereNotNull('conversations.last_message_at')
             ->orderByDesc('sort_last_message_at')
-            ->limit($limit)
+            ->limit($limit * 2)
             ->with('conversation.participants.profile')
-            ->get()
-            ->map(fn ($participant) => $participant->conversation->otherParticipant($profileId)?->profile)
-            ->filter()
-            ->unique('id')
-            ->take($limit)
-            ->values();
+            ->get();
 
-        return response()->json([
-            'data' => $profiles->map(fn ($profile) => [
+        $seenProfiles = [];
+        $suggestions = [];
+
+        foreach ($participants as $participant) {
+            if (count($suggestions) >= $limit) {
+                break;
+            }
+
+            $conversation = $participant->conversation;
+
+            if ($conversation === null) {
+                continue;
+            }
+
+            if ($conversation->type === Conversation::TYPE_GROUP) {
+                if (! $includeGroups) {
+                    continue;
+                }
+
+                $others = $conversation->participants
+                    ->where('profile_id', '!=', $profileId)
+                    ->filter(fn (ConversationParticipant $other) => $other->state !== ConversationParticipant::STATE_LEFT
+                        && $other->profile !== null)
+                    ->values();
+
+                if ($others->isEmpty()) {
+                    continue;
+                }
+
+                $names = $others
+                    ->map(fn (ConversationParticipant $other) => $other->profile->name
+                        ?? explode('@', $other->profile->username)[0])
+                    ->filter()
+                    ->values();
+
+                $display = $conversation->title
+                    ?: ($names->count() <= 3
+                        ? $names->implode(', ')
+                        : $names->take(3)->implode(', ').' +'.($names->count() - 3));
+
+                $suggestions[] = [
+                    'kind' => 'group',
+                    'id' => (string) $conversation->id,
+                    'conversation_id' => (string) $conversation->id,
+                    'username' => null,
+                    'name' => $display,
+                    'avatar' => null,
+                    'avatars' => $others
+                        ->take(2)
+                        ->map(fn (ConversationParticipant $other) => $other->profile->avatar)
+                        ->filter()
+                        ->values()
+                        ->all(),
+                    'member_count' => $others->count() + 1,
+                    'domain' => null,
+                    'is_remote' => false,
+                ];
+
+                continue;
+            }
+
+            $profile = $conversation->otherParticipant($profileId)?->profile;
+
+            if (! $profile || isset($seenProfiles[$profile->id])) {
+                continue;
+            }
+
+            $seenProfiles[$profile->id] = true;
+
+            $suggestions[] = [
+                'kind' => 'account',
                 'id' => (string) $profile->id,
                 'username' => $profile->username,
                 'name' => $profile->name ?? $profile->username,
                 'avatar' => $profile->avatar ?? null,
                 'domain' => $profile->domain,
                 'is_remote' => $profile->domain !== null,
-            ])->all(),
+            ];
+        }
+
+        return response()->json([
+            'data' => $suggestions,
         ]);
     }
 
