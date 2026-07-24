@@ -74,7 +74,7 @@
         "globals": "^17.7.0",
         "laravel-echo": "^2.4.0",
         "prettier": "^3.9.6",
-        "pusher-js": "^8.5.0",
+        "pusher-js": "^8.6.0",
         "typescript": "^6.0.3",
         "typescript-eslint": "^8.65.0",
         "unplugin-auto-import": "^21.0.0",
