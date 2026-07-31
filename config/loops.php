@@ -73,7 +73,7 @@ return [
                 ],
                 'user' => [
                     'max_pages' => env('LOOPS_EXPLORE_PAGINATION_USER_MAX_PAGES', 10),
-                    'max_items' => env('LOOPS_EXPLORE_PAGINATION_USer_MAX_ITEMS', 120),
+                    'max_items' => env('LOOPS_EXPLORE_PAGINATION_USER_MAX_ITEMS', 120),
                 ],
             ],
         ],
