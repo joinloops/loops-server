@@ -43,7 +43,7 @@
         "fs-extra": "^11.4.0",
         "highlight.js": "^11.11.1",
         "laravel-vite-plugin": "^2.1",
-        "markdown-it": ">=14.3.0",
+        "markdown-it": ">=15.0.0",
         "md-editor-v3": "^6.5.5",
         "mediabunny": "^1.51.0",
         "pinia": "^4.0.2",
