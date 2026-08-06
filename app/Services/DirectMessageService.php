@@ -453,6 +453,7 @@ class DirectMessageService
                 'profile_id' => $sender->id,
                 'type' => ! empty($payload['media']) ? Message::TYPE_MEDIA : Message::TYPE_TEXT,
                 'body' => $payload['body'] ?? null,
+                'in_reply_to_id' => $payload['in_reply_to_id'] ?? null,
             ]);
 
             $message->forceFill([
