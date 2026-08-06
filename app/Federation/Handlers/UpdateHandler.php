@@ -277,7 +277,7 @@ class UpdateHandler extends BaseHandler
                 return $commentReplyMatch;
             }
 
-            $statusMatch = Video::where('uri', $url)->first();
+            $statusMatch = Video::where('ap_id', $url)->orWhere('uri', $url)->first();
             if ($statusMatch) {
                 return $statusMatch;
             }
