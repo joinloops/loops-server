@@ -527,7 +527,7 @@ class UndoHandler extends BaseHandler
                 return $commentReply;
             }
 
-            $video = Video::whereUri($url)->first();
+            $video = Video::where('ap_id', $url)->orWhere('uri', $url)->first();
             if ($video) {
                 return $video;
             }
