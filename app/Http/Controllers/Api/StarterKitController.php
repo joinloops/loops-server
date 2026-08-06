@@ -855,7 +855,7 @@ class StarterKitController extends Controller
             if (UserFilterService::isBlocking($pid, $account->id)) {
                 continue;
             }
-            
+
             if ($account->manuallyApprovesFollowers) {
                 continue;
             }
@@ -868,7 +868,6 @@ class StarterKitController extends Controller
 
             if (Follower::whereProfileId($pid)->whereFollowingId($account->id)->exists()) {
                 $alreadyFollowingCount++;
-
                 continue;
             }
 
