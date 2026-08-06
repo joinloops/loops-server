@@ -2304,6 +2304,10 @@ class AdminController extends Controller
         app(AdminDashboardService::class)->getReportsCount(true);
         app(PrivateMediaTokenService::class)->revokeFor($changeset);
 
+        if ($changeset->fresh()->allFieldsReviewed()) {
+            app(PrivateMediaTokenService::class)->revokeFor($changeset);
+        }
+
         return response()->json([
             'field' => $field,
             'status' => 'approved',
