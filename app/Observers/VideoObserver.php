@@ -26,6 +26,11 @@ class VideoObserver
     {
         $this->updateProfileVideoCount($video->profile_id);
         AtomFeedService::invalidate($video->profile_id);
+
+        // Clear video media cache when status changes
+        if ($video->isDirty('status')) {
+            VideoService::deleteMediaData($video->id);
+        }
     }
 
     /**
