@@ -222,6 +222,7 @@ class VideoOptimizeJob implements ShouldQueue
                 $video->processing_failed_at = now();
                 $video->save();
 
+                $this->fail($e);
                 return;
             }
 
