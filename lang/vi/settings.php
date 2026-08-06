@@ -44,6 +44,8 @@ return [
     'email' => 'Email',
     'emailChangePending' => 'Email change pending',
     'emailSettings' => 'Email settings',
+    'enableAtomFeed' => 'Enable Atom Feed',
+    'enableAtomFeedHelpText' => 'Enable a public Atom feed of your 20 most recent public videos. Anyone with the link can subscribe using a feed reader. You can disable this at any time.',
     'enableFederation' => 'Enable Federation',
     'enableTwoFactor' => 'Enable Two-Factor Authentication',
     'enableTwoFactorMessage' => 'Are you sure you want to enable two-factor authentication?',
@@ -84,6 +86,7 @@ return [
     'setup2FAStep1Message' => 'Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)',
     'setup2FAStep2' => 'Step 2: Enter Verification Code',
     'setup2FAStep2Message' => 'Enter the 6-digit code from your authenticator app',
+    'sharing' => 'Sharing',
     'status' => 'Status',
     'successExclamation' => 'Success!',
     'successPasswordChangedMessage' => 'Your password was successfully updated!',
@@ -105,4 +108,5 @@ return [
     'yourDataYourControl' => 'Your data, your control',
     'yourDataYourControlMessage' => 'Download or review your account data. All exports are provided in JSON format for easy portability',
     'yourEmailIsUsedForRecoveryMessage' => 'Your email is used for account recovery, notifications, and security alerts. We\'ll verify any changes to ensure account security.',
+    'yourFeedUrl' => 'Your Feed URL',
 ];
