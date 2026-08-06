@@ -273,6 +273,7 @@ class StarterKitPendingChangeService
                 'changeset' => $changes,
                 'original' => $original,
                 'status' => 'pending',
+                'bundled_with_kit_review' => false,
             ]);
 
             return;
