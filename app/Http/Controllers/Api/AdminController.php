@@ -1869,7 +1869,7 @@ class AdminController extends Controller
         ]);
 
         $domain = $request->input('domain');
-        $domain = str_replace('https://', '', $domain);
+        $domain = str_replace(['https://', 'http://'], '', $domain);
         if (Instance::whereDomain($domain)->exists()) {
             return response()->json(['message' => 'Domain already exists'], 400);
         }
