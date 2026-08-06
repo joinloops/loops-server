@@ -19,6 +19,8 @@ class DmGroupController extends Controller
 
     public function store(Request $request)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+
         $maxRecipients = $this->maxParticipants() - 1;
 
         $data = $request->validate([
@@ -46,6 +48,8 @@ class DmGroupController extends Controller
 
     public function addParticipants(Request $request, string $conversationId)
     {
+        abort_unless($request->user()->can_dm == true, 403, 'You do not have permission for this action');
+        
         $maxRecipients = $this->maxParticipants() - 1;
 
         $data = $request->validate([
