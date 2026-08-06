@@ -89,6 +89,7 @@ class AcceptHandler
             );
 
             FollowerService::refreshAndSync($actor->id, $target->id);
+            ShareSheetService::forget($target->id);
         });
     }
 }
