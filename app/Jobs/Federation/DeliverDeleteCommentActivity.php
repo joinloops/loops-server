@@ -85,7 +85,7 @@ class DeliverDeleteCommentActivity implements ShouldBeUnique, ShouldQueue
         $actor = $this->profile;
         $inboxUrl = $this->inboxUrl;
 
-        $activity = DeleteActivityBuilder::buildForComment($actor, $this->commentObjectUrl, $this->visibility);
+        $activity = DeleteActivityBuilder::buildForComment($actor, $this->commentObjectUrl, $this->visibility ?? 1);
 
         $parsedUrl = $this->parsedUrl;
 
