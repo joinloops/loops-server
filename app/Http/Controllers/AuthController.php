@@ -89,13 +89,14 @@ class AuthController extends Controller
         $uris = collect($data['redirect_uris'])
             ->map('urldecode')
             ->filter()
-            ->join(',');
+            ->values()
+            ->all();
 
         $client = Passport::client()->forceFill([
             'name' => e($request->client_name),
             'secret' => Str::random(40),
             'grant_types' => ['authorization_code', 'refresh_token'],
-            'redirect_uris' => [$uris],
+            'redirect_uris' => $uris,
             'revoked' => false,
         ]);
 
