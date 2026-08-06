@@ -356,8 +356,8 @@ Route::prefix('api')->group(function () {
     Route::post('/v1/comments/hide/{vid}/{id}', [VideoController::class, 'hideComment'])->middleware('auth:web,api');
     Route::post('/v1/comments/hide/{vid}/{pid}/{id}', [VideoController::class, 'hideCommentReply'])->middleware('auth:web,api');
     Route::post('/v1/comments/unhide/{vid}/{id}', [VideoController::class, 'unhideComment'])->middleware('auth:web,api');
-    Route::get('/v1/comments/history/{vid}/{cid}', [VideoController::class, 'showCommentsHistory']);
-    Route::get('/v1/comments/history/{vid}/{cid}/{id}', [VideoController::class, 'showCommentReplyHistory']);
+    Route::get('/v1/comments/history/{vid}/{cid}', [VideoController::class, 'showCommentsHistory'])->middleware('auth:web,api');
+    Route::get('/v1/comments/history/{vid}/{cid}/{id}', [VideoController::class, 'showCommentReplyHistory'])->middleware('auth:web,api');
     Route::post('/v1/video/comments/reply/edit/{id}', [VideoController::class, 'storeCommentReplyUpdate'])->middleware('auth:web,api');
     Route::post('/v1/video/comments/edit/{id}', [VideoController::class, 'storeCommentUpdate'])->middleware('auth:web,api');
     Route::post('/v1/video/comments/{id}', [VideoController::class, 'storeComment'])->middleware('auth:web,api');
