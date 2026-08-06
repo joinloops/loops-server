@@ -429,9 +429,9 @@ Route::prefix('api')->group(function () {
         Route::post('/messages/media', [DmMessageController::class, 'storeMedia'])->middleware(['auth:web,api']);
         Route::delete('/messages/{id}', [DmMessageController::class, 'destroy'])->middleware(['auth:web,api']);
 
-        Route::post('/groups', [DmGroupController::class, 'store']);
-        Route::post('/conversations/{id}/participants', [DmGroupController::class, 'addParticipants']);
-        Route::post('/conversations/{id}/leave', [DmGroupController::class, 'leave']);
+        Route::post('/groups', [DmGroupController::class, 'store'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/participants', [DmGroupController::class, 'addParticipants'])->middleware(['auth:web,api']);
+        Route::post('/conversations/{id}/leave', [DmGroupController::class, 'leave'])->middleware(['auth:web,api']);
     });
 
     // Admin
