@@ -81,6 +81,6 @@
         "unplugin-vue-components": "^32.1.0",
         "vue-eslint-parser": "^10.4.1",
         "vue-tsc": "^3.3.9",
-        "ws": ">=8.20.1"
+        "ws": ">=8.21.3"
     }
 }
