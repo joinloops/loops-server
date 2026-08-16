@@ -589,7 +589,7 @@ class StarterKitService
 
                 $publicPath = app(StarterKitPendingChangeService::class)->moveToPermanent($data['value'], $field, $starterKit->id);
                 $publicUrl = Storage::disk('s3')->url($publicPath);
-                $starterKit->$field = $data['value'];
+                $starterKit->$field = $publicPath;
                 $starterKit->$urlField = $publicUrl;
             }
 
