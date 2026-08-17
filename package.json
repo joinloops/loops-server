@@ -32,7 +32,7 @@
         "@unhead/vue": "^3.3.1",
         "@vitejs/plugin-vue": "^6.0.8",
         "@vueuse/core": "^14.4.0",
-        "@xmldom/xmldom": ">=0.9.10",
+        "@xmldom/xmldom": ">=0.9.11",
         "autoprefixer": "^10.5.4",
         "axios": "1.19.0",
         "boxicons": "^2.1.4",
