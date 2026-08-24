@@ -83,7 +83,7 @@
         "unplugin-auto-import": "^21.1.0",
         "unplugin-vue-components": "^32.1.0",
         "vue-eslint-parser": "^10.4.1",
-        "vue-tsc": "^3.3.9",
+        "vue-tsc": "^3.3.11",
         "ws": ">=8.21.3"
     }
 }
