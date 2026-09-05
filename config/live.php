@@ -6,6 +6,7 @@ return [
     'provider' => env('LIVE_PROVIDER', 'mediamtx'),
 
     'rtmp' => [
+        'scheme' => env('LIVE_RTMP_SCHEME', 'rtmp'),
         'host' => env('LIVE_RTMP_HOST', 'live.example.org'),
         'port' => env('LIVE_RTMP_PORT', 1935),
         'app' => env('LIVE_RTMP_APP', 'live'),

@@ -12,14 +12,15 @@ class MediaMtxProvider implements LiveProvider
 {
     public function ingestFor(LiveChannel $channel): array
     {
+        $scheme = config('live.rtmp.scheme', 'rtmp');
         $host = config('live.rtmp.host');
         $port = config('live.rtmp.port');
         $app = trim((string) config('live.rtmp.app'), '/');
         $user = config('live.rtmp.user');
 
         $base = $app === ''
-            ? sprintf('rtmp://%s:%s/', $host, $port)
-            : sprintf('rtmp://%s:%s/%s/', $host, $port, $app);
+            ? sprintf('%s://%s:%s', $scheme, $host, $port)
+            : sprintf('%s://%s:%s/%s', $scheme, $host, $port, $app);
 
         $key = sprintf(
             '%s?user=%s&pass=%s',
