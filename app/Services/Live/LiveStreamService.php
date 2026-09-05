@@ -102,7 +102,7 @@ class LiveStreamService
             return false;
         }
 
-        if ($minFollowers > 0 && (int) $profile->followers_count < $minFollowers) {
+        if ($minFollowers > 0 && (int) $profile->followers < $minFollowers) {
             return false;
         }
 
