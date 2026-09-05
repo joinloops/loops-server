@@ -38,6 +38,7 @@ class LiveChannelController extends Controller
                 'can_go_live' => $this->streams->canGoLive($channel),
             ],
             'ingest' => $this->streams->ingestFor($channel),
+            'realtime' => $this->streams->realtimeConfig(),
             'playback_url' => $this->streams->playbackUrl($channel),
             'current_stream' => $current ? [
                 'id' => (string) $current->id,

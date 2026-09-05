@@ -135,6 +135,7 @@ class LiveChatController extends Controller
             'chat_enabled' => (bool) $stream->channel->chat_enabled,
             'chat_mode' => $stream->channel->chat_mode,
             'playback_url' => $this->streams->playbackUrl($stream->channel),
+            'realtime' => $this->streams->realtimeConfig(),
             'host' => $account ? [
                 'id' => (string) $stream->profile_id,
                 'username' => $account['username'] ?? 'username',

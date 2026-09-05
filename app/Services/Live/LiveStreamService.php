@@ -91,7 +91,7 @@ class LiveStreamService
             return false;
         }
 
-        if ($profile->status !== 1) {
+        if ($profile->status != 1) {
             return false;
         }
 
@@ -223,6 +223,16 @@ class LiveStreamService
         }
 
         return $channel->refresh();
+    }
+
+    public function realtimeConfig(): array
+    {
+        return [
+            'ws_host' => config('reverb.apps.apps.0.options.host'),
+            'ws_port' => (int) config('reverb.apps.apps.0.options.port', 443),
+            'scheme' => config('reverb.apps.apps.0.options.scheme', 'https'),
+            'app_key' => config('reverb.apps.apps.0.key'),
+        ];
     }
 
     public function forgetChannel(LiveChannel $channel): void
