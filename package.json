@@ -34,7 +34,7 @@
         "@vueuse/core": "^14.4.0",
         "@xmldom/xmldom": ">=0.9.12",
         "autoprefixer": "^10.5.4",
-        "axios": "1.19.0",
+        "axios": "1.20.0",
         "boxicons": "^2.1.4",
         "date-fns": "^4.4.0",
         "echarts": "^6.1.0",
