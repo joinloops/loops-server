@@ -45,6 +45,10 @@ use App\Http\Controllers\HealthController;
 use App\Http\Controllers\InboxController;
 use App\Http\Controllers\InstanceActorController;
 use App\Http\Controllers\IntentsController;
+use App\Http\Controllers\Live\LiveChannelController;
+use App\Http\Controllers\Live\LiveChatController;
+use App\Http\Controllers\Live\LiveDiscoveryController;
+use App\Http\Controllers\Live\MediaMtxWebhookController;
 use App\Http\Controllers\NodeInfoController;
 use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\PageController;
@@ -58,6 +62,7 @@ use App\Http\Middleware\AdminOnlyAccess;
 use App\Http\Middleware\AuthorizedFetch;
 use App\Http\Middleware\FederationEnabled;
 use App\Http\Middleware\OptionalAuth;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 
 // Health check endpoints
@@ -138,6 +143,38 @@ Route::middleware(['auth:web,api'])
         Route::post('/logout-all', [AccountSwitcherController::class, 'logoutAll'])
             ->name('logout-all');
     });
+
+Route::prefix('api/live/mediamtx')
+    ->middleware('throttle:600,1')
+    ->group(function () {
+        Route::post('auth', [MediaMtxWebhookController::class, 'auth']);
+        Route::post('ready', [MediaMtxWebhookController::class, 'ready']);
+        Route::post('notready', [MediaMtxWebhookController::class, 'notReady']);
+    });
+
+Broadcast::routes(['middleware' => ['auth:web,api'], 'prefix' => 'api']);
+
+Route::prefix('api/v1/live')->middleware('auth:web,api')->group(function () {
+    Route::get('channel', [LiveChannelController::class, 'show']);
+    Route::post('channel', [LiveChannelController::class, 'update']);
+    Route::post('channel/rotate-key', [LiveChannelController::class, 'rotateKey']);
+    Route::post('channel/end', [LiveChannelController::class, 'end']);
+});
+
+Route::prefix('api/v1/live')->middleware('auth:web,api')->group(function () {
+    Route::get('active', [LiveDiscoveryController::class, 'active'])
+        ->middleware('throttle:120,1');
+    Route::get('{publicId}', [LiveChatController::class, 'show']);
+    Route::post('{publicId}/heartbeat', [LiveChatController::class, 'heartbeat'])
+        ->middleware('throttle:120,1');
+
+    Route::middleware('auth:web,api')->middleware('auth:web,api')->group(function () {
+        Route::post('{publicId}/chat', [LiveChatController::class, 'store'])
+            ->middleware('throttle:60,1');
+        Route::delete('{publicId}/chat/{seq}', [LiveChatController::class, 'destroy']);
+        Route::post('{publicId}/ban', [LiveChatController::class, 'ban']);
+    });
+});
 
 Route::prefix('api')->group(function () {
     Route::get('/v1/web/vmh', [WebPublicController::class, 'viteManifestHash']);

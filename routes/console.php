@@ -19,6 +19,11 @@ Schedule::command('admin:check-activity')->everySixHours(15)->runInBackground()-
 Schedule::command('app:purge-old-activities')->daily()->at('16:20')->runInBackground()->onOneServer();
 Schedule::command('loops:publish-scheduled')->everyTenMinutes()->withoutOverlapping(5)->runInBackground()->onOneServer();
 
+if (config('live.enabled')) {
+    Schedule::command('live:viewer-counts')->everyMinute()->withoutOverlapping();
+    Schedule::command('live:reconcile')->everyMinute()->withoutOverlapping();
+}
+
 if (config('denylist.enabled')) {
     Schedule::command('instances:sync-denylist')->dailyAt('04:15')->withoutOverlapping()->onOneServer()->runInBackground();
 }

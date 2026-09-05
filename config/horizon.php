@@ -182,7 +182,7 @@ return [
     'defaults' => [
         'supervisor-1' => [
             'connection' => 'redis',
-            'queue' => ['default', 'activitypub-out', 'activitypub-in', 'actor-update', 'activitypub-delete-fanout', 'remote-video', 'notify', 'push', 'klipy'],
+            'queue' => ['default', 'activitypub-out', 'activitypub-in', 'actor-update', 'activitypub-delete-fanout', 'remote-video', 'notify', 'push', 'klipy', 'livechat'],
             'balance' => 'auto',
             'autoScalingStrategy' => 'time',
             'maxProcesses' => 1,
