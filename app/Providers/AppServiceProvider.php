@@ -79,8 +79,7 @@ class AppServiceProvider extends ServiceProvider
             if ($user) {
                 return $limits(
                     perMinute: config('loops.api.rate_limits.users.per_minute'), 
-                    perHour: config('loops.api.rate_limits.users.per_hour'),
-                    perDay: config('loops.api.rate_limits.users.per_day'),
+                    perHour: config('loops.api.rate_limits.users.per_hour')
                 );
             }
 
