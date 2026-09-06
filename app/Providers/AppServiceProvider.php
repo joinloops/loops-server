@@ -91,6 +91,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         RateLimiter::for('profile-username', function (Request $request) {
+            if (! config('loops.api.rate_limits.enabled')) {
+                return;
+            }
+
             $user = $request->user();
             $actor = $user
                 ? "u:{$user->id}"
