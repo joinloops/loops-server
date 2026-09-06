@@ -77,10 +77,17 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if ($user) {
-                return $limits(perMinute: config('loops.api.rate_limits.users.per_minute'), perHour: config('loops.api.rate_limits.users.per_hour'));
+                return $limits(
+                    perMinute: config('loops.api.rate_limits.users.per_minute'), 
+                    perHour: config('loops.api.rate_limits.users.per_hour'),
+                    perDay: config('loops.api.rate_limits.users.per_day'),
+                );
             }
 
-            return $limits(perMinute: config('loops.api.rate_limits.guests.per_minute'), perHour: config('loops.api.rate_limits.guests.per_hour'));
+            return $limits(
+                perMinute: config('loops.api.rate_limits.guests.per_minute'), 
+                perHour: config('loops.api.rate_limits.guests.per_hour')
+            );
         });
 
         RateLimiter::for('profile-username', function (Request $request) {
