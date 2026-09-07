@@ -49,7 +49,7 @@
         "mediabunny": "^1.55.5",
         "pica": "^10.0.3",
         "pinia": "^4.0.3",
-        "postcss": "^8.5.26",
+        "postcss": "^8.5.28",
         "sass": "^1.103.1",
         "tailwindcss": "^4.3.3",
         "video.js": "^8.24.0",
