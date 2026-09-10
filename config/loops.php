@@ -26,6 +26,7 @@ return [
             'users' => [
                 'per_minute' => (int) env('LOOPS_API_RATE_LIMITS_USER_PER_MIN', 120),
                 'per_hour' => (int) env('LOOPS_API_RATE_LIMITS_USER_PER_HOUR', 3000),
+                'per_day'    => (int) env('LOOPS_API_RATE_LIMITS_USER_PER_DAY', 50000),
             ],
         ],
     ],
