@@ -188,8 +188,10 @@ RUN install-php-extensions \
     zip
 
 # Copy the source-built FFmpeg binaries and shared libraries into the final image.
-COPY --from=ffmpeg /usr/local/ffmpeg/bin/ffmpeg /usr/local/bin/ffmpeg
-COPY --from=ffmpeg /usr/local/ffmpeg/bin/ffprobe /usr/local/bin/ffprobe
+# Binaries go to /usr/bin to match the FFMPEG_BINARIES/FFPROBE_BINARIES defaults
+# in .env.example (/usr/bin/ffmpeg, /usr/bin/ffprobe).
+COPY --from=ffmpeg /usr/local/ffmpeg/bin/ffmpeg /usr/bin/ffmpeg
+COPY --from=ffmpeg /usr/local/ffmpeg/bin/ffprobe /usr/bin/ffprobe
 COPY --from=ffmpeg /usr/local/ffmpeg/lib /usr/local/lib
 # Copy the source-built x264 and x265 shared libraries that FFmpeg links against.
 COPY --from=ffmpeg /usr/local/lib/libx264.so* /usr/local/lib/
@@ -197,8 +199,8 @@ COPY --from=ffmpeg /usr/local/lib/libx265.so* /usr/local/lib/
 
 # Refresh the dynamic linker cache and smoke-test the media processors
 RUN ldconfig \
-    && ffmpeg -version \
-    && ffprobe -version
+    && /usr/bin/ffmpeg -version \
+    && /usr/bin/ffprobe -version
 
 # Copy application files
 COPY --chown=www-data:www-data . /var/www/html
