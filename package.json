@@ -64,7 +64,7 @@
         "@eslint/css": "^2.0.0",
         "@eslint/js": "^10.0.1",
         "@intlify/unplugin-vue-i18n": "^11.2.5",
-        "@laravel/echo-vue": "^2.4.0",
+        "@laravel/echo-vue": "^2.5.0",
         "@types/fs-extra": "^11.0.4",
         "@types/video.js": "^7.3.58",
         "@vue/eslint-config-prettier": "^10.2.0",
