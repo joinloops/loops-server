@@ -4,6 +4,7 @@ namespace App\Federation\Handlers;
 
 use App\Models\Comment;
 use App\Models\CommentReply;
+use App\Models\InstanceActor;
 use App\Models\Profile;
 use App\Models\StarterKitAccount;
 use App\Models\Video;
@@ -15,7 +16,7 @@ use Illuminate\Support\Facades\Storage;
 
 class DeleteHandler extends BaseHandler
 {
-    public function handle(array $activity, ?Profile $actor = null, ?Profile $target = null)
+    public function handle(array $activity, Profile|InstanceActor|null $actor = null, ?Profile $target = null)
     {
         $objectUrl = is_array($activity['object']) ? $activity['object']['id'] : $activity['object'];
 
@@ -37,7 +38,7 @@ class DeleteHandler extends BaseHandler
 
             return;
 
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             DB::rollBack();
 
             if (config('logging.dev_log')) {
@@ -52,7 +53,7 @@ class DeleteHandler extends BaseHandler
         }
     }
 
-    private function handleProfileDelete(array $activity, ?Profile $actor, $objectUrl)
+    private function handleProfileDelete(array $activity, Profile|InstanceActor|null $actor, $objectUrl)
     {
         $account = Profile::whereUri($objectUrl)->whereLocal(false)->first();
 
@@ -80,7 +81,7 @@ class DeleteHandler extends BaseHandler
         return true;
     }
 
-    private function handleTombstoneDelete(array $activity, ?Profile $actor, $objectUrl)
+    private function handleTombstoneDelete(array $activity, Profile|InstanceActor|null $actor, $objectUrl)
     {
         $account = Profile::whereUri($objectUrl)->first();
         if ($account) {
@@ -257,11 +258,11 @@ class DeleteHandler extends BaseHandler
         return true;
     }
 
-    private function handleGenericDelete(array $activity, Profile $actor, $objectUrl)
+    private function handleGenericDelete(array $activity, Profile|InstanceActor|null $actor, $objectUrl)
     {
         if (config('logging.dev_log')) {
             Log::error('Failed to handle Delete activity', [
-                'actor' => $actor->username,
+                'actor' => $actor?->uri ?? 'unknown',
                 'object' => $objectUrl,
             ]);
         }
