@@ -58,7 +58,7 @@ jobs:
     timeout-minutes: 45
     steps:
       - name: Checkout tag
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           ref: ${{ github.ref }}
 
