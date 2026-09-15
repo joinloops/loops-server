@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Http\Resources\VideoResource;
 use App\Models\FeedFeedback;
-use App\Models\FeedImpression;
 use App\Models\Profile;
 use App\Models\UserInterest;
 use App\Models\Video;
@@ -465,19 +464,33 @@ class ForYouFeedService
         int $watchDuration = 0,
         bool $completed = false
     ): void {
-        app(ImpressionBloomFilterService::class)->add($profileId, $videoId);
+        $watchDuration = max(0, min($watchDuration, 65535));
 
-        FeedImpression::updateOrCreate(
+        DB::statement(
+            '
+                INSERT INTO feed_impressions (
+                    profile_id,
+                    video_id,
+                    viewed_at,
+                    watch_duration,
+                    completed
+                )
+                VALUES (?, ?, NOW(), ?, ?)
+                AS new
+                ON DUPLICATE KEY UPDATE
+                    viewed_at = new.viewed_at,
+                    watch_duration = GREATEST(feed_impressions.watch_duration, new.watch_duration),
+                    completed = GREATEST(feed_impressions.completed, new.completed)
+                ',
             [
-                'profile_id' => $profileId,
-                'video_id' => $videoId,
-            ],
-            [
-                'viewed_at' => now(),
-                'watch_duration' => $watchDuration,
-                'completed' => $completed,
+                $profileId,
+                $videoId,
+                $watchDuration,
+                $completed ? 1 : 0,
             ]
         );
+
+        app(ImpressionBloomFilterService::class)->add($profileId, $videoId);
     }
 
     public function recordFeedback(
