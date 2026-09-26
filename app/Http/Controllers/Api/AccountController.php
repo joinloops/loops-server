@@ -463,7 +463,8 @@ class AccountController extends Controller
             'pending_follow_request' => false,
             'followed_by' => (bool) FollowerService::follows($id, $pid),
             'following' => (bool) FollowerService::follows($pid, $id),
-            'blocking' => (bool) UserFilterService::isBlocking($pid, $id),
+            'blocking' => in_array($id, UserFilterService::getAll($pid)), // I blocked them
+            'blocked_by' => in_array($pid, UserFilterService::getAll($id)), // They blocked me
         ];
 
         if (! $account['local']) {
