@@ -11,6 +11,7 @@ return [
     'developers' => 'Kehittäjät',
     'federation' => 'Federointi',
     'forYou' => 'Sinulle',
+    'getTheApp' => 'Get the app',
     'help' => 'Ohje',
     'home' => 'Etusivu',
     'join' => 'Liity',

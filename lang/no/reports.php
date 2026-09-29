@@ -10,6 +10,7 @@ return [
         'title' => 'Report Submitted!',
     ],
     'types' => [
+        1009 => 'Untagged AI content',
         1010 => 'Inappropriate and irrelevant search',
         1011 => 'Violence, abuse, and criminal exploitation',
         1012 => 'Hate and harassment',
