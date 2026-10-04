@@ -565,6 +565,7 @@ Route::prefix('api')->group(function () {
         Route::get('/conversations/{id}', [AdminController::class, 'conversationShow'])->middleware('auth:web,api');
         Route::get('/profiles/{id}', [AdminController::class, 'profileShow'])->middleware('auth:web,api');
         Route::get('/profiles/{id}/videos', [AdminController::class, 'profileVideos'])->middleware('auth:web,api');
+        Route::get('/profiles/{id}/conversations', [AdminController::class, 'profileConversations'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/mod-permissions', [AdminController::class, 'profileModPermissionUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/permissions', [AdminController::class, 'profilePermissionUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/admin_note', [AdminController::class, 'profileAdminNoteUpdate'])->middleware('auth:web,api');

@@ -36,6 +36,7 @@ class AdminConversationResource extends JsonResource
             'created_by_id' => (string) $this->created_by_profile_id,
             'participants' => $participants,
             'messages_count' => (int) ($this->messages_count ?? 0),
+            'profile_messages_count' => (int) ($this->resource->getAttributes()['profile_messages_count'] ?? 0),
             'created_at' => $this->created_at?->toIso8601String(),
             'updated_at' => $this->last_message_at?->toIso8601String(),
         ];

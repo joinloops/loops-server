@@ -772,6 +772,7 @@
                 v-if="report.content_type === 'dm' && report.content_preview?.id"
                 :conversation="report.content_preview"
                 :reporter-id="report.reporter?.id"
+                :report-id="report.id"
             />
 
             <div

@@ -1428,6 +1428,12 @@ const statCards = computed(() => {
             value: formatNumber(p.comment_replies_count || 0)
         },
         {
+            icon: EnvelopeIcon,
+            label: 'DMs Sent',
+            value: formatNumber(p.dms_sent_count || 0),
+            to: `/admin/profiles/${p.id}/conversations`
+        },
+        {
             icon: FlagIcon,
             label: 'Reports Created',
             value: formatNumber(p.reports_created_count || 0),

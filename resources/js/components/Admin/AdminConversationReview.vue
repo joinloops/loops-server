@@ -301,17 +301,20 @@
 </template>
 
 <script setup>
-import { nextTick, ref, watch } from 'vue'
+import { computed, nextTick, onMounted, ref, watch } from 'vue'
 import { ArrowPathIcon, ChatBubbleLeftRightIcon } from '@heroicons/vue/24/outline'
-import { reportsApi } from '@/services/adminApi'
+import { conversationsApi } from '@/services/adminApi'
 import { useUtils } from '@/composables/useUtils'
 
 const props = defineProps({
     conversation: { type: Object, required: true },
-    reporterId: { type: [String, Number], default: null }
+    reporterId: { type: [String, Number], default: null },
+    reportId: { type: [String, Number], default: null }
 })
 
 const { formatCount, formatDateTime } = useUtils()
+
+const audited = computed(() => props.reportId !== null)
 
 const details = ref(props.conversation)
 const revealed = ref(false)
@@ -335,7 +338,10 @@ const stateLabel = (state) => {
 }
 
 const fetchMessages = async (cursor = null) => {
-    const response = await reportsApi.getConversationMessages(details.value.id, cursor)
+    const response = await conversationsApi.getConversationMessages(details.value.id, {
+        cursor,
+        reportId: props.reportId
+    })
     nextCursor.value = response.meta?.next_cursor || null
     return [...response.data].reverse()
 }
@@ -346,7 +352,7 @@ const load = async () => {
 
     try {
         const [conversation, page] = await Promise.all([
-            reportsApi.getConversation(details.value.id),
+            conversationsApi.getConversation(details.value.id),
             fetchMessages()
         ])
         details.value = conversation.data
@@ -402,6 +408,15 @@ watch(
         error.value = ''
         messages.value = []
         nextCursor.value = null
+        if (!audited.value) {
+            reveal()
+        }
     }
 )
+
+onMounted(() => {
+    if (!audited.value) {
+        reveal()
+    }
+})
 </script>

@@ -490,6 +490,23 @@ class AdminController extends Controller
         return AdminVideoResource::collection($videos);
     }
 
+    public function profileConversations(Request $request, $id)
+    {
+        $profile = Profile::findOrFail($id);
+
+        $conversations = Conversation::whereHas('participants', fn ($query) => $query->where('profile_id', $profile->id))
+            ->with('participants.profile')
+            ->withCount([
+                'messages',
+                'messages as profile_messages_count' => fn ($query) => $query->withTrashed()->where('profile_id', $profile->id),
+            ])
+            ->orderByDesc('id')
+            ->cursorPaginate(10)
+            ->withQueryString();
+
+        return AdminConversationResource::collection($conversations);
+    }
+
     public function profileShow(Request $request, $id)
     {
         $profile = Profile::findOrFail($id);
@@ -522,6 +539,7 @@ class AdminController extends Controller
         $res['starter_kits_included_in_count'] = StarterKitAccount::whereProfileId($profile->id)->approved()->count();
         $res['comments_count'] = Comment::whereProfileId($profile->id)->count();
         $res['comment_replies_count'] = CommentReply::whereProfileId($profile->id)->count();
+        $res['dms_sent_count'] = Message::withTrashed()->where('profile_id', $profile->id)->count();
         $res['reports_created_count'] = Report::whereReporterProfileId($profile->id)->count();
         $res['reported_count'] = Report::totalReportsAgainstProfile($profile->id);
         $res['likes_count'] = AccountService::getAccountLikesCount($profile->id);
@@ -1232,7 +1250,7 @@ class AdminController extends Controller
 
     public function conversationShow(Request $request, $id)
     {
-        $conversation = $this->findReportedConversation($id);
+        $conversation = Conversation::findOrFail($id);
         $conversation->load('participants.profile')->loadCount('messages');
 
         return new AdminConversationResource($conversation);
@@ -1242,14 +1260,17 @@ class AdminController extends Controller
     {
         $request->validate([
             'limit' => 'sometimes|integer|min:1|max:50',
+            'report_id' => 'sometimes|nullable|integer',
         ]);
 
-        $conversation = $this->findReportedConversation($id);
+        $conversation = Conversation::findOrFail($id);
 
-        if (! $request->filled('cursor')) {
+        if ($request->filled('report_id') && ! $request->filled('cursor')) {
+            $report = Report::where('reported_conversation_id', $conversation->id)->findOrFail($request->integer('report_id'));
+
             app(AdminAuditLogService::class)->logReportConversationView($request->user(), $conversation, [
                 'conversation_id' => (string) $conversation->id,
-                'report_ids' => Report::where('reported_conversation_id', $conversation->id)->pluck('id')->all(),
+                'report_id' => $report->id,
             ]);
         }
 
@@ -1261,14 +1282,6 @@ class AdminController extends Controller
             ->withQueryString();
 
         return AdminConversationMessageResource::collection($messages);
-    }
-
-    protected function findReportedConversation($id): Conversation
-    {
-        abort_unless(ctype_digit((string) $id), 404);
-        abort_unless(Report::where('reported_conversation_id', $id)->exists(), 404);
-
-        return Conversation::findOrFail($id);
     }
 
     public function comments(Request $request)

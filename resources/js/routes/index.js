@@ -592,6 +592,20 @@ const router = createRouter({
                     meta: { requiresAdmin: true }
                 },
                 {
+                    path: 'profiles/:id/conversations',
+                    name: 'ProfileConversations',
+                    component: () => import('~/pages/admin/ProfileConversations.vue'),
+                    params: true,
+                    meta: { requiresAdmin: true }
+                },
+                {
+                    path: 'conversations/:id',
+                    name: 'ConversationShow',
+                    component: () => import('~/pages/admin/ConversationShow.vue'),
+                    params: true,
+                    meta: { requiresAdmin: true }
+                },
+                {
                     path: 'videos',
                     name: 'Videos',
                     component: () => import('~/pages/admin/Videos.vue'),

@@ -298,15 +298,18 @@ export const reportsApi = {
 
     async dismissReport(id) {
         return await apiClient.post(`/api/v1/admin/reports/${id}/dismiss`)
-    },
+    }
+}
 
+export const conversationsApi = {
     async getConversation(id) {
         return await apiClient.get(`/api/v1/admin/conversations/${id}`)
     },
 
-    async getConversationMessages(id, cursor = null) {
+    async getConversationMessages(id, { cursor = null, reportId = null } = {}) {
         return await apiClient.get(`/api/v1/admin/conversations/${id}/messages`, {
-            cursor: cursor
+            cursor: cursor,
+            report_id: reportId
         })
     }
 }
@@ -409,6 +412,12 @@ export const profilesApi = {
 
     async getProfileVideos(id, params = {}) {
         return await apiClient.get(`/api/v1/admin/profiles/${id}/videos`, params)
+    },
+
+    async getProfileConversations(id, cursor = null) {
+        return await apiClient.get(`/api/v1/admin/profiles/${id}/conversations`, {
+            cursor: cursor
+        })
     },
 
     async deleteProfile(id) {
