@@ -10,6 +10,8 @@ use App\Http\Requests\ProfileModPermissionRequest;
 use App\Http\Requests\StoreAdminInviteRequest;
 use App\Http\Resources\AdminAuditLogResource;
 use App\Http\Resources\AdminBlockedTermResource;
+use App\Http\Resources\AdminConversationMessageResource;
+use App\Http\Resources\AdminConversationResource;
 use App\Http\Resources\AdminHashtagResource;
 use App\Http\Resources\AdminInstanceResource;
 use App\Http\Resources\AdminInviteResource;
@@ -35,9 +37,11 @@ use App\Models\AdminInvite;
 use App\Models\BlockedTerm;
 use App\Models\Comment;
 use App\Models\CommentReply;
+use App\Models\Conversation;
 use App\Models\Follower;
 use App\Models\Hashtag;
 use App\Models\Instance;
+use App\Models\Message;
 use App\Models\Notification;
 use App\Models\Playlist;
 use App\Models\Profile;
@@ -1224,6 +1228,47 @@ class AdminController extends Controller
         app(AdminAuditLogService::class)->logReportAdminNotesUpdate($request->user(), $report, ['old' => $oldValues, 'new' => ['admin_notes' => $request->input('content')]]);
 
         return new ReportResource($report);
+    }
+
+    public function conversationShow(Request $request, $id)
+    {
+        $conversation = $this->findReportedConversation($id);
+        $conversation->load('participants.profile')->loadCount('messages');
+
+        return new AdminConversationResource($conversation);
+    }
+
+    public function conversationMessages(Request $request, $id)
+    {
+        $request->validate([
+            'limit' => 'sometimes|integer|min:1|max:50',
+        ]);
+
+        $conversation = $this->findReportedConversation($id);
+
+        if (! $request->filled('cursor')) {
+            app(AdminAuditLogService::class)->logReportConversationView($request->user(), $conversation, [
+                'conversation_id' => (string) $conversation->id,
+                'report_ids' => Report::where('reported_conversation_id', $conversation->id)->pluck('id')->all(),
+            ]);
+        }
+
+        $messages = Message::withTrashed()
+            ->with(['sender', 'video'])
+            ->where('conversation_id', $conversation->id)
+            ->orderByDesc('id')
+            ->cursorPaginate($request->integer('limit', 25))
+            ->withQueryString();
+
+        return AdminConversationMessageResource::collection($messages);
+    }
+
+    protected function findReportedConversation($id): Conversation
+    {
+        abort_unless(ctype_digit((string) $id), 404);
+        abort_unless(Report::where('reported_conversation_id', $id)->exists(), 404);
+
+        return Conversation::findOrFail($id);
     }
 
     public function comments(Request $request)

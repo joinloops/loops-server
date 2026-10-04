@@ -197,6 +197,10 @@ class Report extends Model
             return 'starter_kit';
         }
 
+        if ($this->reported_conversation_id) {
+            return 'conversation';
+        }
+
         return 'Undefined Type';
     }
 

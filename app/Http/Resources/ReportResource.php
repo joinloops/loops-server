@@ -75,7 +75,9 @@ class ReportResource extends JsonResource
             $contentPreview = $sound ? (new VideoSoundResource($sound))->toArray(request()) : [];
         } elseif ($this->reported_conversation_id) {
             $contentType = 'dm';
-            $convo = Conversation::find($this->reported_conversation_id);
+            $convo = Conversation::with('participants.profile')
+                ->withCount('messages')
+                ->find($this->reported_conversation_id);
             $contentPreview = $convo ? (new AdminConversationResource($convo))->toArray(request()) : [];
         }
 

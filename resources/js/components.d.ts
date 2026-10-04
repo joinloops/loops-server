@@ -13,6 +13,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AccountCard: typeof import('./components/AccountCard.vue')['default']
     AccountSwitcher: typeof import('./components/Auth/AccountSwitcher.vue')['default']
+    AdminConversationReview: typeof import('./components/Admin/AdminConversationReview.vue')['default']
     AdminDeleteAllVideosModal: typeof import('./components/Admin/AdminDeleteAllVideosModal.vue')['default']
     AdminModPermissionModal: typeof import('./components/Admin/AdminModPermissionModal.vue')['default']
     AdminResetPasswordModal: typeof import('./components/Admin/AdminResetPasswordModal.vue')['default']

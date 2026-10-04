@@ -298,6 +298,16 @@ export const reportsApi = {
 
     async dismissReport(id) {
         return await apiClient.post(`/api/v1/admin/reports/${id}/dismiss`)
+    },
+
+    async getConversation(id) {
+        return await apiClient.get(`/api/v1/admin/conversations/${id}`)
+    },
+
+    async getConversationMessages(id, cursor = null) {
+        return await apiClient.get(`/api/v1/admin/conversations/${id}/messages`, {
+            cursor: cursor
+        })
     }
 }
 

@@ -643,6 +643,51 @@
                             </div>
                         </div>
 
+                        <div v-else-if="report.content_type === 'dm'" class="space-y-3">
+                            <div
+                                v-if="report.content_preview?.id"
+                                class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
+                            >
+                                <h3 class="text-lg text-gray-900 dark:text-white font-bold mb-1">
+                                    {{
+                                        report.content_preview.title ||
+                                        (report.content_preview.type === 'group'
+                                            ? 'Group chat'
+                                            : 'Direct message')
+                                    }}
+                                </h3>
+                                <div
+                                    class="flex flex-wrap items-center gap-2 mt-2 text-xs text-gray-500 dark:text-gray-400"
+                                >
+                                    <span
+                                        >{{
+                                            report.content_preview.participants?.length || 0
+                                        }}
+                                        participants</span
+                                    >
+                                    <span>•</span>
+                                    <span
+                                        >{{
+                                            formatCount(report.content_preview.messages_count)
+                                        }}
+                                        messages</span
+                                    >
+                                    <template v-if="report.content_preview.updated_at">
+                                        <span>•</span>
+                                        <span
+                                            >Last message
+                                            {{
+                                                formatDate(report.content_preview.updated_at)
+                                            }}</span
+                                        >
+                                    </template>
+                                </div>
+                            </div>
+                            <p v-else class="text-sm italic text-gray-600 dark:text-gray-400">
+                                This conversation is no longer available.
+                            </p>
+                        </div>
+
                         <div
                             v-else-if="report.content_type === 'sound' && report.content_preview"
                             class="space-y-3"
@@ -723,6 +768,12 @@
                 </div>
             </div>
 
+            <AdminConversationReview
+                v-if="report.content_type === 'dm' && report.content_preview?.id"
+                :conversation="report.content_preview"
+                :reporter-id="report.reporter?.id"
+            />
+
             <div
                 class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
             >
@@ -775,6 +826,7 @@ import { useAlertModal } from '@/composables/useAlertModal.js'
 import { useUtils } from '@/composables/useUtils'
 const { formatDate, formatNumber, formatCount } = useUtils()
 import { useAdminStore } from '~/stores/admin'
+import AdminConversationReview from '@/components/Admin/AdminConversationReview.vue'
 
 const { alertModal, confirmModal } = useAlertModal()
 

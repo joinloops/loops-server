@@ -152,6 +152,11 @@ class AdminAuditLogService
         return $this->log($user, 'report:mark_ai_and_ad', $changes, $report, null, 1);
     }
 
+    public function logReportConversationView(User|int $user, $conversation, $changes)
+    {
+        return $this->log($user, 'report:view_conversation', $changes, $conversation, null, 1);
+    }
+
     public function logProfileAdminNoteUpdate(User|int $user, $report, $changes)
     {
         return $this->log($user, 'profile:update_notes', $changes, $report, null, 1);
