@@ -83,7 +83,7 @@ jobs:
       # job below, which is what carries the real tags (v1.2.3, stable, etc).
       - name: Build and push (${{ matrix.platform }})
         id: build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           context: .
           platforms: ${{ matrix.platform }}
