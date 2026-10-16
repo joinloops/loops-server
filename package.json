@@ -52,7 +52,7 @@
         "postcss": "^8.5.28",
         "sass": "^1.105.1",
         "tailwindcss": "^4.3.3",
-        "video.js": "^8.24.1",
+        "video.js": "^8.24.2",
         "vite": "^7.3.2",
         "vue": "^3.5.43",
         "vue-advanced-cropper": "^2.8.9",
