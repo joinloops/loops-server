@@ -181,4 +181,13 @@ return [
             'min_followers' => env('LOOPS_DM_FOLLOWERS', 10),
         ],
     ],
+
+    'usernames' => [
+        'changes' => [
+            'enabled' => (bool) env('LOOPS_USERNAME_CHANGES_ENABLED', true),
+            'limit' => (int) env('LOOPS_USERNAME_CHANGES_LIMIT', 3),
+            'window_days' => (int) env('LOOPS_USERNAME_CHANGES_WINDOW_DAYS', 365),
+            'cooldown_hours' => (int) env('LOOPS_USERNAME_CHANGES_COOLDOWN_HOURS', 24),
+        ],
+    ],
 ];

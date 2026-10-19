@@ -472,6 +472,11 @@ const loadProfileData = async (userId) => {
     } catch (err) {
         console.error('Error loading profile:', err)
 
+        if (err.response?.status === 404 && err.response?.data?.moved_to) {
+            router.replace(`/@${err.response.data.moved_to}`)
+            return
+        }
+
         if (err.response?.status === 404) {
             error.value = {
                 type: 'not-found',

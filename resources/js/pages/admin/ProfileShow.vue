@@ -476,6 +476,115 @@
                 </section>
             </div>
 
+            <section>
+                <PanelCard>
+                    <template #header>
+                        <PanelHeader
+                            title="Username History"
+                            :description="usernameHistoryDescription"
+                            :icon="AtSymbolIcon"
+                        />
+                    </template>
+
+                    <div class="p-4 sm:p-6">
+                        <div
+                            v-if="usernameReservation"
+                            class="mb-4 flex flex-wrap items-center gap-2 rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-900/20 dark:text-blue-200"
+                        >
+                            <LockClosedIcon class="h-4 w-4 shrink-0" />
+                            <span>
+                                <strong class="font-semibold"
+                                    >@{{ usernameReservation.username }}</strong
+                                >
+                                is reserved for this account
+                            </span>
+                            <span class="text-xs text-blue-600/80 dark:text-blue-300/80">
+                                since {{ formatDate(usernameReservation.reserved_at) }}
+                            </span>
+                        </div>
+
+                        <div
+                            v-if="isLoadingUsernameHistory"
+                            class="flex items-center justify-center py-8"
+                        >
+                            <ArrowPathIcon class="h-5 w-5 animate-spin text-gray-400" />
+                        </div>
+
+                        <TimelineEmpty
+                            v-else-if="!usernameHistory.length"
+                            title="No username history"
+                            description="Username changes for this profile will show up here."
+                        />
+
+                        <div v-else class="overflow-x-auto">
+                            <table class="w-full min-w-[560px] text-left text-sm">
+                                <thead>
+                                    <tr
+                                        class="border-b border-gray-200 text-xs font-medium uppercase tracking-wide text-gray-500 dark:border-gray-800 dark:text-gray-400"
+                                    >
+                                        <th class="py-2 pr-4 font-medium">Username</th>
+                                        <th class="py-2 pr-4 font-medium">Source</th>
+                                        <th class="py-2 pr-4 font-medium">From</th>
+                                        <th class="py-2 font-medium">Until</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                                    <tr v-for="row in usernameHistory" :key="row.id">
+                                        <td class="py-3 pr-4">
+                                            <div class="flex flex-wrap items-center gap-2">
+                                                <router-link
+                                                    :to="`/admin/profiles?q=previous:${encodeURIComponent(row.username)}`"
+                                                    class="font-mono text-gray-900 hover:underline dark:text-gray-100"
+                                                >
+                                                    @{{ row.username }}
+                                                </router-link>
+                                                <span
+                                                    v-if="!row.ended_at"
+                                                    class="rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
+                                                >
+                                                    Current
+                                                </span>
+                                                <span
+                                                    v-if="row.is_revert"
+                                                    class="rounded-full bg-gray-100 px-2 py-0.5 text-[11px] font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300"
+                                                >
+                                                    Revert
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="py-3 pr-4">
+                                            <span
+                                                :class="[
+                                                    'rounded-full px-2 py-0.5 text-xs font-medium',
+                                                    usernameSourceStyles[row.source] ||
+                                                        'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'
+                                                ]"
+                                            >
+                                                {{ usernameSourceLabels[row.source] || row.source }}
+                                            </span>
+                                        </td>
+                                        <td class="py-3 pr-4 text-gray-600 dark:text-gray-400">
+                                            {{
+                                                row.started_at
+                                                    ? formatDateTime(row.started_at)
+                                                    : 'Unknown'
+                                            }}
+                                        </td>
+                                        <td class="py-3 text-gray-600 dark:text-gray-400">
+                                            {{
+                                                row.ended_at
+                                                    ? formatDateTime(row.ended_at)
+                                                    : 'Present'
+                                            }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </PanelCard>
+            </section>
+
             <div class="grid grid-cols-1 gap-6" :class="profile.local ? '2xl:grid-cols-2' : ''">
                 <section>
                     <PanelCard>
@@ -1044,6 +1153,7 @@ import {
     ArrowLeftIcon,
     ArrowPathIcon,
     ArrowRightIcon,
+    AtSymbolIcon,
     BellAlertIcon,
     BellIcon,
     BellSlashIcon,
@@ -1096,7 +1206,7 @@ import AdminResetPasswordModal from '@/components/Admin/AdminResetPasswordModal.
 import AdminModPermissionModal from '@/components/Admin/AdminModPermissionModal.vue'
 import AdminDeleteAllVideosModal from '@/components/Admin/AdminDeleteAllVideosModal.vue'
 
-const { formatDate, formatNumber, formatTimeAgo } = useUtils()
+const { formatDate, formatDateTime, formatNumber, formatTimeAgo } = useUtils()
 const { confirmModal } = useAlertModal()
 const route = useRoute()
 const router = useRouter()
@@ -1123,6 +1233,11 @@ const auditCursor = ref(null)
 const hasMoreAudits = ref(false)
 const isLoadingAudits = ref(false)
 const isLoadingMoreAudits = ref(false)
+
+const usernameHistory = ref([])
+const usernameReservation = ref(null)
+const usernameChangesLastYear = ref(0)
+const isLoadingUsernameHistory = ref(false)
 
 const userAuditLogs = ref([])
 const userAuditCursor = ref(null)
@@ -1294,6 +1409,7 @@ const userAuditTypeLabels = {
     two_factor_enabled: 'MFA enabled',
     two_factor_disabled: 'MFA disabled',
     email_changed: 'Email updated',
+    username_changed: 'Username changed',
     account_data_settings_updated: 'Data settings changed',
     email_verified: 'Email verified',
     profile_updated: 'Profile updated',
@@ -1314,6 +1430,7 @@ const userAuditTypeIcons = {
     two_factor_enabled: ShieldCheckIcon,
     two_factor_disabled: LockOpenIcon,
     email_changed: EnvelopeOpenIcon,
+    username_changed: AtSymbolIcon,
     account_data_settings_updated: ArchiveBoxIcon,
     email_verified: CheckCircleIcon,
     profile_updated: UserPlusIcon,
@@ -1336,6 +1453,7 @@ const userAuditTypeStyles = {
     two_factor_enabled: 'bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-300',
     two_factor_disabled: 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     email_changed: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    username_changed: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
     push_notifications_disabled:
         'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
     account_data_settings_updated:
@@ -1795,6 +1913,18 @@ const UserAuditDiff = {
                 return rowWrap(inlineRow([badge(true, e.value.email)]))
             }
 
+            if (e.type === 'username_changed') {
+                return rowWrap(
+                    inlineRow([
+                        monoLabel('Username:'),
+                        badge(false, `@${e.value.old_username}`),
+                        arrow(),
+                        badge(true, `@${e.value.new_username}`),
+                        e.value.is_revert ? h('span', { class: 'text-gray-500' }, '(revert)') : null
+                    ])
+                )
+            }
+
             if (e.type === 'email_changed') {
                 return rowWrap(
                     inlineRow([
@@ -1946,6 +2076,42 @@ const fetchProfile = async (id, { silent = false } = {}) => {
         console.error('Error fetching profile:', error)
     } finally {
         if (token === fetchToken && !silent) isLoading.value = false
+    }
+}
+
+const usernameSourceLabels = {
+    initial: 'Initial',
+    local_change: 'User change',
+    remote_update: 'Remote update',
+    admin: 'Admin'
+}
+
+const usernameSourceStyles = {
+    initial: 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300',
+    local_change: 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
+    remote_update: 'bg-violet-50 text-violet-700 dark:bg-violet-900/30 dark:text-violet-300',
+    admin: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+}
+
+const usernameHistoryDescription = computed(() => {
+    if (!profile.value?.local) {
+        return 'Handles this remote account has used, as seen by this server'
+    }
+    const count = usernameChangesLastYear.value
+    return `Every handle this account has held. ${count} counted ${count === 1 ? 'change' : 'changes'} in the last year`
+})
+
+const fetchUsernameHistory = async (id) => {
+    try {
+        isLoadingUsernameHistory.value = true
+        const res = await profilesApi.getProfileUsernameHistory(id)
+        usernameHistory.value = res.data || []
+        usernameReservation.value = res.meta?.reservation || null
+        usernameChangesLastYear.value = res.meta?.changes_last_year || 0
+    } catch (error) {
+        console.error('Error fetching username history:', error)
+    } finally {
+        isLoadingUsernameHistory.value = false
     }
 }
 
@@ -2337,6 +2503,7 @@ onMounted(async () => {
     window.addEventListener('keydown', handleKeydown)
     await fetchProfile(route.params.id)
     await fetchAuditLog(route.params.id)
+    await fetchUsernameHistory(route.params.id)
 })
 
 onUnmounted(() => {
@@ -2361,8 +2528,13 @@ watch(
         bioNeedsClamp.value = false
         bioExpanded.value = false
 
+        usernameHistory.value = []
+        usernameReservation.value = null
+        usernameChangesLastYear.value = 0
+
         fetchProfile(newId)
         fetchAuditLog(newId)
+        fetchUsernameHistory(newId)
     }
 )
 

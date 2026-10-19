@@ -4,6 +4,8 @@ namespace App\Console\Commands;
 
 use App\Models\Profile;
 use App\Models\User;
+use App\Models\UsernameHistory;
+use App\Services\UsernameChangeService;
 use App\Services\UsernameService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -26,7 +28,7 @@ class UpdateReservedUsernames extends Command
         $this->newLine();
 
         $users = User::with('profile')->get();
-        $reservedUsers = $users->filter(fn ($user) => $usernameService->isReserved($user->username)
+        $reservedUsers = $users->filter(fn ($user) => $usernameService->isReservedWord($user->username)
         );
 
         if ($reservedUsers->isEmpty()) {
@@ -197,17 +199,17 @@ class UpdateReservedUsernames extends Command
 
     protected function updateUsername(User $user, string $newUsername): void
     {
+        $profile = $user->profile_id ? Profile::find($user->profile_id) : null;
+
+        if ($profile) {
+            app(UsernameChangeService::class)->apply($profile, $newUsername, UsernameHistory::SOURCE_ADMIN);
+
+            return;
+        }
+
         DB::transaction(function () use ($user, $newUsername) {
             $user->username = $newUsername;
             $user->save();
-
-            if ($user->profile_id) {
-                $profile = Profile::find($user->profile_id);
-                if ($profile) {
-                    $profile->username = $newUsername;
-                    $profile->save();
-                }
-            }
         });
     }
 }

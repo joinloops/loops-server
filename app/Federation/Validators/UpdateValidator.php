@@ -100,6 +100,10 @@ class UpdateValidator extends BaseValidator
         if (isset($object['icon']) && (! is_array($object['icon']) || ! isset($object['icon']['url']))) {
             throw new \Exception('Object "icon" must be an object with a "url" property.');
         }
+
+        if (isset($object['preferredUsername']) && ! is_string($object['preferredUsername'])) {
+            throw new \Exception('Object "preferredUsername" must be a string.');
+        }
     }
 
     /**

@@ -32,7 +32,7 @@ class CheckReservedUsernames extends Command
         $progressBar->start();
 
         foreach ($users as $user) {
-            if ($usernameService->isReserved($user->username)) {
+            if ($usernameService->isReservedWord($user->username)) {
                 $reservedUsers->push($user);
             } elseif ($this->option('show-all')) {
                 $this->line("✓ {$user->username} (ID: {$user->id}) - OK");

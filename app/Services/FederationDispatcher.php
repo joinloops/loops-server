@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Federation\ActivityBuilders\CreateActivityBuilder;
+use App\Federation\ActivityBuilders\UpdateActivityBuilder;
 use App\Federation\Audience;
 use App\Jobs\Federation\DeliverCreateCommentActivity;
 use App\Jobs\Federation\DeliverCreateCommentReplyActivity;
@@ -12,6 +13,7 @@ use App\Jobs\Federation\DeliverDeleteCommentReplyActivity;
 use App\Jobs\Federation\DeliverDeleteVideoActivity;
 use App\Jobs\Federation\DeliverUpdateCommentActivity;
 use App\Jobs\Federation\DeliverUpdateCommentReplyActivity;
+use App\Jobs\Federation\DeliverUpdateProfileActivity;
 use App\Jobs\Federation\DeliverUpdateVideoActivity;
 use App\Models\Comment;
 use App\Models\CommentReply;
@@ -66,6 +68,41 @@ class FederationDispatcher
 
         if ($actor->local && $video->visibility == Audience::VISIBILITY_PUBLIC) {
             app(RelayService::class)->deliverToRelays($actor, CreateActivityBuilder::buildForVideo($actor, $video));
+        }
+    }
+
+    public function dispatchProfileUpdate(Profile $profile, int $chunkSize = 50): void
+    {
+        if (! $profile->local || $profile->status != 1) {
+            return;
+        }
+
+        $allInboxes = $this->resolveAuthorAudience($profile, null, $chunkSize);
+
+        if ($allInboxes->isEmpty()) {
+            return;
+        }
+
+        $activity = UpdateActivityBuilder::buildForProfile($profile);
+
+        $jobs = $allInboxes->map(fn ($inbox) => new DeliverUpdateProfileActivity(
+            $profile,
+            $inbox['inbox'],
+            $activity,
+            $inbox['profile_ids']
+        ))->toArray();
+
+        Bus::batch($jobs)
+            ->name("Deliver Profile Update {$profile->id}")
+            ->allowFailures()
+            ->onQueue('activitypub-out')
+            ->dispatch();
+
+        if (config('logging.dev_log')) {
+            Log::info('Profile update dispatched', [
+                'profile_id' => $profile->id,
+                'inbox_count' => count($jobs),
+            ]);
         }
     }
 

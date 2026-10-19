@@ -105,6 +105,19 @@ class UserAuditLogService
         ]);
     }
 
+    public function logUsernameChanged(
+        User|int $user,
+        string $oldUsername,
+        string $newUsername,
+        bool $isRevert = false
+    ): UserAuditLog {
+        return $this->log($user, 'username_changed', [
+            'old_username' => $oldUsername,
+            'new_username' => $newUsername,
+            'is_revert' => $isRevert,
+        ]);
+    }
+
     public function logProfileAvatarUpdated(
         User|int $user,
     ): UserAuditLog {

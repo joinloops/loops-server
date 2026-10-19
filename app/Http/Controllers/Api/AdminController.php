@@ -51,6 +51,7 @@ use App\Models\StarterKitAccount;
 use App\Models\StarterKitPendingChange;
 use App\Models\User;
 use App\Models\UserAuditLog;
+use App\Models\UsernameHistory;
 use App\Models\Video;
 use App\Services\AccountService;
 use App\Services\AccountSuggestionService;
@@ -470,6 +471,11 @@ class AdminController extends Controller
                         $query->join('users', 'profiles.id', '=', 'users.profile_id');
                     }
                     $query->where('users.admin_invite_id', $inviteId);
+                }
+            } elseif (str_starts_with($search, 'previous:')) {
+                $previous = ltrim(trim(substr($search, 9)), '@');
+                if (! empty($previous)) {
+                    $query->whereIn('profiles.id', UsernameHistory::where('username', $previous)->select('profile_id'));
                 }
             } else {
                 $query->where('profiles.username', 'like', '%'.$search.'%');

@@ -35,6 +35,7 @@ use App\Services\ReportService;
 use App\Services\StarterKitService;
 use App\Services\SystemMessageService;
 use App\Services\UserFilterService;
+use App\Services\UsernameService;
 use App\Services\VideoService;
 use App\Services\ViteService;
 use App\Support\CursorToken;
@@ -266,7 +267,25 @@ class WebPublicController extends Controller
 
         $profile = Profile::whereUsername($id)
             ->with('user')
-            ->firstOrFail();
+            ->first();
+
+        if (! $profile) {
+            $reservation = is_string($id) && ! str_contains($id, '@')
+                ? app(UsernameService::class)->reservationFor($id)
+                : null;
+            $holder = $reservation
+                ? Profile::whereKey($reservation->profile_id)->whereLocal(true)->whereStatus(1)->first(['id', 'username'])
+                : null;
+
+            if ($holder) {
+                return response()->json([
+                    'message' => 'This account has a new username.',
+                    'moved_to' => $holder->username,
+                ], 404);
+            }
+
+            abort(404);
+        }
 
         if ($profile->status != 1) {
             return $this->error('This resource is not available', 403);

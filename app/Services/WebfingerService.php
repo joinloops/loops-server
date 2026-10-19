@@ -325,6 +325,33 @@ class WebfingerService
         ];
     }
 
+    public function acctResolvesTo(string $acct, string $actorUri): bool
+    {
+        $webfinger = $this->lookupRemote(ltrim($acct, '@'));
+
+        if (! $webfinger || ! isset($webfinger['links']) || ! is_array($webfinger['links'])) {
+            return false;
+        }
+
+        foreach ($webfinger['links'] as $link) {
+            if (! is_array($link) || ($link['rel'] ?? '') !== 'self') {
+                continue;
+            }
+
+            $type = (string) ($link['type'] ?? '');
+
+            if ($type !== 'application/activity+json' && ! str_starts_with($type, 'application/ld+json')) {
+                continue;
+            }
+
+            if (($link['href'] ?? null) === $actorUri) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Extract the ActivityPub actor URL from webfinger response
      */

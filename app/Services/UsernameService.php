@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\UsernameReservation;
+
 class UsernameService
 {
     public function reserved()
@@ -44,7 +46,28 @@ class UsernameService
         ];
     }
 
-    public function isReserved(string $username): bool
+    public function isReserved(string $username, ?int $exceptProfileId = null): bool
+    {
+        if ($this->isReservedWord($username)) {
+            return true;
+        }
+
+        return $this->isHeldReservation($username, $exceptProfileId);
+    }
+
+    public function isHeldReservation(string $username, ?int $exceptProfileId = null): bool
+    {
+        return UsernameReservation::where('username', $username)
+            ->when($exceptProfileId, fn ($q) => $q->where('profile_id', '!=', $exceptProfileId))
+            ->exists();
+    }
+
+    public function reservationFor(string $username): ?UsernameReservation
+    {
+        return UsernameReservation::where('username', $username)->first();
+    }
+
+    public function isReservedWord(string $username): bool
     {
         $username = strtolower($username);
 

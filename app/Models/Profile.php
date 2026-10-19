@@ -8,12 +8,14 @@ use App\Services\ActivityService;
 use App\Services\AutoLinkerService;
 use App\Services\SanitizeService;
 use App\Services\SigningService;
+use App\Services\UsernameChangeService;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Facades\DB;
 
 #[ObservedBy([ProfileObserver::class])]
@@ -284,6 +286,16 @@ class Profile extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function usernameHistory(): HasMany
+    {
+        return $this->hasMany(UsernameHistory::class);
+    }
+
+    public function usernameReservation(): HasOne
+    {
+        return $this->hasOne(UsernameReservation::class);
     }
 
     /**
@@ -670,11 +682,13 @@ class Profile extends Model
         }
 
         if (! $actor) {
-            $actor = static::where('local', false)
-                ->where(function ($q) use ($actorId, $acct) {
-                    $q->where('uri', $actorId)->orWhere('username', $acct);
-                })
-                ->first();
+            $actor = static::where('local', false)->where('uri', $actorId)->first();
+        }
+
+        $isNewActor = ! $actor;
+
+        if ($isNewActor && ! app(UsernameChangeService::class)->claimForNewRemote($acct, $actorId)) {
+            return null;
         }
 
         if (! $actor) {
@@ -685,7 +699,7 @@ class Profile extends Model
         }
 
         $actor->forceFill([
-            'username' => $acct,
+            'username' => $isNewActor ? $acct : $actor->username,
             'name' => app(SanitizeService::class)->cleanPlainText($actorData['name'] ?? $username),
             'bio' => app(SanitizeService::class)->cleanHtmlWithSpacing($actorData['summary'] ?? null),
             'inbox_url' => $actorInbox,
@@ -704,6 +718,12 @@ class Profile extends Model
             'starter_kit_state' => $starterKitState,
             'dm_privacy' => 'everyone',
         ])->save();
+
+        if (! $isNewActor && $actor->username !== $acct) {
+            if (app(UsernameChangeService::class)->syncRemote($actor, $username)) {
+                $actor->refresh();
+            }
+        }
 
         return $actor;
     }

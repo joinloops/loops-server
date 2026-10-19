@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Jobs\Federation\FetchRemoteAvatarJob;
 use App\Models\Profile;
+use App\Models\UsernameHistory;
 use App\Services\AccountService;
 use App\Services\ActivityPubCacheService;
 use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
@@ -23,6 +24,10 @@ class ProfileObserver implements ShouldHandleEventsAfterCommit
     public function created(Profile $profile): void
     {
         AccountService::del($profile->id);
+
+        if ($profile->username && ! UsernameHistory::where('profile_id', $profile->id)->exists()) {
+            UsernameHistory::recordInitial($profile);
+        }
 
         if (! $profile->local && $profile->uri && $profile->avatar) {
             FetchRemoteAvatarJob::dispatch($profile)->onQueue('actor-update');

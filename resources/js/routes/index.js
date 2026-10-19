@@ -412,6 +412,12 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
         {
+            path: '/dashboard/account/username',
+            name: 'dashboardAccountUsername',
+            component: () => import('~/pages/dashboard/account/AccountUsername.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
             path: '/dashboard/account/deactivate',
             name: 'dashboardAccountDeactivate',
             component: () => import('~/pages/dashboard/account/AccountDeactivate.vue'),

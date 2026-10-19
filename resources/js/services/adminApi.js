@@ -358,6 +358,14 @@ export const profilesApi = {
         return await apiClient.get(`/api/v1/admin/profiles/${id}/user-auditlog`, params)
     },
 
+    async getProfileUsernameHistory(id) {
+        return await apiClient.get(`/api/v1/admin/profiles/${id}/username-history`)
+    },
+
+    async lookupUsername(q) {
+        return await apiClient.get('/api/v1/admin/usernames/lookup', { q })
+    },
+
     async updateProfile(id, data) {
         return { success: true, data: { id, ...data } }
     },

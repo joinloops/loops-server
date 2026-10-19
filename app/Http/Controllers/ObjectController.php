@@ -14,6 +14,7 @@ use App\Models\Video;
 use App\Services\ActivityPubCacheService;
 use App\Services\ConfigService;
 use App\Services\HashidService;
+use App\Services\UsernameService;
 use App\Services\VideoService;
 use Illuminate\Http\Request;
 
@@ -38,6 +39,12 @@ class ObjectController extends Controller
             $profile = Profile::active()->whereUsername($username)->whereLocal(true)->first();
 
             if (! $profile) {
+                $movedTo = $this->reservedUsernameTarget($username);
+
+                if ($movedTo) {
+                    return redirect('/@'.$movedTo, 301);
+                }
+
                 return $this->activityPubError('Record not found', 404);
             }
 
@@ -56,6 +63,12 @@ class ObjectController extends Controller
         $profile = Profile::whereUsername($username)->first();
 
         if (! $profile) {
+            $movedTo = $this->reservedUsernameTarget($username);
+
+            if ($movedTo) {
+                return redirect('/@'.$movedTo, 301);
+            }
+
             abort(404, 'Profile not found');
         }
 
@@ -64,6 +77,27 @@ class ObjectController extends Controller
         }
 
         return view('profile', compact('profile'));
+    }
+
+    protected function reservedUsernameTarget(string $username): ?string
+    {
+        if (str_contains($username, '@')) {
+            return null;
+        }
+
+        $reservation = app(UsernameService::class)->reservationFor($username);
+
+        if (! $reservation) {
+            return null;
+        }
+
+        $holder = Profile::whereKey($reservation->profile_id)->whereLocal(true)->first(['id', 'username', 'status']);
+
+        if (! $holder || $holder->status != 1) {
+            return null;
+        }
+
+        return $holder->username;
     }
 
     public function showVideo(Request $request, $hashId)

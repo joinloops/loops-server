@@ -9,6 +9,7 @@ use App\Models\CommentReplyCaptionEdit;
 use App\Models\Profile;
 use App\Models\Video;
 use App\Services\SanitizeService;
+use App\Services\UsernameChangeService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -166,6 +167,12 @@ class UpdateHandler extends BaseHandler
             }
 
             return false;
+        }
+
+        if (! $profile->local && isset($object['preferredUsername']) && is_string($object['preferredUsername'])) {
+            if (app(UsernameChangeService::class)->syncRemote($profile, $object['preferredUsername'])) {
+                $profile->refresh();
+            }
         }
 
         // Update profile fields
