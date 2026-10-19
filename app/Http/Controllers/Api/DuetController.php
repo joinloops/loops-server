@@ -56,27 +56,29 @@ class DuetController extends Controller
         $originalDuet = Video::published()->where('can_duet', true)->findOrFail($request->input('duet_id'));
 
         try {
-            DB::beginTransaction();
+            $model = DB::transaction(function () use ($request, $pid, $videoMeta, $originalDuet) {
+                $model = new Video;
+                $model->is_duet = true;
+                $model->original_duet_id = $originalDuet->id;
+                $model->duet_layout = $request->input('duet_layout') == 'side-by-side' ? 1 : 2;
+                $model->profile_id = $pid;
+                $model->caption = app(SanitizeService::class)->cleanPlainText($request->description);
+                $model->size_kb = intval($videoMeta['size']);
+                $model->is_sensitive = $request->filled('is_sensitive') ? (bool) $request->boolean('is_sensitive') : false;
+                $model->comment_state = $request->filled('comment_state') ? ($request->input('comment_state') == 4 ? 4 : 0) : 4;
+                $model->can_download = $request->filled('can_download') ? $request->boolean('can_download') : false;
+                $model->can_duet = $request->filled('can_duet') ? $request->boolean('can_duet') : false;
+                $model->can_stitch = $request->filled('can_stitch') ? $request->boolean('can_stitch') : false;
+                $model->alt_text = $request->filled('alt_text') ? app(SanitizeService::class)->cleanPlainText($request->alt_text) : null;
+                $model->contains_ai = $request->filled('contains_ai') ? $request->boolean('contains_ai') : false;
+                $model->contains_ad = $request->filled('contains_ad') ? $request->boolean('contains_ad') : false;
+                $model->lang = $request->filled('lang') ? $request->input('lang') : null;
+                // @phpstan-ignore-next-line
+                $model->media_metadata = $videoMeta;
+                $model->save();
 
-            $model = new Video;
-            $model->is_duet = true;
-            $model->original_duet_id = $originalDuet->id;
-            $model->duet_layout = $request->input('duet_layout') == 'side-by-side' ? 1 : 2;
-            $model->profile_id = $pid;
-            $model->caption = app(SanitizeService::class)->cleanPlainText($request->description);
-            $model->size_kb = intval($videoMeta['size']);
-            $model->is_sensitive = $request->filled('is_sensitive') ? (bool) $request->boolean('is_sensitive') : false;
-            $model->comment_state = $request->filled('comment_state') ? ($request->input('comment_state') == 4 ? 4 : 0) : 4;
-            $model->can_download = $request->filled('can_download') ? $request->boolean('can_download') : false;
-            $model->can_duet = $request->filled('can_duet') ? $request->boolean('can_duet') : false;
-            $model->can_stitch = $request->filled('can_stitch') ? $request->boolean('can_stitch') : false;
-            $model->alt_text = $request->filled('alt_text') ? app(SanitizeService::class)->cleanPlainText($request->alt_text) : null;
-            $model->contains_ai = $request->filled('contains_ai') ? $request->boolean('contains_ai') : false;
-            $model->contains_ad = $request->filled('contains_ad') ? $request->boolean('contains_ad') : false;
-            $model->lang = $request->filled('lang') ? $request->input('lang') : null;
-            // @phpstan-ignore-next-line
-            $model->media_metadata = $videoMeta;
-            $model->save();
+                return $model;
+            });
 
             try {
                 $s3Path = $request->video->store('videos/'.$pid.'/'.$model->id, 's3');
@@ -105,11 +107,6 @@ class DuetController extends Controller
                 $model->syncMentionsFromCaption();
             }
 
-            $profile->video_count = $profile->videos->count();
-            $profile->save();
-
-            DB::commit();
-
             $config = app(ConfigService::class);
 
             Bus::batch([
@@ -132,8 +129,6 @@ class DuetController extends Controller
             return $this->success();
 
         } catch (\Exception $e) {
-            DB::rollBack();
-
             if ($s3Path) {
                 try {
                     Storage::disk('s3')->delete($s3Path);

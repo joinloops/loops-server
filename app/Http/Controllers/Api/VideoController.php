@@ -139,31 +139,33 @@ class VideoController extends Controller
         $enforceNsfw = (bool) $request->user()->enforce_nsfw_label;
 
         try {
-            DB::beginTransaction();
+            $model = DB::transaction(function () use ($request, $pid, $profile, $videoMeta, $canEmbed, $enforceAi, $enforceAd, $enforceNsfw) {
+                $model = new Video;
+                $model->profile_id = $pid;
+                $model->caption = app(SanitizeService::class)->cleanPlainText($request->description);
+                $model->size_kb = intval($videoMeta['size']);
+                $model->is_sensitive = $enforceNsfw || $request->boolean('is_sensitive');
+                $model->comment_state = $request->filled('comment_state') ? ($request->input('comment_state') == 4 ? 4 : 0) : 4;
+                $model->can_download = $request->filled('can_download') ? $request->boolean('can_download') : false;
+                $model->can_embed = $canEmbed && $request->filled('can_embed') ? $request->boolean('can_embed') : false;
+                $model->can_duet = $request->filled('can_duet') ? $request->boolean('can_duet') : false;
+                $model->can_stitch = $request->filled('can_stitch') ? $request->boolean('can_stitch') : false;
+                $model->alt_text = $request->filled('alt_text') ? app(SanitizeService::class)->cleanPlainText($request->alt_text) : null;
+                $model->contains_ai = $enforceAi || $request->boolean('contains_ai');
+                $model->contains_ad = $enforceAd || $request->boolean('contains_ad');
+                $model->lang = $request->filled('lang') ? $request->input('lang') : null;
+                // @phpstan-ignore-next-line
+                $model->media_metadata = $videoMeta;
+                $model->save();
 
-            $model = new Video;
-            $model->profile_id = $pid;
-            $model->caption = app(SanitizeService::class)->cleanPlainText($request->description);
-            $model->size_kb = intval($videoMeta['size']);
-            $model->is_sensitive = $enforceNsfw || $request->boolean('is_sensitive');
-            $model->comment_state = $request->filled('comment_state') ? ($request->input('comment_state') == 4 ? 4 : 0) : 4;
-            $model->can_download = $request->filled('can_download') ? $request->boolean('can_download') : false;
-            $model->can_embed = $canEmbed && $request->filled('can_embed') ? $request->boolean('can_embed') : false;
-            $model->can_duet = $request->filled('can_duet') ? $request->boolean('can_duet') : false;
-            $model->can_stitch = $request->filled('can_stitch') ? $request->boolean('can_stitch') : false;
-            $model->alt_text = $request->filled('alt_text') ? app(SanitizeService::class)->cleanPlainText($request->alt_text) : null;
-            $model->contains_ai = $enforceAi || $request->boolean('contains_ai');
-            $model->contains_ad = $enforceAd || $request->boolean('contains_ad');
-            $model->lang = $request->filled('lang') ? $request->input('lang') : null;
-            // @phpstan-ignore-next-line
-            $model->media_metadata = $videoMeta;
-            $model->save();
-
-            if ($request->filled('scheduled_at')) {
-                if (app(VideoScheduleService::class)->canSchedule($profile)) {
-                    app(VideoScheduleService::class)->schedule($model, now()->parse($request->scheduled_at)->utc());
+                if ($request->filled('scheduled_at')) {
+                    if (app(VideoScheduleService::class)->canSchedule($profile)) {
+                        app(VideoScheduleService::class)->schedule($model, now()->parse($request->scheduled_at)->utc());
+                    }
                 }
-            }
+
+                return $model;
+            });
 
             try {
                 $s3Path = $request->video->store('videos/'.$pid.'/'.$model->id, 's3');
@@ -173,6 +175,7 @@ class VideoController extends Controller
                 }
 
                 $model->vid = $s3Path;
+                $model->processing_status = 'processing';
                 $model->save();
 
             } catch (\Exception $e) {
@@ -191,14 +194,6 @@ class VideoController extends Controller
                 $model->syncHashtagsFromCaption();
                 $model->syncMentionsFromCaption();
             }
-
-            $profile->video_count = $profile->videos->count();
-            $profile->save();
-
-            DB::commit();
-
-            $model->processing_status = 'processing';
-            $model->save();
 
             if ($request->hasFile('thumbnail')) {
                 try {
@@ -240,8 +235,6 @@ class VideoController extends Controller
             return $this->success();
 
         } catch (\Exception $e) {
-            DB::rollBack();
-
             if ($s3Path) {
                 try {
                     Storage::disk('s3')->delete($s3Path);
