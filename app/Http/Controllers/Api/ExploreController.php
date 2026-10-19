@@ -133,7 +133,6 @@ class ExploreController extends Controller
     protected function recencyTiers(): array
     {
         return collect(config('loops.explore.tags.recency_tiers', []))
-            ->filter(fn ($tier) => isset($tier['hours'], $tier['min_likes']))
             ->map(fn ($tier) => [
                 'after' => now()->subHours((int) $tier['hours']),
                 'min_likes' => (int) $tier['min_likes'],
