@@ -21,7 +21,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->singleton('app_version', function () {
-            return '1.0.0-beta.14';
+            return '1.0.0-beta.15';
         });
 
         $this->app->singleton('user_agent', function () {
