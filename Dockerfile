@@ -7,7 +7,7 @@ FROM node:26-trixie-slim AS node
 # copied/installed into the final image.
 # ffmpeg version to compile, change with [--build-arg FFMPEG_VERSION="9.0.1"]
 FROM serversideup/php:8.5-frankenphp AS ffmpeg
-ARG FFMPEG_VERSION=9.0.1
+ARG FFMPEG_VERSION=9.0.2
 ARG FFMPEG_URL=https://ffmpeg.org/releases
 # x264 has no numbered releases; it is built from its rolling `stable` branch.
 ARG X264_URL=https://code.videolan.org/videolan/x264.git
