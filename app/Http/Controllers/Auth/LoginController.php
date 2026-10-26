@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Rules\HCaptchaRule;
 use App\Rules\TurnstileRule;
+use App\Services\AccountDeletionService;
 use App\Services\AccountService;
 use App\Services\AccountSwitcherService;
 use App\Services\CaptchaService;
@@ -125,6 +126,12 @@ class LoginController extends Controller
         if (! in_array($newUser->status, [1, 7, 8], true)) {
             return response()->json([
                 'message' => 'That account has been disabled and cannot be added.',
+            ], 422);
+        }
+
+        if (app(AccountDeletionService::class)->isLocked($newUser)) {
+            return response()->json([
+                'message' => 'That account has been deleted and cannot be added.',
             ], 422);
         }
 
@@ -259,6 +266,23 @@ class LoginController extends Controller
 
             return redirect()->route('login')->withErrors([
                 $this->username() => 'You need to verify your email.',
+            ]);
+        }
+
+        if (app(AccountDeletionService::class)->isLocked($user)) {
+            $this->guard()->logout();
+
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'message' => 'This account has been deleted.',
+                ], 403);
+            }
+
+            return redirect()->route('login')->withErrors([
+                $this->username() => 'This account has been deleted.',
             ]);
         }
 
