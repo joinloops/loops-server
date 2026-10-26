@@ -599,6 +599,10 @@ class AdminController extends Controller
 
         $profile = Profile::find($id);
 
+        if ($profile && $profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
+
         if (! $profile) {
             return $this->error('Ooops!');
         }
@@ -631,6 +635,10 @@ class AdminController extends Controller
     public function profileModPermissionUpdate(ProfileModPermissionRequest $request, $id)
     {
         $profile = Profile::find($id);
+
+        if ($profile && $profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
 
         if (! $profile) {
             return $this->error('Profile not found', 404);
@@ -713,6 +721,10 @@ class AdminController extends Controller
     {
         $profile = Profile::find($id);
 
+        if ($profile && $profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
+
         if (! $profile) {
             return $this->error('Ooops!');
         }
@@ -745,6 +757,10 @@ class AdminController extends Controller
     {
         $profile = Profile::find($id);
 
+        if ($profile && $profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
+
         if (! $profile) {
             return $this->error('Ooops!');
         }
@@ -768,6 +784,10 @@ class AdminController extends Controller
     public function profileToggleEmailVerify(Request $request, $id)
     {
         $profile = Profile::whereNotNull('user_id')->find($id);
+
+        if ($profile && $profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
 
         if (! $profile) {
             return $this->error('Ooops!');
@@ -802,6 +822,10 @@ class AdminController extends Controller
     public function profileDisableTwoFactorAuth(Request $request, $id)
     {
         $profile = Profile::whereNotNull('user_id')->find($id);
+
+        if ($profile && $profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
 
         $user = User::findOrFail($profile->user_id);
 
@@ -841,6 +865,10 @@ class AdminController extends Controller
     public function profileAdminSendEmail(AdminSendProfileEmailRequest $request, $id)
     {
         $profile = Profile::with('user')->findOrFail($id);
+
+        if ($profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
 
         abort_if(! $profile->local || ! $profile->user, 404, 'Remote profile cannot be emailed');
         abort_if(! $profile->user->email, 422, 'User has no email address on file');
@@ -884,6 +912,10 @@ class AdminController extends Controller
     public function profileAdminResetPassword(AdminResetProfilePasswordRequest $request, $id)
     {
         $profile = Profile::with('user')->findOrFail($id);
+
+        if ($profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
 
         abort_if(! $profile->local || ! $profile->user, 404, 'Only local profiles can be reset');
         abort_if($profile->user->is_admin, 403, 'Admin passwords cannot be reset through this endpoint');
@@ -1011,6 +1043,10 @@ class AdminController extends Controller
         $pid = $request->user()->profile_id;
 
         $profile = Profile::with('user')->where('local', true)->findOrFail($id);
+
+        if ($profile->isPurged()) {
+            return $this->error('This account has been deleted.', 410);
+        }
 
         abort_if($profile->user->is_admin, 403, 'You cannot perform this action');
 
