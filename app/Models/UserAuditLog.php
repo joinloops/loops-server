@@ -102,6 +102,7 @@ class UserAuditLog extends Model
             'login' => 'User logged in',
             'profile_updated' => 'Profile information was updated',
             'account_deleted' => 'Account was deleted',
+            'account_deletion_requested' => 'Account deletion was requested',
             'password_reset' => 'Password was reset',
             'password_changed' => 'Password was changed',
         ];
