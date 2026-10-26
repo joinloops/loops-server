@@ -66,7 +66,7 @@ class AccountSwitcherService
 
             $u = $users[$id];
 
-            if (! in_array($u->status, [1, 7, 8], true)) {
+            if (! $this->isSwitchable($u)) {
                 $stale[] = $id;
 
                 continue;
@@ -120,7 +120,7 @@ class AccountSwitcherService
             return ['success' => false, 'reason' => 'disabled'];
         }
 
-        if (! in_array($user->status, [1, 7, 8], true)) {
+        if (! $this->isSwitchable($user)) {
             $this->removeFromList($userId);
 
             return ['success' => false, 'reason' => 'not_found'];
@@ -170,7 +170,7 @@ class AccountSwitcherService
         foreach ($linked as $candidateId) {
             $next = User::find($candidateId);
 
-            if ($next && in_array($next->status, [1, 7, 8], true)) {
+            if ($next && $this->isSwitchable($next)) {
                 Auth::login($next, $remember);
                 Session::put('password_hash_'.Auth::getDefaultDriver(), $next->getAuthPassword());
                 Session::put(self::SESSION_LINKED_ACCOUNTS, $linked);
@@ -208,6 +208,15 @@ class AccountSwitcherService
         Session::forget(self::SESSION_REMEMBER);
         Session::invalidate();
         Session::regenerateToken();
+    }
+
+    protected function isSwitchable(User $user): bool
+    {
+        if (! in_array($user->status, [1, 7, 8], true)) {
+            return false;
+        }
+
+        return ! app(AccountDeletionService::class)->isLocked($user);
     }
 
     /**
