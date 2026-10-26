@@ -198,7 +198,7 @@ return [
     'environments' => [
         'production' => [
             'supervisor-1' => [
-                'maxProcesses' => 10,
+                'maxProcesses' => max(10, (int) env('LOOPS_HORIZON_SUPERVISOR_MAX_PRO', 10)),
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],
