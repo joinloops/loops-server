@@ -33,7 +33,7 @@ class AdminProfileResource extends JsonResource
         $deleteAfter = null;
 
         if ($this->local && $this->status === 8) {
-            $deleteAfter = $this->user->delete_after;
+            $deleteAfter = $this->user?->delete_after;
         }
 
         $statusDesc = $this->getStatusDescription();
