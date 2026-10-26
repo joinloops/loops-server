@@ -190,4 +190,10 @@ return [
             'cooldown_hours' => (int) env('LOOPS_USERNAME_CHANGES_COOLDOWN_HOURS', 24),
         ],
     ],
+
+    'account_deletion' => [
+        'grace_days' => (int) env('LOOPS_ACCOUNT_DELETE_GRACE_DAYS', 30),
+        'job_budget_seconds' => (int) env('LOOPS_ACCOUNT_DELETE_JOB_BUDGET', 40),
+        'fanout_chunk' => (int) env('LOOPS_ACCOUNT_DELETE_FANOUT_CHUNK', 500),
+    ],
 ];
