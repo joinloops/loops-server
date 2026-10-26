@@ -10,7 +10,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 
-#[Signature('loops:purge-deleted-accounts {--limit=100} {--dry-run : List due accounts without queueing purges}')]
+#[Signature('loops:purge-deleted-accounts {--limit=50} {--dry-run : List due accounts without queueing purges}')]
 #[Description('Queue purges for self-deleted accounts whose grace period has ended')]
 class PurgeDeletedAccounts extends Command
 {
