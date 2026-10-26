@@ -7,6 +7,17 @@ use Illuminate\Contracts\Validation\ValidationRule;
 
 class ValidUsername implements ValidationRule
 {
+    public const ECMASCRIPT_PATTERN = '^(?![.-])(?!.*[.-]$)(?!.*--)(?!.*\.\.)[a-zA-Z0-9_.-]+$';
+
+    public const ALLOWED_CHARACTERS = [
+        'lowercase_ascii',
+        'uppercase_ascii',
+        'digits',
+        'underscore',
+        'period',
+        'hyphen',
+    ];
+
     /**
      * Run the validation rule.
      *

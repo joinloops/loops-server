@@ -24,6 +24,7 @@ class SettingsFileService
         app(StarterKitService::class)->getConfig(true);
         app(AdminDashboardService::class)->getConfigData(true);
         $this->generatePublicConfig();
+        app(ClientConfigService::class)->flush();
         $this->generateAdminConfig();
     }
 

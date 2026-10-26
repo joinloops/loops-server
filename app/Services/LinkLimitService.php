@@ -28,6 +28,16 @@ class LinkLimitService
 
     private const TIER_5_THRESHOLD = 3000;
 
+    public static function baselineLimit(): int
+    {
+        return self::BASE_LIMIT;
+    }
+
+    public static function maxLimit(): int
+    {
+        return self::TIER_5_LIMIT;
+    }
+
     public static function getMinThreshold(): int
     {
         return self::TIER_1_THRESHOLD;

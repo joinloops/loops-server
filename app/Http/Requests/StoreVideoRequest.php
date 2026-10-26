@@ -11,6 +11,10 @@ use Illuminate\Validation\Rules\File;
 
 class StoreVideoRequest extends FormRequest
 {
+    public const CAPTION_MAX_LENGTH = 200;
+
+    public const ALT_TEXT_MAX_LENGTH = 2000;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -59,7 +63,7 @@ class StoreVideoRequest extends FormRequest
                     ->max(5 * 1024)
                     ->dimensions(Rule::dimensions()->width(1080)->height(1920)),
             ],
-            'description' => 'nullable|string|max:200',
+            'description' => 'nullable|string|max:'.self::CAPTION_MAX_LENGTH,
             'comment_state' => 'sometimes|string|in:0,4',
             'can_download' => 'nullable|boolean',
             'can_comment' => 'nullable|boolean',
@@ -67,7 +71,7 @@ class StoreVideoRequest extends FormRequest
             'can_stitch' => 'nullable|boolean',
             'can_embed' => 'nullable|boolean',
             'is_sensitive' => 'nullable|boolean',
-            'alt_text' => 'nullable|sometimes|string|max:2000',
+            'alt_text' => 'nullable|sometimes|string|max:'.self::ALT_TEXT_MAX_LENGTH,
             'contains_ai' => 'nullable|boolean',
             'contains_ad' => 'nullable|boolean',
             'scheduled_at' => 'sometimes|nullable|date',

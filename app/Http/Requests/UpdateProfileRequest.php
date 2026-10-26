@@ -8,6 +8,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfileRequest extends FormRequest
 {
+    public const NAME_MAX_LENGTH = 30;
+
+    public const BIO_MAX_LENGTH = 500;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -31,14 +35,14 @@ class UpdateProfileRequest extends FormRequest
                 'string',
                 'nullable',
                 'min:0',
-                'max:30',
+                'max:'.self::NAME_MAX_LENGTH,
                 function (string $attribute, mixed $value, Closure $fail) {
                     if (! AccountService::validDisplayName($value)) {
                         $fail('The display name you entered contains invalid characters. Please try again with only letters and numbers.');
                     }
                 },
             ],
-            'bio' => 'sometimes|string|nullable|min:0|max:500',
+            'bio' => 'sometimes|string|nullable|min:0|max:'.self::BIO_MAX_LENGTH,
         ];
     }
 }

@@ -30,6 +30,8 @@ class VideoOptimizeJob implements ShouldQueue
 
     public $deleteWhenMissingModels = true;
 
+    public const MAX_DURATION_SECONDS = 180;
+
     public function __construct($video)
     {
         $this->video = $video->withoutRelations();
@@ -62,7 +64,7 @@ class VideoOptimizeJob implements ShouldQueue
                 throw new \Exception('Source video file not found on S3: '.$video->vid);
             }
 
-            $maxDuration = 180;
+            $maxDuration = self::MAX_DURATION_SECONDS;
             $ext = pathinfo($video->vid, PATHINFO_EXTENSION);
             $randomStr = Str::random(20);
             $name = str_replace('.'.$ext, $randomStr.'.720p.mp4', $video->vid);

@@ -6,6 +6,10 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateAvatarRequest extends FormRequest
 {
+    public const MIMES = ['jpg', 'png', 'jpeg'];
+
+    public const MAX_KILOBYTES = 2 * 1024;
+
     public function authorize(): bool
     {
         return (bool) $this->user() &&
@@ -19,9 +23,9 @@ class UpdateAvatarRequest extends FormRequest
             'avatar' => [
                 'required',
                 'file',
-                'mimes:jpg,png,jpeg',
+                'mimes:'.implode(',', self::MIMES),
                 'min:1',
-                'max:'.(2 * 1024),
+                'max:'.self::MAX_KILOBYTES,
             ],
             'coordinates' => 'sometimes|nullable|json',
         ];

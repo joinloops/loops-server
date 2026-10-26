@@ -9,6 +9,8 @@ use Illuminate\Validation\Rule;
 
 class UpdateVideoRequest extends FormRequest
 {
+    public const MAX_PINNED_VIDEOS = 3;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -30,14 +32,14 @@ class UpdateVideoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'caption' => 'nullable|string|max:200',
+            'caption' => 'nullable|string|max:'.StoreVideoRequest::CAPTION_MAX_LENGTH,
             'can_download' => 'nullable|boolean',
             'can_comment' => 'nullable|boolean',
             'can_duet' => 'nullable|boolean',
             'can_stitch' => 'nullable|boolean',
             'can_embed' => 'nullable|boolean',
             'is_pinned' => 'nullable|boolean',
-            'alt_text' => 'nullable|sometimes|string|max:2000',
+            'alt_text' => 'nullable|sometimes|string|max:'.StoreVideoRequest::ALT_TEXT_MAX_LENGTH,
             'is_sensitive' => 'nullable|boolean',
             'contains_ai' => 'nullable|boolean',
             'contains_ad' => 'nullable|boolean',
@@ -65,10 +67,10 @@ class UpdateVideoRequest extends FormRequest
                         ->where('is_pinned', true)
                         ->count();
 
-                    if ($pinnedCount >= 3) {
+                    if ($pinnedCount >= self::MAX_PINNED_VIDEOS) {
                         $validator->errors()->add(
                             'is_pinned',
-                            'You can only pin up to 3 videos. Please unpin another video first.'
+                            'You can only pin up to '.self::MAX_PINNED_VIDEOS.' videos. Please unpin another video first.'
                         );
                     }
                 }

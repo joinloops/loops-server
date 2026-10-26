@@ -40,6 +40,7 @@ use App\Http\Controllers\AtomFeedController;
 use App\Http\Controllers\Auth\AccountSwitcherController;
 use App\Http\Controllers\Auth\ForcePasswordChangeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ClientConfigController;
 use App\Http\Controllers\CuratedOnboardingController;
 use App\Http\Controllers\EmailChangeController;
 use App\Http\Controllers\EmailVerificationController;
@@ -87,6 +88,8 @@ Route::group(['prefix' => 'nodeinfo'], function () {
     })->where('any', '.*');
 });
 
+Route::get('/api/client-config/1.0', [ClientConfigController::class, 'show'])->name('client-config.1.0');
+
 Route::group(['prefix' => '.well-known'], function () {
     Route::get('host-meta', function () {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
@@ -97,6 +100,7 @@ Route::group(['prefix' => '.well-known'], function () {
         return response($xml, 200)->header('Content-Type', 'application/xrd+xml');
     })->name('host-meta')->middleware([FederationEnabled::class]);
     Route::get('nodeinfo', [NodeInfoController::class, 'discovery'])->middleware([FederationEnabled::class]);
+    Route::get('activitypub-client-config', [ClientConfigController::class, 'discovery'])->name('client-config.discovery');
     Route::get('webfinger', [WebfingerController::class, 'handle'])
         ->name('webfinger')->middleware([FederationEnabled::class]);
 

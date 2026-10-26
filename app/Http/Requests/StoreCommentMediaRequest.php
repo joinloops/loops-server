@@ -30,7 +30,7 @@ class StoreCommentMediaRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'comment' => 'nullable|string|min:1|max:500',
+            'comment' => 'nullable|string|min:1|max:'.StoreCommentRequest::COMMENT_MAX_LENGTH,
             'type' => 'required|string|in:gifs,stickers,memes,clips',
             'item' => 'required|array',
             'item.id' => 'required',
