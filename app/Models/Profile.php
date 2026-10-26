@@ -27,6 +27,7 @@ use Illuminate\Support\Facades\DB;
  * @property string|null $bio
  * @property string|null $avatar
  * @property int $status
+ * @property \Illuminate\Support\Carbon|null $purged_at
  * @property int $followers
  * @property int $following
  * @property int $video_count
@@ -221,6 +222,7 @@ class Profile extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'purged_at' => 'datetime',
         'hide_ai' => 'boolean',
         'hide_sensitive' => 'boolean',
         'status' => 'integer',
@@ -261,6 +263,11 @@ class Profile extends Model
     protected function scopeActive(Builder $query): Builder
     {
         return $query->where('status', 1);
+    }
+
+    public function isPurged(): bool
+    {
+        return $this->purged_at !== null;
     }
 
     public function deepLink()
