@@ -12,7 +12,26 @@
             </div>
             <hr class="border-gray-300 dark:border-gray-700" />
 
-            <section class="my-8">
+            <section v-if="isAdmin" class="my-8">
+                <div
+                    class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-lg p-4"
+                >
+                    <div class="flex items-start gap-3">
+                        <i class="bx bx-shield text-amber-500 text-[20px] mt-0.5"></i>
+                        <div>
+                            <h3 class="font-medium text-amber-800 dark:text-amber-300 mb-1">
+                                Admin accounts can't be deleted here
+                            </h3>
+                            <p class="text-sm text-amber-700 dark:text-amber-400">
+                                To protect your instance, admin accounts can only be deleted with
+                                the command line tools on your server.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section v-else class="my-8">
                 <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                     <div class="flex items-start gap-3">
                         <i class="bx bx-error text-red-500 text-[20px] mt-0.5"></i>
@@ -160,8 +179,9 @@
                                         30-day grace period
                                     </h4>
                                     <p class="text-sm text-gray-600">
-                                        Your data is marked for deletion but not yet removed. Simply
-                                        log back in if you change your mind.
+                                        Your data is marked for deletion but not yet removed, and
+                                        your username stays reserved for you. Simply log back in if
+                                        you change your mind.
                                     </p>
                                 </div>
                             </div>
@@ -177,7 +197,8 @@
                                     </h4>
                                     <p class="text-sm text-gray-600">
                                         After 30 days, all your data is permanently and irreversibly
-                                        deleted.
+                                        deleted, your media is removed from storage and other
+                                        servers in the fediverse are told to remove their copies.
                                     </p>
                                 </div>
                             </div>
@@ -228,6 +249,56 @@
                             </label>
                         </div>
 
+                        <div
+                            class="mb-6 rounded-lg border border-gray-200 dark:border-gray-700 p-4"
+                        >
+                            <label class="flex items-start gap-3">
+                                <input
+                                    type="checkbox"
+                                    v-model="immediate"
+                                    class="mt-1 rounded border-gray-300 text-red-600 focus:ring-red-500"
+                                />
+                                <span>
+                                    <span
+                                        class="block text-sm font-medium text-gray-800 dark:text-gray-300"
+                                        >Skip the 30-day grace period</span
+                                    >
+                                    <span class="block text-sm text-gray-600"
+                                        >Delete everything now and release your username right away,
+                                        for example so another account of yours can use it.</span
+                                    >
+                                </span>
+                            </label>
+
+                            <div v-if="immediate" class="mt-4">
+                                <div
+                                    class="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4"
+                                >
+                                    <p class="text-sm text-amber-800 dark:text-amber-300">
+                                        Your account can't be restored by logging back in. Your
+                                        username becomes available to anyone on this server as soon
+                                        as you confirm.
+                                    </p>
+                                </div>
+                                <label
+                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                                >
+                                    Type your username
+                                    <span class="font-semibold">@{{ username }}</span>
+                                    to confirm
+                                </label>
+                                <input
+                                    type="text"
+                                    v-model="confirmUsername"
+                                    autocomplete="off"
+                                    autocapitalize="off"
+                                    spellcheck="false"
+                                    :placeholder="username"
+                                    class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:text-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                                />
+                            </div>
+                        </div>
+
                         <div class="mb-6">
                             <label
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
@@ -264,11 +335,15 @@
                                 Cancel
                             </button>
                             <button
-                                :disabled="!canDelete"
+                                :disabled="!canDelete || submitting"
                                 class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
                                 @click="deleteAccount"
                             >
-                                Delete my account permanently
+                                {{
+                                    immediate
+                                        ? 'Delete my account now'
+                                        : 'Delete my account permanently'
+                                }}
                             </button>
                         </div>
                     </div>
@@ -290,43 +365,78 @@ const confirmDataLoss = ref(false)
 const confirmBackup = ref(false)
 const deleteConfirmText = ref('')
 const passwordConfirm = ref('')
-const { alertModal, confirmModal } = useAlertModal()
+const immediate = ref(false)
+const confirmUsername = ref('')
+const submitting = ref(false)
+const { alertModal } = useAlertModal()
 const router = useRouter()
 const authStore = inject('authStore')
 
 const axiosInstance = axios.getAxiosInstance()
 
+const isAdmin = computed(() => !!authStore?.isAdmin)
+const username = computed(() => authStore?.getUser?.username ?? '')
+
+const usernameMatches = computed(() => {
+    const typed = confirmUsername.value.trim().replace(/^@/, '').toLowerCase()
+    return typed.length > 0 && typed === username.value.toLowerCase()
+})
+
 const canDelete = computed(() => {
     return (
+        !isAdmin.value &&
         confirmPermanent.value &&
         confirmDataLoss.value &&
         confirmBackup.value &&
         deleteConfirmText.value === 'DELETE' &&
-        passwordConfirm.value.length > 0
+        passwordConfirm.value.length > 0 &&
+        (!immediate.value || usernameMatches.value)
     )
 })
 
+const finish = (stillLoggedIn) => {
+    if (stillLoggedIn) {
+        window.location.href = '/'
+        return
+    }
+
+    authStore.resetUser()
+    router.push('/')
+}
+
 const deleteAccount = async () => {
+    if (!canDelete.value || submitting.value) {
+        return
+    }
+
+    submitting.value = true
+
+    const payload = { password: passwordConfirm.value }
+
+    if (immediate.value) {
+        payload.immediate = true
+        payload.confirm_username = confirmUsername.value.trim()
+    }
+
     await axiosInstance
-        .post('/api/v1/account/settings/account/delete', {
-            password: passwordConfirm.value
-        })
+        .post('/api/v1/account/settings/account/delete', payload)
         .then((res) => {
+            const data = res.data?.data ?? {}
+            const stillLoggedIn = !!data.logged_in
+
             alertModal(
-                'Successfully deleted account.',
-                'Your account is now pending deletion in 30 days, or until you log in again!',
+                data.immediate ? 'Account deleted' : 'Successfully deleted account.',
+                data.immediate
+                    ? 'Your account is being deleted now and your username has been released.'
+                    : `Your account is now pending deletion in ${data.grace_days ?? 30} days, or until you log in again!`,
                 [
                     {
                         text: 'Ok',
                         type: 'cancel',
-                        callback: () => {
-                            authStore.resetUser()
-                            router.push('/')
-                        }
+                        callback: () => finish(stillLoggedIn)
                     }
                 ]
             )
-            console.log(res)
         })
         .catch((error) => {
             if (error.response && error.response.data && error.response.data.message) {
@@ -334,6 +444,9 @@ const deleteAccount = async () => {
             } else {
                 alertModal('Oops!', 'An unexpected error occured. Please try again.')
             }
+        })
+        .finally(() => {
+            submitting.value = false
         })
 }
 </script>
