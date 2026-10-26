@@ -13,6 +13,16 @@ class ActorController extends Controller
             abort(404);
         }
 
+        if ($actor->isPurged()) {
+            return $this->activityPubResponse([
+                '@context' => 'https://www.w3.org/ns/activitystreams',
+                'id' => $actor->getActorId(),
+                'type' => 'Tombstone',
+                'formerType' => 'Person',
+                'deleted' => $actor->purged_at->toIso8601ZuluString(),
+            ], 410);
+        }
+
         // Confirm profile is active (1)
         if ($actor->status != 1) {
             return $this->activityPubError('Record not available', 400);
