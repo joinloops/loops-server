@@ -12,8 +12,10 @@ use App\Http\Resources\ProfileResource;
 use App\Models\Profile;
 use App\Models\User;
 use App\Models\UserFilter;
+use App\Services\AccountDeletionService;
 use App\Services\AccountService;
 use App\Services\AccountSuggestionService;
+use App\Services\AccountSwitcherService;
 use App\Services\AvatarService;
 use App\Services\PushTokenCacheService;
 use App\Services\StarterKitService;
@@ -409,54 +411,59 @@ class SettingsController extends Controller
         return $this->success();
     }
 
-    public function confirmDeleteAccount(Request $request)
+    public function confirmDeleteAccount(Request $request, AccountDeletionService $deletion, AccountSwitcherService $switcher)
     {
-        $request->validate([
-            'password' => 'required|current_password',
-        ]);
-
         $user = $request->user();
 
-        DB::transaction(function () use ($user) {
-            app(PushTokenCacheService::class)->remove((string) $user->profile_id);
-
-            $user->forceFill([
-                'status' => 8,
-                'delete_after' => now()->addMonth(),
-                'remember_token' => Str::random(60),
-                'push_token' => null,
-                'push_token_platform' => null,
-                'push_token_verified_at' => null,
-            ])->save();
-
-            $user->profile?->update(['status' => 8]);
-
-            $user->videos()->whereIn('status', [2])->update(['status' => 8]);
-            $user->comments()->whereIn('status', ['active'])->update(['status' => 'account_pending_deletion']);
-            $user->commentReplies()->whereIn('status', ['active'])->update(['status' => 'account_pending_deletion']);
-            $user->actorNotifications()->update(['actor_state' => 8]);
-            $user->starterKits()->update([
-                'previous_status' => DB::raw('status'),
-            ]);
-            $user->starterKits()->update(['status' => 8]);
-
-            AccountSuggestionService::removeFromAll($user->profile_id);
-            AccountService::del($user->profile_id);
-
-            User::find($user->id)->tokens()->each(function (Token $token) {
-                $token->revoke();
-                $token->refreshToken?->revoke();
-            });
-        });
-
-        app(StarterKitService::class)->flushStatsAndPopular();
-
-        if ($request->hasSession()) {
-            Auth::guard('web')->logout();
-            $request->session()->invalidate();
-            $request->session()->regenerateToken();
+        if (! $deletion->canSelfDelete($user)) {
+            return response()->json([
+                'message' => 'Admin accounts cannot be deleted here. Use the command line tools on the server instead.',
+            ], 403);
         }
 
-        return $this->success();
+        // Sign in with Apple accounts have no usable password, they confirm with their username instead
+        $requiresPassword = blank($user->apple_id);
+
+        $request->validate([
+            'password' => $requiresPassword ? 'required|current_password' : 'nullable',
+            'immediate' => 'sometimes|boolean',
+            'confirm_username' => $requiresPassword
+                ? 'required_if_accepted:immediate|nullable|string|max:255'
+                : 'required|string|max:255',
+        ]);
+
+        $immediate = $request->boolean('immediate');
+
+        if (($immediate || ! $requiresPassword) && strcasecmp(ltrim(trim((string) $request->input('confirm_username')), '@'), (string) $user->username) !== 0) {
+            return response()->json([
+                'message' => 'The username you entered does not match this account.',
+                'errors' => ['confirm_username' => ['The username you entered does not match this account.']],
+            ], 422);
+        }
+
+        $deleteAfter = $deletion->schedule($user, $immediate);
+
+        $session = ['logged_in' => false, 'active_id' => null];
+
+        if ($request->hasSession()) {
+            $result = $switcher->removeFromList($user->id);
+            $session = [
+                'logged_in' => (bool) $result['logged_in'],
+                'active_id' => $result['active_id'] ? (string) $result['active_id'] : null,
+            ];
+
+            if (! $result['logged_in']) {
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
+        }
+
+        return $this->data([
+            'immediate' => $immediate,
+            'delete_after' => $deleteAfter->toIso8601String(),
+            'grace_days' => $immediate ? 0 : $deletion->graceDays(),
+            ...$session,
+        ]);
     }
 }
