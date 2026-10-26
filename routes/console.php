@@ -18,6 +18,7 @@ Schedule::command('curated:expire-stale')->hourly()->runInBackground()->onOneSer
 Schedule::command('admin:check-activity')->everySixHours(15)->runInBackground()->onOneServer();
 Schedule::command('app:purge-old-activities')->daily()->at('16:20')->runInBackground()->onOneServer();
 Schedule::command('loops:publish-scheduled')->everyTenMinutes()->withoutOverlapping(5)->runInBackground()->onOneServer();
+Schedule::command('loops:purge-deleted-accounts')->hourlyAt(37)->withoutOverlapping(10)->runInBackground()->onOneServer();
 
 if (config('live.enabled')) {
     Schedule::command('live:viewer-counts')->everyMinute()->withoutOverlapping();
