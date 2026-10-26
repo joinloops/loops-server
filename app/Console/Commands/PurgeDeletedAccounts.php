@@ -32,7 +32,7 @@ class PurgeDeletedAccounts extends Command
                     return;
                 }
 
-                if (! Cache::add('loops:account-purge:queued:'.$user->id, 1, now()->addHour())) {
+                if (! Cache::add('loops:account-purge:queued:'.$user->id, 1, now()->addHours(4))) {
                     return;
                 }
 
