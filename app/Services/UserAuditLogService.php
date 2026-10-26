@@ -214,6 +214,17 @@ class UserAuditLogService
         return $this->log($user, 'selective_export', null, $activity);
     }
 
+    public function logAccountDeletionRequested(
+        User|int $user,
+        bool $immediate,
+        \DateTimeInterface $deleteAfter
+    ): UserAuditLog {
+        return $this->log($user, 'account_deletion_requested', [
+            'immediate' => $immediate,
+            'delete_after' => $deleteAfter->format(DATE_ATOM),
+        ]);
+    }
+
     public function logPasswordReset(User|int $user, array $additionalData = []): UserAuditLog
     {
         return $this->log($user, 'password_reset', [
