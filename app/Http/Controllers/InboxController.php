@@ -22,6 +22,10 @@ class InboxController extends Controller
             return response()->json(['status' => 'accepted'], 202);
         }
 
+        if ($actor->isPurged()) {
+            return response()->json(['error' => 'Gone'], 410);
+        }
+
         $activity = $request->json()->all();
 
         $headers = $request->attributes->get('raw_headers') ?? $request->headers->all();
