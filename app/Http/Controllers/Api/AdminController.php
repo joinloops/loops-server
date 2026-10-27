@@ -53,6 +53,7 @@ use App\Models\User;
 use App\Models\UserAuditLog;
 use App\Models\UsernameHistory;
 use App\Models\Video;
+use App\Services\AccountDeletionService;
 use App\Services\AccountService;
 use App\Services\AccountSuggestionService;
 use App\Services\AdminAuditLogService;
@@ -74,6 +75,7 @@ use App\Services\VersionCheckService;
 use App\Services\VideoService;
 use Dedoc\Scramble\Attributes\ExcludeAllRoutesFromDocs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -518,8 +520,12 @@ class AdminController extends Controller
         $profile = Profile::findOrFail($id);
 
         $res = (new ProfileResource($profile))->toArray($request);
+        $res['is_purged'] = $profile->isPurged();
 
-        if ($profile->local) {
+        if ($profile->isPurged()) {
+            $res['is_admin'] = false;
+            $res['domain'] = parse_url(config('app.url'), PHP_URL_HOST);
+        } elseif ($profile->local) {
             $user = User::whereProfileId($id)->firstOrFail();
             $res['is_admin'] = (bool) $user->is_admin;
             $res['email'] = $user->email;
@@ -751,6 +757,53 @@ class AdminController extends Controller
         app(AdminAuditLogService::class)->logProfileAdminSuspend($request->user(), $profile);
 
         return $this->success();
+    }
+
+    public function profileDelete(Request $request, AccountDeletionService $deletion, $id)
+    {
+        $request->validate([
+            'confirm' => 'required|string|in:DELETE',
+        ]);
+
+        $profile = Profile::find($id);
+
+        if (! $profile) {
+            return $this->error('Profile not found', 404);
+        }
+
+        if ($profile->isPurged()) {
+            return $this->error('This account has already been deleted.', 410);
+        }
+
+        if (! $profile->local || ! $profile->user_id) {
+            return $this->error('Only local accounts can be deleted.', 422);
+        }
+
+        $user = User::find($profile->user_id);
+
+        if (! $user) {
+            return $this->error('This account has already been deleted.', 410);
+        }
+
+        if ($user->is_admin) {
+            return $this->error('Admin accounts can only be deleted through the CLI.', 403);
+        }
+
+        $changes = [
+            'username' => $profile->username,
+            'user_id' => (string) $user->id,
+            'previous_status' => $profile->getStatusDescription(),
+            'delete_after' => $user->delete_after ? Carbon::parse($user->delete_after)->toIso8601String() : null,
+        ];
+
+        $deletion->deleteByAdmin($user, $request->user());
+
+        app(AdminAuditLogService::class)->logProfileAdminDelete($request->user(), $profile, $changes);
+
+        return $this->data([
+            'id' => (string) $profile->id,
+            'deleted' => true,
+        ]);
     }
 
     public function profileUnsuspend(Request $request, $id)
