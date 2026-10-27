@@ -224,7 +224,7 @@ return [
                 'maxJobs' => 0,
                 'memory' => 512,
                 'tries' => 3,
-                'timeout' => 420,
+                'timeout' => (int) env('LOOPS_TRANSCODE_JOB_TIMEOUT', 900) + 60,
                 'nice' => 0,
             ],
 
@@ -267,7 +267,7 @@ return [
                 'maxProcesses' => 1,
                 'memory' => 512,
                 'tries' => 3,
-                'timeout' => 420,
+                'timeout' => (int) env('LOOPS_TRANSCODE_JOB_TIMEOUT', 900) + 60,
             ],
 
             'audio-processor' => [

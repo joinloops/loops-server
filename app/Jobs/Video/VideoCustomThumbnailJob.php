@@ -86,4 +86,18 @@ class VideoCustomThumbnailJob implements ShouldQueue
             throw $e;
         }
     }
+
+    public function failed(\Throwable $exception): void
+    {
+        Log::error('Custom thumbnail job permanently failed, falling back to auto thumbnail', [
+            'video_id' => $this->video->id,
+            'error' => $exception->getMessage(),
+        ]);
+
+        $video = $this->video->fresh();
+
+        if ($video && ! $video->has_thumb) {
+            VideoThumbnailJob::dispatch($video);
+        }
+    }
 }

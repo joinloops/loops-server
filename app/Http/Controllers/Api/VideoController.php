@@ -221,16 +221,14 @@ class VideoController extends Controller
             }
 
             if ($model->thumbnail_path) {
-                VideoCustomThumbnailJob::withChain([
-                    new VideoOptimizeJob($model),
-                    new VideoProcessingCompleteJob($model),
-                ])->dispatch($model);
+                VideoCustomThumbnailJob::dispatch($model);
             } else {
-                VideoThumbnailJob::withChain([
-                    new VideoOptimizeJob($model),
-                    new VideoProcessingCompleteJob($model),
-                ])->dispatch($model);
+                VideoThumbnailJob::dispatch($model);
             }
+
+            VideoOptimizeJob::withChain([
+                new VideoProcessingCompleteJob($model),
+            ])->dispatch($model);
 
             return $this->success();
 

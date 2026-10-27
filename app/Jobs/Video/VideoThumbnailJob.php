@@ -2,6 +2,8 @@
 
 namespace App\Jobs\Video;
 
+use App\Services\Media\TranscodeException;
+use App\Services\Media\VideoTranscoder;
 use App\Services\VideoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -12,7 +14,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use ProtoneMedia\LaravelFFMpeg\Support\FFMpeg;
 
 class VideoThumbnailJob implements ShouldQueue
 {
@@ -20,9 +21,7 @@ class VideoThumbnailJob implements ShouldQueue
 
     public $video;
 
-    public $timeout = 120;
-
-    public $tries = 3;
+    public $timeout = 180;
 
     public $maxExceptions = 3;
 
@@ -36,12 +35,21 @@ class VideoThumbnailJob implements ShouldQueue
         $this->onQueue('video-processing');
     }
 
-    public function middleware(): array
+    public function retryUntil(): \DateTimeInterface
     {
-        return [(new WithoutOverlapping('video-thumb:'.$this->video->id))->expireAfter(180)];
+        return now()->addHours(2);
     }
 
-    public function handle(): void
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping('video-thumb:'.$this->video->id))
+                ->releaseAfter(30)
+                ->expireAfter($this->timeout + 30),
+        ];
+    }
+
+    public function handle(VideoTranscoder $transcoder): void
     {
         $video = $this->video->fresh();
 
@@ -51,81 +59,70 @@ class VideoThumbnailJob implements ShouldQueue
             return;
         }
 
-        if (str_starts_with($video->vid, 'https://')) {
+        if (! $video->vid || str_starts_with($video->vid, 'https://')) {
             return;
         }
 
+        $workdir = null;
+
         try {
-            if (! Storage::disk('s3')->exists($video->vid)) {
-                throw new \Exception('Video file not found on S3: '.$video->vid);
+            $sourcePath = $video->vid_optimized && Storage::disk('s3')->exists($video->vid_optimized)
+                ? $video->vid_optimized
+                : $video->vid;
+
+            if (! Storage::disk('s3')->exists($sourcePath)) {
+                throw new TranscodeException('Video file not found on S3: '.$sourcePath, permanent: true);
             }
 
-            $ext = pathinfo($video->vid, PATHINFO_EXTENSION);
-            $randomStr = Str::random(8);
-            $thumb = str_replace('.'.$ext, '_thumb_'.$randomStr.'.jpg', $video->vid);
+            $workdir = $transcoder->makeWorkdir('thumb-'.$video->id);
+            $ext = pathinfo($sourcePath, PATHINFO_EXTENSION);
+            $source = $workdir.DIRECTORY_SEPARATOR.'source'.($ext ? '.'.strtolower($ext) : '');
+            $frame = $workdir.DIRECTORY_SEPARATOR.'thumb.jpg';
 
-            if (Storage::disk('s3')->exists($thumb)) {
-                $video->thumbnail_path = $thumb;
-                $video->has_thumb = true;
-                $video->save();
-                VideoService::deleteMediaData($video->id);
+            $transcoder->download('s3', $sourcePath, $source);
 
-                return;
+            $probe = $transcoder->probe($source);
+            $streams = VideoTranscoder::selectStreams($probe, $transcoder->decodableCodecs());
+
+            if (! $streams['video']) {
+                throw new TranscodeException('No decodable video stream for thumbnail', permanent: true);
             }
 
-            $indexSec = 0;
+            $transcoder->extractFrame($source, $frame, (int) $streams['video']['index'], timeout: $this->timeout - 60);
 
-            $media = FFMpeg::fromDisk('s3')
-                ->open($video->vid)
-                ->getFrameFromSeconds($indexSec)
-                ->export()
-                ->toDisk('s3')
-                ->withVisibility('public')
-                ->save($thumb);
+            $vidExt = pathinfo($video->vid, PATHINFO_EXTENSION);
+            $base = $vidExt ? Str::beforeLast($video->vid, '.'.$vidExt) : $video->vid;
+            $thumb = $base.'_thumb_'.Str::random(8).'.jpg';
 
-            $media->cleanupTemporaryFiles();
+            $transcoder->upload('s3', $frame, $thumb);
 
-            // @phpstan-ignore-next-line
-            if (! Storage::disk('s3')->exists($thumb)) {
-                throw new \Exception('Thumbnail was not created on S3');
-            }
-
-            // @phpstan-ignore-next-line
             $video->thumbnail_path = $thumb;
             $video->has_thumb = true;
             $video->save();
 
             VideoService::deleteMediaData($video->id);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             Log::error('Video thumbnail generation failed', [
                 'video_id' => $video->id,
                 'attempt' => $this->attempts(),
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'ffmpeg' => $e instanceof TranscodeException ? $e->stderrTail() : null,
             ]);
 
-            if ($this->attempts() >= $this->tries) {
-                $video->processing_error = 'Thumbnail generation failed: '.$e->getMessage();
-                $video->processing_status = 'failed';
-                $video->processing_failed_at = now();
-                $video->save();
+            if ($e instanceof TranscodeException && $e->permanent) {
+                $this->fail($e);
+
+                return;
             }
 
             throw $e;
+        } finally {
+            $transcoder->cleanup($workdir);
         }
     }
 
     public function failed(\Throwable $exception): void
     {
-        $video = $this->video->fresh();
-
-        if ($video) {
-            $video->processing_status = 'failed';
-            $video->processing_error = 'Thumbnail: '.$exception->getMessage();
-            $video->processing_failed_at = now();
-            $video->save();
-        }
-
         Log::error('Video thumbnail job permanently failed', [
             'video_id' => $this->video->id,
             'error' => $exception->getMessage(),

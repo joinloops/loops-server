@@ -13,6 +13,11 @@ return [
             'preset' => env('LOOPS_TRANSCODE_PRESET', 'slow'),
             'audio_kbps' => (int) env('LOOPS_TRANSCODE_AUDIO_KBPS', 128),
             'advanced' => (bool) env('LOOPS_TRANSCODE_ADVANCED', false),
+            'fallback_preset' => env('LOOPS_TRANSCODE_FALLBACK_PRESET', 'veryfast'),
+            'max_fps' => (int) env('LOOPS_TRANSCODE_MAX_FPS', 60),
+            'job_timeout' => (int) env('LOOPS_TRANSCODE_JOB_TIMEOUT', 900),
+            'retry_window_hours' => (int) env('LOOPS_TRANSCODE_RETRY_WINDOW_HOURS', 6),
+            'temp_dir' => env('LOOPS_TRANSCODE_TEMP_DIR'),
         ],
     ],
 
