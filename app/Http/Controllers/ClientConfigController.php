@@ -12,24 +12,41 @@ class ClientConfigController extends Controller
 
     public function discovery(Request $request): Response
     {
-        return $this->respond($request, $this->service->discovery(), 86400);
+        return $this->respond($request, $this->service->discovery(), 'public, max-age=86400', 'Accept-Encoding');
     }
 
     public function show(Request $request): Response
     {
-        return $this->respond($request, $this->service->get(), ClientConfigService::CACHE_TTL_SECONDS);
+        $user = $this->service->accountFromRequest($request);
+
+        if ($user) {
+            return $this->respond(
+                $request,
+                $this->service->forUser($user),
+                'private, max-age='.ClientConfigService::ACCOUNT_MAX_AGE_SECONDS,
+                'Accept-Encoding, Authorization'
+            );
+        }
+
+        return $this->respond(
+            $request,
+            $this->service->get(),
+            'public, max-age='.ClientConfigService::CACHE_TTL_SECONDS,
+            'Accept-Encoding, Authorization'
+        );
     }
 
-    protected function respond(Request $request, array $payload, int $maxAge): Response
+    protected function respond(Request $request, array $payload, string $cacheControl, string $vary): Response
     {
         $body = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $etag = '"'.hash('xxh128', $body).'"';
 
         $headers = [
             'Access-Control-Allow-Origin' => '*',
-            'Cache-Control' => 'public, max-age='.$maxAge,
+            'Access-Control-Expose-Headers' => 'ETag',
+            'Cache-Control' => $cacheControl,
             'ETag' => $etag,
-            'Vary' => 'Accept-Encoding',
+            'Vary' => $vary,
         ];
 
         $ifNoneMatch = array_map('trim', explode(',', (string) $request->header('If-None-Match')));

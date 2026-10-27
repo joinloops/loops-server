@@ -19,7 +19,7 @@ return [
 
     'allowed_headers' => ['*'],
 
-    'exposed_headers' => ['Link'],
+    'exposed_headers' => ['Link', 'ETag'],
 
     'max_age' => 86400,
 

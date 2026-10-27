@@ -9,12 +9,15 @@ use App\Http\Requests\UpdateAvatarRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\UpdateVideoRequest;
 use App\Jobs\Video\VideoOptimizeJob;
+use App\Models\User;
 use App\Rules\ValidUsername;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class ClientConfigService
 {
-    public const CACHE_KEY = 'loops:services:client-config:v1';
+    public const CACHE_KEY = 'loops:services:client-config:v2';
 
     public const VERSION = '1.0';
 
@@ -23,6 +26,8 @@ class ClientConfigService
     public const EXTENSION_KEY = 'https://joinloops.org/ns/client-config';
 
     public const CACHE_TTL_SECONDS = 3600;
+
+    public const ACCOUNT_MAX_AGE_SECONDS = 600;
 
     protected const VIDEO_MIME_MAP = [
         'mp4' => 'video/mp4',
@@ -55,6 +60,48 @@ class ClientConfigService
         Cache::forget(self::CACHE_KEY);
     }
 
+    public function accountFromRequest(Request $request): ?User
+    {
+        if (! $request->bearerToken()) {
+            return null;
+        }
+
+        try {
+            $user = Auth::guard('api')->user();
+        } catch (\Throwable) {
+            return null;
+        }
+
+        return $user instanceof User ? $user : null;
+    }
+
+    public function forUser(User $user): array
+    {
+        $config = $this->get();
+        $profile = $user->profile;
+        $active = (int) $user->status === 1 && $profile && (int) $profile->status === 1;
+        $canPost = $active && (bool) $user->can_upload;
+
+        $config['scope'] = 'account';
+        $config['composer']['allowed'] = $canPost;
+
+        if (! $canPost) {
+            $config['media']['max_attachments'] = 0;
+            $config['media']['min_attachments'] = 0;
+            $config['composer']['scheduling']['supported'] = false;
+        }
+
+        unset($config['links']['registration']);
+
+        $ext = &$config['extensions'][self::EXTENSION_KEY];
+        $ext['comments']['allowed'] = $active && (bool) $user->can_comment;
+        $ext['video']['embed_allowed'] = $canPost && (bool) $user->can_embed;
+        $ext['profile_links']['account_max_count'] = $profile ? LinkLimitService::getMaxLinks($profile) : 0;
+        unset($ext);
+
+        return $config;
+    }
+
     public function discovery(): array
     {
         return [
@@ -73,6 +120,8 @@ class ClientConfigService
 
         return [
             'version' => self::VERSION,
+            'scope' => 'default',
+            'account_scope_supported' => true,
             'software' => [
                 'name' => 'loops',
                 'version' => (string) app('app_version'),
@@ -122,6 +171,7 @@ class ClientConfigService
     protected function composer(): array
     {
         return [
+            'allowed' => true,
             'max_length' => StoreVideoRequest::CAPTION_MAX_LENGTH,
             'url_weight' => null,
             'mention_counting' => 'full',
