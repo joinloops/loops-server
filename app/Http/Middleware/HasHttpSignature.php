@@ -2,44 +2,39 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\HttpSignatureService;
 use Closure;
 use Illuminate\Http\Request;
 
 class HasHttpSignature
 {
+    public function __construct(protected HttpSignatureService $signatures) {}
+
     public function handle(Request $request, Closure $next)
     {
-        $signature = $request->header('Signature');
+        $headers = $request->headers->all();
 
-        if (! $signature) {
+        if (! $request->hasHeader('Signature')) {
             return response()->json(['error' => 'Missing signature header'], 401);
         }
 
-        if (! str_contains($signature, 'keyId=') || ! str_contains($signature, 'signature=')) {
+        if (! $this->signatures->hasSignature($headers)) {
             return response()->json(['error' => 'Malformed signature header'], 401);
         }
 
-        $request->attributes->set('raw_signature', $signature);
-        $request->attributes->set('raw_headers', $request->headers->all());
+        $request->attributes->set('raw_signature', $request->header('Signature'));
+        $request->attributes->set('raw_headers', $headers);
 
-        $keyId = $this->extractKeyId($signature);
+        $keyId = $this->signatures->peekKeyId($headers);
+
         if ($keyId) {
-            $actorUrl = preg_replace('/#.*$/', '', $keyId);
-            $originDomain = parse_url($actorUrl, PHP_URL_HOST);
+            $originDomain = parse_url(preg_replace('/#.*$/', '', $keyId), PHP_URL_HOST);
+
             if ($originDomain) {
                 $request->attributes->set('activitypub_origin_domain', strtolower($originDomain));
             }
         }
 
         return $next($request);
-    }
-
-    protected function extractKeyId(string $signature): ?string
-    {
-        if (preg_match('/keyId="([^"]+)"/', $signature, $matches)) {
-            return $matches[1];
-        }
-
-        return null;
     }
 }
