@@ -4,11 +4,9 @@ namespace App\Jobs\Federation;
 
 use App\Federation\ActivityBuilders\UndoActivityBuilder;
 use App\Models\FollowRequest;
-use App\Services\HttpSignatureService;
-use App\Services\SigningService;
+use App\Services\SignedHttpClient;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliverUndoFollowRequestActivity implements ShouldQueue
@@ -62,42 +60,8 @@ class DeliverUndoFollowRequestActivity implements ShouldQueue
             return;
         }
 
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
-        $signatureService = app(HttpSignatureService::class);
-        $path = $parsedUrl['path'] ?? '/';
-        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-        $requestPath = $path.$queryString;
-
         try {
-            $privateKey = app(SigningService::class)->getPrivateKey();
-            $signature = $signatureService->sign(
-                $actor->getKeyId(),
-                $privateKey,
-                $headers,
-                'POST',
-                $requestPath,
-                json_encode($activity)
-            );
-
-            $headers['Signature'] = $signature;
-        } catch (\Exception $e) {
-            $error = "Failed to sign request: {$e->getMessage()}";
-            Log::error($error, ['actor' => $actor->id]);
-
-            return;
-        }
-
-        try {
-            $response = Http::timeout(config('loops.federation.delivery.timeout', 10))
-                ->withHeaders($headers)
-                ->post($inboxUrl, $activity);
+            $response = app(SignedHttpClient::class)->post($actor->getKeyId(), $inboxUrl, $activity, (int) config('loops.federation.delivery.timeout', 10));
 
             if ($response->successful()) {
                 $followRequest->delete();

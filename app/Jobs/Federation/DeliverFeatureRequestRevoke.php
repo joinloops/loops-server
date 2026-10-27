@@ -3,13 +3,11 @@
 namespace App\Jobs\Federation;
 
 use App\Models\Profile;
-use App\Services\HttpSignatureService;
-use App\Services\SigningService;
+use App\Services\SignedHttpClient;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliverFeatureRequestRevoke implements ShouldBeUnique, ShouldQueue
@@ -105,39 +103,8 @@ class DeliverFeatureRequestRevoke implements ShouldBeUnique, ShouldQueue
             ],
         ];
 
-        $parsedUrl = parse_url($inboxUrl);
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
         try {
-            $signature = app(HttpSignatureService::class)->sign(
-                $actor->getKeyId(),
-                app(SigningService::class)->getPrivateKey(),
-                $headers,
-                'POST',
-                $parsedUrl['path'] ?? '/',
-                json_encode($activity),
-            );
-            $headers['Signature'] = $signature;
-        } catch (\Exception $e) {
-            $this->devLog && Log::error("Failed to sign Revoke: {$e->getMessage()}", [
-                'actor' => $actor->id,
-                'inbox' => $inboxUrl,
-            ]);
-            $this->delete();
-
-            return;
-        }
-
-        try {
-            $response = Http::timeout($this->deliveryTimeout)
-                ->withHeaders($headers)
-                ->post($inboxUrl, $activity);
+            $response = app(SignedHttpClient::class)->post($actor->getKeyId(), $inboxUrl, $activity, (int) $this->deliveryTimeout);
 
             if ($response->successful()) {
                 $this->devLog && Log::info('FeatureRequest Revoke delivered', [

@@ -2,14 +2,16 @@
 
 namespace App\Jobs\Federation;
 
+use App\Federation\Signatures\IncomingSignature;
+use App\Federation\Signatures\InvalidSignatureException;
 use App\Models\Instance;
 use App\Models\InstanceActor;
 use App\Models\Profile;
 use App\Services\ActivityPubService;
 use App\Services\HttpSignatureService;
 use App\Services\SanitizeService;
+use App\Services\SignedHttpClient;
 use App\Services\WebfingerService;
-use Carbon\Carbon;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -115,64 +117,44 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
         SanitizeService $sanitizeService,
         WebfingerService $webfingerService
     ): array {
-        $signature = $this->headers['signature'][0] ?? null;
-
-        if (! $signature) {
-            return ['valid' => false, 'reason' => 'Missing signature'];
-        }
-
         try {
-            $parsed = $this->parseSignatureHeader($signature);
-        } catch (Exception $e) {
-            return ['valid' => false, 'reason' => 'Malformed signature: '.$e->getMessage()];
+            $incoming = $signatureService->parseIncoming($this->headers, $this->method, $this->requestUri, $this->rawBody);
+        } catch (InvalidSignatureException $e) {
+            return ['valid' => false, 'reason' => $e->getMessage()];
         }
 
-        $keyId = $parsed['keyId'] ?? null;
-        if (! $keyId) {
-            return ['valid' => false, 'reason' => 'Missing keyId'];
+        $result = $this->resolveSignedActor($incoming, $activityPubService, $sanitizeService, $webfingerService);
+
+        if ($result['valid'] && ($result['key_verified'] ?? true)) {
+            app(SignedHttpClient::class)->noteInboundScheme($incoming->originDomain(), $incoming->scheme);
         }
 
-        $actorUrl = preg_replace('/#.*$/', '', $keyId);
+        return $result;
+    }
+
+    protected function resolveSignedActor(
+        IncomingSignature $incoming,
+        ActivityPubService $activityPubService,
+        SanitizeService $sanitizeService,
+        WebfingerService $webfingerService
+    ): array {
+        $actorUrl = $incoming->actorUrl();
         $originDomain = parse_url($actorUrl, PHP_URL_HOST);
-
-        $signedHeadersList = isset($parsed['headers'])
-            ? explode(' ', strtolower($parsed['headers']))
-            : [];
-
-        $requiredHeaders = ['(request-target)', 'host', 'date'];
-        foreach ($requiredHeaders as $required) {
-            if (! in_array($required, $signedHeadersList)) {
-                return ['valid' => false, 'reason' => "Missing signed header: {$required}"];
-            }
-        }
-
-        $headers = $this->buildSignedHeaders($signedHeadersList);
-
-        if (! $this->isDateValid($headers['Date'] ?? '')) {
-            return ['valid' => false, 'reason' => 'Invalid or expired Date header'];
-        }
 
         if (! $sanitizeService->url($actorUrl, true)) {
             return ['valid' => false, 'reason' => 'Invalid actor URL'];
         }
 
-        if (in_array('digest', $signedHeadersList)) {
-            $digest = $this->headers['digest'][0] ?? null;
-            if (! $digest || ! $signatureService->verifyDigest($digest, $this->rawBody)) {
-                return ['valid' => false, 'reason' => 'Invalid Digest'];
-            }
-        }
-
         $profile = Profile::where('uri', $actorUrl)->first();
         if ($profile && $profile->public_key) {
-            if ($this->verifyWithKey($signature, $profile->public_key, $headers, $signatureService)) {
+            if ($incoming->verify($profile->public_key)) {
                 return ['valid' => true, 'actor' => $profile];
             }
         }
 
         $instanceActor = InstanceActor::where('uri', $actorUrl)->first();
         if ($instanceActor && $instanceActor->public_key) {
-            if ($this->verifyWithKey($signature, $instanceActor->public_key, $headers, $signatureService)) {
+            if ($incoming->verify($instanceActor->public_key)) {
                 return ['valid' => true, 'actor' => $instanceActor];
             }
         }
@@ -181,7 +163,7 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
             try {
                 $webfingerActor = $webfingerService->findOrCreateRemoteInstanceActor("acct:{$originDomain}@{$originDomain}");
                 if ($webfingerActor && $webfingerActor->public_key) {
-                    if ($this->verifyWithKey($signature, $webfingerActor->public_key, $headers, $signatureService)) {
+                    if ($incoming->verify($webfingerActor->public_key)) {
                         return ['valid' => true, 'actor' => $webfingerActor];
                     }
                 }
@@ -214,10 +196,10 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
                 }
 
                 if ($existing) {
-                    return ['valid' => true, 'actor' => $existing];
+                    return ['valid' => true, 'actor' => $existing, 'key_verified' => false];
                 }
 
-                return ['valid' => true, 'actor' => (object) ['uri' => $actorUrl, 'domain' => $originDomain]];
+                return ['valid' => true, 'actor' => (object) ['uri' => $actorUrl, 'domain' => $originDomain], 'key_verified' => false];
             }
 
             return ['valid' => false, 'reason' => 'Unable to fetch public key'];
@@ -232,7 +214,7 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
         if ($canonicalActorUrl !== $actorUrl) {
             $existing = Profile::where('uri', $canonicalActorUrl)->first();
             if ($existing && $existing->public_key) {
-                if ($this->verifyWithKey($signature, $existing->public_key, $headers, $signatureService)) {
+                if ($incoming->verify($existing->public_key)) {
                     return ['valid' => true, 'actor' => $existing];
                 }
             }
@@ -240,116 +222,13 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
 
         $publicKey = $actorData['publicKey']['publicKeyPem'];
 
-        if (! $this->verifyWithKey($signature, $publicKey, $headers, $signatureService)) {
+        if (! $incoming->verify($publicKey)) {
             return ['valid' => false, 'reason' => 'Signature verification failed with fresh key'];
         }
 
         $actor = $this->updateOrCreateActor($actorUrl, $actorData);
 
         return ['valid' => true, 'actor' => $actor ?? (object) ['uri' => $actorUrl, 'domain' => $originDomain]];
-    }
-
-    protected function buildSignedHeaders(array $signedHeadersList): array
-    {
-        $headers = [];
-
-        foreach ($signedHeadersList as $headerName) {
-            switch ($headerName) {
-                case '(request-target)':
-                    $headers['(request-target)'] = strtolower($this->method).' '.$this->requestUri;
-                    break;
-
-                case 'host':
-                    $headers['Host'] = $this->headers['host'][0] ?? '';
-                    break;
-
-                case 'date':
-                    $headers['Date'] = $this->headers['date'][0] ?? '';
-                    break;
-
-                case 'digest':
-                    if (isset($this->headers['digest'])) {
-                        $headers['Digest'] = $this->headers['digest'][0];
-                    }
-                    break;
-
-                case 'content-type':
-                    if (isset($this->headers['content-type'])) {
-                        $headers['Content-Type'] = $this->headers['content-type'][0];
-                    }
-                    break;
-
-                case 'content-length':
-                    if (isset($this->headers['content-length'])) {
-                        $headers['Content-Length'] = $this->headers['content-length'][0];
-                    }
-                    break;
-
-                default:
-                    if (isset($this->headers[$headerName])) {
-                        $properCase = implode('-', array_map('ucfirst', explode('-', $headerName)));
-                        $headers[$properCase] = $this->headers[$headerName][0];
-                    }
-                    break;
-            }
-        }
-
-        return $headers;
-    }
-
-    protected function verifyWithKey(string $signature, string $publicKey, array $headers, HttpSignatureService $signatureService): bool
-    {
-        return $signatureService->verify(
-            $signature,
-            $publicKey,
-            $headers,
-            $this->method,
-            $this->requestUri
-        );
-    }
-
-    protected function parseSignatureHeader(string $signature): array
-    {
-        $parts = [];
-
-        if (! preg_match_all('/(\w+)="([^"\\\\]*(?:\\\\.[^"\\\\]*)*)"/', $signature, $matches, PREG_SET_ORDER)) {
-            throw new Exception('Malformed signature header');
-        }
-
-        foreach ($matches as $match) {
-            $parts[$match[1]] = str_replace('\\"', '"', $match[2]);
-        }
-
-        if (! isset($parts['keyId']) || ! isset($parts['signature'])) {
-            throw new Exception('Missing required signature components');
-        }
-
-        return $parts;
-    }
-
-    protected function isDateValid(string $dateHeader): bool
-    {
-        if ($dateHeader === '') {
-            return false;
-        }
-
-        try {
-            $date = Carbon::parse($dateHeader, 'UTC');
-        } catch (\Throwable $e) {
-            return false;
-        }
-
-        $now = now('UTC');
-
-        if ($date->isAfter($now->copy()->addHour())) {
-            return false;
-        }
-
-        if ($date->isBefore($now->copy()->subHour())) {
-            return false;
-        }
-
-        return true;
     }
 
     protected function fetchActorData(string $actorUrl, ActivityPubService $activityPubService)

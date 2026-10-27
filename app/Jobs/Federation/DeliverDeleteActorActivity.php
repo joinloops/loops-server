@@ -2,13 +2,11 @@
 
 namespace App\Jobs\Federation;
 
-use App\Services\HttpSignatureService;
-use App\Services\SigningService;
+use App\Services\SignedHttpClient;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliverDeleteActorActivity implements ShouldBeUnique, ShouldQueue
@@ -53,47 +51,9 @@ class DeliverDeleteActorActivity implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $parsedUrl = parse_url($this->inboxUrl);
         $body = json_encode($this->activity, JSON_UNESCAPED_SLASHES);
-        $devLog = (bool) config('logging.dev_log');
 
-        $headers = [
-            'Host' => $parsedUrl['host'].(isset($parsedUrl['port']) ? ':'.$parsedUrl['port'] : ''),
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
-        $path = ($parsedUrl['path'] ?? '/').(isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '');
-
-        try {
-            $signature = app(HttpSignatureService::class)->sign(
-                $this->keyId,
-                app(SigningService::class)->getPrivateKey(),
-                $headers,
-                'POST',
-                $path,
-                $body
-            );
-
-            $headers['Signature'] = $signature;
-        } catch (\Exception $e) {
-            $devLog && Log::error('Failed to sign actor Delete', [
-                'actor' => $this->actorId,
-                'inbox' => $this->inboxUrl,
-                'error' => $e->getMessage(),
-            ]);
-
-            $this->delete();
-
-            return;
-        }
-
-        $response = Http::timeout((int) config('loops.federation.delivery.timeout', 10))
-            ->withHeaders($headers)
-            ->withBody($body, 'application/activity+json')
-            ->post($this->inboxUrl);
+        $response = app(SignedHttpClient::class)->post($this->keyId, $this->inboxUrl, $body, (int) config('loops.federation.delivery.timeout', 10));
 
         if ($response->successful()) {
             return;

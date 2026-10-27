@@ -5,14 +5,11 @@ namespace App\Jobs\Federation;
 use App\Federation\ActivityBuilders\UndoActivityBuilder;
 use App\Models\Profile;
 use App\Models\Video;
-use App\Services\HttpSignatureService;
-use App\Services\SigningService;
+use App\Services\SignedHttpClient;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
 
 class DeliverUndoVideoLikeActivity implements ShouldBeUnique, ShouldQueue
 {
@@ -25,8 +22,6 @@ class DeliverUndoVideoLikeActivity implements ShouldBeUnique, ShouldQueue
     public $objectUrl;
 
     public $originalLikeId;
-
-    private $devLog;
 
     private $deliveryTimeout;
 
@@ -63,7 +58,6 @@ class DeliverUndoVideoLikeActivity implements ShouldBeUnique, ShouldQueue
         $this->objectUrl = $objectUrl;
         $this->originalLikeId = $originalLikeId;
 
-        $this->devLog = (bool) config('logging.dev_log');
         $this->deliveryTimeout = config('loops.federation.delivery.timeout', 10);
     }
 
@@ -81,48 +75,8 @@ class DeliverUndoVideoLikeActivity implements ShouldBeUnique, ShouldQueue
 
         $activity = UndoActivityBuilder::buildForLike($actor, $this->objectUrl, $this->originalLikeId);
 
-        $parsedUrl = parse_url($inboxUrl);
-
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
-        $signatureService = app(HttpSignatureService::class);
-        $path = $parsedUrl['path'] ?? '/';
-        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-        $requestPath = $path.$queryString;
-
         try {
-            $privateKey = app(SigningService::class)->getPrivateKey();
-            $signature = $signatureService->sign(
-                $actor->getKeyId(),
-                $privateKey,
-                $headers,
-                'POST',
-                $requestPath,
-                json_encode($activity)
-            );
-
-            $headers['Signature'] = $signature;
-        } catch (\Exception $e) {
-            $this->devLog && Log::error("Failed to sign request: {$e->getMessage()}", [
-                'actor' => $actor->id,
-                'inbox' => $inboxUrl,
-            ]);
-
-            $this->delete();
-
-            return;
-        }
-
-        try {
-            $response = Http::timeout($this->deliveryTimeout)
-                ->withHeaders($headers)
-                ->post($inboxUrl, $activity);
+            $response = app(SignedHttpClient::class)->post($actor->getKeyId(), $inboxUrl, $activity, (int) $this->deliveryTimeout);
 
             if ($response->successful()) {
                 return;

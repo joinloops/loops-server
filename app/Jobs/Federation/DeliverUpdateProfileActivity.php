@@ -3,13 +3,11 @@
 namespace App\Jobs\Federation;
 
 use App\Models\Profile;
-use App\Services\HttpSignatureService;
-use App\Services\SigningService;
+use App\Services\SignedHttpClient;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliverUpdateProfileActivity implements ShouldBeUnique, ShouldQueue
@@ -79,44 +77,7 @@ class DeliverUpdateProfileActivity implements ShouldBeUnique, ShouldQueue
 
         $parsedUrl = $this->parsedUrl;
 
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
-        $signatureService = app(HttpSignatureService::class);
-        $path = $parsedUrl['path'] ?? '/';
-        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-        $requestPath = $path.$queryString;
-
-        try {
-            $privateKey = app(SigningService::class)->getPrivateKey();
-            $headers['Signature'] = $signatureService->sign(
-                $actor->getKeyId(),
-                $privateKey,
-                $headers,
-                'POST',
-                $requestPath,
-                $payload
-            );
-        } catch (\Exception $e) {
-            $this->devLog && Log::error("Failed to sign request: {$e->getMessage()}", [
-                'actor' => $actor->id,
-                'inbox' => $this->inboxUrl,
-            ]);
-
-            $this->delete();
-
-            return;
-        }
-
-        $response = Http::timeout($this->deliveryTimeout)
-            ->withHeaders($headers)
-            ->withBody($payload, 'application/activity+json')
-            ->post($this->inboxUrl);
+        $response = app(SignedHttpClient::class)->post($actor->getKeyId(), $this->inboxUrl, $payload, (int) $this->deliveryTimeout);
 
         if ($response->successful()) {
             return;

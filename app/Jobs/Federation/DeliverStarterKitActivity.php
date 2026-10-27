@@ -3,13 +3,11 @@
 namespace App\Jobs\Federation;
 
 use App\Models\Profile;
-use App\Services\HttpSignatureService;
-use App\Services\SigningService;
+use App\Services\SignedHttpClient;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliverStarterKitActivity implements ShouldBeUnique, ShouldQueue
@@ -69,38 +67,8 @@ class DeliverStarterKitActivity implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
         try {
-            $signature = app(HttpSignatureService::class)->sign(
-                $this->actor->getKeyId(),
-                app(SigningService::class)->getPrivateKey(),
-                $headers,
-                'POST',
-                $parsedUrl['path'] ?? '/',
-                json_encode($this->activity),
-            );
-            $headers['Signature'] = $signature;
-        } catch (\Exception $e) {
-            $this->devLog && Log::error("Failed to sign starter kit activity: {$e->getMessage()}", [
-                'actor' => $this->actor->id,
-                'inbox' => $this->inboxUrl,
-            ]);
-            $this->delete();
-
-            return;
-        }
-
-        try {
-            $response = Http::timeout($this->deliveryTimeout)
-                ->withHeaders($headers)
-                ->post($this->inboxUrl, $this->activity);
+            $response = app(SignedHttpClient::class)->post($this->actor->getKeyId(), $this->inboxUrl, $this->activity, (int) $this->deliveryTimeout);
 
             if ($response->successful()) {
                 $this->devLog && Log::info('Starter kit activity delivered', [
