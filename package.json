@@ -63,7 +63,7 @@
     "devDependencies": {
         "@eslint/css": "^2.0.1",
         "@eslint/js": "^10.0.1",
-        "@intlify/unplugin-vue-i18n": "^11.2.5",
+        "@intlify/unplugin-vue-i18n": "^11.2.7",
         "@laravel/echo-vue": "^2.6.1",
         "@types/fs-extra": "^11.0.4",
         "@types/video.js": "^7.3.58",
