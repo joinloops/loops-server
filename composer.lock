@@ -6742,16 +6742,16 @@
         },
         {
             "name": "resend/resend-laravel",
-            "version": "v1.5.0",
+            "version": "v1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resend/resend-laravel.git",
-                "reference": "3f67df5b6f61353b09d7f849e6c81df8cdbc079f"
+                "reference": "7d046f4bdf13f4ffd16ee82a8a76c71c23b88015"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resend/resend-laravel/zipball/3f67df5b6f61353b09d7f849e6c81df8cdbc079f",
-                "reference": "3f67df5b6f61353b09d7f849e6c81df8cdbc079f",
+                "url": "https://api.github.com/repos/resend/resend-laravel/zipball/7d046f4bdf13f4ffd16ee82a8a76c71c23b88015",
+                "reference": "7d046f4bdf13f4ffd16ee82a8a76c71c23b88015",
                 "shasum": ""
             },
             "require": {
@@ -6805,22 +6805,22 @@
             ],
             "support": {
                 "issues": "https://github.com/resend/resend-laravel/issues",
-                "source": "https://github.com/resend/resend-laravel/tree/v1.5.0"
+                "source": "https://github.com/resend/resend-laravel/tree/v1.7.0"
             },
-            "time": "2026-09-17T20:41:15+00:00"
+            "time": "2026-10-20T23:47:13+00:00"
         },
         {
             "name": "resend/resend-php",
-            "version": "v1.15.0",
+            "version": "v1.17.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/resend/resend-php.git",
-                "reference": "048d4d481ca6c29c6542f4a48d49f01bd5196d6b"
+                "reference": "33b1083251a839dd5f6ae6e3fce6bf8c19734f96"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/resend/resend-php/zipball/048d4d481ca6c29c6542f4a48d49f01bd5196d6b",
-                "reference": "048d4d481ca6c29c6542f4a48d49f01bd5196d6b",
+                "url": "https://api.github.com/repos/resend/resend-php/zipball/33b1083251a839dd5f6ae6e3fce6bf8c19734f96",
+                "reference": "33b1083251a839dd5f6ae6e3fce6bf8c19734f96",
                 "shasum": ""
             },
             "require": {
@@ -6864,9 +6864,9 @@
             ],
             "support": {
                 "issues": "https://github.com/resend/resend-php/issues",
-                "source": "https://github.com/resend/resend-php/tree/v1.15.0"
+                "source": "https://github.com/resend/resend-php/tree/v1.17.0"
             },
-            "time": "2026-09-11T19:42:51+00:00"
+            "time": "2026-10-20T03:25:21+00:00"
         },
         {
             "name": "spatie/db-dumper",
