@@ -224,7 +224,7 @@
                                     </DropdownItem>
 
                                     <DropdownItem
-                                        v-if="!profile.is_admin && profile.status === 'active'"
+                                        v-if="canAdminDelete"
                                         destructive
                                         @click="showDeleteConfirmation = true"
                                     >
@@ -232,6 +232,20 @@
                                         Delete Account
                                     </DropdownItem>
                                 </Dropdown>
+                            </div>
+
+                            <div
+                                v-else-if="isPendingDeletion"
+                                class="flex flex-wrap items-center justify-center gap-2 lg:w-full lg:max-w-[240px] lg:shrink-0 lg:justify-end"
+                            >
+                                <button
+                                    type="button"
+                                    class="inline-flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+                                    @click="showDeleteConfirmation = true"
+                                >
+                                    <TrashIcon class="h-4 w-4" />
+                                    Delete now
+                                </button>
                             </div>
                         </div>
 
@@ -892,7 +906,16 @@
                             class="mt-2 text-center text-sm leading-6 text-gray-600 dark:text-gray-400"
                         >
                             Permanently delete <strong>@{{ profile.username }}</strong
-                            >? This action cannot be undone and will remove all associated data.
+                            >? This skips the 30 day grace period. Their videos, comments, messages
+                            and media are removed, other servers are told to delete their copies and
+                            the username is released right away. This cannot be undone.
+                        </p>
+
+                        <p
+                            v-if="deleteError"
+                            class="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300"
+                        >
+                            {{ deleteError }}
                         </p>
 
                         <label
@@ -1223,6 +1246,7 @@ const notFound = ref(false)
 const showDeleteConfirmation = ref(false)
 const deleteConfirmationText = ref('')
 const isDeleting = ref(false)
+const deleteError = ref('')
 const deleteInputRef = ref(null)
 const showSendEmailModal = ref(false)
 const showResetPasswordModal = ref(false)
@@ -1510,6 +1534,22 @@ const copyMessageBody = async () => {
 }
 
 const isDeleted = computed(() => profile.value?.status === 'deleted')
+
+const canAdminDelete = computed(
+    () =>
+        !!profile.value?.local &&
+        !profile.value?.is_admin &&
+        !profile.value?.is_purged &&
+        ['active', 'suspended', 'disabled'].includes(profile.value?.status)
+)
+
+const isPendingDeletion = computed(
+    () =>
+        isDeleted.value &&
+        !!profile.value?.local &&
+        !profile.value?.is_admin &&
+        !profile.value?.is_purged
+)
 
 const statusBadge = computed(() => statusBadgeStyles[profile.value?.status] || defaultBadge)
 
@@ -2465,21 +2505,27 @@ const closeDeleteModal = () => {
     if (isDeleting.value) return
     showDeleteConfirmation.value = false
     deleteConfirmationText.value = ''
+    deleteError.value = ''
 }
 
 const deleteAccount = async () => {
     if (!canDelete.value) return
     isDeleting.value = true
+    deleteError.value = ''
 
     try {
-        await new Promise((resolve) => setTimeout(resolve, 2000))
+        await profilesApi.deleteProfile(profile.value.id)
         showDeleteConfirmation.value = false
+        deleteConfirmationText.value = ''
         router.replace('/admin/profiles')
     } catch (error) {
         console.error('Error deleting account:', error)
+        deleteError.value =
+            error?.response?.data?.error?.message ||
+            error?.response?.data?.message ||
+            'Something went wrong deleting this account. Please try again.'
     } finally {
         isDeleting.value = false
-        deleteConfirmationText.value = ''
     }
 }
 

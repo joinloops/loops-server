@@ -429,7 +429,7 @@ export const profilesApi = {
     },
 
     async deleteProfile(id) {
-        return { success: true }
+        return await apiClient.post(`/api/v1/admin/profiles/${id}/delete`, { confirm: 'DELETE' })
     }
 }
 
