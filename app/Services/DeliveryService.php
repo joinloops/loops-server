@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class DeliveryService
@@ -28,46 +27,13 @@ class DeliveryService
             return;
         }
 
-        $body = json_encode($activity);
-
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
         try {
-            $privateKey = app(SigningService::class)->getPrivateKey();
-            $path = $parsedUrl['path'] ?? '/';
-            $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-            $requestPath = $path.$queryString;
-
-            $signature = $this->signatureService->sign(
+            $response = app(SignedHttpClient::class)->post(
                 $actor->getKeyId(),
-                $privateKey,
-                $headers,
-                'POST',
-                $requestPath,
-                $body
+                $inboxUrl,
+                $activity,
+                (int) config('loops.federation.delivery.timeout', 10)
             );
-
-            $headers['Signature'] = $signature;
-        } catch (\Exception $e) {
-            $error = "Failed to sign request: {$e->getMessage()}";
-            if (config('logging.dev_log')) {
-                Log::error($error, ['actor' => $actor->id]);
-            }
-
-            return;
-        }
-
-        try {
-            $response = Http::timeout(config('loops.federation.delivery.timeout', 10))
-                ->withHeaders($headers)
-                ->withBody($body, 'application/activity+json')
-                ->post($inboxUrl);
 
             if ($response->successful()) {
                 if (config('logging.dev_log')) {

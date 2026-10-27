@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Profile;
 use App\Models\RelaySubscription;
 use Exception;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class RelayService
@@ -255,36 +254,13 @@ class RelayService
             throw new Exception('Invalid inbox URL');
         }
 
-        $body = json_encode($activity);
-
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
-        $privateKey = $this->signingService->getPrivateKey();
-        $path = $parsedUrl['path'] ?? '/';
-        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-        $requestPath = $path.$queryString;
-
-        $signature = app(HttpSignatureService::class)->sign(
+        $response = app(SignedHttpClient::class)->post(
             $this->instanceActorService->getKeyId(),
-            $privateKey,
-            $headers,
-            'POST',
-            $requestPath,
-            $body
+            $inboxUrl,
+            $activity,
+            (int) config('loops.federation.delivery.timeout', 10),
+            $this->signingService->getPrivateKey()
         );
-
-        $headers['Signature'] = $signature;
-
-        $response = Http::timeout(config('loops.federation.delivery.timeout', 10))
-            ->withHeaders($headers)
-            ->withBody($body, 'application/activity+json')
-            ->post($inboxUrl);
 
         if (! $response->successful()) {
             throw new Exception("Delivery failed: {$response->status()} - {$response->body()}");
@@ -309,36 +285,13 @@ class RelayService
             throw new Exception('Invalid inbox URL');
         }
 
-        $body = json_encode($activity);
-
-        $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
-            'Content-Type' => 'application/activity+json',
-            'Accept' => 'application/activity+json',
-            'User-Agent' => app('user_agent'),
-        ];
-
-        $privateKey = $actor->private_key ?? $this->signingService->getPrivateKey();
-        $path = $parsedUrl['path'] ?? '/';
-        $queryString = isset($parsedUrl['query']) ? '?'.$parsedUrl['query'] : '';
-        $requestPath = $path.$queryString;
-
-        $signature = app(HttpSignatureService::class)->sign(
+        $response = app(SignedHttpClient::class)->post(
             $actor->getKeyId(),
-            $privateKey,
-            $headers,
-            'POST',
-            $requestPath,
-            $body
+            $inboxUrl,
+            $activity,
+            (int) config('loops.federation.delivery.timeout', 10),
+            $actor->private_key ?? $this->signingService->getPrivateKey()
         );
-
-        $headers['Signature'] = $signature;
-
-        $response = Http::timeout(config('loops.federation.delivery.timeout', 10))
-            ->withHeaders($headers)
-            ->withBody($body, 'application/activity+json')
-            ->post($inboxUrl);
 
         if (! $response->successful()) {
             throw new Exception("Delivery failed: {$response->status()}");

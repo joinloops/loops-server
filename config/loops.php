@@ -97,6 +97,12 @@ return [
         'delivery' => [
             'timeout' => env('LOOPS_FED_DELIVERY_TIMEOUT', 10),
         ],
+        'signatures' => [
+            'default' => env('LOOPS_FED_SIGNATURES_DEFAULT', 'rfc9421'),
+            'double_knock' => (bool) env('LOOPS_FED_SIGNATURES_DOUBLE_KNOCK', true),
+            'rfc9421_ttl_days' => (int) env('LOOPS_FED_SIGNATURES_RFC9421_TTL_DAYS', 30),
+            'cavage_ttl_days' => (int) env('LOOPS_FED_SIGNATURES_CAVAGE_TTL_DAYS', 7),
+        ],
         'inbox_dispatch_chunk_size' => env('LOOPS_FED_INBOX_DIS_CHUNKER', 100),
         'inbox_max_followers' => env('LOOPS_FED_INBOX_MAX_FOLLOWERS', 5000),
         'cache_ttl' => env('LOOPS_FEDI_CACHE_TTL', 3600),

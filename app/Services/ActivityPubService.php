@@ -59,23 +59,18 @@ class ActivityPubService
 
     protected function fetchActivityPub($url, $params, $signed, $validateContentType)
     {
-        $parsedUrl = parse_url($url);
+        if (! empty($params)) {
+            $url .= (str_contains($url, '?') ? '&' : '?').http_build_query($params);
+        }
 
         $headers = [
-            'Host' => $parsedUrl['host'],
-            'Date' => now()->toRfc7231String(),
             'Content-Type' => 'application/activity+json',
             'Accept' => 'application/activity+json',
             'User-Agent' => app('user_agent'),
         ];
 
-        if ($signed) {
-            $signature = app(HttpSignatureService::class)->instanceSign($headers, 'GET', $parsedUrl['path'] ?? '/');
-            $headers['Signature'] = $signature;
-        }
-
-        try {
-            $res = Http::withOptions([
+        $dispatch = function (array $headers) use ($url) {
+            return Http::withOptions([
                 'allow_redirects' => false,
                 'stream' => true,
                 'on_headers' => function (\Psr\Http\Message\ResponseInterface $response) {
@@ -88,8 +83,15 @@ class ActivityPubService
                 ->withHeaders($headers)
                 ->timeout(5)
                 ->connectTimeout(3)
-                ->retry(2, 500)
-                ->get($url, $params);
+                ->retry(2, 500, fn ($e) => $e instanceof ConnectionException
+                    || ($e instanceof RequestException && $e->response->serverError()), throw: false)
+                ->get($url);
+        };
+
+        try {
+            $res = $signed
+                ? app(SignedHttpClient::class)->send('GET', app(InstanceActorService::class)->getKeyId(), $url, null, $dispatch, $headers)
+                : $dispatch($headers);
         } catch (RequestException $e) {
             return false;
         } catch (ConnectionException $e) {
