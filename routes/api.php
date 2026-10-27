@@ -580,6 +580,7 @@ Route::prefix('api')->group(function () {
         Route::post('/profiles/{id}/admin_note', [AdminController::class, 'profileAdminNoteUpdate'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/suspend', [AdminController::class, 'profileSuspend'])->middleware('auth:web,api');
         Route::post('/profiles/{id}/unsuspend', [AdminController::class, 'profileUnsuspend'])->middleware('auth:web,api');
+        Route::post('/profiles/{id}/delete', [AdminController::class, 'profileDelete'])->middleware(['auth:web,api', 'throttle:30,1']);
         Route::get('/profiles/{id}/admin-auditlog', [AdminController::class, 'profileAuditLog'])->middleware('auth:web,api');
         Route::get('/profiles/{id}/user-auditlog', [AdminController::class, 'profileUserAuditLog'])->middleware('auth:web,api');
         Route::get('/profiles/{id}/username-history', [AdminUsernameController::class, 'profileHistory'])->middleware('auth:web,api');
