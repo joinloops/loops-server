@@ -80,6 +80,12 @@ class AuthController extends Controller
 
     public function registerApp(Request $request)
     {
+        if (is_string($request->input('redirect_uris'))) {
+            $request->merge([
+                'redirect_uris' => preg_split('/\s+/', trim($request->input('redirect_uris')), -1, PREG_SPLIT_NO_EMPTY),
+            ]);
+        }
+
         $data = $request->validate([
             'client_name' => ['required', 'string'],
             'redirect_uris' => ['required', 'array', 'min:1'],
