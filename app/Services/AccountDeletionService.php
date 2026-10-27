@@ -106,6 +106,46 @@ class AccountDeletionService
 
         $deleteAfter = $immediate ? now() : now()->addDays($this->graceDays());
 
+        $this->markPendingDeletion($user, $deleteAfter);
+
+        app(UserAuditLogService::class)->logAccountDeletionRequested($user, $immediate, $deleteAfter);
+
+        if ($immediate) {
+            $this->releaseUsername($user);
+
+            UserAccountDeleteJob::dispatch($user, true, ['source' => 'self_service', 'immediate' => true])
+                ->onQueue('default')
+                ->afterCommit();
+        }
+
+        return $deleteAfter;
+    }
+
+    public function deleteByAdmin(User $user, User $admin): void
+    {
+        if ($user->is_admin) {
+            throw new \LogicException('Admin accounts can only be deleted through the CLI.');
+        }
+
+        if ((int) $user->id === (int) $admin->id) {
+            throw new \LogicException('Admins cannot delete their own account from the dashboard.');
+        }
+
+        if ((int) $user->status === 8) {
+            $user->forceFill(['delete_after' => now()])->save();
+        } else {
+            $this->markPendingDeletion($user, now());
+        }
+
+        $this->releaseUsername($user);
+
+        UserAccountDeleteJob::dispatch($user, true, ['source' => 'admin', 'immediate' => true, 'deleted_by' => $admin->id])
+            ->onQueue('default')
+            ->afterCommit();
+    }
+
+    protected function markPendingDeletion(User $user, CarbonInterface $deleteAfter): void
+    {
         DB::transaction(function () use ($user, $deleteAfter) {
             app(PushTokenCacheService::class)->remove((string) $user->profile_id);
 
@@ -139,18 +179,6 @@ class AccountDeletionService
         });
 
         app(StarterKitService::class)->flushStatsAndPopular();
-
-        app(UserAuditLogService::class)->logAccountDeletionRequested($user, $immediate, $deleteAfter);
-
-        if ($immediate) {
-            $this->releaseUsername($user);
-
-            UserAccountDeleteJob::dispatch($user, true, ['source' => 'self_service', 'immediate' => true])
-                ->onQueue('default')
-                ->afterCommit();
-        }
-
-        return $deleteAfter;
     }
 
     public function releaseUsername(User $user): void
