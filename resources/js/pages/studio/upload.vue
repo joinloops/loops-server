@@ -1806,10 +1806,25 @@ const handleTranscode = async () => {
         console.debug(
             'Discarded tracks:',
             currentConversion.discardedTracks.map(({ track, reason }) => ({
-                type: track.isAudioTrack() ? 'audio' : 'other',
+                type: track.isVideoTrack() ? 'video' : track.isAudioTrack() ? 'audio' : 'other',
                 reason
             }))
         )
+
+        const discardedVideo = currentConversion.discardedTracks.find(({ track }) =>
+            track.isVideoTrack()
+        )
+        const hasVideoTrack = Boolean(await input.getPrimaryVideoTrack())
+
+        if (!hasVideoTrack || discardedVideo) {
+            const reason = discardedVideo?.reason ?? 'no_video_track'
+            console.error('Video track cannot be converted:', reason)
+            await alertModal(
+                'Unsupported Video',
+                `<p class="text-gray-700">Your browser can't convert the video in this file (${reason}). Try a different browser such as Chrome or Safari, or export it as H.264 MP4 under ${uploadLimitMB}MB and upload again.</p>`
+            )
+            return null
+        }
 
         currentConversion.onProgress = (p) => {
             transcodeProgress.value = Math.floor(p * 100)

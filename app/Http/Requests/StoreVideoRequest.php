@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Video;
+use App\Rules\HasVideoStream;
 use App\Services\IntlService;
 use Cache;
 use Illuminate\Foundation\Http\FormRequest;
@@ -50,10 +51,12 @@ class StoreVideoRequest extends FormRequest
 
         return [
             'video' => [
+                'bail',
                 'required',
                 File::types(config('loops.media.video_types', ['mp4']))
                     ->min(250)
                     ->max($maxSize * 1024),
+                new HasVideoStream,
             ],
             'thumbnail' => [
                 'nullable',

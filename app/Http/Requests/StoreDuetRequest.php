@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\Video;
+use App\Rules\HasVideoStream;
 use App\Services\IntlService;
 use Cache;
 use Illuminate\Foundation\Http\FormRequest;
@@ -46,10 +47,12 @@ class StoreDuetRequest extends FormRequest
 
         return [
             'video' => [
+                'bail',
                 'required',
                 File::types(['mp4'])
                     ->min(250)
                     ->max($maxSize * 1024),
+                new HasVideoStream,
             ],
             'duet_id' => 'required|exists:videos,id',
             'duet_layout' => 'required|string|in:side-by-side,vertical',
