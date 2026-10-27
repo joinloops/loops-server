@@ -207,6 +207,11 @@ class AdminAuditLogService
         return $this->log($user, 'profile:suspend', null, $profile, null, 1);
     }
 
+    public function logProfileAdminDelete(User|int $user, $profile, $changes)
+    {
+        return $this->log($user, 'profile:delete', $changes, $profile, null, 1);
+    }
+
     public function logProfileDeleteAllComments(User|int $user, $profile)
     {
         return $this->log($user, 'profile:delete_all_comments', null, $profile, null, 1);
