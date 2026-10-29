@@ -20,10 +20,38 @@ class HasVideoStream implements ValidationRule
         }
 
         $transcoder = app(VideoTranscoder::class);
+        $binary = $transcoder->ffprobeBinary();
+
+        if (str_contains($binary, DIRECTORY_SEPARATOR) && ! is_executable($binary)) {
+            Log::error('ffprobe binary is missing or not executable, skipping upload stream check. Check FFPROBE_BINARIES.', [
+                'binary' => $binary,
+            ]);
+
+            return;
+        }
 
         try {
             $probe = $transcoder->probe($value->getRealPath(), 30);
         } catch (TranscodeException $e) {
+            if ($e->isToolFailure()) {
+                Log::error('ffprobe could not run, skipping upload stream check. Check FFPROBE_BINARIES.', [
+                    'binary' => $binary,
+                    'exit_code' => $e->exitCode,
+                    'stderr' => $e->stderrTail(1000),
+                ]);
+
+                return;
+            }
+
+            Log::info('Upload rejected, ffprobe could not read file', [
+                'error' => $e->getMessage(),
+                'exit_code' => $e->exitCode,
+                'stderr' => $e->stderrTail(1000),
+                'client_name' => $value->getClientOriginalName(),
+                'client_mime' => $value->getClientMimeType(),
+                'size' => $value->getSize(),
+            ]);
+
             $fail('This file could not be read as a video. Please export it as an MP4 and try again.');
 
             return;

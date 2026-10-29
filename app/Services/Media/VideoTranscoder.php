@@ -123,7 +123,11 @@ class VideoTranscoder
         ]);
 
         if (! $result->successful()) {
-            throw new TranscodeException('ffprobe failed', $result->errorOutput());
+            throw new TranscodeException(
+                'ffprobe failed (exit '.$result->exitCode().')',
+                $result->errorOutput(),
+                exitCode: $result->exitCode(),
+            );
         }
 
         $json = json_decode($result->output(), true);
