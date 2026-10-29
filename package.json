@@ -73,7 +73,7 @@
         "eslint": "^10.13.0",
         "eslint-plugin-vue": "^10.11.1",
         "flatted": ">=3.4.4",
-        "follow-redirects": ">=1.16.1",
+        "follow-redirects": ">=1.16.2",
         "globals": "^17.13.0",
         "laravel-echo": "^2.6.1",
         "prettier": "^3.9.10",
