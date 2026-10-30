@@ -17,6 +17,7 @@ Schedule::command('logs:clean-admin-security --days=14')->dailyAt('03:00')->runI
 Schedule::command('curated:expire-stale')->hourly()->runInBackground()->onOneServer();
 Schedule::command('admin:check-activity')->everySixHours(15)->runInBackground()->onOneServer();
 Schedule::command('app:purge-old-activities')->daily()->at('16:20')->runInBackground()->onOneServer();
+Schedule::command('collabs:expire')->hourly()->withoutOverlapping()->runInBackground()->onOneServer();
 Schedule::command('loops:publish-scheduled')->everyTenMinutes()->withoutOverlapping(5)->runInBackground()->onOneServer();
 Schedule::command('loops:purge-deleted-accounts')->everyFourHours(37)->withoutOverlapping()->runInBackground()->onOneServer();
 

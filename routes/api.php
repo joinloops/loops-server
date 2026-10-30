@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDashboardController;
 use App\Http\Controllers\Api\AdminUsernameController;
 use App\Http\Controllers\Api\AppController;
+use App\Http\Controllers\Api\CollabController;
 use App\Http\Controllers\Api\ConversationLookupController;
 use App\Http\Controllers\Api\DmConversationController;
 use App\Http\Controllers\Api\DmGroupController;
@@ -326,6 +327,23 @@ Route::prefix('api')->group(function () {
     Route::post('/v1/app/logout', [AppController::class, 'handleLogout'])->middleware(['auth:web,api']);
 
     Route::get('/v1/account/settings/dm/status', [AccountController::class, 'getDmStatus'])->middleware(['auth:web,api']);
+    Route::get('/v1/account/settings/collab/status', [CollabController::class, 'getSettings'])->middleware(['auth:web,api']);
+    Route::post('/v1/account/settings/collab/update', [CollabController::class, 'updateSettings'])->middleware(['auth:web,api']);
+
+    Route::prefix('v1/collabs')->middleware(['auth:web,api'])->group(function () {
+        Route::get('requests', [CollabController::class, 'requests']);
+        Route::get('requests/{id}', [CollabController::class, 'show']);
+        Route::post('requests/{id}/accept', [CollabController::class, 'accept'])->middleware('throttle:60,1');
+        Route::post('requests/{id}/decline', [CollabController::class, 'decline'])->middleware('throttle:60,1');
+        Route::post('requests/{id}/leave', [CollabController::class, 'leave'])->middleware('throttle:60,1');
+        Route::get('search', [CollabController::class, 'search'])->middleware('throttle:autocomplete');
+        Route::post('video/{videoId}/remove', [CollabController::class, 'removeFromVideo'])->middleware('throttle:60,1');
+        Route::post('video/{videoId}/discard', [CollabController::class, 'discard'])->middleware('throttle:30,1');
+        Route::get('trusted', [CollabController::class, 'trusted']);
+        Route::post('trusted/{profileId}', [CollabController::class, 'trust'])->middleware('throttle:60,1');
+        Route::post('trusted/{profileId}/delete', [CollabController::class, 'untrust'])->middleware('throttle:60,1');
+    });
+
     Route::get('/v1/account/settings/starter-kits/status', [AccountController::class, 'getStarterKitsStatus'])->middleware(['auth:web,api']);
     Route::post('/v1/account/settings/dm/update', [AccountController::class, 'updateDmStatus'])->middleware(['auth:web,api']);
     Route::post('/v1/account/settings/starter-kits/update', [AccountController::class, 'updateStarterKitsStatus'])->middleware(['auth:web,api']);
@@ -672,4 +690,5 @@ Route::prefix('/ap')->middleware([AuthorizedFetch::class])->group(function () {
     Route::get('kit/{kit}/items/{pid}', [ObjectController::class, 'showStarterKitAccountItem'])->middleware(AuthorizedFetch::class);
     Route::get('kit/{kit}/attestation/{id}', [ObjectController::class, 'showStarterKitAccountAttestation'])->middleware(AuthorizedFetch::class);
     Route::get('users/{profileId}/quote_authorizations/{authId}', [ObjectController::class, 'getQuoteAuthorization'])->middleware(AuthorizedFetch::class);
+    Route::get('users/{profileId}/coauthor_authorizations/{collabId}', [ObjectController::class, 'getCoauthorAuthorization'])->middleware(AuthorizedFetch::class);
 });
