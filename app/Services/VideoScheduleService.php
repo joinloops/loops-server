@@ -95,6 +95,12 @@ class VideoScheduleService
             return false;
         }
 
+        if (app(CollabService::class)->blocksPublish($video)) {
+            $this->releaseClaim($video->id);
+
+            return false;
+        }
+
         $video->forceFill([
             'publish_state' => Video::PUBLISH_STATE_PUBLISHED,
             'status' => self::STATUS_LIVE,
