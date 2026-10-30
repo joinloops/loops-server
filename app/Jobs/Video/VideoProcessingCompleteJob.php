@@ -3,13 +3,16 @@
 namespace App\Jobs\Video;
 
 use App\Jobs\PushNotifications\SendPushNotificationJob;
+use App\Services\CollabService;
 use App\Services\ConfigService;
 use App\Services\FederationDispatcher;
+use App\Services\VideoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class VideoProcessingCompleteJob implements ShouldQueue
@@ -43,6 +46,10 @@ class VideoProcessingCompleteJob implements ShouldQueue
             $video->processing_status = 'completed';
             $video->save();
 
+            if (app(CollabService::class)->blocksPublish($video)) {
+                return;
+            }
+
             $scheduler = app(\App\Services\VideoScheduleService::class);
 
             if ($scheduler->shouldHoldForSchedule($video)) {
@@ -55,6 +62,12 @@ class VideoProcessingCompleteJob implements ShouldQueue
                 }
 
                 return;
+            }
+
+            if (! $video->isLive() && $video->has_processed) {
+                DB::table('videos')->where('id', $video->id)->where('status', '!=', 2)->update(['status' => 2]);
+                $video = $video->fresh();
+                VideoService::deleteMediaData($video->id);
             }
 
             $config = app(ConfigService::class);

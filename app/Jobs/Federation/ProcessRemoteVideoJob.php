@@ -131,6 +131,16 @@ class ProcessRemoteVideoJob implements ShouldBeUnique, ShouldQueue
 
             VideoService::deleteMediaData($video->id);
 
+            if (! empty($this->object['coauthors']) && is_array($this->object['coauthors'])) {
+                VerifyRemoteCoauthorsJob::dispatch(
+                    (string) $video->id,
+                    (string) $this->object['id'],
+                    is_string($this->object['attributedTo'] ?? null) ? $this->object['attributedTo'] : $profile->getActorId(),
+                    array_values($this->object['coauthors']),
+                    true,
+                );
+            }
+
             if ($this->remoteSearchImportId) {
                 RemoteSearchImport::where('id', $this->remoteSearchImportId)
                     ->whereNull('searchable_id')

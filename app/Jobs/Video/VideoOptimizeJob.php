@@ -3,6 +3,7 @@
 namespace App\Jobs\Video;
 
 use App\Models\Video;
+use App\Services\CollabService;
 use App\Services\Media\TranscodeException;
 use App\Services\Media\VideoTranscoder;
 use App\Services\VideoService;
@@ -193,7 +194,9 @@ class VideoOptimizeJob implements ShouldQueue
             $video->processing_failed_at = null;
         }
 
-        if (! $isScheduled) {
+        $heldForCollab = app(CollabService::class)->blocksPublish($video);
+
+        if (! $isScheduled && ! $heldForCollab) {
             $video->status = 2;
         }
 
