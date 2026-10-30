@@ -64,6 +64,7 @@ use Illuminate\Support\Facades\DB;
  * @property int $can_playlist
  * @property int $can_dm
  * @property string $dm_privacy
+ * @property string $collab_state
  * @property int $hide_ai
  * @property int $hide_sensitive
  * @property int $manuallyApprovesFollowers
@@ -217,6 +218,7 @@ class Profile extends Model
         'enforce_ad_label',
         'enforce_nsfw_label',
         'dm_privacy',
+        'collab_state',
     ];
 
     protected $guarded = [];

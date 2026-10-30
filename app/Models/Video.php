@@ -420,6 +420,33 @@ class Video extends Model
         return $this->morphMany(QuoteAuthorization::class, 'quotable');
     }
 
+    /**
+     * @param  Builder<Video>  $query
+     * @return Builder<Video>
+     */
+    protected function scopeByAuthorOrCoauthor(Builder $query, $profileId): Builder
+    {
+        return $query->where(function ($q) use ($profileId) {
+            $q->where('videos.profile_id', $profileId)
+                ->orWhere(function ($q) use ($profileId) {
+                    $q->where('videos.visibility', 1)
+                        ->whereExists(function ($sub) use ($profileId) {
+                            $sub->selectRaw(1)
+                                ->from('video_collaborations')
+                                ->whereColumn('video_collaborations.video_id', 'videos.id')
+                                ->where('video_collaborations.profile_id', $profileId)
+                                ->where('video_collaborations.state', VideoCollaboration::STATE_APPROVED);
+                        });
+                });
+        });
+    }
+
+    /** @return HasMany<VideoCollaboration, $this> */
+    public function collaborations(): HasMany
+    {
+        return $this->hasMany(VideoCollaboration::class);
+    }
+
     public function remoteSearchImports(): MorphMany
     {
         return $this->morphMany(RemoteSearchImport::class, 'searchable');

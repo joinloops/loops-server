@@ -118,6 +118,16 @@ class Notification extends Model
 
     public const KIT_AUTO_APPROVE_ADDED_YOU = 56;
 
+    public const COLLAB_REQUEST = 60;
+
+    public const COLLAB_ACCEPTED = 61;
+
+    public const COLLAB_DECLINED = 62;
+
+    public const COLLAB_AUTO_ADDED = 63;
+
+    public const COLLAB_REMOVED = 64;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -140,7 +150,7 @@ class Notification extends Model
 
     public static function allTypes()
     {
-        return [11, 15, 16, 18, 21, 22, 23, 26, 27, 28, 31];
+        return [11, 15, 16, 18, 21, 22, 23, 26, 27, 28, 31, 60, 61, 62, 63, 64];
     }
 
     public static function videoLikeTypes()
@@ -170,7 +180,12 @@ class Notification extends Model
 
     public static function activityTypes()
     {
-        return [15, 16, 18, 21, 22, 23, 26, 27, 28, 31];
+        return [15, 16, 18, 21, 22, 23, 26, 27, 28, 31, 60, 61, 62, 63, 64];
+    }
+
+    public static function collabTypes()
+    {
+        return [60, 61, 62, 63, 64];
     }
 
     public static function followerTypes()
