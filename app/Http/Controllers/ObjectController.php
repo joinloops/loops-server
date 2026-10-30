@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Federation\ActivityBuilders\CreateActivityBuilder;
 use App\Federation\ActivityBuilders\StarterKitActivityBuilder;
+use App\Federation\Audience;
+use App\Federation\Coauthors;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
@@ -11,7 +13,9 @@ use App\Models\QuoteAuthorization;
 use App\Models\StarterKit;
 use App\Models\StarterKitAccount;
 use App\Models\Video;
+use App\Models\VideoCollaboration;
 use App\Services\ActivityPubCacheService;
+use App\Services\CollabService;
 use App\Services\ConfigService;
 use App\Services\HashidService;
 use App\Services\UsernameService;
@@ -259,6 +263,50 @@ class ObjectController extends Controller
         }, 900);
 
         return $this->activityPubResponseWithCache($activityPub);
+    }
+
+    public function getCoauthorAuthorization($profileId, $collabId)
+    {
+        abort_unless(app(ConfigService::class)->federation(), 404);
+
+        $collab = VideoCollaboration::with(['video.profile', 'profile'])
+            ->where('id', $collabId)
+            ->where('profile_id', $profileId)
+            ->where('is_local', true)
+            ->first();
+
+        abort_if(! $collab || ! $collab->video || ! $collab->video->is_local, 404);
+
+        $video = $collab->video;
+        $live = $collab->isApproved()
+            && $video->isLive()
+            && (int) $video->visibility !== Audience::VISIBILITY_LOCAL_ONLY
+            && $collab->profile
+            && (int) $collab->profile->status === 1
+            && $video->profile
+            && (int) $video->profile->status === 1;
+
+        if (! $live) {
+            if (in_array($collab->state, [VideoCollaboration::STATE_REMOVED], true) && $collab->profile) {
+                return response()->json(Coauthors::tombstone($collab), 410, [
+                    'Content-Type' => 'application/activity+json; charset=utf-8',
+                    'Cache-Control' => 'no-store',
+                ], JSON_UNESCAPED_SLASHES);
+            }
+
+            abort(404);
+        }
+
+        $activityPub = $this->apCache->getOrCache(
+            app(CollabService::class)->attestationCacheKey($collab->id),
+            fn () => Coauthors::authorization($collab),
+            900
+        );
+
+        return response(json_encode($activityPub, JSON_UNESCAPED_SLASHES))
+            ->header('Content-Type', 'application/activity+json; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=300')
+            ->header('Vary', 'Accept');
     }
 
     public function showVideoObjectLikes(Request $request, $actor, $id)

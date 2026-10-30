@@ -52,6 +52,7 @@ use App\Models\VideoLike;
 use App\Models\VideoRepost;
 use App\Services\AccountService;
 use App\Services\ActivityPubCacheService;
+use App\Services\CollabService;
 use App\Services\ConfigService;
 use App\Services\FederationDispatcher;
 use App\Services\KlipyMediaSelector;
@@ -67,6 +68,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class VideoController extends Controller
 {
@@ -130,6 +132,18 @@ class VideoController extends Controller
             'mime' => $videoFile->getMimeType(),
         ];
 
+        $coauthor = null;
+
+        if ($request->filled('coauthor_id')) {
+            $coauthor = Profile::where('local', true)->find($request->input('coauthor_id'));
+
+            if (! $coauthor) {
+                throw ValidationException::withMessages(['coauthor_id' => 'That account could not be found.']);
+            }
+
+            app(CollabService::class)->assertCanInvite($profile, $coauthor);
+        }
+
         $model = null;
         $s3Path = null;
         $thumbnailPath = null;
@@ -188,6 +202,10 @@ class VideoController extends Controller
                 }
 
                 throw new \Exception('Failed to upload video file. Please try again.');
+            }
+
+            if ($coauthor) {
+                app(CollabService::class)->invite($model, $profile, $coauthor);
             }
 
             if ($request->filled('description')) {

@@ -34,6 +34,7 @@ use App\Models\VideoLike;
 use App\Services\AccountService;
 use App\Services\AccountSuggestionService;
 use App\Services\BlockedDomainService;
+use App\Services\CollabService;
 use App\Services\ConfigService;
 use App\Services\FollowerService;
 use App\Services\LinkLimitService;
@@ -269,6 +270,8 @@ class AccountController extends Controller
 
         ShareSheetService::forget($pid);
         ShareSheetService::forget($profile->id);
+
+        app(CollabService::class)->severBetween($pid, $profile->id);
 
         return response()->json($res);
     }

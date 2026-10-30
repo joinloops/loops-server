@@ -119,7 +119,7 @@ class FeedController extends Controller
         $user = $request->user();
         $authProfileId = $user->profile_id;
 
-        $video = Video::where('profile_id', $profileId)
+        $video = Video::byAuthorOrCoauthor($profileId)
             ->where('id', $videoId)
             ->published()
             ->firstOrFail();
@@ -139,13 +139,13 @@ class FeedController extends Controller
         }
 
         $feed = Video::select('videos.*')
-            ->whereIn('visibility', $visibilityScopes)
+            ->whereIn('videos.visibility', $visibilityScopes)
             ->selectRaw('CASE WHEN video_bookmarks.id IS NOT NULL THEN 1 ELSE 0 END as is_bookmarked')
             ->leftJoin('video_bookmarks', function ($join) use ($authProfileId) {
                 $join->on('video_bookmarks.video_id', '=', 'videos.id')
                     ->where('video_bookmarks.profile_id', '=', $authProfileId);
             })
-            ->where('videos.profile_id', $profileId)
+            ->byAuthorOrCoauthor($profileId)
             ->published()
             ->where('videos.id', '<=', $videoId)
             ->orderByDesc('videos.id')
