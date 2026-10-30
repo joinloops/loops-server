@@ -187,6 +187,16 @@ class UserAuditLogService
         ]);
     }
 
+    public function logAccountCollabSettings(
+        User|int $user,
+        array $changedFields = [],
+    ): UserAuditLog {
+        return $this->log($user, 'collab_state', [
+            'old' => $changedFields['old'],
+            'new' => $changedFields['new'],
+        ]);
+    }
+
     public function logAccountAddProfileLink(
         User|int $user,
         array $changedFields = [],
