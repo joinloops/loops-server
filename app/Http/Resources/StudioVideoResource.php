@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use App\Models\Video;
 use App\Services\AccountService;
+use App\Services\CollabService;
 use App\Services\HashidService;
 use App\Services\VideoService;
 use Illuminate\Http\Request;
@@ -75,6 +76,20 @@ class StudioVideoResource extends JsonResource
             $res['media']['thumbnail'] = $thumb;
             $res['status'] = 'scheduled';
             $res['scheduled_at'] = $this->scheduled_at;
+        }
+
+        $collab = app(CollabService::class)->studioSummary($this->resource);
+
+        if ($collab) {
+            $res['collab'] = $collab;
+
+            if ($this->status !== 2 && $this->has_processed && in_array($collab['state'], ['pending', 'declined', 'expired'], true)) {
+                $res['status'] = match ($collab['state']) {
+                    'pending' => 'awaiting_collab',
+                    default => 'collab_'.$collab['state'],
+                };
+                $res['media']['thumbnail'] = app(CollabService::class)->videoPreview($this->resource)['thumbnail'];
+            }
         }
 
         if ($this->status === 2) {

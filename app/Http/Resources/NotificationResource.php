@@ -3,7 +3,9 @@
 namespace App\Http\Resources;
 
 use App\Models\Notification;
+use App\Models\VideoCollaboration;
 use App\Services\AccountService;
+use App\Services\CollabService;
 use App\Services\HashidService;
 use App\Services\StarterKitService;
 use App\Services\SystemMessageService;
@@ -50,6 +52,11 @@ class NotificationResource extends JsonResource
             Notification::KIT_YOU_IN_NEW_MEMBERS => $this->starterKitYouInNewMembers(),
             Notification::KIT_ONLY_YOU_FOLLOW_ADDED_YOU => $this->starterKitOnlyYouFollowAutoApprovedAdded(),
             Notification::KIT_AUTO_APPROVE_ADDED_YOU => $this->starterKitAutoApprovedAdded(),
+            Notification::COLLAB_REQUEST => $this->collab('collab.request'),
+            Notification::COLLAB_ACCEPTED => $this->collab('collab.accepted'),
+            Notification::COLLAB_DECLINED => $this->collab('collab.declined'),
+            Notification::COLLAB_AUTO_ADDED => $this->collab('collab.autoAdded'),
+            Notification::COLLAB_REMOVED => $this->collab('collab.removed'),
             default => [
                 'id' => (string) $this->id,
                 'type' => 'internal',
@@ -396,6 +403,29 @@ class NotificationResource extends JsonResource
             'video_thumbnail' => $thumb,
             'comment_id' => (string) $this->comment_id,
             'url' => $link,
+            'read_at' => $this->read_at,
+            'created_at' => $this->created_at,
+        ];
+    }
+
+    protected function collab(string $type)
+    {
+        $collabId = data_get($this->meta, 'collab_id');
+        $collab = $collabId ? VideoCollaboration::with('video')->find($collabId) : null;
+        $video = $collab?->video;
+        $preview = $video ? app(CollabService::class)->videoPreview($video) : null;
+
+        return [
+            'id' => (string) $this->id,
+            'type' => $type,
+            'actor' => AccountService::get($this->profile_id, false) ?: $this->unavailableAccount(),
+            'collab_id' => $collabId ? (string) $collabId : null,
+            'collab_state' => $collab?->stateName(),
+            'reason' => data_get($this->meta, 'reason'),
+            'by' => data_get($this->meta, 'by'),
+            'video_id' => $this->video_id ? (string) $this->video_id : null,
+            'video_thumbnail' => $preview['thumbnail'] ?? null,
+            'url' => $video && $video->isLive() ? '/v/'.HashidService::encode($video->id) : null,
             'read_at' => $this->read_at,
             'created_at' => $this->created_at,
         ];

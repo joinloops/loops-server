@@ -5,6 +5,7 @@ namespace App\Http\Resources;
 use App\Models\Hashtag;
 use App\Models\Video;
 use App\Services\AccountService;
+use App\Services\CollabService;
 use App\Services\LikeService;
 use App\Services\VideoService;
 use Illuminate\Http\Request;
@@ -40,6 +41,7 @@ class VideoResource extends JsonResource
         $res = [
             'id' => (string) $this->id,
             'account' => AccountService::compact($this->profile_id),
+            'coauthors' => app(CollabService::class)->coauthorAccounts($this->id),
             'caption' => $this->caption,
             'url' => $this->shareUrl(),
             'shortcode' => $this->hashid(),
