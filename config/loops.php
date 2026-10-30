@@ -1,6 +1,12 @@
 <?php
 
 return [
+    'collabs' => [
+        'enabled' => (bool) env('LOOPS_COLLABS_ENABLED', true),
+        'request_ttl_days' => (int) env('LOOPS_COLLABS_REQUEST_TTL_DAYS', 7),
+        'max_remote_coauthors' => (int) env('LOOPS_COLLABS_MAX_REMOTE', 3),
+    ],
+
     'media' => [
         'video_types' => array_values(array_filter(array_map(
             'trim',
