@@ -26,9 +26,20 @@ class DeleteValidator extends BaseValidator
         }
 
         if (is_array($activity['object']) && isset($activity['object']['type'])) {
-            $allowedTypes = ['Person', 'Tombstone', 'FeatureAuthorization'];
+            $allowedTypes = ['Person', 'Tombstone', 'FeatureAuthorization', 'CoauthorAuthorization'];
             if (! in_array($activity['object']['type'], $allowedTypes)) {
                 throw new \Exception("Delete activity 'object' has an invalid embedded type: '{$activity['object']['type']}'.");
+            }
+
+            if ($activity['object']['type'] === 'CoauthorAuthorization') {
+                if (! isset($activity['object']['id']) || ! is_string($activity['object']['id'])) {
+                    throw new \Exception('Delete CoauthorAuthorization is missing its id.');
+                }
+
+                $interactingObject = $activity['object']['interactingObject'] ?? null;
+                if ($interactingObject !== null && (! is_string($interactingObject) || ! app(SanitizeService::class)->url($interactingObject, true))) {
+                    throw new \Exception('Delete CoauthorAuthorization has an invalid interactingObject.');
+                }
             }
 
             if ($activity['object']['type'] === 'FeatureAuthorization') {

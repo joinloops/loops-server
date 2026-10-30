@@ -7,6 +7,8 @@ use App\Models\CommentReply;
 use App\Models\Profile;
 use App\Models\StarterKitAccount;
 use App\Models\Video;
+use App\Models\VideoCollaboration;
+use App\Services\CollabService;
 use App\Services\DmInboundService;
 use App\Services\StarterKitService;
 use Illuminate\Support\Facades\DB;
@@ -27,6 +29,7 @@ class DeleteHandler extends BaseHandler
                     'Person' => $this->handleProfileDelete($activity, $actor, $objectUrl),
                     'Tombstone' => $this->handleTombstoneDelete($activity, $actor, $objectUrl),
                     'FeatureAuthorization' => $this->handleFeatureAuthorizationDelete($activity, $actor, $objectUrl),
+                    'CoauthorAuthorization' => $this->handleCoauthorAuthorizationDelete($activity, $actor, $objectUrl),
                     default => $this->handleGenericDelete($activity, $actor, $objectUrl)
                 };
             } else {
@@ -253,6 +256,46 @@ class DeleteHandler extends BaseHandler
                 'activity_id' => $activity['id'] ?? 'unknown',
             ]);
         }
+
+        return true;
+    }
+
+    private function handleCoauthorAuthorizationDelete(array $activity, ?Profile $actor, $objectUrl)
+    {
+        if (! $actor) {
+            return true;
+        }
+
+        $collab = VideoCollaboration::forAttestation($objectUrl)
+            ->where('is_local', false)
+            ->first();
+
+        if (! $collab) {
+            return true;
+        }
+
+        if ((string) $collab->profile_id !== (string) $actor->id) {
+            if (config('logging.dev_log')) {
+                Log::warning('Rejecting CoauthorAuthorization delete by non-owner', [
+                    'actor' => $actor->id,
+                    'collab_profile' => $collab->profile_id,
+                ]);
+            }
+
+            return true;
+        }
+
+        $video = $collab->video;
+        $interactingObject = data_get($activity, 'object.interactingObject');
+
+        if ($video && $interactingObject && $video->ap_id !== $interactingObject) {
+            return true;
+        }
+
+        $videoId = $collab->video_id;
+        $collab->delete();
+
+        app(CollabService::class)->forgetVideo($videoId);
 
         return true;
     }

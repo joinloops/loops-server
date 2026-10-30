@@ -2,6 +2,7 @@
 
 namespace App\Federation\Handlers;
 
+use App\Jobs\Federation\VerifyRemoteCoauthorsJob;
 use App\Models\Comment;
 use App\Models\CommentCaptionEdit;
 use App\Models\CommentReply;
@@ -130,6 +131,16 @@ class UpdateHandler extends BaseHandler
         $status->update($updateData);
         $status->syncHashtagsFromCaption();
         $status->syncMentionsFromCaption();
+
+        if ($statusClass === 'App\Models\Video' && ! $status->is_local && array_key_exists('coauthors', $object)) {
+            VerifyRemoteCoauthorsJob::dispatch(
+                (string) $status->id,
+                (string) $object['id'],
+                is_string($object['attributedTo'] ?? null) ? $object['attributedTo'] : $actor->getActorId(),
+                is_array($object['coauthors']) ? array_values($object['coauthors']) : [],
+                true,
+            );
+        }
 
         if (config('logging.dev_log')) {
             Log::info('Successfully processed Status Update', [
