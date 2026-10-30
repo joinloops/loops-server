@@ -3,6 +3,7 @@
 namespace App\Federation\ActivityBuilders;
 
 use App\Federation\Audience;
+use App\Federation\Coauthors;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
@@ -114,8 +115,12 @@ class UpdateActivityBuilder
         $videoObject['to'] = $audience['to'];
         $videoObject['cc'] = $audience['cc'];
 
+        $videoObject = Coauthors::applyToNote($videoObject, $video, authoritative: true);
+
         return [
-            '@context' => 'https://www.w3.org/ns/activitystreams',
+            '@context' => array_key_exists('coauthors', $videoObject)
+                ? Coauthors::extendContext('https://www.w3.org/ns/activitystreams')
+                : 'https://www.w3.org/ns/activitystreams',
             'id' => $activityId,
             'type' => 'Update',
             'actor' => $actor->getActorId(),

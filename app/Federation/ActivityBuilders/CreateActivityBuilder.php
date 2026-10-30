@@ -3,6 +3,7 @@
 namespace App\Federation\ActivityBuilders;
 
 use App\Federation\Audience;
+use App\Federation\Coauthors;
 use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
@@ -26,7 +27,7 @@ class CreateActivityBuilder
         $videoObject = self::buildVideoObject($actor, $video);
 
         $videoObject = [
-            '@context' => app(ActivityPubContext::class)->forVideo($video),
+            '@context' => self::videoContext($video, $videoObject),
             'id' => $activityId,
             'type' => 'Create',
             'actor' => $actor->getActorId(),
@@ -52,10 +53,19 @@ class CreateActivityBuilder
      */
     public static function buildForVideoFlat(Profile $actor, Video $video): array
     {
+        $object = self::buildVideoObject($actor, $video);
+
         return [
-            '@context' => app(ActivityPubContext::class)->forVideo($video),
-            ...self::buildVideoObject($actor, $video),
+            '@context' => self::videoContext($video, $object),
+            ...$object,
         ];
+    }
+
+    private static function videoContext(Video $video, array $object)
+    {
+        $context = app(ActivityPubContext::class)->forVideo($video);
+
+        return array_key_exists('coauthors', $object) ? Coauthors::extendContext($context) : $context;
     }
 
     /**
@@ -177,7 +187,7 @@ class CreateActivityBuilder
         $videoObject['to'] = $audience['to'];
         $videoObject['cc'] = $audience['cc'];
 
-        return $videoObject;
+        return Coauthors::applyToNote($videoObject, $video);
     }
 
     /**
