@@ -78,6 +78,7 @@ class StoreVideoRequest extends FormRequest
             'contains_ai' => 'nullable|boolean',
             'contains_ad' => 'nullable|boolean',
             'scheduled_at' => 'sometimes|nullable|date',
+            'coauthor_id' => ['sometimes', 'nullable', 'string', 'regex:/^\d{1,20}$/'],
             'lang' => [
                 'sometimes',
                 'string',
