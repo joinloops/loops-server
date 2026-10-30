@@ -516,4 +516,37 @@ class NotificationService
 
         return $res;
     }
+
+    public static function collab(int $type, $uid, $pid, $vid, array $meta = [])
+    {
+        if ((string) $uid === (string) $pid) {
+            return;
+        }
+
+        $res = Notification::updateOrCreate([
+            'type' => $type,
+            'user_id' => $uid,
+            'profile_id' => $pid,
+            'video_id' => $vid,
+        ], [
+            'meta' => $meta,
+            'read_at' => null,
+        ]);
+
+        self::clearUnreadCount($uid);
+
+        return $res;
+    }
+
+    public static function deleteCollab(array $types, $uid, $vid): void
+    {
+        $deleted = Notification::whereIn('type', $types)
+            ->where('user_id', $uid)
+            ->where('video_id', $vid)
+            ->delete();
+
+        if ($deleted) {
+            self::clearUnreadCount($uid);
+        }
+    }
 }
