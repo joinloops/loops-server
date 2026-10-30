@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Federation\ActivityBuilders\CreateActivityBuilder;
 use App\Federation\ActivityBuilders\UpdateActivityBuilder;
 use App\Federation\Audience;
+use App\Federation\Coauthors;
+use App\Jobs\Federation\DeliverCoauthorAuthorizationDelete;
 use App\Jobs\Federation\DeliverCreateCommentActivity;
 use App\Jobs\Federation\DeliverCreateCommentReplyActivity;
 use App\Jobs\Federation\DeliverCreateVideoActivity;
@@ -19,6 +21,7 @@ use App\Models\Comment;
 use App\Models\CommentReply;
 use App\Models\Profile;
 use App\Models\Video;
+use App\Models\VideoCollaboration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Log;
@@ -35,7 +38,7 @@ class FederationDispatcher
     public function dispatchVideoCreation(Video $video, int $chunkSize = 50): void
     {
         $actor = $video->profile;
-        $allInboxes = $this->resolveAuthorAudience($actor, $video->mentions, $chunkSize);
+        $allInboxes = $this->resolveAuthorAudience($actor, $video->mentions, $chunkSize, $this->coauthorProfileIds($video));
 
         if ($allInboxes->isEmpty()) {
             if (config('logging.dev_log')) {
@@ -106,10 +109,15 @@ class FederationDispatcher
         }
     }
 
-    public function dispatchVideoUpdate(Video $video, int $chunkSize = 50): void
+    public function dispatchVideoUpdate(Video $video, int $chunkSize = 50, array $extraAudienceIds = []): void
     {
         $actor = $video->profile;
-        $allInboxes = $this->resolveAuthorAudience($actor, $video->mentions, $chunkSize);
+        $allInboxes = $this->resolveAuthorAudience(
+            $actor,
+            $video->mentions,
+            $chunkSize,
+            array_merge($this->coauthorProfileIds($video), $extraAudienceIds)
+        );
 
         if ($allInboxes->isEmpty()) {
             if (config('logging.dev_log')) {
@@ -158,7 +166,14 @@ class FederationDispatcher
 
         $isPublic = $visibility == Audience::VISIBILITY_PUBLIC;
 
-        $inboxes = $this->resolveDeleteInboxes($actor, 'video', $videoId, $extraRecipients, $isPublic);
+        $inboxes = $this->resolveDeleteInboxes($actor, 'video', $videoId, $extraRecipients, $isPublic)->keyBy('inbox');
+
+        foreach (app(CollabService::class)->coauthorIds($videoId) as $coauthorId) {
+            foreach ($this->resolver->getFollowerInboxes((int) $coauthorId) as $inbox) {
+                $this->mergeInbox($inboxes, $inbox);
+            }
+        }
+        $inboxes = $inboxes->values();
 
         if ($inboxes->isEmpty()) {
             if (config('logging.dev_log')) {
@@ -440,15 +455,83 @@ class FederationDispatcher
         }
     }
 
+    public function dispatchCoauthorRemoval(Video $video, VideoCollaboration $collab, int $chunkSize = 50): void
+    {
+        $coauthor = $collab->profile;
+
+        if (! $video->is_local || ! $coauthor || ! $coauthor->local) {
+            return;
+        }
+
+        $this->dispatchVideoUpdate($video, $chunkSize, [$coauthor->id]);
+
+        $inboxes = $this->resolveAuthorAudience(
+            $video->profile,
+            $video->mentions,
+            $chunkSize,
+            array_merge($this->coauthorProfileIds($video), [$coauthor->id])
+        );
+
+        if ($inboxes->isEmpty()) {
+            return;
+        }
+
+        $activity = Coauthors::revocation($collab, $video);
+
+        $jobs = $inboxes->map(fn ($inbox) => new DeliverCoauthorAuthorizationDelete(
+            $coauthor,
+            $inbox['inbox'],
+            $activity,
+            (string) $collab->id
+        ))->toArray();
+
+        Bus::batch($jobs)
+            ->name("Revoke Coauthor {$collab->id}")
+            ->allowFailures()
+            ->onQueue('activitypub-out')
+            ->dispatch();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function coauthorProfileIds(Video $video): array
+    {
+        if (! $video->is_local) {
+            return [];
+        }
+
+        return app(CollabService::class)->federatableCollaborations($video)
+            ->pluck('profile_id')
+            ->map(fn ($id) => (string) $id)
+            ->all();
+    }
+
     /**
      * Resolve the audience for a Create or Update: the author's remote
      * followers plus any mentioned remote profiles.
      *
      * @param  \Illuminate\Support\Collection|null  $mentions  Mention or Profile models
      */
-    protected function resolveAuthorAudience(Profile $actor, $mentions = null, int $chunkSize = 50): Collection
+    protected function resolveAuthorAudience(Profile $actor, $mentions = null, int $chunkSize = 50, array $coauthorIds = []): Collection
     {
         $allInboxes = collect();
+
+        foreach (array_unique(array_map('strval', $coauthorIds)) as $coauthorId) {
+            if ((string) $coauthorId === (string) $actor->id) {
+                continue;
+            }
+
+            $this->resolver->chunkFollowerInboxes(
+                (int) $coauthorId,
+                function ($inboxes) use ($allInboxes) {
+                    foreach ($inboxes as $inbox) {
+                        $this->mergeInbox($allInboxes, $inbox);
+                    }
+                },
+                $chunkSize
+            );
+        }
 
         $mentions = collect($mentions ?? []);
 

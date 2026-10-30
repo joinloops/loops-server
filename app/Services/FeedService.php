@@ -15,10 +15,12 @@ class FeedService
         $request = request();
         $isFirstPage = $showPinned && ! $request->has('cursor');
 
-        $query = Video::whereProfileId($profileId)
+        $query = Video::byAuthorOrCoauthor($profileId)
             ->whereStatus(2)
-            ->when($isFirstPage, function ($query, $isFirstPage) {
-                $query->where('is_pinned', false);
+            ->when($isFirstPage, function ($query, $isFirstPage) use ($profileId) {
+                $query->where(function ($q) use ($profileId) {
+                    $q->where('is_pinned', false)->orWhere('videos.profile_id', '!=', $profileId);
+                });
             });
 
         match ($sort) {

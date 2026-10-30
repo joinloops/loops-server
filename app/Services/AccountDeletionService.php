@@ -252,6 +252,7 @@ class AccountDeletionService
 
         if ($profile) {
             $steps = [
+                'purgeCollaborations',
                 'federateDelete',
                 'purgeSounds',
                 'purgeVideos',
@@ -346,6 +347,13 @@ class AccountDeletionService
         if (config('logging.dev_log')) {
             Log::info('Account Delete dispatched', ['profile_id' => $profile->id, 'inbox_count' => $total]);
         }
+
+        return true;
+    }
+
+    protected function purgeCollaborations(Profile $profile): bool
+    {
+        $this->safely(fn () => app(CollabService::class)->purgeForProfile($profile));
 
         return true;
     }
@@ -445,6 +453,7 @@ class AccountDeletionService
                 DB::table('video_sounds')->whereIn('original_video_id', $videoIds)->update(['original_video_id' => null]);
 
                 DB::table('videos')->whereIn('id', $videoIds)->delete();
+                app(CollabService::class)->purgeForVideoIds($videoIds);
             });
 
             foreach ($videoIds as $videoId) {
