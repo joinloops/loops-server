@@ -3,6 +3,7 @@
 return [
     'activity' => 'Activity',
     'allCaughtUp' => 'You\'re all caught up!',
+    'collabReview' => 'Review',
     'errorLoadingNotifications' => 'Error loading notifications',
     'messageTypes' => [
         'videoLike' => 'liked your video',
@@ -21,6 +22,13 @@ return [
         'starterKitDeclinedToBeIncludedIn' => 'declined to be included in',
         'starterKitRemovedYouFrom' => 'removed you from',
         'default' => 'interacted with your content',
+        'collabAccepted' => 'accepted your collaboration invite',
+        'collabAutoAdded' => 'added you as a collaborator on a video',
+        'collabDeclined' => 'declined your collaboration invite',
+        'collabExpired' => 'did not answer your collaboration invite in time',
+        'collabLeft' => 'left your collaboration',
+        'collabRemoved' => 'removed you from a collaboration',
+        'collabRequest' => 'invited you to collaborate on a video',
     ],
     'messages' => 'Messages',
     'messagesWillAppearHere' => 'Messages will appear here',
