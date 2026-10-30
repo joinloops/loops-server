@@ -187,6 +187,21 @@ Sent when a user deletes a post or account.
 }
 ```
 
+When an account is deleted (after its 30 day grace period, or right away if the user skips it), a single `Delete` with the actor as its object is sent to the shared inbox of every known server. Individual posts are not deleted one by one; receivers are expected to remove everything the actor owns.
+
+```json
+{
+  "@context": "https://www.w3.org/ns/activitystreams",
+  "id": "https://loops.example.com/ap/users/123#delete",
+  "type": "Delete",
+  "actor": "https://loops.example.com/ap/users/123",
+  "object": "https://loops.example.com/ap/users/123",
+  "to": ["https://www.w3.org/ns/activitystreams#Public"]
+}
+```
+
+Afterwards the actor URL answers `410 Gone` with a `Tombstone` (`formerType: Person`), so servers that missed the `Delete` can still clean up when they refetch the actor.
+
 #### Follow
 
 Sent when a user follows another account.
@@ -375,23 +390,92 @@ Supported ActivityStreams object types:
 - **Note**: Primary content type for Loops posts (for optimal compatibility)
 - **Tombstone**: Deleted content markers
 
+## Coauthors (Creator Collaborations)
+
+A Loops video can credit one coauthor besides its author. Coauthors must have an account on the author's server, and they agree to each credit, either per video or by trusting the author ahead of time.
+
+The author stays the only `actor` and `attributedTo`, so software that does not understand coauthors sees an ordinary post. The Note gains a `coauthors` array in the `https://joinloops.org/ns#` namespace. The coauthor's actor and followers collection are added to the Note's addressing, and the post is delivered to the coauthor's followers too.
+
+```json
+{
+  "@context": [
+    "https://www.w3.org/ns/activitystreams",
+    {
+      "loops": "https://joinloops.org/ns#",
+      "coauthors": { "@id": "loops:coauthors", "@container": "@set" },
+      "CoauthorAuthorization": "loops:CoauthorAuthorization"
+    }
+  ],
+  "type": "Note",
+  "id": "https://loops.example/ap/users/100/video/200",
+  "attributedTo": "https://loops.example/ap/users/100",
+  "coauthors": [
+    {
+      "type": "CoauthorAuthorization",
+      "id": "https://loops.example/ap/users/101/coauthor_authorizations/300",
+      "attributedTo": "https://loops.example/ap/users/101"
+    }
+  ]
+}
+```
+
+### CoauthorAuthorization
+
+Each entry points at a public attestation, served by the coauthor's server under the coauthor's actor, stating that the coauthor agreed to be credited on that Note. The vocabulary follows the `interactingObject` / `interactionTarget` convention used by GoToSocial interaction approvals and FEP-044f `QuoteAuthorization`.
+
+```json
+{
+  "@context": ["https://www.w3.org/ns/activitystreams", { "...": "same terms as above, plus gts:interactingObject / gts:interactionTarget" }],
+  "type": "CoauthorAuthorization",
+  "id": "https://loops.example/ap/users/101/coauthor_authorizations/300",
+  "attributedTo": "https://loops.example/ap/users/101",
+  "interactingObject": "https://loops.example/ap/users/100/video/200",
+  "interactionTarget": "https://loops.example/ap/users/100",
+  "published": "2026-10-27T10:00:00Z"
+}
+```
+
+Receivers must not trust the copy embedded in the Note. Loops fetches each attestation from its `id` and accepts the credit only if all of the following hold:
+
+- `type` is `CoauthorAuthorization` and `id` equals the URL that was fetched.
+- `interactingObject` is the Note and `interactionTarget` is the Note's author.
+- The attestation, the coauthor and the Note's author are all on the same host.
+- `attributedTo` resolves to an actor other than the author.
+
+Claims that fail are ignored and the post is shown without the credit.
+
+### Withdrawing a credit
+
+When a coauthor leaves, or the author removes them:
+
+- The attestation URL starts returning `410 Gone` with a `Tombstone` (`formerType: CoauthorAuthorization`).
+- The author sends an `Update` of the Note. On `Update`, `coauthors` is authoritative: an empty array means the credit was removed.
+- The coauthor sends a `Delete` whose object is the `CoauthorAuthorization` (with `interactingObject`), signed by the coauthor.
+
 ## Security
 
 ### HTTP Signatures
 
-All federated requests are signed using HTTP Signatures (draft-cavage-http-signatures).
+Loops signs and verifies both [RFC 9421 HTTP Message Signatures](https://www.rfc-editor.org/rfc/rfc9421) and [draft-cavage-http-signatures-12](https://datatracker.ietf.org/doc/html/draft-cavage-http-signatures-12).
 
-**Signature Requirements:**
-- Algorithm: `rsa-sha256`
-- Headers: `(request-target) host date`
+**Outbound (double-knocking):**
+- The first attempt to an unknown server is signed with RFC 9421: `@method`, `@target-uri`, `@authority` and, when there is a body, `content-digest` ([RFC 9530](https://www.rfc-editor.org/rfc/rfc9530)), with `created`, `keyid` and `alg="rsa-v1_5-sha256"` parameters
+- If the server rejects it (any 4xx other than 404, 408, 410 or 429, or a 5xx), the request is sent again signed with draft-cavage (`(request-target) host date digest`, `rsa-sha256`)
+- Whichever scheme succeeds is remembered per server (RFC 9421 for 30 days, draft-cavage for 7 days so upgrades are picked up), so later deliveries need only one request
+- A server that sends Loops a valid RFC 9421 signature is assumed to accept RFC 9421 too
+
+**Inbound:**
+- Requests carrying `Signature-Input` are verified as RFC 9421, everything else as draft-cavage
+- RFC 9421 signatures must use `rsa-v1_5-sha256` (or no `alg` with an RSA key), cover `@method` and the target URI, and cover a valid `content-digest` when there is a body; `created` must be within 60 minutes and `expires`, if present, in the future
+- draft-cavage signatures must cover `(request-target) host date`, use `rsa-sha256` or `hs2019`, and a signed `Digest` must match the body
 - Key size: Minimum 2048 bits RSA
 
 ### Verification Process
 
-1. Extract signature from HTTP headers
-2. Fetch actor's public key
-3. Verify signature matches request
-4. Check date header (reject if > 60 minutes old)
+1. Extract the signature from the HTTP headers (RFC 9421 or draft-cavage)
+2. Fetch the actor's public key
+3. Verify the signature matches the request
+4. Check freshness (`created` for RFC 9421, the `Date` header for draft-cavage; reject if more than 60 minutes off)
 5. Process activity if valid
 
 ### Domain Blocking
@@ -506,4 +590,6 @@ curl https://loops.example.com/.well-known/webfinger?resource=acct:alice@loops.e
 - [ActivityPub Specification](https://www.w3.org/TR/activitypub/)
 - [ActivityStreams 2.0](https://www.w3.org/TR/activitystreams-core/)
 - [WebFinger RFC 7033](https://tools.ietf.org/html/rfc7033)
-- [HTTP Signatures](https://tools.ietf.org/html/draft-cavage-http-signatures)
+- [HTTP Message Signatures RFC 9421](https://www.rfc-editor.org/rfc/rfc9421)
+- [Digest Fields RFC 9530](https://www.rfc-editor.org/rfc/rfc9530)
+- [HTTP Signatures (draft-cavage)](https://tools.ietf.org/html/draft-cavage-http-signatures)
