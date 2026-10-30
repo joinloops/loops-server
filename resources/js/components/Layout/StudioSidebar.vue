@@ -97,7 +97,8 @@ const sections = computed(() => {
     const manageLinks = [
         { name: t('studio.posts'), path: '/studio/posts', icon: 'bx bx-video' },
         { name: t('studio.playlists'), path: '/studio/playlists', icon: 'bx bx-list-ul' },
-        { name: 'Scheduled', path: '/studio/scheduled', icon: 'bx bx-timer' }
+        { name: 'Scheduled', path: '/studio/scheduled', icon: 'bx bx-timer' },
+        { name: t('studio.collab.navTitle'), path: '/studio/collaborations', icon: 'bx bx-group' }
     ]
 
     const analyticsLinks = [{ name: 'Analytics', path: '/studio/', icon: 'bx bx-bar-chart' }]

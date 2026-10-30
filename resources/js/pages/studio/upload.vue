@@ -1,32 +1,24 @@
 <template>
     <StudioLayout>
         <div class="w-full min-h-screen bg-gray-50 dark:bg-gray-950">
-            <div
-                v-if="showWarning"
-                class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4"
-            >
+            <div v-if="showWarning"
+                class="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
                 <div class="flex items-center justify-between max-w-7xl mx-auto">
                     <div class="flex items-center text-orange-600 dark:text-orange-400">
                         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                fill-rule="evenodd"
+                            <path fill-rule="evenodd"
                                 d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
-                                clip-rule="evenodd"
-                            />
+                                clip-rule="evenodd" />
                         </svg>
                         {{ $t('studio.unsavedWarning') }}
                     </div>
                     <div class="flex space-x-3">
-                        <button
-                            @click="showWarning = false"
-                            class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200"
-                        >
+                        <button @click="showWarning = false"
+                            class="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200">
                             {{ $t('common.discard') }}
                         </button>
-                        <button
-                            @click="showWarning = false"
-                            class="text-gray-900 dark:text-gray-100 font-medium hover:text-gray-700 dark:hover:text-gray-300"
-                        >
+                        <button @click="showWarning = false"
+                            class="text-gray-900 dark:text-gray-100 font-medium hover:text-gray-700 dark:hover:text-gray-300">
                             {{ $t('common.continue') }}
                         </button>
                     </div>
@@ -35,31 +27,17 @@
 
             <div class="container max-w-7xl mx-auto p-8">
                 <div v-if="!uploadedFile" class="max-w-6xl mx-auto">
-                    <div
-                        @drop="handleDrop"
-                        @dragover.prevent
-                        @dragenter.prevent
+                    <div @drop="handleDrop" @dragover.prevent @dragenter.prevent
                         class="border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg p-12 text-center hover:border-gray-400 dark:hover:border-gray-600 transition-colors bg-white dark:bg-gray-800"
                         :class="{
                             'border-blue-400 dark:border-blue-500 bg-blue-50 dark:bg-blue-950/30':
                                 isDragging
-                        }"
-                        @dragenter="isDragging = true"
-                        @dragleave="isDragging = false"
-                    >
+                        }" @dragenter="isDragging = true" @dragleave="isDragging = false">
                         <div class="mb-6">
-                            <svg
-                                class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    stroke-width="1.5"
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                                />
+                            <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                             </svg>
                         </div>
 
@@ -70,37 +48,22 @@
                             {{ $t('studio.orDragAndDropItHere') }}
                         </p>
 
-                        <button
-                            @click="$refs.fileInput.click()"
-                            class="bg-[#F02C56] hover:bg-[#F02C56]/80 text-white px-8 py-3 rounded-md font-medium transition-colors"
-                        >
+                        <button @click="$refs.fileInput.click()"
+                            class="bg-[#F02C56] hover:bg-[#F02C56]/80 text-white px-8 py-3 rounded-md font-medium transition-colors">
                             {{ $t('studio.selectVideo') }}
                         </button>
 
-                        <input
-                            ref="fileInput"
-                            type="file"
-                            accept="video/mp4,video/mov,video/quicktime"
-                            @change="handleFileSelect"
-                            class="hidden"
-                        />
+                        <input ref="fileInput" type="file" accept="video/mp4,video/mov,video/quicktime"
+                            @change="handleFileSelect" class="hidden" />
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mt-12">
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <svg
-                                    class="w-6 h-6 text-gray-600 dark:text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                    />
+                                <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                             </div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -117,18 +80,10 @@
 
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <svg
-                                    class="w-6 h-6 text-gray-600 dark:text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                                    />
+                                <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                                 </svg>
                             </div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -144,18 +99,10 @@
 
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <svg
-                                    class="w-6 h-6 text-gray-600 dark:text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                                    />
+                                <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -168,18 +115,10 @@
 
                         <div class="text-center">
                             <div class="flex items-center justify-center mb-3">
-                                <svg
-                                    class="w-6 h-6 text-gray-600 dark:text-gray-400"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        stroke-width="2"
-                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                    />
+                                <svg class="w-6 h-6 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </div>
                             <h4 class="font-medium text-gray-900 dark:text-gray-100 mb-2">
@@ -195,98 +134,64 @@
                 <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2">
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6"
-                        >
+                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-6">
                             <div class="flex items-center">
                                 <div class="flex items-center">
                                     <div class="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
                                     <span class="font-medium text-gray-900 dark:text-gray-100">{{
                                         uploadedFile.name
-                                    }}</span>
-                                    <span class="text-sm text-gray-500 dark:text-gray-400 ml-2"
-                                        >({{ formatFileSize(uploadedFile.size) }})</span
-                                    >
+                                        }}</span>
+                                    <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">({{
+                                        formatFileSize(uploadedFile.size) }})</span>
                                 </div>
                                 <button
-                                    class="ml-auto text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
-                                >
+                                    class="ml-auto text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300">
                                     <span class="text-sm">{{ $t('studio.replace') }}</span>
                                 </button>
                             </div>
-                            <div
-                                class="w-full bg-green-200 dark:bg-green-900/30 rounded-full h-2 mt-3"
-                            >
-                                <div
-                                    class="bg-green-500 dark:bg-green-600 h-2 rounded-full w-full"
-                                ></div>
+                            <div class="w-full bg-green-200 dark:bg-green-900/30 rounded-full h-2 mt-3">
+                                <div class="bg-green-500 dark:bg-green-600 h-2 rounded-full w-full"></div>
                             </div>
                         </div>
 
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6"
-                        >
+                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">
                                 {{ $t('studio.details') }}
                             </h3>
 
                             <div class="mb-6">
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                    >{{ $t('studio.caption') }}</label
-                                >
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{
+                                    $t('studio.caption') }}</label>
                                 <div class="relative">
-                                    <textarea
-                                        ref="textareaRef"
-                                        v-model="description"
-                                        @input="handleDescriptionInput"
-                                        @keydown="handleKeydown"
-                                        :placeholder="$t('studio.describeYourVideoDotDotDot')"
+                                    <textarea ref="textareaRef" v-model="description" @input="handleDescriptionInput"
+                                        @keydown="handleKeydown" :placeholder="$t('studio.describeYourVideoDotDotDot')"
                                         rows="4"
                                         class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                        maxlength="200"
-                                    ></textarea>
+                                        maxlength="200"></textarea>
 
-                                    <div
-                                        v-if="showAutocomplete"
+                                    <div v-if="showAutocomplete"
                                         class="absolute z-10 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg mt-1"
-                                        :style="autocompletePosition"
-                                    >
+                                        :style="autocompletePosition">
                                         <div class="max-h-48 overflow-y-auto">
-                                            <div
-                                                v-if="isLoadingSuggestions"
-                                                class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm flex items-center"
-                                            >
-                                                <svg
-                                                    class="animate-spin -ml-1 mr-2 h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    fill="none"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <circle
-                                                        class="opacity-25"
-                                                        cx="12"
-                                                        cy="12"
-                                                        r="10"
-                                                        stroke="currentColor"
-                                                        stroke-width="4"
-                                                    ></circle>
-                                                    <path
-                                                        class="opacity-75"
-                                                        fill="currentColor"
-                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                    ></path>
+                                            <div v-if="isLoadingSuggestions"
+                                                class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm flex items-center">
+                                                <svg class="animate-spin -ml-1 mr-2 h-4 w-4"
+                                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                        stroke="currentColor" stroke-width="4"></circle>
+                                                    <path class="opacity-75" fill="currentColor"
+                                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                    </path>
                                                 </svg>
                                                 {{ $t('studio.searchingDotDotDot') }}
                                             </div>
 
-                                            <div
-                                                v-else-if="
-                                                    !isLoadingSuggestions &&
-                                                    filteredSuggestions.length === 0 &&
-                                                    autocompleteQuery
-                                                "
-                                                class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm"
-                                            >
+                                            <div v-else-if="
+                                                !isLoadingSuggestions &&
+                                                filteredSuggestions.length === 0 &&
+                                                autocompleteQuery
+                                            " class="px-3 py-2 text-gray-500 dark:text-gray-400 text-sm">
                                                 {{ $t('studio.no') }}
                                                 {{
                                                     autocompleteType === 'hashtag'
@@ -296,50 +201,31 @@
                                                 {{ $t('studio.found') }}
                                             </div>
 
-                                            <div
-                                                v-for="(item, index) in filteredSuggestions"
-                                                :key="index"
+                                            <div v-for="(item, index) in filteredSuggestions" :key="index"
                                                 @click="selectSuggestion(item)"
                                                 class="px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer flex items-center"
                                                 :class="{
                                                     'bg-blue-50 dark:bg-blue-950/50':
                                                         index === selectedSuggestionIndex
-                                                }"
-                                            >
-                                                <div
-                                                    v-if="autocompleteType === 'mention'"
-                                                    class="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mr-3 flex items-center justify-center overflow-hidden"
-                                                >
-                                                    <img
-                                                        v-if="item.avatar"
-                                                        :src="item.avatar"
-                                                        :alt="item.name"
-                                                        class="w-full h-full object-cover"
-                                                        @error="
+                                                }">
+                                                <div v-if="autocompleteType === 'mention'"
+                                                    class="w-8 h-8 bg-gray-300 dark:bg-gray-600 rounded-full mr-3 flex items-center justify-center overflow-hidden">
+                                                    <img v-if="item.avatar" :src="item.avatar" :alt="item.name"
+                                                        class="w-full h-full object-cover" @error="
                                                             $event.target.src =
-                                                                '/storage/avatars/default.jpg'
-                                                        "
-                                                    />
-                                                    <span
-                                                        v-else
-                                                        class="text-xs font-medium text-gray-700 dark:text-gray-300"
-                                                        >{{
+                                                            '/storage/avatars/default.jpg'
+                                                            " />
+                                                    <span v-else
+                                                        class="text-xs font-medium text-gray-700 dark:text-gray-300">{{
                                                             item.username.charAt(0).toUpperCase()
-                                                        }}</span
-                                                    >
+                                                        }}</span>
                                                 </div>
-                                                <div
-                                                    v-else
-                                                    class="w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-full mr-3 flex items-center justify-center"
-                                                >
-                                                    <span class="text-blue-600 dark:text-blue-400"
-                                                        >#</span
-                                                    >
+                                                <div v-else
+                                                    class="w-8 h-8 bg-blue-100 dark:bg-blue-900/40 rounded-full mr-3 flex items-center justify-center">
+                                                    <span class="text-blue-600 dark:text-blue-400">#</span>
                                                 </div>
                                                 <div>
-                                                    <div
-                                                        class="font-medium text-gray-900 dark:text-gray-100"
-                                                    >
+                                                    <div class="font-medium text-gray-900 dark:text-gray-100">
                                                         {{
                                                             autocompleteType === 'hashtag'
                                                                 ? '#'
@@ -347,24 +233,18 @@
                                                         }}{{ item.name }}
                                                     </div>
                                                     <div class="flex gap-3">
-                                                        <div
-                                                            v-if="item.count"
-                                                            class="text-xs text-gray-500 dark:text-gray-400"
-                                                        >
+                                                        <div v-if="item.count"
+                                                            class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ item.count }}
                                                             posts
                                                         </div>
-                                                        <div
-                                                            v-if="item.post_count"
-                                                            class="text-xs text-gray-500 dark:text-gray-400"
-                                                        >
+                                                        <div v-if="item.post_count"
+                                                            class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ item.post_count }}
                                                             posts
                                                         </div>
-                                                        <div
-                                                            v-if="item.follower_count"
-                                                            class="text-xs text-gray-500 dark:text-gray-400"
-                                                        >
+                                                        <div v-if="item.follower_count"
+                                                            class="text-xs text-gray-500 dark:text-gray-400">
                                                             {{ item.follower_count }}
                                                             followers
                                                         </div>
@@ -374,104 +254,61 @@
                                         </div>
                                     </div>
 
-                                    <div
-                                        class="absolute bottom-2 right-2 text-xs text-gray-400 dark:text-gray-500"
-                                    >
+                                    <div class="absolute bottom-2 right-2 text-xs text-gray-400 dark:text-gray-500">
                                         {{ description.length }}/200
                                     </div>
                                 </div>
                                 <div class="flex space-x-4 -mt-1">
-                                    <button
-                                        @click="insertHashtag"
-                                        class="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-bold text-xs cursor-pointer"
-                                    >
+                                    <button @click="insertHashtag"
+                                        class="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-bold text-xs cursor-pointer">
                                         # {{ $t('studio.hashtag') }}
                                     </button>
-                                    <button
-                                        @click="insertMention"
-                                        class="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-bold text-xs cursor-pointer"
-                                    >
+                                    <button @click="insertMention"
+                                        class="text-gray-600 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 font-bold text-xs cursor-pointer">
                                         @ {{ $t('studio.mention') }}
                                     </button>
                                 </div>
                             </div>
 
                             <div class="mb-6">
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                    >{{ $t('studio.altText') }}</label
-                                >
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{{
+                                    $t('studio.altText') }}</label>
                                 <div class="relative">
-                                    <textarea
-                                        v-model="altText"
-                                        :placeholder="
-                                            $t('studio.describeYourVideoDotDotDotAltText')
-                                        "
-                                        rows="2"
+                                    <textarea v-model="altText" :placeholder="$t('studio.describeYourVideoDotDotDotAltText')
+                                        " rows="2"
                                         class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                                        maxlength="2000"
-                                    ></textarea>
+                                        maxlength="2000"></textarea>
 
-                                    <div
-                                        class="absolute bottom-2 right-2 text-xs text-gray-400 dark:text-gray-500"
-                                    >
+                                    <div class="absolute bottom-2 right-2 text-xs text-gray-400 dark:text-gray-500">
                                         {{ altText.length }}/2000
                                     </div>
                                 </div>
-                                <p
-                                    class="text-sm text-gray-500 dark:text-gray-400 flex items-start gap-1"
-                                >
-                                    <svg
-                                        class="w-4 h-4 mt-0.5 flex-shrink-0"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
-                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                                        />
+                                <p class="text-sm text-gray-500 dark:text-gray-400 flex items-start gap-1">
+                                    <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                     <span>{{ $t('studio.altTextHelp') }}</span>
                                 </p>
                             </div>
 
                             <div class="mb-6">
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                >
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     {{ $t('studio.language') }}
                                 </label>
                                 <div class="relative">
-                                    <select
-                                        v-model="settings.lang"
-                                        class="block w-full px-4 py-2 pr-8 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                                    >
-                                        <option
-                                            v-for="lang in languages"
-                                            :key="lang.code"
-                                            :value="lang.code"
-                                        >
+                                    <select v-model="settings.lang"
+                                        class="block w-full px-4 py-2 pr-8 text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                                        <option v-for="lang in languages" :key="lang.code" :value="lang.code">
                                             {{ lang.name }}
                                         </option>
                                     </select>
-                                    <div
-                                        class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none"
-                                    >
-                                        <svg
-                                            class="w-5 h-5 text-gray-400 dark:text-gray-500"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M19 9l-7 7-7-7"
-                                            />
+                                    <div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                                        <svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 9l-7 7-7-7" />
                                         </svg>
                                     </div>
                                 </div>
@@ -481,70 +318,37 @@
                             </div>
 
                             <div class="mb-6">
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-                                >
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                                     {{ $t('studio.customThumbnail') }}
                                 </label>
                                 <div class="flex items-center space-x-4">
                                     <div
-                                        class="relative w-30 h-50 bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden"
-                                    >
-                                        <img
-                                            v-if="thumbnailPreview"
-                                            :src="thumbnailPreview"
-                                            alt="Thumbnail"
-                                            class="w-full h-full object-cover rounded-md"
-                                        />
+                                        class="relative w-30 h-50 bg-gray-200 dark:bg-gray-700 rounded-md flex items-center justify-center overflow-hidden">
+                                        <img v-if="thumbnailPreview" :src="thumbnailPreview" alt="Thumbnail"
+                                            class="w-full h-full object-cover rounded-md" />
                                         <div v-else class="text-center">
-                                            <svg
-                                                class="w-8 h-8 mx-auto text-gray-400 dark:text-gray-500"
-                                                fill="currentColor"
-                                                viewBox="0 0 20 20"
-                                            >
-                                                <path
-                                                    fill-rule="evenodd"
+                                            <svg class="w-8 h-8 mx-auto text-gray-400 dark:text-gray-500"
+                                                fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd"
                                                     d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                                                    clip-rule="evenodd"
-                                                />
+                                                    clip-rule="evenodd" />
                                             </svg>
-                                            <span
-                                                class="text-xs text-gray-500 dark:text-gray-400 mt-1"
-                                                >1080x1920</span
-                                            >
+                                            <span class="text-xs text-gray-500 dark:text-gray-400 mt-1">1080x1920</span>
                                         </div>
-                                        <button
-                                            v-if="thumbnailPreview"
-                                            @click="removeThumbnail"
-                                            class="absolute top-1 right-1 w-6 h-6 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70"
-                                        >
-                                            <svg
-                                                class="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <path
-                                                    stroke-linecap="round"
-                                                    stroke-linejoin="round"
-                                                    stroke-width="2"
-                                                    d="M6 18L18 6M6 6l12 12"
-                                                />
+                                        <button v-if="thumbnailPreview" @click="removeThumbnail"
+                                            class="absolute top-1 right-1 w-6 h-6 bg-black bg-opacity-50 rounded-full flex items-center justify-center text-white hover:bg-opacity-70">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M6 18L18 6M6 6l12 12" />
                                             </svg>
                                         </button>
                                     </div>
                                     <div class="flex flex-col justify-start align-start space-y-1">
                                         <div>
-                                            <AnimatedButton
-                                                @click="$refs.thumbnailInput.click()"
-                                                :variant="
-                                                    thumbnailPreview
-                                                        ? 'primaryOutline'
-                                                        : 'primaryGradient'
-                                                "
-                                                size="sm"
-                                                pill
-                                            >
+                                            <AnimatedButton @click="$refs.thumbnailInput.click()" :variant="thumbnailPreview
+                                                    ? 'primaryOutline'
+                                                    : 'primaryGradient'
+                                                " size="sm" pill>
                                                 {{
                                                     thumbnailPreview
                                                         ? $t('studio.changeThumbnail')
@@ -552,21 +356,14 @@
                                                 }}
                                             </AnimatedButton>
                                         </div>
-                                        <div
-                                            class="flex flex-col text-xs text-gray-500 dark:text-gray-400"
-                                        >
+                                        <div class="flex flex-col text-xs text-gray-500 dark:text-gray-400">
                                             <div class="">Formats: JPG or PNG</div>
                                             <div class="">Aspect: 1080x1920</div>
                                             <div class="">Max size: 5mb</div>
                                         </div>
                                     </div>
-                                    <input
-                                        ref="thumbnailInput"
-                                        type="file"
-                                        accept="image/jpeg,image/png,image/webp"
-                                        @change="handleThumbnailUpload"
-                                        class="hidden"
-                                    />
+                                    <input ref="thumbnailInput" type="file" accept="image/jpeg,image/png,image/webp"
+                                        @change="handleThumbnailUpload" class="hidden" />
                                 </div>
                                 <p v-if="thumbnailError" class="text-sm text-red-500 mt-1">
                                     {{ thumbnailError }}
@@ -575,24 +372,19 @@
                         </div>
 
                         <div
-                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6"
-                        >
+                            class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 mt-6">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-6">
                                 {{ $t('studio.settings') }}
                             </h3>
 
                             <div>
-                                <label
-                                    class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3"
-                                    >{{ $t('studio.allowOthersTo') }}:</label
-                                >
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{{
+                                    $t('studio.allowOthersTo') }}:</label>
                                 <div class="space-y-4">
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <span
-                                                class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{ $t('common.comment') }}</span
-                                            >
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                                $t('common.comment') }}</span>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                 {{ $t('studio.commentMessage') }}
                                             </p>
@@ -601,10 +393,8 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <span
-                                                class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{ $t('studio.download') }}</span
-                                            >
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                                $t('studio.download') }}</span>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                 {{ $t('studio.downloadMessage') }}
                                             </p>
@@ -614,9 +404,7 @@
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <span
-                                                class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >Embeds</span
-                                            >
+                                                class="text-sm font-medium text-gray-700 dark:text-gray-200">Embeds</span>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                 Manage whether your videos can be embedded on other
                                                 sites.
@@ -626,10 +414,8 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <span
-                                                class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{ $t('studio.duet') }}</span
-                                            >
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                                $t('studio.duet') }}</span>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                 {{ $t('studio.duetMessage') }}
                                             </p>
@@ -638,10 +424,8 @@
                                     </div>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <span
-                                                class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                                >{{ $t('studio.stitch') }}</span
-                                            >
+                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                                $t('studio.stitch') }}</span>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">
                                                 {{ $t('studio.stitchMessage') }}
                                             </p>
@@ -651,15 +435,19 @@
                                 </div>
                             </div>
 
+                            <template v-if="collabsEnabled">
+                                <div class="w-full h-[1px] bg-gray-100 dark:bg-gray-700 my-6"></div>
+
+                                <CollaboratorPicker v-model="collaborator" />
+                            </template>
+
                             <div class="w-full h-[1px] bg-gray-100 dark:bg-gray-700 my-6"></div>
 
                             <div class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span
-                                            class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >{{ $t('studio.containsNSFW') }}</span
-                                        >
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                            $t('studio.containsNSFW') }}</span>
                                         <p class="text-xs text-gray-500 dark:text-gray-400">
                                             {{ $t('studio.containsNSFWMessage') }}
                                         </p>
@@ -668,10 +456,9 @@
                                 </div>
                                 <div class="flex items-center justify-between">
                                     <div>
-                                        <span
-                                            class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >{{ $t('studio.disclosePostContent') }}</span
-                                        >
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                            $t('studio.disclosePostContent')
+                                            }}</span>
                                         <p class="text-xs text-gray-500 dark:text-gray-400">
                                             {{ $t('studio.disclosePostContentHelp') }}
                                         </p>
@@ -681,10 +468,9 @@
 
                                 <div class="flex items-center justify-between">
                                     <div class="max-w-[70%]">
-                                        <span
-                                            class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >{{ $t('studio.containsAlteredContent') }}</span
-                                        >
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-200">{{
+                                            $t('studio.containsAlteredContent')
+                                            }}</span>
                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                             {{ $t('studio.containsAlteredContentHelp') }}
                                         </div>
@@ -693,18 +479,13 @@
                                 </div>
                             </div>
 
-                            <div
-                                v-if="showSchedule"
-                                class="w-full h-[1px] bg-gray-100 dark:bg-gray-700 my-6"
-                            ></div>
+                            <div v-if="showSchedule" class="w-full h-[1px] bg-gray-100 dark:bg-gray-700 my-6"></div>
 
                             <div v-if="showSchedule" class="space-y-4">
                                 <div class="flex items-center justify-between">
                                     <div class="max-w-[70%]">
                                         <span
-                                            class="text-sm font-medium text-gray-700 dark:text-gray-200"
-                                            >Schedule</span
-                                        >
+                                            class="text-sm font-medium text-gray-700 dark:text-gray-200">Schedule</span>
                                         <div class="text-xs text-gray-500 dark:text-gray-400">
                                             Pick a time to publish this loop. Nobody can see it
                                             until then.
@@ -713,23 +494,16 @@
                                     <ToggleSwitch v-model="settings.schedule" />
                                 </div>
 
-                                <div
-                                    v-if="settings.schedule"
-                                    class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4 space-y-4"
-                                >
+                                <div v-if="settings.schedule"
+                                    class="rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/40 p-4 space-y-4">
                                     <div class="flex flex-wrap gap-2">
-                                        <button
-                                            v-for="preset in schedulePresets"
-                                            :key="preset.key"
-                                            type="button"
-                                            @click="applyPreset(preset)"
-                                            :class="[
+                                        <button v-for="preset in schedulePresets" :key="preset.key" type="button"
+                                            @click="applyPreset(preset)" :class="[
                                                 'px-3 py-1.5 text-xs font-medium rounded-full border transition-colors cursor-pointer',
                                                 activePresetKey === preset.key
                                                     ? 'border-[#F02C56] bg-[#F02C56]/10 text-[#F02C56]'
                                                     : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500'
-                                            ]"
-                                        >
+                                            ]">
                                             {{ preset.label }}
                                         </button>
                                     </div>
@@ -737,72 +511,37 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label
-                                                class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
-                                                >Date</label
-                                            >
-                                            <input
-                                                v-model="scheduleDay"
-                                                type="date"
-                                                :min="minDayInput"
+                                                class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Date</label>
+                                            <input v-model="scheduleDay" type="date" :min="minDayInput"
                                                 :max="maxDayInput"
-                                                class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            />
+                                                class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                                         </div>
                                         <div>
                                             <label
-                                                class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1"
-                                                >Time</label
-                                            >
-                                            <input
-                                                v-model="scheduleTime"
-                                                type="time"
-                                                step="900"
-                                                class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                            />
+                                                class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Time</label>
+                                            <input v-model="scheduleTime" type="time" step="900"
+                                                class="w-full border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" />
                                         </div>
                                     </div>
 
-                                    <div
-                                        v-if="scheduleError"
-                                        class="flex items-start gap-2 text-sm text-red-500"
-                                    >
-                                        <svg
-                                            class="w-4 h-4 mt-0.5 flex-shrink-0"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z"
-                                            />
+                                    <div v-if="scheduleError" class="flex items-start gap-2 text-sm text-red-500">
+                                        <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor"
+                                            viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 9v2m0 4h.01M5.07 19h13.86a2 2 0 001.74-3L13.74 4a2 2 0 00-3.48 0L3.33 16a2 2 0 001.74 3z" />
                                         </svg>
                                         <span>{{ scheduleError }}</span>
                                     </div>
 
-                                    <div
-                                        v-else-if="scheduleDateTime"
-                                        class="flex items-start gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3"
-                                    >
-                                        <svg
-                                            class="w-5 h-5 mt-0.5 flex-shrink-0 text-[#F02C56]"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
+                                    <div v-else-if="scheduleDateTime"
+                                        class="flex items-start gap-3 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3">
+                                        <svg class="w-5 h-5 mt-0.5 flex-shrink-0 text-[#F02C56]" fill="none"
+                                            stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <div class="min-w-0">
-                                            <p
-                                                class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                                            >
+                                            <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
                                                 {{ scheduleLabel }}
                                             </p>
                                             <p class="text-xs text-gray-500 dark:text-gray-400">
@@ -824,125 +563,82 @@
                     <div class="lg:col-span-1">
                         <div class="sticky top-6">
                             <div
-                                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4"
-                            >
+                                class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 mb-4">
                                 <div class="flex justify-center space-x-4 mb-4 text-sm">
                                     <div class="flex bg-gray-100 dark:bg-gray-900 rounded-lg p-1">
-                                        <button
-                                            :class="[
-                                                'px-3 py-1.5 text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
-                                                previewMode === 'feed'
-                                                    ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
-                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                                            ]"
-                                            @click="previewMode = 'feed'"
-                                        >
+                                        <button :class="[
+                                            'px-3 py-1.5 text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
+                                            previewMode === 'feed'
+                                                ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                                        ]" @click="previewMode = 'feed'">
                                             {{ $t('studio.feed') }}
                                         </button>
-                                        <button
-                                            :class="[
-                                                'px-3 py-1.5 text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
-                                                previewMode === 'profile'
-                                                    ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
-                                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
-                                            ]"
-                                            @click="previewMode = 'profile'"
-                                        >
+                                        <button :class="[
+                                            'px-3 py-1.5 text-[14px] font-medium rounded-md transition-all duration-200 relative cursor-pointer',
+                                            previewMode === 'profile'
+                                                ? 'bg-white dark:bg-gray-700 text-black dark:text-white shadow-sm'
+                                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200'
+                                        ]" @click="previewMode = 'profile'">
                                             {{ $t('common.profile') }}
                                         </button>
                                     </div>
                                 </div>
 
-                                <div
-                                    class="bg-black rounded-2xl p-2"
-                                    style="width: 250px; height: 500px; margin: 0 auto"
-                                >
-                                    <div
-                                        class="relative w-full h-full rounded-xl overflow-hidden bg-black"
-                                    >
-                                        <video
-                                            v-if="videoPreviewUrl"
-                                            ref="videoPreviewEl"
-                                            :src="videoPreviewUrl"
-                                            class="w-full h-full object-cover"
-                                            playsinline
-                                            muted
-                                            :controls="true"
-                                        ></video>
+                                <div class="bg-black rounded-2xl p-2"
+                                    style="width: 250px; height: 500px; margin: 0 auto">
+                                    <div class="relative w-full h-full rounded-xl overflow-hidden bg-black">
+                                        <video v-if="videoPreviewUrl" ref="videoPreviewEl" :src="videoPreviewUrl"
+                                            class="w-full h-full object-cover" playsinline muted
+                                            :controls="true"></video>
 
-                                        <div
-                                            v-else
-                                            class="w-full h-full flex flex-col items-center justify-center text-white/70 text-xs bg-gray-800"
-                                        >
+                                        <div v-else
+                                            class="w-full h-full flex flex-col items-center justify-center text-white/70 text-xs bg-gray-800">
                                             <span class="text-lg mb-1">No preview</span>
                                             <span>Upload a video to see it here</span>
                                         </div>
 
-                                        <div
-                                            v-if="videoPreviewUrl"
+                                        <div v-if="videoPreviewUrl"
                                             class="pointer-events-none absolute inset-x-0 px-3 pb-2 bg-gradient-to-t from-black/80 via-black/10 to-transparent pt-10"
                                             :class="[
                                                 videoPreviewUrl && previewMode === 'feed'
                                                     ? 'bottom-[46px]'
                                                     : 'bottom-0'
-                                            ]"
-                                        >
+                                            ]">
                                             <p class="text-white font-semibold text-sm mb-1">
                                                 {{ previewUsername }}
                                             </p>
                                             <p
-                                                class="text-white/90 text-[12px] leading-snug line-clamp-1 overflow-hidden break-words"
-                                            >
+                                                class="text-white/90 text-[12px] leading-snug line-clamp-1 overflow-hidden break-words">
                                                 {{ previewCaption }}
                                             </p>
                                         </div>
 
-                                        <MockUIIcons
-                                            v-if="videoPreviewUrl && previewMode === 'feed'"
-                                        />
+                                        <MockUIIcons v-if="videoPreviewUrl && previewMode === 'feed'" />
                                     </div>
                                 </div>
                             </div>
 
                             <div class="space-y-3">
-                                <button
-                                    @click="handleSubmit"
-                                    :disabled="!canSubmit || isSubmitting"
+                                <button @click="handleSubmit" :disabled="!canSubmit || isSubmitting"
                                     class="w-full py-3 rounded-md font-medium transition-colors flex items-center justify-center"
-                                    :class="
-                                        canSubmit && !isSubmitting
+                                    :class="canSubmit && !isSubmitting
                                             ? 'bg-[#F02C56] border border-[#F02C56] hover:bg-[#F02C56]/80 text-white'
                                             : 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                                    "
-                                >
-                                    <svg
-                                        v-if="isSubmitting"
-                                        class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <circle
-                                            class="opacity-25"
-                                            cx="12"
-                                            cy="12"
-                                            r="10"
-                                            stroke="currentColor"
-                                            stroke-width="4"
-                                        ></circle>
-                                        <path
-                                            class="opacity-75"
-                                            fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                        ></path>
+                                        ">
+                                    <svg v-if="isSubmitting" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
                                     </svg>
                                     {{ submitLabel }}
                                 </button>
-                                <button
-                                    @click="handleDiscard"
+                                <button @click="handleDiscard"
                                     class="w-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 py-3 rounded-md font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                                    :disabled="isSubmitting"
-                                >
+                                    :disabled="isSubmitting">
                                     {{ $t('common.discard') }}
                                 </button>
                             </div>
@@ -954,18 +650,11 @@
     </StudioLayout>
 
     <Teleport to="body">
-        <Transition
-            enter-active-class="transition-opacity duration-300"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition-opacity duration-300"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div
-                v-if="isSubmitting"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
-            >
+        <Transition enter-active-class="transition-opacity duration-300" enter-from-class="opacity-0"
+            enter-to-class="opacity-100" leave-active-class="transition-opacity duration-300"
+            leave-from-class="opacity-100" leave-to-class="opacity-0">
+            <div v-if="isSubmitting"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm">
                 <div class="text-center space-y-6">
                     <div class="flex justify-center">
                         <Spinner size="xl" speed="slow" />
@@ -977,10 +666,8 @@
 
                         <div class="w-80 mx-auto">
                             <div class="bg-gray-700 rounded-full h-3 overflow-hidden">
-                                <div
-                                    class="bg-gradient-to-r from-[#ed5b7bff] to-[#F02C56] h-full transition-all duration-300 ease-out"
-                                    :style="{ width: `${uploadProgress}%` }"
-                                ></div>
+                                <div class="bg-gradient-to-r from-[#ed5b7bff] to-[#F02C56] h-full transition-all duration-300 ease-out"
+                                    :style="{ width: `${uploadProgress}%` }"></div>
                             </div>
                             <p class="text-white text-sm mt-2 font-medium">{{ uploadProgress }}%</p>
                         </div>
@@ -991,18 +678,11 @@
     </Teleport>
 
     <Teleport to="body">
-        <Transition
-            enter-active-class="transition-opacity duration-300"
-            enter-from-class="opacity-0"
-            enter-to-class="opacity-100"
-            leave-active-class="transition-opacity duration-300"
-            leave-from-class="opacity-100"
-            leave-to-class="opacity-0"
-        >
-            <div
-                v-if="isConverting"
-                class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm"
-            >
+        <Transition enter-active-class="transition-opacity duration-300" enter-from-class="opacity-0"
+            enter-to-class="opacity-100" leave-active-class="transition-opacity duration-300"
+            leave-from-class="opacity-100" leave-to-class="opacity-0">
+            <div v-if="isConverting"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-sm">
                 <div class="text-center space-y-6">
                     <div class="flex justify-center">
                         <Spinner size="xl" speed="slow" />
@@ -1014,10 +694,8 @@
 
                         <div class="w-80 mx-auto">
                             <div class="bg-gray-700 rounded-full h-3 overflow-hidden">
-                                <div
-                                    class="bg-gradient-to-r from-[#ed5b7bff] to-[#F02C56] h-full transition-all duration-300 ease-out"
-                                    :style="{ width: `${transcodeProgress}%` }"
-                                ></div>
+                                <div class="bg-gradient-to-r from-[#ed5b7bff] to-[#F02C56] h-full transition-all duration-300 ease-out"
+                                    :style="{ width: `${transcodeProgress}%` }"></div>
                             </div>
                             <p class="text-white text-sm mt-2 font-medium">
                                 {{ transcodeProgress }}%
@@ -1049,6 +727,8 @@ import {
 } from 'mediabunny'
 import { registerAacEncoder } from '@mediabunny/aac-encoder'
 import AnimatedButton from '@/components/AnimatedButton.vue'
+import CollaboratorPicker from '@/components/Studio/CollaboratorPicker.vue'
+import collabApi from '~/api/collab'
 
 const router = useRouter()
 const axios = inject('axios')
@@ -1127,6 +807,9 @@ const settings = reactive({
 
 const showSchedule = ref(false)
 
+const collaborator = ref(null)
+const collabsEnabled = ref(true)
+
 const videoMetadata = ref({ width: 0, height: 0, duration: 0, orientation: 'portrait' })
 
 onBeforeRouteLeave((to, from, next) => {
@@ -1172,6 +855,13 @@ onMounted(async () => {
     window.addEventListener('beforeunload', handleBeforeUnload)
     await appStore.ensureLanguages()
     await checkScheduleAllowed()
+
+    try {
+        const res = await collabApi.settings()
+        collabsEnabled.value = res.data?.data?.enabled !== false
+    } catch (e) {
+        collabsEnabled.value = false
+    }
 })
 
 onBeforeUnmount(() => {
@@ -1641,6 +1331,7 @@ const resetForm = () => {
     settings.containsAd = false
     settings.containsAi = false
     settings.schedule = false
+    collaborator.value = null
     showAutocomplete.value = false
     apiSuggestions.value = []
     isLoadingSuggestions.value = false
@@ -1777,7 +1468,7 @@ const handleTranscode = async () => {
                     if (stats?.averagePacketRate > 32) {
                         frameRate = 30
                     }
-                } catch (e) {}
+                } catch (e) { }
 
                 return {
                     codec: 'avc',
@@ -1916,6 +1607,10 @@ const handleSubmit = async () => {
 
         if (thumbnailFile.value) {
             formData.append('thumbnail', thumbnailFile.value)
+        }
+
+        if (collaborator.value?.id) {
+            formData.append('coauthor_id', collaborator.value.id)
         }
 
         const response = await axios.post('/api/v1/studio/upload', formData, {

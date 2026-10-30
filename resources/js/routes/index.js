@@ -324,6 +324,12 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
         {
+            path: '/studio/collaborations',
+            name: 'studioCollaborations',
+            component: () => import('~/pages/studio/collaborations.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
             path: '/studio/playlists',
             name: 'playlists',
             component: () => import('~/pages/studio/playlists/index.vue'),

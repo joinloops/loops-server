@@ -100,6 +100,25 @@
                 />
             </div>
 
+            <div v-else-if="notification.type === 'collab.request'">
+                <AnimatedButton
+                    size="xs"
+                    :aria-label="t('notifications.collabReview')"
+                    @click.stop="handleNotificationClick"
+                >
+                    {{ t('notifications.collabReview') }}
+                </AnimatedButton>
+            </div>
+
+            <div v-else-if="isCollabNotification && notification.video_thumbnail">
+                <img
+                    :src="notification.video_thumbnail"
+                    alt="Thumbnail"
+                    class="w-6 h-10 sm:w-8 sm:h-12 rounded-md object-cover border border-gray-200 dark:border-gray-700"
+                    @error="handleVideoImageError"
+                />
+            </div>
+
             <div
                 v-else-if="
                     notification.type === 'starterKit.awaitingApproval' && notification.kit?.path
@@ -211,7 +230,8 @@ import {
     UserPlusIcon,
     ChatBubbleLeftIcon,
     ArrowPathIcon,
-    BellIcon
+    BellIcon,
+    UserGroupIcon
 } from '@heroicons/vue/24/solid'
 import { useHashids } from '@/composables/useHashids'
 import { useI18n } from 'vue-i18n'
@@ -261,6 +281,39 @@ const STARTER_KIT_TYPES = [
 ]
 
 const isStarterKitNotification = computed(() => STARTER_KIT_TYPES.includes(props.notification.type))
+
+const COLLAB_TYPES = [
+    'collab.request',
+    'collab.accepted',
+    'collab.declined',
+    'collab.autoAdded',
+    'collab.removed'
+]
+
+const isCollabNotification = computed(() => COLLAB_TYPES.includes(props.notification.type))
+
+const collabMessage = () => {
+    const n = props.notification
+
+    switch (n.type) {
+        case 'collab.request':
+            return t('notifications.messageTypes.collabRequest')
+        case 'collab.accepted':
+            return t('notifications.messageTypes.collabAccepted')
+        case 'collab.declined':
+            return n.reason === 'expired'
+                ? t('notifications.messageTypes.collabExpired')
+                : t('notifications.messageTypes.collabDeclined')
+        case 'collab.autoAdded':
+            return t('notifications.messageTypes.collabAutoAdded')
+        case 'collab.removed':
+            return n.by === 'coauthor'
+                ? t('notifications.messageTypes.collabLeft')
+                : t('notifications.messageTypes.collabRemoved')
+        default:
+            return t('notifications.messageTypes.default')
+    }
+}
 
 const newFollowerMessage = computed(() =>
     props.notification.kit?.path
@@ -375,7 +428,12 @@ const notificationConfig = {
         icon: XMarkIcon,
         iconColor: 'text-white',
         bgColor: 'bg-red-500'
-    }
+    },
+    'collab.request': { icon: UserGroupIcon, iconColor: 'text-white', bgColor: 'bg-[#F02C56]' },
+    'collab.accepted': { icon: UserGroupIcon, iconColor: 'text-white', bgColor: 'bg-green-500' },
+    'collab.autoAdded': { icon: UserGroupIcon, iconColor: 'text-white', bgColor: 'bg-green-500' },
+    'collab.declined': { icon: XMarkIcon, iconColor: 'text-white', bgColor: 'bg-gray-500' },
+    'collab.removed': { icon: XMarkIcon, iconColor: 'text-white', bgColor: 'bg-gray-500' }
 }
 
 const checkMobile = () => {
@@ -489,6 +547,10 @@ const navigateToProfile = () => {
 }
 
 const getNotificationMessage = () => {
+    if (isCollabNotification.value) {
+        return collabMessage()
+    }
+
     const config = notificationConfig[props.notification.type]
     return config?.message ?? t('notifications.messageTypes.default')
 }
@@ -537,6 +599,21 @@ const handleNotificationClick = () => {
                 router.push(props.notification.kit.path)
             } else {
                 router.push(`/@${props.notification.actor.username}`)
+            }
+        } else if (isCollabNotification.value) {
+            const n = props.notification
+
+            if (n.type === 'collab.request') {
+                router.push({
+                    path: '/studio/collaborations',
+                    query: n.collab_id ? { id: n.collab_id } : {}
+                })
+            } else if (n.url) {
+                router.push(n.url)
+            } else if (['collab.declined', 'collab.accepted'].includes(n.type)) {
+                router.push('/studio/posts')
+            } else {
+                router.push({ path: '/studio/collaborations', query: { tab: 'all' } })
             }
         } else if (
             props.notification.type === 'starterKit.awaitingApproval' &&

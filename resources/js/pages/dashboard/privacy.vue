@@ -45,6 +45,8 @@
                 </div>
             </section>
 
+            <CollabPrivacySettings />
+
             <section class="my-8">
                 <h2 class="tracking-tight font-light mb-2 dark:text-gray-300">Starter Kits</h2>
                 <label class="block text-sm font-light text-gray-700 dark:text-gray-300 mb-3">
@@ -136,6 +138,7 @@
 import { onMounted, ref, nextTick, watch } from 'vue'
 import SettingsLayout from '~/layouts/SettingsLayout.vue'
 import ToggleSwitch from '@/components/Form/ToggleSwitch.vue'
+import CollabPrivacySettings from '@/components/Settings/CollabPrivacySettings.vue'
 import axios from '~/plugins/axios'
 const axiosInstance = axios.getAxiosInstance()
 

@@ -105,6 +105,8 @@
                                 </span>
                             </div>
 
+                            <StudioCollabStatus :post="post" @changed="reloadCurrentPage" />
+
                             <div
                                 v-if="post.scheduled_at && post.status === 'scheduled'"
                                 class="mt-2 min-w-0"
@@ -305,6 +307,11 @@
                                             No caption provided
                                         </p>
 
+                                        <StudioCollabStatus
+                                            :post="post"
+                                            @changed="reloadCurrentPage"
+                                        />
+
                                         <div
                                             v-if="post.scheduled_at && post.status === 'scheduled'"
                                             class="mt-1 min-w-0"
@@ -487,7 +494,9 @@ import {
     XMarkIcon
 } from '@heroicons/vue/24/outline'
 
+import { useI18n } from 'vue-i18n'
 import { useUtils } from '@/composables/useUtils'
+import StudioCollabStatus from '@/components/Studio/StudioCollabStatus.vue'
 
 const props = defineProps({
     apiBase: {
@@ -503,6 +512,10 @@ const axios = inject('axios')
 const videoStore = inject('videoStore')
 
 const { formatDate } = useUtils()
+const { t } = useI18n()
+
+// Re-fetch the page the user is on after a collaborator action.
+const reloadCurrentPage = () => loadPosts(pagination.currentCursor, false)
 
 const loading = ref(false)
 const posts = ref([])
@@ -563,6 +576,16 @@ const timezoneLabel = computed(() => {
 const statusLabel = (status) => {
     if (!status) {
         return ''
+    }
+
+    const collabLabels = {
+        awaiting_collab: t('studio.collab.statusAwaiting'),
+        collab_declined: t('studio.collab.statusDeclined'),
+        collab_expired: t('studio.collab.statusExpired')
+    }
+
+    if (collabLabels[status]) {
+        return collabLabels[status]
     }
 
     return status.charAt(0).toUpperCase() + status.slice(1)
@@ -766,6 +789,13 @@ const getStatusBadgeClass = (status) => {
 
         case 'scheduled':
             return `${baseClasses} bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200`
+
+        case 'awaiting_collab':
+            return `${baseClasses} bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200`
+
+        case 'collab_declined':
+        case 'collab_expired':
+            return `${baseClasses} bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200`
 
         default:
             return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200`

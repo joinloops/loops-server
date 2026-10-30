@@ -94,6 +94,7 @@ const getVideoProps = (post, index) => ({
     'profile-id': post.account.id,
     username: post.account.username,
     'profile-image': post.account.avatar,
+    coauthors: post.coauthors || [],
     caption: post.caption,
     hashtags: post.tags,
     mentions: post.mentions,

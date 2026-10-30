@@ -93,6 +93,10 @@
                                 <span class="text-base sm:text-lg font-semibold drop-shadow-lg"
                                     >@{{ username }}</span
                                 >
+                                <CoauthorCredit
+                                    :coauthors="coauthors"
+                                    class="ml-1 text-sm drop-shadow-lg"
+                                />
                             </div>
                             <div class="mb-2">
                                 <AutolinkedText
@@ -438,6 +442,7 @@ import { useReportModal } from '@/composables/useReportModal'
 import { useQueryClient } from '@tanstack/vue-query'
 import { useAlertModal } from '@/composables/useAlertModal.js'
 import { useI18n } from 'vue-i18n'
+import CoauthorCredit from '@/components/Feed/CoauthorCredit.vue'
 
 const props = defineProps({
     duration: { type: Number, default: 0 },
@@ -460,6 +465,7 @@ const props = defineProps({
     commentCount: { type: Number, default: 0 },
     index: { type: Number, default: 0 },
     isSensitive: { type: Boolean, default: false },
+    coauthors: { type: Array, default: () => [] },
     altText: { type: String, default: '' }
 })
 

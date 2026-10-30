@@ -62,6 +62,14 @@
                 </div>
 
                 <div
+                    v-if="post.coauthors?.length"
+                    class="absolute top-2 right-2 flex items-center gap-1 text-white bg-black/60 px-2 py-1 text-[11px] rounded font-semibold"
+                >
+                    <i class="bx bx-group text-sm"></i>
+                    <span>{{ $t('studio.collab.badge') }}</span>
+                </div>
+
+                <div
                     class="absolute bottom-3 left-3 flex items-center gap-1 text-white text-sm font-bold drop-shadow"
                 >
                     <HeartIcon class="w-5 h-5 text-white" />

@@ -202,6 +202,11 @@
                                         {{ currentVideo.account.username }}
                                     </div>
                                 </router-link>
+                                <CoauthorCredit
+                                    v-if="currentVideo.coauthors?.length"
+                                    :coauthors="currentVideo.coauthors"
+                                    class="text-xs sm:text-[13px] text-gray-700 dark:text-slate-300 truncate"
+                                />
                                 <div
                                     class="text-xs sm:text-[13px] font-light flex gap-1 items-center"
                                 >
@@ -552,6 +557,7 @@ import { useAlertModal } from '@/composables/useAlertModal.js'
 import { useUtils } from '@/composables/useUtils'
 import { useEditHistory } from '@/composables/useEditHistory'
 import PlaylistPanel from '@/components/Status/PlaylistPanel.vue'
+import CoauthorCredit from '@/components/Feed/CoauthorCredit.vue'
 import {
     ArrowPathIcon,
     VideoCameraSlashIcon,
