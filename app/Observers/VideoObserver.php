@@ -6,6 +6,7 @@ use App\Models\Profile;
 use App\Models\Video;
 use App\Services\AccountService;
 use App\Services\AtomFeedService;
+use App\Services\CollabService;
 use App\Services\StudioService;
 use App\Services\VideoService;
 
@@ -41,6 +42,7 @@ class VideoObserver
     {
         $this->updateProfileVideoCount($video->profile_id);
         AtomFeedService::invalidate($video->profile_id);
+        app(CollabService::class)->purgeForVideoIds([$video->id]);
     }
 
     /**
