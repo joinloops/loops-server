@@ -56,7 +56,7 @@
         "tailwindcss": "^4.3.3",
         "video.js": "^8.24.2",
         "vite": "^7.3.2",
-        "vue": "^3.5.44",
+        "vue": "^3.5.45",
         "vue-advanced-cropper": "^2.8.9",
         "vue-draggable-next": "^2.3.0",
         "vue-i18n": "^11.4.16",
