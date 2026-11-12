@@ -32,6 +32,7 @@ class VideoThumbnailJob implements ShouldQueue
     public function __construct($video)
     {
         $this->video = $video->withoutRelations();
+        $this->onConnection('redis-video');
         $this->onQueue('video-processing');
     }
 
@@ -66,6 +67,10 @@ class VideoThumbnailJob implements ShouldQueue
         $workdir = null;
 
         try {
+            if ($video->has_thumb && $video->thumbnail_path && Storage::disk('s3')->exists($video->thumbnail_path)) {
+                return;
+            }
+
             $sourcePath = $video->vid_optimized && Storage::disk('s3')->exists($video->vid_optimized)
                 ? $video->vid_optimized
                 : $video->vid;

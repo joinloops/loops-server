@@ -54,7 +54,7 @@ class StoreVideoRequest extends FormRequest
                 'bail',
                 'required',
                 File::types(config('loops.media.video_types', ['mp4']))
-                    ->min(250)
+                    ->min(1)
                     ->max($maxSize * 1024),
                 new HasVideoStream,
             ],

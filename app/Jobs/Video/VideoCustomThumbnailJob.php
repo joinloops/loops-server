@@ -23,7 +23,14 @@ class VideoCustomThumbnailJob implements ShouldQueue
 
     public $backoff = 10;
 
-    public function __construct(public Video $video) {}
+    public $timeout = 120;
+
+    public function __construct(public Video $video)
+    {
+        $this->video = $video->withoutRelations();
+        $this->onConnection('redis-video');
+        $this->onQueue('video-processing');
+    }
 
     public function handle(): void
     {
@@ -32,6 +39,7 @@ class VideoCustomThumbnailJob implements ShouldQueue
         }
 
         $disk = Storage::disk('s3');
+        $tempPath = null;
 
         try {
             $originalPath = $this->video->thumbnail_path;
@@ -58,12 +66,8 @@ class VideoCustomThumbnailJob implements ShouldQueue
             $fileName = Str::random(40).'_thumb_'.Str::random(8).'.webp';
             $s3Path = 'videos/'.$pid.'/'.$this->video->id.'/'.$fileName;
 
-            $disk->put($s3Path, file_get_contents($tempPath), 'public');
-
-            unlink($tempPath);
-
-            if ($originalPath !== $s3Path) {
-                $disk->delete($originalPath);
+            if (! $disk->put($s3Path, file_get_contents($tempPath), 'public')) {
+                throw new \RuntimeException('Failed to write optimized thumbnail to S3');
             }
 
             $this->video->has_thumb = true;
@@ -73,9 +77,20 @@ class VideoCustomThumbnailJob implements ShouldQueue
             $this->video->thumbnail_mime = 'image/webp';
             $this->video->save();
 
-            VideoService::getMediaData($this->video->id, true);
+            if ($originalPath !== $s3Path) {
+                try {
+                    $disk->delete($originalPath);
+                } catch (\Throwable $cleanupError) {
+                    Log::warning('Could not delete old thumbnail after replacement', [
+                        'video_id' => $this->video->id,
+                        'error' => $cleanupError->getMessage(),
+                    ]);
+                }
+            }
 
-        } catch (\Exception $e) {
+            VideoService::deleteMediaData($this->video->id);
+
+        } catch (\Throwable $e) {
             if (config('logging.dev_log')) {
                 Log::error('Custom thumbnail optimization failed', [
                     'video_id' => $this->video->id,
@@ -84,6 +99,10 @@ class VideoCustomThumbnailJob implements ShouldQueue
             }
 
             throw $e;
+        } finally {
+            if ($tempPath && is_file($tempPath)) {
+                @unlink($tempPath);
+            }
         }
     }
 

@@ -14,6 +14,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class VideoProcessingCompleteJob implements ShouldQueue
 {
@@ -30,6 +31,8 @@ class VideoProcessingCompleteJob implements ShouldQueue
     public function __construct($video)
     {
         $this->video = $video->withoutRelations();
+        $this->onConnection('redis-video');
+        $this->onQueue('video-processing');
     }
 
     public function handle(): void
@@ -43,6 +46,12 @@ class VideoProcessingCompleteJob implements ShouldQueue
         }
 
         try {
+            $disk = Storage::disk('s3');
+            if (! $video->has_processed || ! $video->vid_optimized ||
+                ! $disk->exists($video->vid_optimized) || $disk->size($video->vid_optimized) < 1024) {
+                throw new \RuntimeException('Optimized video missing or empty on S3: '.$video->id);
+            }
+
             $video->processing_status = 'completed';
             $video->save();
 
@@ -64,6 +73,7 @@ class VideoProcessingCompleteJob implements ShouldQueue
                 return;
             }
 
+            // @phpstan-ignore-next-line
             if (! $video->isLive() && $video->has_processed) {
                 DB::table('videos')->where('id', $video->id)->where('status', '!=', 2)->update(['status' => 2]);
                 $video = $video->fresh();
@@ -98,6 +108,14 @@ class VideoProcessingCompleteJob implements ShouldQueue
 
     public function failed(\Throwable $exception): void
     {
+        $video = $this->video->fresh();
+        if ($video && ! $video->isLive() && $video->processing_status !== 'completed') {
+            $video->processing_status = 'failed';
+            $video->processing_error = \Illuminate\Support\Str::limit('Completion: '.$exception->getMessage(), 1000);
+            $video->processing_failed_at = now();
+            $video->saveQuietly();
+        }
+
         Log::error('Video completion job permanently failed', [
             'video_id' => $this->video->id,
             'error' => $exception->getMessage(),

@@ -40,6 +40,7 @@ class VideoOptimizeJob implements ShouldQueue
     {
         $this->video = $video->withoutRelations();
         $this->timeout = max(120, (int) config('loops.media.transcode.job_timeout', 900));
+        $this->onConnection('redis-video');
         $this->onQueue('video-processing');
     }
 
@@ -53,7 +54,7 @@ class VideoOptimizeJob implements ShouldQueue
         return [
             (new WithoutOverlapping('video-processing:'.$this->video->id))
                 ->releaseAfter(60)
-                ->expireAfter($this->timeout + 60),
+                ->expireAfter($this->timeout + 120),
         ];
     }
 
@@ -79,18 +80,29 @@ class VideoOptimizeJob implements ShouldQueue
 
         $isScheduled = (int) $video->publish_state === Video::PUBLISH_STATE_SCHEDULED;
 
-        if ($video->vid_optimized) {
-            $this->markProcessed($video, $isScheduled);
-
-            return;
-        }
-
         $failureKey = self::failureCountKey($video->id);
         $previousFailures = (int) Cache::get($failureKey, 0);
         $safeMode = $previousFailures > 0;
         $workdir = null;
 
         try {
+            if ($video->vid_optimized) {
+                $disk = Storage::disk('s3');
+                if ($disk->exists($video->vid_optimized) && $disk->size($video->vid_optimized) >= 1024) {
+                    $this->markProcessed($video, $isScheduled);
+
+                    return;
+                }
+
+                Log::warning('Optimized video is missing or empty; retrying from original', [
+                    'video_id' => $video->id,
+                    'optimized_path' => $video->vid_optimized,
+                ]);
+                $video->vid_optimized = null;
+                $video->has_processed = false;
+                $video->saveQuietly();
+            }
+
             if (! Storage::disk('s3')->exists($video->vid)) {
                 throw new TranscodeException('Source video file not found on S3: '.$video->vid, permanent: true);
             }
@@ -143,6 +155,11 @@ class VideoOptimizeJob implements ShouldQueue
             $name = $base.Str::random(20).'.720p.mp4';
 
             $transcoder->upload('s3', $output, $name);
+
+            $disk = Storage::disk('s3');
+            if (! $disk->exists($name) || $disk->size($name) < 1024) {
+                throw new TranscodeException('Optimized output is missing or empty on S3');
+            }
 
             $video->width = (int) ($outputVideo['width'] ?? $plan['width']);
             $video->height = (int) ($outputVideo['height'] ?? $plan['height']);

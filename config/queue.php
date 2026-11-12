@@ -72,6 +72,18 @@ return [
             'after_commit' => false,
         ],
 
+        'redis-video' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => 'video-processing',
+            'retry_after' => max(
+                (int) env('REDIS_VIDEO_QUEUE_RETRY_AFTER', 0),
+                max(120, (int) env('LOOPS_TRANSCODE_JOB_TIMEOUT', 900)) + 180
+            ),
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
     ],
 
     /*
