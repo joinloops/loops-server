@@ -72,6 +72,15 @@ return [
             'after_commit' => false,
         ],
 
+        'redis-migration' => [
+            'driver' => 'redis',
+            'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
+            'queue' => 'migration',
+            'retry_after' => max(300, (int) env('LOOPS_MIGRATION_JOB_TIMEOUT', 900)) + 180,
+            'block_for' => null,
+            'after_commit' => false,
+        ],
+
         'redis-video' => [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
