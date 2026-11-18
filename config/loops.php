@@ -7,6 +7,25 @@ return [
         'max_remote_coauthors' => (int) env('LOOPS_COLLABS_MAX_REMOTE', 3),
     ],
 
+    'migration' => [
+        'manifest_page_size' => (int) env('LOOPS_MIGRATION_MANIFEST_PAGE_SIZE', 25),
+        'map_page_size' => (int) env('LOOPS_MIGRATION_MAP_PAGE_SIZE', 200),
+        'intent_ttl_days' => (int) env('LOOPS_MIGRATION_INTENT_TTL_DAYS', 7),
+        'job_timeout' => (int) env('LOOPS_MIGRATION_JOB_TIMEOUT', 900),
+        'hard_max_video_mb' => (int) env('LOOPS_MIGRATION_HARD_MAX_VIDEO_MB', 512),
+        'hard_max_duration' => (int) env('LOOPS_MIGRATION_HARD_MAX_DURATION', 900),
+        'max_image_mb' => (int) env('LOOPS_MIGRATION_MAX_IMAGE_MB', 10),
+        'max_follows' => (int) env('LOOPS_MIGRATION_MAX_FOLLOWS', 7500),
+        'max_blocks' => (int) env('LOOPS_MIGRATION_MAX_BLOCKS', 1000),
+        'max_bookmarks' => (int) env('LOOPS_MIGRATION_MAX_BOOKMARKS', 2000),
+        'follow_spacing_seconds' => (int) env('LOOPS_MIGRATION_FOLLOW_SPACING', 1),
+        'bookmark_spacing_seconds' => (int) env('LOOPS_MIGRATION_BOOKMARK_SPACING', 5),
+        'video_codecs' => ['h264'],
+        'audio_codecs' => ['aac', 'mp3', 'opus'],
+        'containers' => ['mov', 'mp4', 'm4a', '3gp', '3g2', 'mj2'],
+        'max_dimension' => (int) env('LOOPS_MIGRATION_MAX_DIMENSION', 4096),
+    ],
+
     'media' => [
         'video_types' => array_values(array_filter(array_map(
             'trim',
