@@ -129,6 +129,10 @@ use Illuminate\Support\Facades\Storage;
  * @method static Builder<static>|Video whereViews($value)
  * @method static Builder<static>|Video whereVisibility($value)
  *
+ * @property array<string, mixed>|null $media_hashes
+ * @property string|null $previous_ap_id
+ * @property string|null $previous_ap_id_hash
+ *
  * @mixin \Eloquent
  */
 class Video extends Model
@@ -213,6 +217,7 @@ class Video extends Model
             'publishing_at' => 'datetime',
             'ap_published_at' => 'datetime',
             'publish_state' => 'integer',
+            'media_hashes' => 'array',
         ];
     }
 
