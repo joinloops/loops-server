@@ -242,6 +242,21 @@ return [
                 'timeout' => 420,
                 'nice' => 0,
             ],
+
+            'migration-processor' => [
+                'connection' => 'redis-migration',
+                'queue' => ['migration'],
+                'balance' => 'simple',
+                'processes' => (int) env('LOOPS_MIGRATION_WORKERS', 2),
+                'minProcesses' => 1,
+                'maxProcesses' => (int) env('LOOPS_MIGRATION_WORKERS', 2),
+                'maxTime' => 0,
+                'maxJobs' => 0,
+                'memory' => 256,
+                'tries' => 3,
+                'timeout' => max(300, (int) env('LOOPS_MIGRATION_JOB_TIMEOUT', 900)) + 60,
+                'nice' => 0,
+            ],
         ],
 
         'local' => [
@@ -280,6 +295,18 @@ return [
                 'memory' => 512,
                 'tries' => 3,
                 'timeout' => 420,
+            ],
+
+            'migration-processor' => [
+                'connection' => 'redis-migration',
+                'queue' => ['migration'],
+                'balance' => 'simple',
+                'processes' => 1,
+                'minProcesses' => 1,
+                'maxProcesses' => 1,
+                'memory' => 256,
+                'tries' => 3,
+                'timeout' => max(300, (int) env('LOOPS_MIGRATION_JOB_TIMEOUT', 900)) + 60,
             ],
         ],
     ],
