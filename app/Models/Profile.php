@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\HasSnowflakePrimary;
+use App\Federation\Migration;
 use App\Observers\ProfileObserver;
 use App\Services\ActivityService;
 use App\Services\AutoLinkerService;
@@ -125,6 +126,11 @@ use Illuminate\Support\Facades\DB;
  * @method static Builder<static>|Profile whereManuallyApprovesFollowers($value)
  * @method static Builder<static>|Profile withFollowingStatus($authProfileId = null)
  *
+ * @property array<int, string>|null $also_known_as
+ * @property int|null $moved_to_profile_id
+ * @property \Illuminate\Support\Carbon|null $moved_at
+ * @property-read Profile|null $movedTo
+ *
  * @mixin \Eloquent
  */
 class Profile extends Model
@@ -219,6 +225,9 @@ class Profile extends Model
         'enforce_nsfw_label',
         'dm_privacy',
         'collab_state',
+        'also_known_as',
+        'moved_to_profile_id',
+        'moved_at',
     ];
 
     protected $guarded = [];
@@ -251,6 +260,8 @@ class Profile extends Model
         'enforce_ai_label' => 'boolean',
         'enforce_ad_label' => 'boolean',
         'enforce_nsfw_label' => 'boolean',
+        'also_known_as' => 'array',
+        'moved_at' => 'datetime',
     ];
 
     public function videos(): HasMany
@@ -330,6 +341,7 @@ class Profile extends Model
             6 => 'suspended',
             7 => 'disabled',
             8 => 'deleted',
+            9 => 'moved',
             default => 'Unknown',
         };
     }
@@ -367,6 +379,26 @@ class Profile extends Model
         return $this->local ?
             $this->getActorId('/outbox') :
             $this->outbox_url;
+    }
+
+    public function movedTo(): BelongsTo
+    {
+        return $this->belongsTo(Profile::class, 'moved_to_profile_id');
+    }
+
+    public function movedToProfile(): ?Profile
+    {
+        return $this->moved_to_profile_id ? Profile::find($this->moved_to_profile_id) : null;
+    }
+
+    public function isMoved(): bool
+    {
+        return (int) $this->status === 9 && $this->moved_to_profile_id !== null;
+    }
+
+    public function aliases(): array
+    {
+        return array_values(array_filter((array) $this->also_known_as, 'is_string'));
     }
 
     public function profileAvatar()
@@ -451,6 +483,20 @@ class Profile extends Model
                 'publicKeyPem' => app(SigningService::class)->getPublicKey(),
             ],
         ];
+
+        $aliases = $this->aliases();
+
+        if ($aliases || $this->moved_to_profile_id) {
+            $res['@context'][] = Migration::actorContext();
+        }
+
+        if ($aliases) {
+            $res['alsoKnownAs'] = $aliases;
+        }
+
+        if ($movedTo = $this->movedToProfile()) {
+            $res['movedTo'] = $movedTo->getActorId();
+        }
 
         if ($this->avatar) {
             $res['icon'] = [
@@ -683,6 +729,8 @@ class Profile extends Model
             }
         }
 
+        $alsoKnownAs = Migration::sanitizeAliases(data_get($actorData, 'alsoKnownAs'));
+
         $starterKitStateCanFeature = data_get($actorData, 'interactionPolicy.canFeature', false);
         $starterKitState = 0;
 
@@ -726,6 +774,7 @@ class Profile extends Model
             'shared_inbox_url' => $sharedInbox ?? null,
             'starter_kit_state' => $starterKitState,
             'dm_privacy' => 'everyone',
+            'also_known_as' => $alsoKnownAs ?: null,
         ])->save();
 
         if (! $isNewActor && $actor->username !== $acct) {
