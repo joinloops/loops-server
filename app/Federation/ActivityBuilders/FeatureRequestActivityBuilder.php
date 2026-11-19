@@ -68,7 +68,7 @@ class FeatureRequestActivityBuilder
             'id' => $account->getAttestationUrl('/revoke'),
             'type' => 'Delete',
             'actor' => $actor->getActorId(),
-            'to' => $$recipient->getActorId(),
+            'to' => $recipient->getActorId(),
             'object' => [
                 'id' => $account->getAttestationUrl(),
                 'type' => 'FeatureAuthorization',
