@@ -6,6 +6,7 @@ use App\Models\Video;
 use App\Services\CollabService;
 use App\Services\Media\TranscodeException;
 use App\Services\Media\VideoTranscoder;
+use App\Services\Migration\MediaHashService;
 use App\Services\VideoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -165,6 +166,7 @@ class VideoOptimizeJob implements ShouldQueue
             $video->height = (int) ($outputVideo['height'] ?? $plan['height']);
             $video->duration = max(1, (int) round($duration));
             $video->vid_optimized = $name;
+            app(MediaHashService::class)->recordOn($video, 'vid_optimized', $name, $output);
             $video->has_audio = $plan['audio_index'] !== null;
             $this->markProcessed($video, $isScheduled);
 

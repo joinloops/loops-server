@@ -3,6 +3,7 @@
 namespace App\Jobs\Video;
 
 use App\Models\Video;
+use App\Services\Migration\MediaHashService;
 use App\Services\VideoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -75,6 +76,7 @@ class VideoCustomThumbnailJob implements ShouldQueue
             $this->video->thumbnail_width = $width;
             $this->video->thumbnail_height = $height;
             $this->video->thumbnail_mime = 'image/webp';
+            app(MediaHashService::class)->recordOn($this->video, 'thumbnail', $s3Path, $tempPath);
             $this->video->save();
 
             if ($originalPath !== $s3Path) {

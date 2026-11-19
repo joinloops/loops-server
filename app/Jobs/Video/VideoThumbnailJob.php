@@ -4,6 +4,7 @@ namespace App\Jobs\Video;
 
 use App\Services\Media\TranscodeException;
 use App\Services\Media\VideoTranscoder;
+use App\Services\Migration\MediaHashService;
 use App\Services\VideoService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -103,6 +104,7 @@ class VideoThumbnailJob implements ShouldQueue
 
             $video->thumbnail_path = $thumb;
             $video->has_thumb = true;
+            app(MediaHashService::class)->recordOn($video, 'thumbnail', $thumb, $frame);
             $video->save();
 
             VideoService::deleteMediaData($video->id);
