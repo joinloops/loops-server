@@ -23,8 +23,7 @@ class ActorController extends Controller
             ], 410);
         }
 
-        // Confirm profile is active (1)
-        if ($actor->status != 1) {
+        if ($actor->status != 1 && ! $actor->isMoved()) {
             return $this->activityPubError('Record not available', 400);
         }
 
