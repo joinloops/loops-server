@@ -400,6 +400,12 @@ const router = createRouter({
             meta: { requiresAuth: true }
         },
         {
+            path: '/dashboard/account/migration',
+            name: 'dashboardAccountMigration',
+            component: () => import('~/pages/dashboard/account/AccountMigration.vue'),
+            meta: { requiresAuth: true }
+        },
+        {
             path: '/dashboard/account/security',
             name: 'dashboardAccountSecurity',
             component: () => import('~/pages/dashboard/account/AccountSecurity.vue'),
@@ -658,6 +664,18 @@ const router = createRouter({
                     path: 'relays',
                     name: 'Relays',
                     component: () => import('~/pages/admin/Relays.vue'),
+                    meta: { requiresAdmin: true }
+                },
+                {
+                    path: 'migrations',
+                    name: 'adminMigrations',
+                    component: () => import('~/pages/admin/Migrations.vue'),
+                    meta: { requiresAdmin: true }
+                },
+                {
+                    path: 'migrations/:id',
+                    name: 'adminMigrationShow',
+                    component: () => import('~/pages/admin/MigrationShow.vue'),
                     meta: { requiresAdmin: true }
                 },
                 {

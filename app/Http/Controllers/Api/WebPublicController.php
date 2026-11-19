@@ -287,6 +287,26 @@ class WebPublicController extends Controller
             abort(404);
         }
 
+        if ($profile->isMoved() && ($movedTo = $profile->movedToProfile())) {
+            return response()->json([
+                'message' => 'This account has moved.',
+                'account_moved' => [
+                    'id' => (string) $movedTo->id,
+                    'username' => $movedTo->username,
+                    'name' => $movedTo->name,
+                    'avatar' => $movedTo->avatar,
+                    'local' => (bool) $movedTo->local,
+                    'url' => $movedTo->local ? $movedTo->getPublicUrl() : ($movedTo->remote_url ?: $movedTo->uri),
+                    'moved_at' => $profile->moved_at?->toIso8601String(),
+                ],
+                'previous' => [
+                    'username' => $profile->username,
+                    'name' => $profile->name,
+                    'avatar' => $profile->avatar,
+                ],
+            ], 410, [], JSON_UNESCAPED_SLASHES);
+        }
+
         if ($profile->status != 1) {
             return $this->error('This resource is not available', 403);
         }

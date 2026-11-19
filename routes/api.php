@@ -9,8 +9,10 @@ use App\Http\Controllers\AdminInviteController;
 use App\Http\Controllers\AdminRelayController;
 use App\Http\Controllers\AdminSettingsController;
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\AccountMigrationController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AdminDashboardController;
+use App\Http\Controllers\Api\AdminMigrationController;
 use App\Http\Controllers\Api\AdminUsernameController;
 use App\Http\Controllers\Api\AppController;
 use App\Http\Controllers\Api\CollabController;
@@ -53,6 +55,7 @@ use App\Http\Controllers\Live\LiveChannelController;
 use App\Http\Controllers\Live\LiveChatController;
 use App\Http\Controllers\Live\LiveDiscoveryController;
 use App\Http\Controllers\Live\MediaMtxWebhookController;
+use App\Http\Controllers\MigrationObjectController;
 use App\Http\Controllers\NodeInfoController;
 use App\Http\Controllers\ObjectController;
 use App\Http\Controllers\PageController;
@@ -65,6 +68,7 @@ use App\Http\Controllers\WebfingerController;
 use App\Http\Middleware\AdminOnlyAccess;
 use App\Http\Middleware\AuthorizedFetch;
 use App\Http\Middleware\FederationEnabled;
+use App\Http\Middleware\MigrationSignedFetch;
 use App\Http\Middleware\OptionalAuth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -394,6 +398,12 @@ Route::prefix('api')->group(function () {
     Route::get('/v1/account/data/export/{id}/download', [AccountDataController::class, 'downloadExport'])->name('export.download')->middleware(['auth:web,api']);
     Route::get('/v1/account/sharing/settings', [AccountSettingsController::class, 'getSharingSettings'])->middleware(['auth:web,api']);
     Route::post('/v1/account/sharing/settings', [AccountSettingsController::class, 'updateSharingSettings'])->middleware(['auth:web,api']);
+    Route::get('/v1/account/migration', [AccountMigrationController::class, 'show'])->middleware(['auth:web,api']);
+    Route::post('/v1/account/migration/aliases', [AccountMigrationController::class, 'addAlias'])->middleware(['auth:web,api', 'throttle:10,1']);
+    Route::post('/v1/account/migration/aliases/remove', [AccountMigrationController::class, 'removeAlias'])->middleware(['auth:web,api', 'throttle:10,1']);
+    Route::post('/v1/account/migration/start', [AccountMigrationController::class, 'start'])->middleware(['auth:web,api', 'throttle:5,1']);
+    Route::post('/v1/account/migration/cancel', [AccountMigrationController::class, 'cancel'])->middleware(['auth:web,api', 'throttle:10,1']);
+    Route::post('/v1/account/migration/finalize', [AccountMigrationController::class, 'finalize'])->middleware(['auth:web,api', 'throttle:10,1']);
 
     // Account Feeds
     Route::get('/v1/feed/account/self', [FeedController::class, 'selfAccountFeed'])->middleware('auth:web,api');
@@ -666,9 +676,22 @@ Route::prefix('api')->group(function () {
         Route::post('/blocked-terms/bulk-import', [AdminController::class, 'blockedTermsBulkImport']);
         Route::post('/blocked-terms/test', [AdminController::class, 'blockedTermsTest']);
         Route::post('/blocked-terms/flush-cache', [AdminController::class, 'blockedTermsBulkFlushCache']);
+        Route::get('/migrations', [AdminMigrationController::class, 'index']);
+        Route::get('/migrations/stats', [AdminMigrationController::class, 'stats']);
+        Route::get('/migrations/settings', [AdminMigrationController::class, 'getSettings']);
+        Route::post('/migrations/settings', [AdminMigrationController::class, 'updateSettings']);
+        Route::get('/migrations/{uuid}', [AdminMigrationController::class, 'show'])->whereUuid('uuid');
+        Route::get('/migrations/{uuid}/items', [AdminMigrationController::class, 'items'])->whereUuid('uuid');
+        Route::post('/migrations/{uuid}/cancel', [AdminMigrationController::class, 'cancel'])->whereUuid('uuid');
     });
 
     Route::any('{any}', [WebPublicController::class, 'apiCatchAll'])->where('any', '.*');
+});
+
+Route::prefix('/ap/migrations')->middleware([MigrationSignedFetch::class, 'throttle:240,1'])->group(function () {
+    Route::get('{uuid}', [MigrationObjectController::class, 'show'])->whereUuid('uuid');
+    Route::get('{uuid}/manifest', [MigrationObjectController::class, 'manifest'])->whereUuid('uuid');
+    Route::get('{uuid}/map', [MigrationObjectController::class, 'map'])->whereUuid('uuid');
 });
 
 Route::prefix('/ap')->middleware([AuthorizedFetch::class])->group(function () {

@@ -347,6 +347,7 @@ import {
     SunIcon,
     MoonIcon,
     ArrowPathIcon,
+    ArrowsRightLeftIcon,
     MagnifyingGlassIcon,
     ChevronDownIcon,
     WalletIcon,
@@ -426,7 +427,8 @@ const navigation = computed(() => [
         title: 'Federation',
         items: [
             { name: 'Instances', href: '/admin/instances', icon: ServerStackIcon },
-            { name: 'Relays', href: '/admin/relays', icon: ArrowPathIcon }
+            { name: 'Relays', href: '/admin/relays', icon: ArrowPathIcon },
+            { name: 'Migrations', href: '/admin/migrations', icon: ArrowsRightLeftIcon }
         ]
     }
 ])

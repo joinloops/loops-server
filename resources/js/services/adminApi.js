@@ -605,6 +605,45 @@ export const relaysApi = {
     }
 }
 
+export const migrationsApi = {
+    async getMigrations({ cursor = null, direction = '', state = '', q = '' } = {}) {
+        const params = {}
+        if (cursor) params.cursor = cursor
+        if (direction) params.direction = direction
+        if (state) params.state = state
+        if (q) params.q = q
+        return await apiClient.get('/api/v1/admin/migrations', params)
+    },
+
+    async getStats() {
+        return await apiClient.get('/api/v1/admin/migrations/stats')
+    },
+
+    async getSettings() {
+        return await apiClient.get('/api/v1/admin/migrations/settings')
+    },
+
+    async updateSettings(data) {
+        return await apiClient.post('/api/v1/admin/migrations/settings', data)
+    },
+
+    async getMigration(id) {
+        return await apiClient.get(`/api/v1/admin/migrations/${id}`)
+    },
+
+    async getItems(id, { cursor = null, kind = '', state = '' } = {}) {
+        const params = {}
+        if (cursor) params.cursor = cursor
+        if (kind) params.kind = kind
+        if (state) params.state = state
+        return await apiClient.get(`/api/v1/admin/migrations/${id}/items`, params)
+    },
+
+    async cancelMigration(id) {
+        return await apiClient.post(`/api/v1/admin/migrations/${id}/cancel`)
+    }
+}
+
 export const instancesApi = {
     async getInstances({
         cursor = null,

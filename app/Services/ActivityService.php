@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Federation\Migration;
 use App\Models\Activity;
 use App\Models\InstanceActor;
 use App\Models\Profile;
@@ -18,6 +19,11 @@ class ActivityService
         ?Profile $target = null
     ) {
         $type = $activityData['type'] ?? null;
+
+        if (is_string($type) && Migration::isMigrationResponse($activityData)) {
+            $type = 'MigrationResponse';
+        }
+
         $mapping = $this->getMapType($type);
 
         if (! $mapping) {
@@ -113,6 +119,18 @@ class ActivityService
             'Block' => [
                 'handler' => \App\Federation\Handlers\BlockHandler::class,
                 'validator' => \App\Federation\Validators\BlockValidator::class,
+            ],
+            'Offer' => [
+                'handler' => \App\Federation\Handlers\OfferHandler::class,
+                'validator' => \App\Federation\Validators\OfferValidator::class,
+            ],
+            'Move' => [
+                'handler' => \App\Federation\Handlers\MoveHandler::class,
+                'validator' => \App\Federation\Validators\MoveValidator::class,
+            ],
+            'MigrationResponse' => [
+                'handler' => \App\Federation\Handlers\MigrationResponseHandler::class,
+                'validator' => \App\Federation\Validators\MigrationResponseValidator::class,
             ],
         ];
     }

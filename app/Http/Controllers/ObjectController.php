@@ -18,6 +18,7 @@ use App\Services\ActivityPubCacheService;
 use App\Services\CollabService;
 use App\Services\ConfigService;
 use App\Services\HashidService;
+use App\Services\Migration\OutboundMigrationService;
 use App\Services\UsernameService;
 use App\Services\VideoService;
 use Illuminate\Http\Request;
@@ -40,7 +41,7 @@ class ObjectController extends Controller
                 return abort(404, 'Not found');
             }
 
-            $profile = Profile::active()->whereUsername($username)->whereLocal(true)->first();
+            $profile = Profile::whereIn('status', [1, 9])->whereUsername($username)->whereLocal(true)->first();
 
             if (! $profile) {
                 $movedTo = $this->reservedUsernameTarget($username);
@@ -52,7 +53,7 @@ class ObjectController extends Controller
                 return $this->activityPubError('Record not found', 404);
             }
 
-            if ($profile->status != 1) {
+            if ($profile->status != 1 && ! $profile->isMoved()) {
                 return $this->activityPubError('Record not available', 400);
             }
 
@@ -108,6 +109,10 @@ class ObjectController extends Controller
     {
         $id = HashidService::safeDecode($hashId);
 
+        if ($redirect = $this->movedVideoRedirect($request, $id)) {
+            return $redirect;
+        }
+
         $video = Video::with('profile')->whereStatus(2)->findOrFail($id);
 
         if ($request->wantsJson()) {
@@ -154,6 +159,31 @@ class ObjectController extends Controller
         return view('video', compact('videoData'));
     }
 
+    protected function movedVideoRedirect(Request $request, $videoId, $profileId = null)
+    {
+        if (! is_numeric($videoId)) {
+            return;
+        }
+
+        $video = Video::with('profile:id,status,moved_to_profile_id')->find($videoId);
+
+        if (! $video || ! $video->is_local || ! $video->profile?->isMoved()) {
+            return;
+        }
+
+        if ($profileId !== null && (string) $profileId !== (string) $video->profile_id) {
+            return;
+        }
+
+        $target = app(OutboundMigrationService::class)->redirectFor($video);
+
+        if (! $target) {
+            return;
+        }
+
+        return redirect()->away($request->wantsJson() ? $target['id'] : $target['url'], 301);
+    }
+
     protected function renderVideoObject($video, $hashId)
     {
         $cacheKey = $this->apCache->videoKey($video->id);
@@ -167,6 +197,10 @@ class ObjectController extends Controller
 
     public function showVideoObject(Request $request, $actor, $id)
     {
+        if ($redirect = $this->movedVideoRedirect($request, $id, $actor)) {
+            return $redirect;
+        }
+
         $profile = Profile::active()->findOrFail($actor);
         $video = Video::whereStatus(2)->findOrFail($id);
         abort_if($actor != $video->profile_id || ! $video->is_local, 404);

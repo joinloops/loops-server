@@ -246,6 +246,7 @@ declare global {
     const useMediaQuery: typeof import('@vueuse/core').useMediaQuery
     const useMemoize: typeof import('@vueuse/core').useMemoize
     const useMemory: typeof import('@vueuse/core').useMemory
+    const useMigrationMeta: typeof import('./composables/useMigrationMeta.js').useMigrationMeta
     const useModel: typeof import('vue').useModel
     const useMounted: typeof import('@vueuse/core').useMounted
     const useMouse: typeof import('@vueuse/core').useMouse
@@ -415,9 +416,6 @@ declare module 'vue' {
         >
         readonly controlledRef: UnwrapRef<(typeof import('@vueuse/core'))['controlledRef']>
         readonly createApp: UnwrapRef<(typeof import('vue'))['createApp']>
-        readonly createDisposableDirective: UnwrapRef<
-            (typeof import('@vueuse/core'))['createDisposableDirective']
-        >
         readonly createEventHook: UnwrapRef<(typeof import('@vueuse/core'))['createEventHook']>
         readonly createGlobalState: UnwrapRef<(typeof import('@vueuse/core'))['createGlobalState']>
         readonly createInjectionState: UnwrapRef<
@@ -425,7 +423,6 @@ declare module 'vue' {
         >
         readonly createPinia: UnwrapRef<(typeof import('pinia'))['createPinia']>
         readonly createReactiveFn: UnwrapRef<(typeof import('@vueuse/core'))['createReactiveFn']>
-        readonly createRef: UnwrapRef<(typeof import('@vueuse/core'))['createRef']>
         readonly createReusableTemplate: UnwrapRef<
             (typeof import('@vueuse/core'))['createReusableTemplate']
         >
@@ -479,7 +476,6 @@ declare module 'vue' {
         readonly onBeforeUpdate: UnwrapRef<(typeof import('vue'))['onBeforeUpdate']>
         readonly onClickOutside: UnwrapRef<(typeof import('@vueuse/core'))['onClickOutside']>
         readonly onDeactivated: UnwrapRef<(typeof import('vue'))['onDeactivated']>
-        readonly onElementRemoval: UnwrapRef<(typeof import('@vueuse/core'))['onElementRemoval']>
         readonly onErrorCaptured: UnwrapRef<(typeof import('vue'))['onErrorCaptured']>
         readonly onKeyStroke: UnwrapRef<(typeof import('@vueuse/core'))['onKeyStroke']>
         readonly onLongPress: UnwrapRef<(typeof import('@vueuse/core'))['onLongPress']>
@@ -506,10 +502,11 @@ declare module 'vue' {
         readonly refAutoReset: UnwrapRef<(typeof import('@vueuse/core'))['refAutoReset']>
         readonly refDebounced: UnwrapRef<(typeof import('@vueuse/core'))['refDebounced']>
         readonly refDefault: UnwrapRef<(typeof import('@vueuse/core'))['refDefault']>
-        readonly refManualReset: UnwrapRef<(typeof import('@vueuse/core'))['refManualReset']>
         readonly refThrottled: UnwrapRef<(typeof import('@vueuse/core'))['refThrottled']>
         readonly refWithControl: UnwrapRef<(typeof import('@vueuse/core'))['refWithControl']>
         readonly resolveComponent: UnwrapRef<(typeof import('vue'))['resolveComponent']>
+        readonly resolveRef: UnwrapRef<(typeof import('@vueuse/core'))['resolveRef']>
+        readonly resolveUnref: UnwrapRef<(typeof import('@vueuse/core'))['resolveUnref']>
         readonly setActivePinia: UnwrapRef<(typeof import('pinia'))['setActivePinia']>
         readonly setMapStoreSuffix: UnwrapRef<(typeof import('pinia'))['setMapStoreSuffix']>
         readonly shallowReactive: UnwrapRef<(typeof import('vue'))['shallowReactive']>
@@ -518,6 +515,7 @@ declare module 'vue' {
         readonly storeToRefs: UnwrapRef<(typeof import('pinia'))['storeToRefs']>
         readonly syncRef: UnwrapRef<(typeof import('@vueuse/core'))['syncRef']>
         readonly syncRefs: UnwrapRef<(typeof import('@vueuse/core'))['syncRefs']>
+        readonly templateRef: UnwrapRef<(typeof import('@vueuse/core'))['templateRef']>
         readonly throttledRef: UnwrapRef<(typeof import('@vueuse/core'))['throttledRef']>
         readonly throttledWatch: UnwrapRef<(typeof import('@vueuse/core'))['throttledWatch']>
         readonly toRaw: UnwrapRef<(typeof import('vue'))['toRaw']>
@@ -589,10 +587,8 @@ declare module 'vue' {
             (typeof import('./stores/comments.js'))['useCommentStore']
         >
         readonly useConfirmDialog: UnwrapRef<(typeof import('@vueuse/core'))['useConfirmDialog']>
-        readonly useCountdown: UnwrapRef<(typeof import('@vueuse/core'))['useCountdown']>
         readonly useCounter: UnwrapRef<(typeof import('@vueuse/core'))['useCounter']>
         readonly useCssModule: UnwrapRef<(typeof import('vue'))['useCssModule']>
-        readonly useCssSupports: UnwrapRef<(typeof import('@vueuse/core'))['useCssSupports']>
         readonly useCssVar: UnwrapRef<(typeof import('@vueuse/core'))['useCssVar']>
         readonly useCssVars: UnwrapRef<(typeof import('vue'))['useCssVars']>
         readonly useCuratedApplicationsAdmin: UnwrapRef<
@@ -648,9 +644,6 @@ declare module 'vue' {
         >
         readonly useElementByPoint: UnwrapRef<(typeof import('@vueuse/core'))['useElementByPoint']>
         readonly useElementHover: UnwrapRef<(typeof import('@vueuse/core'))['useElementHover']>
-        readonly useElementOverflow: UnwrapRef<
-            (typeof import('@vueuse/core'))['useElementOverflow']
-        >
         readonly useElementSize: UnwrapRef<(typeof import('@vueuse/core'))['useElementSize']>
         readonly useElementVisibility: UnwrapRef<
             (typeof import('@vueuse/core'))['useElementVisibility']
@@ -716,7 +709,6 @@ declare module 'vue' {
         >
         readonly useLastChanged: UnwrapRef<(typeof import('@vueuse/core'))['useLastChanged']>
         readonly useLink: UnwrapRef<(typeof import('vue-router'))['useLink']>
-        readonly useLiveAnnouncer: UnwrapRef<(typeof import('@vueuse/core'))['useLiveAnnouncer']>
         readonly useLocalStorage: UnwrapRef<(typeof import('@vueuse/core'))['useLocalStorage']>
         readonly useMagicKeys: UnwrapRef<(typeof import('@vueuse/core'))['useMagicKeys']>
         readonly useManualRefHistory: UnwrapRef<
@@ -726,6 +718,9 @@ declare module 'vue' {
         readonly useMediaQuery: UnwrapRef<(typeof import('@vueuse/core'))['useMediaQuery']>
         readonly useMemoize: UnwrapRef<(typeof import('@vueuse/core'))['useMemoize']>
         readonly useMemory: UnwrapRef<(typeof import('@vueuse/core'))['useMemory']>
+        readonly useMigrationMeta: UnwrapRef<
+            (typeof import('./composables/useMigrationMeta.js'))['useMigrationMeta']
+        >
         readonly useModel: UnwrapRef<(typeof import('vue'))['useModel']>
         readonly useMounted: UnwrapRef<(typeof import('@vueuse/core'))['useMounted']>
         readonly useMouse: UnwrapRef<(typeof import('@vueuse/core'))['useMouse']>
@@ -777,9 +772,6 @@ declare module 'vue' {
         readonly usePreferredReducedMotion: UnwrapRef<
             (typeof import('@vueuse/core'))['usePreferredReducedMotion']
         >
-        readonly usePreferredReducedTransparency: UnwrapRef<
-            (typeof import('@vueuse/core'))['usePreferredReducedTransparency']
-        >
         readonly usePrevious: UnwrapRef<(typeof import('@vueuse/core'))['usePrevious']>
         readonly useProfileStore: UnwrapRef<
             (typeof import('./stores/profile.js'))['useProfileStore']
@@ -797,7 +789,6 @@ declare module 'vue' {
         readonly useResizeObserver: UnwrapRef<(typeof import('@vueuse/core'))['useResizeObserver']>
         readonly useRoute: UnwrapRef<(typeof import('vue-router'))['useRoute']>
         readonly useRouter: UnwrapRef<(typeof import('vue-router'))['useRouter']>
-        readonly useSSRWidth: UnwrapRef<(typeof import('@vueuse/core'))['useSSRWidth']>
         readonly useSafeUrl: UnwrapRef<(typeof import('./composables/useSafeUrl.js'))['useSafeUrl']>
         readonly useScreenOrientation: UnwrapRef<
             (typeof import('@vueuse/core'))['useScreenOrientation']
@@ -838,7 +829,6 @@ declare module 'vue' {
         readonly useTemplateRefsList: UnwrapRef<
             (typeof import('@vueuse/core'))['useTemplateRefsList']
         >
-        readonly useTemporalNow: UnwrapRef<(typeof import('@vueuse/core'))['useTemporalNow']>
         readonly useTextDirection: UnwrapRef<(typeof import('@vueuse/core'))['useTextDirection']>
         readonly useTextSelection: UnwrapRef<(typeof import('@vueuse/core'))['useTextSelection']>
         readonly useTextareaAutosize: UnwrapRef<
@@ -850,7 +840,6 @@ declare module 'vue' {
             (typeof import('@vueuse/core'))['useThrottledRefHistory']
         >
         readonly useTimeAgo: UnwrapRef<(typeof import('@vueuse/core'))['useTimeAgo']>
-        readonly useTimeAgoIntl: UnwrapRef<(typeof import('@vueuse/core'))['useTimeAgoIntl']>
         readonly useTimeout: UnwrapRef<(typeof import('@vueuse/core'))['useTimeout']>
         readonly useTimeoutFn: UnwrapRef<(typeof import('@vueuse/core'))['useTimeoutFn']>
         readonly useTimeoutPoll: UnwrapRef<(typeof import('@vueuse/core'))['useTimeoutPoll']>
@@ -877,7 +866,6 @@ declare module 'vue' {
             (typeof import('./composables/useViteVersion.js'))['useViteVersion']
         >
         readonly useWakeLock: UnwrapRef<(typeof import('@vueuse/core'))['useWakeLock']>
-        readonly useWebMCP: UnwrapRef<(typeof import('@vueuse/core'))['useWebMCP']>
         readonly useWebNotification: UnwrapRef<
             (typeof import('@vueuse/core'))['useWebNotification']
         >

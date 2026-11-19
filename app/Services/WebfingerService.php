@@ -83,7 +83,7 @@ class WebfingerService
 
         $actor = Profile::where('username', $parsed['username'])
             ->where('local', true)
-            ->where('status', 1)
+            ->whereIn('status', [1, 9])
             ->first();
 
         if (! $actor) {
@@ -282,10 +282,10 @@ class WebfingerService
 
         return [
             'subject' => $resource,
-            'aliases' => [
+            'aliases' => array_values(array_unique(array_merge([
                 $actorPublicUrl,
                 $actorUrl,
-            ],
+            ], $actor->aliases()))),
             'links' => $links,
         ];
     }

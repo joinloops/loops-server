@@ -169,6 +169,25 @@
                     </router-link>
 
                     <router-link
+                        to="/dashboard/account/migration"
+                        class="bg-white dark:bg-slate-950 dark:hover:bg-slate-800 transition-colors hover:bg-gray-50 rounded-lg shadow-lg"
+                    >
+                        <div class="flex justify-between items-center p-4">
+                            <div class="flex items-center gap-5">
+                                <h3 class="font-medium mb-0 dark:text-gray-300">
+                                    {{ t('migration.navTitle') }}
+                                </h3>
+                                <p class="hidden lg:block text-xs text-gray-500 -mb-1 font-light">
+                                    {{ t('migration.navDescription') }}
+                                </p>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="bx bx-chevron-right text-[20px] text-gray-400"></i>
+                            </div>
+                        </div>
+                    </router-link>
+
+                    <router-link
                         to="/dashboard/safety/blocked-accounts"
                         class="lg:hidden bg-white dark:bg-slate-950 dark:hover:bg-slate-800 transition-colors hover:bg-gray-50 rounded-lg shadow-lg"
                     >

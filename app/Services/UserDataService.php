@@ -115,13 +115,17 @@ class UserDataService
                     'likes' => $cached['likes'],
                     'comments' => $cached['comments'],
                     'media' => $cached['media']['src_url'],
+                    'thumbnail' => $video->thumb(),
                     'created_at' => now()->parse($cached['created_at'])->format('F j, Y, g:i a'),
                 ] : [
-                    'id' => $video->id,
+                    'id' => (string) $video->id,
                     'caption' => $video->caption,
+                    'url' => $video->shareUrl(),
                     'file_size' => $video->size_kb ? $video->size_kb * 1024 : null,
                     'likes' => $video->likes,
                     'comments' => $video->comments,
+                    'media' => $video->mediaUrl(),
+                    'thumbnail' => $video->thumb(),
                     'created_at' => $video->created_at->format('F j, Y, g:i a'),
                 ];
             })->filter()->toArray(),

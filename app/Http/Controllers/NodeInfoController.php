@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Migration\MigrationSettings;
 use Cache;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -77,6 +78,9 @@ class NodeInfoController extends Controller
             'metadata' => [
                 'nodeName' => data_get($settings, 'app.name', 'Loops'),
                 'nodeDescription' => data_get($settings, 'app.description', 'A Loops instance'),
+                'loops' => [
+                    'migration' => app(MigrationSettings::class)->publicSummary(),
+                ],
             ],
         ];
 

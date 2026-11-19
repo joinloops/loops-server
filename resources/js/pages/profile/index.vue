@@ -115,6 +115,57 @@
             </div>
         </div>
 
+        <div v-else-if="error && error.type === 'moved'" class="pt-[90px] px-5 overflow-hidden">
+            <div
+                class="flex flex-col items-center justify-center min-h-[400px] max-w-md mx-auto text-center"
+            >
+                <div class="flex items-center gap-4 mb-6">
+                    <img
+                        :src="error.previous?.avatar || '/storage/avatars/default.jpg'"
+                        class="size-16 rounded-full object-cover opacity-60"
+                        alt=""
+                    />
+                    <ArrowRightIcon class="size-6 text-gray-400" />
+                    <img
+                        :src="error.account.avatar || '/storage/avatars/default.jpg'"
+                        class="size-16 rounded-full object-cover ring-2 ring-[#F02C56]"
+                        alt=""
+                    />
+                </div>
+                <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-3">
+                    {{ $t('migration.accountMovedTitle') }}
+                </h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed break-words">
+                    {{
+                        $t('migration.accountMovedMessage', {
+                            previous: `@${error.previous?.username || error.userId}`,
+                            account: `@${error.account.username}`
+                        })
+                    }}
+                </p>
+                <div class="flex flex-col gap-3 w-full">
+                    <AnimatedButton
+                        variant="primary"
+                        class="w-full"
+                        size="lg"
+                        pill
+                        @click="$router.push(`/@${error.account.username}`)"
+                    >
+                        {{ $t('migration.goToNewAccount') }}
+                    </AnimatedButton>
+                    <a
+                        v-if="!error.account.local && error.account.url"
+                        :href="error.account.url"
+                        target="_blank"
+                        rel="noopener"
+                        class="text-sm font-medium text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
+                    >
+                        {{ $t('migration.openOnServer') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
         <div v-else-if="error" class="pt-[90px] px-5 overflow-hidden">
             <div
                 class="flex flex-col items-center justify-center min-h-[400px] max-w-md mx-auto text-center"
@@ -194,7 +245,12 @@ import { useAuthStore } from '~/stores/auth'
 import { useUtils } from '@/composables/useUtils'
 import { useI18n, Translation as I18nT } from 'vue-i18n'
 import { useHead } from '@unhead/vue'
-import { BookmarkIcon, ExclamationTriangleIcon, Squares2X2Icon } from '@heroicons/vue/24/outline'
+import {
+    ArrowRightIcon,
+    BookmarkIcon,
+    ExclamationTriangleIcon,
+    Squares2X2Icon
+} from '@heroicons/vue/24/outline'
 
 const { formatCount } = useUtils()
 const authStore = useAuthStore()
@@ -474,6 +530,16 @@ const loadProfileData = async (userId) => {
 
         if (err.response?.status === 404 && err.response?.data?.moved_to) {
             router.replace(`/@${err.response.data.moved_to}`)
+            return
+        }
+
+        if (err.response?.status === 410 && err.response?.data?.account_moved) {
+            error.value = {
+                type: 'moved',
+                userId,
+                account: err.response.data.account_moved,
+                previous: err.response.data.previous
+            }
             return
         }
 
