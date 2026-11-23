@@ -5,6 +5,8 @@ namespace App\Http\Requests;
 use App\Models\AdminSetting;
 use App\Models\UserRegisterVerify;
 use App\Rules\HCaptchaRule;
+use App\Rules\NotBlockedEmail;
+use App\Rules\NotBlockedIp;
 use App\Rules\TurnstileRule;
 use App\Services\CaptchaService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -46,7 +48,9 @@ class StoreUserRegisterVerifyRequest extends FormRequest
         $rules = [
             'email' => [
                 'required',
+                new NotBlockedIp,
                 'email:rfc,dns,spoof,strict',
+                new NotBlockedEmail,
                 'unique:users,email',
             ],
         ];
