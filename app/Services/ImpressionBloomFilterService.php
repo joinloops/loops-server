@@ -19,6 +19,8 @@ class ImpressionBloomFilterService
 
     private const HYDRATION_DAYS = 90;
 
+    private const MEXISTS_CHUNK_SIZE = 500;
+
     public function add(int $profileId, int $videoId): void
     {
         $key = $this->getKey($profileId);
@@ -45,33 +47,41 @@ class ImpressionBloomFilterService
             return $videos;
         }
 
+        $unseen = array_flip($this->filterIds($profileId, $videos->pluck('id')->all()));
+
+        return $videos->filter(
+            fn ($video) => isset($unseen[(int) $video->id])
+        )->values();
+    }
+
+    public function filterIds(int $profileId, array $videoIds): array
+    {
+        $videoIds = array_values(array_map('intval', $videoIds));
+
+        if (empty($videoIds)) {
+            return [];
+        }
+
         $key = $this->getKey($profileId);
         $this->ensureFilterHydrated($profileId, $key);
 
-        $exists = $this->keyExists($key);
-
-        if (! $exists) {
-            return $videos;
+        if (! $this->keyExists($key)) {
+            return $videoIds;
         }
 
-        $videoIdList = $videos->pluck('id')
-            ->map(fn ($id) => (string) $id)
-            ->values()
-            ->all();
+        $unseen = [];
 
-        $results = $this->bloom('BF.MEXISTS', array_merge([$key], $videoIdList));
+        foreach (array_chunk($videoIds, self::MEXISTS_CHUNK_SIZE) as $chunk) {
+            $results = $this->bloom('BF.MEXISTS', array_merge([$key], array_map('strval', $chunk)));
 
-        $seenVideoIds = [];
-        foreach ($videoIdList as $i => $videoId) {
-            $resultValue = $results[$i] ?? null;
-            if (((int) ($resultValue ?? 0)) === 1) {
-                $seenVideoIds[$videoId] = true;
+            foreach ($chunk as $i => $videoId) {
+                if ((int) ($results[$i] ?? 0) !== 1) {
+                    $unseen[] = $videoId;
+                }
             }
         }
 
-        return $videos->reject(
-            fn ($video) => isset($seenVideoIds[(string) $video->id])
-        )->values();
+        return $unseen;
     }
 
     private function getClient()

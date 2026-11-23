@@ -72,6 +72,12 @@ return [
                 'max_days' => env('LOOPS_FEED_FYP_MAXP_MAX_DAYS', 7),
             ],
         ],
+        'fyf' => [
+            'recycle' => [
+                'enabled' => env('LOOPS_FEED_FYF_RECYCLE_ENABLED', true),
+                'after_days' => env('LOOPS_FEED_FYF_RECYCLE_AFTER_DAYS', 30),
+            ],
+        ],
         'following' => [
             'max_page' => [
                 'enabled' => env('LOOPS_FEED_FOLLOWING_MAXP_ENABLED', true),

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Api\Traits\ApiHelpers;
 use App\Http\Controllers\Controller;
-use App\Models\FeedFeedback;
 use App\Models\Video;
 use App\Services\ConfigService;
 use App\Services\ForYouFeedService;
@@ -108,9 +107,7 @@ class ForYouFeedController extends Controller
         abort_unless(app(ConfigService::class)->forYouFeed(), 404);
         $profile = $request->user()->profile;
 
-        FeedFeedback::where('profile_id', $profile->id)
-            ->where('video_id', $videoId)
-            ->delete();
+        $this->feedService->removeFeedback($profile->id, $videoId);
 
         return response()->json(['success' => true]);
     }

@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use App\Http\Resources\VideoResource;
+use App\Jobs\UpdateUserInterestsJob;
 use App\Models\FeedFeedback;
 use App\Models\Profile;
 use App\Models\UserInterest;
 use App\Models\Video;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +16,8 @@ use Illuminate\Support\Facades\DB;
 class ForYouFeedService
 {
     private const DEFAULT_LIMIT = 20;
+
+    private const MAX_LIMIT = 50;
 
     private const FRESHNESS_WEIGHT = 0.25;
 
@@ -27,19 +31,52 @@ class ForYouFeedService
 
     private const MIN_SCORE_THRESHOLD = 0.1;
 
-    private const MIN_RESULTS = 20;
-
     private const DISCOVERY_MIX_RATIO = 0.3;
+
+    private const ENGAGEMENT_SATURATION = 1000;
+
+    private const POOL_MULTIPLIER = 3;
+
+    private const CREATOR_PAGE_CAP = 2;
+
+    private const CREATOR_POOL_CAP = 4;
+
+    private const SCAN_BATCH_SIZE = 500;
+
+    private const MAX_SCAN_BATCHES = 20;
+
+    private const POPULAR_POOL_SIZE = 500;
+
+    private const POPULAR_FRESH_SECONDS = 600;
+
+    private const POPULAR_STALE_SECONDS = 3600;
+
+    private const DISCOVERY_MIN_LIKES = 2;
+
+    private const DISCOVERY_SLICES = 3;
+
+    private const RECYCLE_MIN_WATCH_SECONDS = 3;
+
+    private const SESSION_TTL_MINUTES = 120;
+
+    private const SESSION_MAX_SERVED = 1000;
+
+    private const FEEDBACK_TTL_MINUTES = 30;
+
+    private const FEEDBACK_MAX_VIDEOS = 1000;
+
+    private const FEEDBACK_MAX_CREATORS = 500;
 
     public function getFeed(
         Profile $profile,
         ?string $cursor = null,
         int $limit = self::DEFAULT_LIMIT
     ): array {
-        $videos = $this->buildFeedQuery($profile, $cursor, $limit);
+        $limit = max(1, min($limit, self::MAX_LIMIT));
+        $feed = $this->buildFeed($profile, $cursor, $limit);
 
         return [
-            'data' => VideoResource::collection($videos),
+            'data' => VideoResource::collection($feed['videos']),
             'links' => [
                 'first' => null,
                 'last' => null,
@@ -49,222 +86,449 @@ class ForYouFeedService
             'meta' => [
                 'path' => url('/api/v1/feed/recommended'),
                 'per_page' => $limit,
-                'next_cursor' => $this->generateCursor($videos),
+                'next_cursor' => $feed['has_more'] ? $this->encodeCursor($feed['position']) : null,
                 'prev_cursor' => null,
-                'has_more' => count($videos) === $limit,
+                'has_more' => $feed['has_more'],
             ],
         ];
     }
 
-    private function buildFeedQuery(Profile $profile, ?string $cursor, int $limit): Collection
+    private function buildFeed(Profile $profile, ?string $cursor, int $limit): array
     {
-        $interests = $this->getUserInterests($profile->id);
-        $isNewUser = $interests->isEmpty();
+        $profileId = (int) $profile->id;
+        $cursorId = $cursor ? $this->decodeCursor($cursor) : null;
+        $interests = $this->getUserInterests($profileId);
+        $feedback = $this->getFeedbackFilters($profileId);
+        $hiddenCreators = $feedback['creators'];
+        $session = $this->getSession($profileId, $cursorId === null);
+        $excluded = array_fill_keys(array_merge($session['served'], $feedback['videos']), true);
+        $poolSize = $limit * self::POOL_MULTIPLIER;
+        $personalizedCount = $limit - (int) ceil($limit * self::DISCOVERY_MIX_RATIO);
 
-        $cursorScore = null;
-        $cursorId = null;
-        if ($cursor) {
-            [$cursorScore, $cursorId] = $this->decodeCursor($cursor);
-        }
-
-        $discoveryCount = (int) ceil($limit * self::DISCOVERY_MIX_RATIO);
-        $personalizedCount = $limit - $discoveryCount;
-
-        $personalizedVideos = $this->getPersonalizedVideos(
+        $walk = $this->getWalkCandidates(
             $profile,
             $interests,
-            $cursorScore,
+            $hiddenCreators,
+            $excluded,
+            $session['carry'],
             $cursorId,
-            $isNewUser ? $limit : $personalizedCount
+            $poolSize
+        );
+        $popular = $this->getPopularVideos($profile, $hiddenCreators, $excluded, $limit * 2);
+
+        $page = ['limit' => $limit, 'main' => [], 'mix' => [], 'ids' => [], 'creators' => []];
+
+        $this->pick($page, $walk['videos'], 'main', self::CREATOR_PAGE_CAP, $personalizedCount);
+        $this->pick($page, $popular, 'mix', self::CREATOR_PAGE_CAP);
+        $this->pick($page, $walk['videos'], 'main', self::CREATOR_PAGE_CAP);
+
+        $unseen = [[$walk['videos'], 'main'], [$popular, 'mix']];
+
+        if ($this->isShort($page)) {
+            $discovery = $this->getDiscoveryVideos($profile, $hiddenCreators, $excluded + $page['ids'], $limit);
+            $this->pick($page, $discovery, 'mix', self::CREATOR_PAGE_CAP);
+            $unseen[] = [$discovery, 'mix'];
+        }
+
+        if ($this->isShort($page)) {
+            foreach ($unseen as [$candidates, $slot]) {
+                $this->pick($page, $candidates, $slot, PHP_INT_MAX);
+            }
+        }
+
+        $walkPicks = $session['walk_picks'] + $this->countPicked($page, $walk['videos']);
+
+        if ($this->isShort($page) && $walk['exhausted'] && $cursorId !== null && $walkPicks > 0) {
+            $walk = $this->getWalkCandidates(
+                $profile,
+                $interests,
+                $hiddenCreators,
+                $excluded + $page['ids'],
+                [],
+                null,
+                $poolSize
+            );
+            $this->pick($page, $walk['videos'], 'main', self::CREATOR_PAGE_CAP);
+            $this->pick($page, $walk['videos'], 'main', PHP_INT_MAX);
+            $walkPicks = $this->countPicked($page, $walk['videos']);
+        }
+
+        if ($this->isShort($page) && $this->recycleEnabled()) {
+            $recycled = $this->getRecycledVideos($profile, $hiddenCreators, $excluded + $page['ids'], $limit);
+            $this->pick($page, $recycled, 'mix', self::CREATOR_PAGE_CAP);
+            $this->pick($page, $recycled, 'mix', PHP_INT_MAX);
+        }
+
+        $carry = [];
+        foreach ($walk['videos'] as $video) {
+            if (! isset($page['ids'][(int) $video->id])) {
+                $carry[(int) $video->id] = (string) $video->profile_id;
+            }
+        }
+
+        $videos = $this->spreadCreators(
+            $this->interleaveVideos(collect($page['main']), collect($page['mix']), $limit)
         );
 
-        if ($personalizedVideos->count() < self::MIN_RESULTS || $isNewUser) {
-            $popularVideos = $this->getPopularVideos(
-                $profile,
-                $cursorId,
-                $limit - $personalizedVideos->count(),
-                $personalizedVideos->pluck('id')->toArray()
-            );
+        $this->putSession($profileId, [
+            'served' => array_merge($session['served'], array_keys($page['ids'])),
+            'carry' => $carry,
+            'walk_picks' => $walkPicks,
+        ]);
 
-            $allVideos = $personalizedVideos->concat($popularVideos)
-                ->unique('id')
-                ->sortByDesc('feed_score')
-                ->take($limit)
-                ->values();
-
-            return $allVideos;
-        }
-        // @phpstan-ignore-next-line
-        if (! $isNewUser && $discoveryCount > 0) {
-            $discoveryVideos = $this->getDiscoveryVideos(
-                $profile,
-                $personalizedVideos->pluck('id')->toArray(),
-                $discoveryCount
-            );
-
-            return $this->interleaveVideos($personalizedVideos, $discoveryVideos, $limit);
-        }
-
-        return $personalizedVideos->take($limit)->values();
+        return [
+            'videos' => $videos,
+            'position' => $walk['floor'] ?? $cursorId ?? 0,
+            'has_more' => ! $walk['exhausted'] || ! empty($carry) || $videos->count() >= $limit,
+        ];
     }
 
-    private function applyUserFilters($query, int $profileId)
+    private function countPicked(array $page, Collection $videos): int
     {
-        return $query->leftJoin('user_filters', function ($join) use ($profileId) {
-            $join->on('videos.profile_id', '=', 'user_filters.account_id')
-                ->where('user_filters.profile_id', '=', $profileId);
-        })->whereNull('user_filters.id');
+        return $videos
+            ->filter(fn (Video $video) => isset($page['ids'][(int) $video->id]))
+            ->count();
     }
 
-    private function applyContentPreferences($query, Profile $profile)
+    private function visibleVideos(Profile $profile, array $hiddenCreators): Builder
     {
-        return $query->when($profile->hide_ai, function ($q) {
-            $q->where('videos.contains_ai', false);
-        });
+        return Video::query()
+            ->where('videos.status', 2)
+            ->where('videos.visibility', 1)
+            ->where('videos.created_at', '>=', now()->subDays(self::MAX_AGE_DAYS))
+            ->where('videos.profile_id', '!=', $profile->id)
+            ->when($profile->hide_ai, function ($q) {
+                $q->where('videos.contains_ai', false);
+            })
+            ->when(! empty($hiddenCreators), function ($q) use ($hiddenCreators) {
+                $q->whereNotIn('videos.profile_id', $hiddenCreators);
+            })
+            ->leftJoin('user_filters', function ($join) use ($profile) {
+                $join->on('videos.profile_id', '=', 'user_filters.account_id')
+                    ->where('user_filters.profile_id', '=', $profile->id);
+            })
+            ->whereNull('user_filters.id');
     }
 
-    private function getPersonalizedVideos(
+    private function loadVideos(Profile $profile, array $hiddenCreators, array $ids): Collection
+    {
+        if (empty($ids)) {
+            return collect();
+        }
+
+        $videos = $this->visibleVideos($profile, $hiddenCreators)
+            ->whereIn('videos.id', $ids)
+            ->select('videos.*')
+            ->with([
+                'profile:id,username,trust_level',
+                'hashtags:hashtags.id,hashtags.name',
+            ])
+            ->get()
+            ->keyBy('id');
+
+        return collect($ids)
+            ->map(fn ($id) => $videos->get($id))
+            ->filter()
+            ->values();
+    }
+
+    private function getWalkCandidates(
         Profile $profile,
         Collection $interests,
-        ?float $cursorScore,
+        array $hiddenCreators,
+        array $excluded,
+        array $carry,
         ?int $cursorId,
-        int $limit
-    ): Collection {
-        $scoredVideos = collect();
+        int $poolSize
+    ): array {
+        $carry = array_diff_key($carry, $excluded);
+        $unseenCarry = array_flip(
+            app(ImpressionBloomFilterService::class)->filterIds((int) $profile->id, array_keys($carry))
+        );
+        $carry = array_intersect_key($carry, $unseenCarry);
+
+        $scan = $this->scanCandidates(
+            $profile,
+            $hiddenCreators,
+            $excluded + $carry,
+            array_count_values($carry),
+            $cursorId,
+            $poolSize - count($carry)
+        );
+
+        $videos = $this->loadVideos(
+            $profile,
+            $hiddenCreators,
+            array_merge(array_keys($carry), $scan['ids'])
+        );
+
+        $scores = [];
+        foreach ($videos as $video) {
+            $scores[(int) $video->id] = $this->calculateVideoScore($video, $interests);
+        }
+
+        return [
+            'videos' => $videos
+                ->filter(fn (Video $video) => $scores[(int) $video->id] >= self::MIN_SCORE_THRESHOLD)
+                ->sortByDesc(fn (Video $video) => $scores[(int) $video->id])
+                ->values(),
+            'floor' => $scan['floor'],
+            'exhausted' => $scan['exhausted'],
+        ];
+    }
+
+    private function scanCandidates(
+        Profile $profile,
+        array $hiddenCreators,
+        array $excluded,
+        array $creatorCounts,
+        ?int $cursorId,
+        int $target
+    ): array {
+        if ($target <= 0) {
+            return ['ids' => [], 'floor' => null, 'exhausted' => false];
+        }
+
+        $bloom = app(ImpressionBloomFilterService::class);
+        $ids = [];
+        $overflow = [];
+        $overflowCount = 0;
+        $floor = null;
+        $exhausted = false;
         $lastId = $cursorId;
-        $maxAttempts = 5;
-        $attempts = 0;
-        $batchMultiplier = 3;
 
-        while ($scoredVideos->count() < $limit && $attempts < $maxAttempts) {
-            $attempts++;
-            $batchSize = $limit * $batchMultiplier * $attempts;
-
-            $query = Video::query()
-                ->select([
-                    'videos.*',
-                    DB::raw('0 as feed_score'),
-                ])
-                ->where('videos.status', 2)
-                ->where('videos.visibility', 1)
-                ->where('videos.created_at', '>=', now()->subDays(self::MAX_AGE_DAYS))
+        for ($batch = 0; $batch < self::MAX_SCAN_BATCHES; $batch++) {
+            $rows = $this->visibleVideos($profile, $hiddenCreators)
+                ->when($lastId !== null, function ($q) use ($lastId) {
+                    $q->where('videos.id', '<', $lastId);
+                })
                 ->orderByDesc('videos.id')
-                ->with([
-                    'profile:id,username',
-                    'hashtags:hashtags.id,hashtags.name',
-                ]);
+                ->limit(self::SCAN_BATCH_SIZE)
+                ->toBase()
+                ->get(['videos.id', 'videos.profile_id']);
 
-            // Apply user filters via join
-            $query = $this->applyUserFilters($query, $profile->id);
-            $query = $this->applyContentPreferences($query, $profile);
-
-            if ($lastId !== null) {
-                $query->where('videos.id', '<', $lastId);
-            }
-
-            $videos = $query->limit($batchSize)->get();
-
-            if ($videos->isEmpty()) {
+            if ($rows->isEmpty()) {
+                $exhausted = true;
                 break;
             }
 
-            $lastId = $videos->last()->id;
+            $unseen = array_flip($bloom->filterIds((int) $profile->id, $rows->pluck('id')->all()));
+            $full = false;
 
-            $unviewedVideos = app(ImpressionBloomFilterService::class)
-                ->filterVideos($profile->id, $videos);
+            foreach ($rows as $row) {
+                $id = (int) $row->id;
+                $lastId = $id;
+                $floor = $id;
 
-            $batchScored = $unviewedVideos->map(function ($video) use ($profile, $interests) {
-                $score = $this->calculateVideoScore($video, $profile, $interests);
-                $video->feed_score = $score;
+                if (! isset($unseen[$id]) || isset($excluded[$id])) {
+                    continue;
+                }
 
-                return $video;
-            })->filter(fn ($v) => $v->feed_score >= self::MIN_SCORE_THRESHOLD);
+                $creator = (string) $row->profile_id;
 
-            $scoredVideos = $scoredVideos->concat($batchScored);
+                if (($creatorCounts[$creator] ?? 0) >= self::CREATOR_POOL_CAP) {
+                    $overflowCount++;
+
+                    if (count($overflow) < $target) {
+                        $overflow[] = $id;
+                    }
+
+                    continue;
+                }
+
+                $creatorCounts[$creator] = ($creatorCounts[$creator] ?? 0) + 1;
+                $ids[] = $id;
+
+                if (count($ids) >= $target) {
+                    $full = true;
+                    break;
+                }
+            }
+
+            if ($full) {
+                break;
+            }
+
+            if ($rows->count() < self::SCAN_BATCH_SIZE) {
+                $exhausted = true;
+                break;
+            }
         }
 
-        return $scoredVideos
-            ->sortByDesc('feed_score')
-            ->take($limit)
-            ->values();
+        if (count($ids) < $target && ! empty($overflow)) {
+            $admitted = array_slice($overflow, 0, $target - count($ids));
+
+            if ($overflowCount > count($admitted)) {
+                $floor = end($admitted);
+                $exhausted = false;
+            }
+
+            $ids = array_merge($ids, $admitted);
+        }
+
+        return ['ids' => $ids, 'floor' => $floor, 'exhausted' => $exhausted];
     }
 
     private function getPopularVideos(
         Profile $profile,
-        ?int $cursorId,
-        int $limit,
-        array $alreadyIncludedIds = []
+        array $hiddenCreators,
+        array $excluded,
+        int $limit
     ): Collection {
-        $query = Video::query()
-            ->select([
-                'videos.*',
-                DB::raw('(
-                    (videos.likes * 2) +
-                    (videos.comments * 3) +
-                    (videos.shares * 4) +
-                    (videos.bookmarks * 3) +
-                    (videos.views * 0.1)
-                ) / (TIMESTAMPDIFF(HOUR, videos.created_at, NOW()) + 1) as feed_score'),
-            ])
-            ->where('videos.status', 2)
-            ->where('videos.visibility', 1)
-            ->where('videos.created_at', '>=', now()->subDays(self::MAX_AGE_DAYS))
-            ->whereNotIn('videos.id', $alreadyIncludedIds)
-            ->with([
-                'profile:id,username',
-                'hashtags:hashtags.id,hashtags.name',
-            ]);
+        $candidates = array_values(array_filter(
+            $this->getPopularPool(),
+            fn ($id) => ! isset($excluded[$id])
+        ));
 
-        // Apply user filters via join
-        $query = $this->applyUserFilters($query, $profile->id);
-        $query = $this->applyContentPreferences($query, $profile);
+        $unseen = app(ImpressionBloomFilterService::class)->filterIds((int) $profile->id, $candidates);
 
-        if ($cursorId) {
-            $query->where('videos.id', '<', $cursorId);
-        }
+        return $this->loadVideos($profile, $hiddenCreators, array_slice($unseen, 0, $limit));
+    }
 
-        $videos = $query
-            ->orderByDesc('feed_score')
-            ->limit($limit)
-            ->get();
-
-        $videos = app(ImpressionBloomFilterService::class)->filterVideos($profile->id, $videos);
-
-        return $videos;
+    private function getPopularPool(): array
+    {
+        return Cache::flexible(
+            'fyf:popular:pool',
+            [self::POPULAR_FRESH_SECONDS, self::POPULAR_STALE_SECONDS],
+            fn () => DB::table('videos')
+                ->where('status', 2)
+                ->where('visibility', 1)
+                ->where('created_at', '>=', now()->subDays(self::MAX_AGE_DAYS))
+                ->orderByRaw('(
+                    (likes * 2) +
+                    (comments * 3) +
+                    (shares * 4) +
+                    (bookmarks * 3) +
+                    (views * 0.1)
+                ) / (TIMESTAMPDIFF(HOUR, created_at, NOW()) + 1) DESC')
+                ->limit(self::POPULAR_POOL_SIZE)
+                ->pluck('id')
+                ->map(fn ($id) => (int) $id)
+                ->all()
+        );
     }
 
     private function getDiscoveryVideos(
         Profile $profile,
-        array $alreadyIncludedIds,
+        array $hiddenCreators,
+        array $excluded,
         int $limit
     ): Collection {
-        $query = Video::query()
-            ->select([
-                'videos.*',
-                DB::raw('RAND() as feed_score'),
-            ])
-            ->where('videos.status', 2)
-            ->where('videos.visibility', 1)
-            ->where('videos.created_at', '>=', now()->subDays(self::MAX_AGE_DAYS))
-            ->whereNotIn('videos.id', $alreadyIncludedIds)
-            ->where('videos.likes', '>=', 2)
-            ->with([
-                'profile:id,username',
-                'hashtags:hashtags.id,hashtags.name',
-            ]);
+        [$minId, $maxId] = $this->getDiscoveryBounds();
 
-        // Apply user filters via join
-        $query = $this->applyUserFilters($query, $profile->id);
-        $query = $this->applyContentPreferences($query, $profile);
+        if ($maxId <= 0) {
+            return collect();
+        }
 
-        $videos = $query
-            ->inRandomOrder()
+        $ids = [];
+
+        for ($slice = 0; $slice < self::DISCOVERY_SLICES; $slice++) {
+            $rows = $this->visibleVideos($profile, $hiddenCreators)
+                ->where('videos.likes', '>=', self::DISCOVERY_MIN_LIKES)
+                ->where('videos.id', '<=', random_int($minId, $maxId))
+                ->orderByDesc('videos.id')
+                ->limit($limit)
+                ->toBase()
+                ->pluck('videos.id');
+
+            foreach ($rows as $id) {
+                if (! isset($excluded[(int) $id])) {
+                    $ids[(int) $id] = true;
+                }
+            }
+        }
+
+        $unseen = app(ImpressionBloomFilterService::class)->filterIds((int) $profile->id, array_keys($ids));
+        shuffle($unseen);
+
+        return $this->loadVideos($profile, $hiddenCreators, array_slice($unseen, 0, $limit));
+    }
+
+    private function getDiscoveryBounds(): array
+    {
+        return Cache::flexible(
+            'fyf:discovery:bounds',
+            [self::POPULAR_FRESH_SECONDS, self::POPULAR_STALE_SECONDS],
+            function () {
+                $bounds = DB::table('videos')
+                    ->where('status', 2)
+                    ->where('visibility', 1)
+                    ->where('created_at', '>=', now()->subDays(self::MAX_AGE_DAYS))
+                    ->selectRaw('MIN(id) as min_id, MAX(id) as max_id')
+                    ->first();
+
+                return [(int) ($bounds->min_id ?? 0), (int) ($bounds->max_id ?? 0)];
+            }
+        );
+    }
+
+    private function getRecycledVideos(
+        Profile $profile,
+        array $hiddenCreators,
+        array $excluded,
+        int $limit
+    ): Collection {
+        $ids = $this->visibleVideos($profile, $hiddenCreators)
+            ->join('feed_impressions', function ($join) use ($profile) {
+                $join->on('feed_impressions.video_id', '=', 'videos.id')
+                    ->where('feed_impressions.profile_id', '=', $profile->id);
+            })
+            ->where('feed_impressions.viewed_at', '<', now()->subDays($this->recycleAfterDays()))
+            ->where(function ($q) {
+                $q->where('feed_impressions.completed', true)
+                    ->orWhere('feed_impressions.watch_duration', '>=', self::RECYCLE_MIN_WATCH_SECONDS);
+            })
+            ->when(! empty($excluded), function ($q) use ($excluded) {
+                $q->whereNotIn('videos.id', array_keys($excluded));
+            })
+            ->orderByDesc('feed_impressions.completed')
+            ->orderBy('feed_impressions.viewed_at')
             ->limit($limit)
-            ->get();
+            ->toBase()
+            ->pluck('videos.id')
+            ->map(fn ($id) => (int) $id)
+            ->all();
 
-        $videos = app(ImpressionBloomFilterService::class)->filterVideos($profile->id, $videos);
+        return $this->loadVideos($profile, $hiddenCreators, $ids);
+    }
 
-        return $videos;
+    private function recycleEnabled(): bool
+    {
+        return (bool) config('loops.feed.fyf.recycle.enabled', true);
+    }
+
+    private function recycleAfterDays(): int
+    {
+        return max(1, (int) config('loops.feed.fyf.recycle.after_days', 30));
+    }
+
+    private function pick(array &$page, Collection $candidates, string $slot, int $creatorCap, ?int $max = null): void
+    {
+        $room = $page['limit'] - count($page['main']) - count($page['mix']);
+        $take = $max === null ? $room : min($room, $max);
+
+        foreach ($candidates as $video) {
+            if ($take <= 0) {
+                break;
+            }
+
+            $id = (int) $video->id;
+            $creator = (string) $video->profile_id;
+
+            if (isset($page['ids'][$id]) || ($page['creators'][$creator] ?? 0) >= $creatorCap) {
+                continue;
+            }
+
+            $page['ids'][$id] = true;
+            $page['creators'][$creator] = ($page['creators'][$creator] ?? 0) + 1;
+            $page[$slot][] = $video;
+            $take--;
+        }
+    }
+
+    private function isShort(array $page): bool
+    {
+        return count($page['main']) + count($page['mix']) < $page['limit'];
     }
 
     private function interleaveVideos(Collection $personalized, Collection $discovery, int $limit): Collection
@@ -290,7 +554,32 @@ class ForYouFeedService
         return $result->take($limit)->values();
     }
 
-    private function calculateVideoScore(Video $video, Profile $profile, Collection $interests): float
+    private function spreadCreators(Collection $videos): Collection
+    {
+        $queue = $videos->values()->all();
+        $result = [];
+        $lastCreator = null;
+
+        while (! empty($queue)) {
+            $index = 0;
+
+            foreach ($queue as $i => $video) {
+                if ((string) $video->profile_id !== $lastCreator) {
+                    $index = $i;
+                    break;
+                }
+            }
+
+            $video = $queue[$index];
+            array_splice($queue, $index, 1);
+            $result[] = $video;
+            $lastCreator = (string) $video->profile_id;
+        }
+
+        return collect($result);
+    }
+
+    private function calculateVideoScore(Video $video, Collection $interests): float
     {
         $freshnessScore = $this->calculateFreshnessScore($video);
         $engagementScore = $this->calculateEngagementScore($video);
@@ -317,23 +606,17 @@ class ForYouFeedService
 
     private function calculateEngagementScore(Video $video): float
     {
-        $ageInDays = max(1, now()->diffInDays($video->created_at) + 1);
+        $ageInDays = max(1, (int) abs(now()->diffInDays($video->created_at)) + 1);
 
-        $likeScore = min(1, $video->likes / 1000);
-        $commentScore = min(1, $video->comments / 100);
-        $shareScore = min(1, $video->shares / 50);
-        $bookmarkScore = min(1, $video->bookmarks / 50);
-        $viewScore = min(1, $video->views / 5000);
+        $interactions = ($video->likes * 2) +
+            ($video->comments * 3) +
+            ($video->shares * 4) +
+            ($video->bookmarks * 3) +
+            ($video->views * 0.1);
 
-        $rawEngagement = (
-            ($likeScore * 0.30) +
-            ($commentScore * 0.20) +
-            ($shareScore * 0.25) +
-            ($bookmarkScore * 0.15) +
-            ($viewScore * 0.10)
-        );
+        $volume = min(1, log1p(max(0, $interactions)) / log1p(self::ENGAGEMENT_SATURATION));
 
-        return $rawEngagement / log($ageInDays + 2);
+        return $volume / log($ageInDays + 2);
     }
 
     private function calculatePersonalizationScore(Video $video, Collection $interests): float
@@ -428,34 +711,84 @@ class ForYouFeedService
         Cache::forget("fyf:user_interests:{$profileId}");
     }
 
-    private function generateCursor(Collection $videos): ?string
+    private function getFeedbackFilters(int $profileId): array
     {
-        if ($videos->isEmpty()) {
+        return Cache::remember(
+            "fyf:feedback:{$profileId}",
+            now()->addMinutes(self::FEEDBACK_TTL_MINUTES),
+            function () use ($profileId) {
+                $videos = FeedFeedback::where('profile_id', $profileId)
+                    ->whereIn('feedback_type', [
+                        FeedFeedback::TYPE_DISLIKE,
+                        FeedFeedback::TYPE_NOT_INTERESTED,
+                        FeedFeedback::TYPE_HIDE_CREATOR,
+                    ])
+                    ->orderByDesc('id')
+                    ->limit(self::FEEDBACK_MAX_VIDEOS)
+                    ->pluck('video_id')
+                    ->map(fn ($id) => (int) $id)
+                    ->unique()
+                    ->values()
+                    ->all();
+
+                $creators = DB::table('feed_feedback')
+                    ->join('videos', 'videos.id', '=', 'feed_feedback.video_id')
+                    ->where('feed_feedback.profile_id', $profileId)
+                    ->where('feed_feedback.feedback_type', FeedFeedback::TYPE_HIDE_CREATOR)
+                    ->distinct()
+                    ->limit(self::FEEDBACK_MAX_CREATORS)
+                    ->pluck('videos.profile_id')
+                    ->map(fn ($id) => (int) $id)
+                    ->all();
+
+                return ['videos' => $videos, 'creators' => $creators];
+            }
+        );
+    }
+
+    public function forgetFeedbackFilters(int $profileId): void
+    {
+        Cache::forget("fyf:feedback:{$profileId}");
+    }
+
+    private function getSession(int $profileId, bool $fresh): array
+    {
+        $session = $fresh ? null : Cache::get("fyf:session:{$profileId}");
+
+        return [
+            'served' => is_array($session['served'] ?? null) ? $session['served'] : [],
+            'carry' => is_array($session['carry'] ?? null) ? $session['carry'] : [],
+            'walk_picks' => (int) ($session['walk_picks'] ?? 0),
+        ];
+    }
+
+    private function putSession(int $profileId, array $session): void
+    {
+        $session['served'] = array_slice($session['served'], -self::SESSION_MAX_SERVED);
+
+        Cache::put(
+            "fyf:session:{$profileId}",
+            $session,
+            now()->addMinutes(self::SESSION_TTL_MINUTES)
+        );
+    }
+
+    private function encodeCursor(int $position): string
+    {
+        return base64_encode('0|'.$position);
+    }
+
+    private function decodeCursor(string $cursor): ?int
+    {
+        $decoded = base64_decode($cursor, true);
+
+        if (! $decoded || ! str_contains($decoded, '|')) {
             return null;
         }
 
-        $boundaryId = (int) $videos->min('id');
+        $id = explode('|', $decoded, 2)[1];
 
-        return base64_encode('0|'.$boundaryId);
-    }
-
-    private function decodeCursor(string $cursor): array
-    {
-        try {
-            $decoded = base64_decode($cursor, true);
-            if (! $decoded || ! str_contains($decoded, '|')) {
-                return [null, null];
-            }
-
-            [$score, $id] = explode('|', $decoded, 2);
-
-            return [
-                is_numeric($score) ? (float) $score : null,
-                is_numeric($id) ? (int) $id : null,
-            ];
-        } catch (\Throwable $e) {
-            return [null, null];
-        }
+        return is_numeric($id) ? (int) $id : null;
     }
 
     public function recordImpression(
@@ -498,85 +831,27 @@ class ForYouFeedService
         int $videoId,
         string $feedbackType
     ): void {
-        FeedFeedback::create([
+        $feedback = FeedFeedback::firstOrCreate([
             'profile_id' => $profileId,
             'video_id' => $videoId,
             'feedback_type' => $feedbackType,
         ]);
 
-        $this->updateUserInterestsFromFeedback($profileId, $videoId, $feedbackType);
-    }
+        $this->forgetFeedbackFilters($profileId);
 
-    private function updateUserInterestsFromFeedback(
-        int $profileId,
-        int $videoId,
-        string $feedbackType
-    ): void {
-        $video = Video::with(['hashtags'])->find($videoId);
-
-        if (! $video) {
-            return;
-        }
-
-        $weight = match ($feedbackType) {
-            FeedFeedback::TYPE_LIKE => 2.0,
-            FeedFeedback::TYPE_DISLIKE => -1.0,
-            FeedFeedback::TYPE_NOT_INTERESTED => -0.5,
-            FeedFeedback::TYPE_HIDE_CREATOR => -3.0,
-            default => 0,
-        };
-
-        $this->updateInterest(
-            $profileId,
-            UserInterest::TYPE_CREATOR,
-            (string) $video->profile_id,
-            $weight
-        );
-
-        if ($video->hashtags->isNotEmpty()) {
-            foreach ($video->hashtags as $hashtag) {
-                $this->updateInterest(
-                    $profileId,
-                    UserInterest::TYPE_HASHTAG,
-                    $hashtag->name,
-                    $weight
-                );
-            }
-        }
-
-        if ($video->category) {
-            $this->updateInterest(
-                $profileId,
-                UserInterest::TYPE_CATEGORY,
-                $video->category,
-                $weight
-            );
+        if ($feedback->wasRecentlyCreated) {
+            UpdateUserInterestsJob::dispatch($profileId);
         }
     }
 
-    private function updateInterest(
-        int $profileId,
-        string $type,
-        string $value,
-        float $weight
-    ): void {
-        $interest = UserInterest::firstOrCreate(
-            [
-                'profile_id' => $profileId,
-                'interest_type' => $type,
-                'interest_value' => $value,
-            ],
-            [
-                'score' => 0,
-                'interaction_count' => 0,
-            ]
-        );
+    public function removeFeedback(int $profileId, int $videoId): void
+    {
+        FeedFeedback::where('profile_id', $profileId)
+            ->where('video_id', $videoId)
+            ->delete();
 
-        if ($weight > 0) {
-            $interest->recordInteraction($weight);
-        } else {
-            $interest->score = max(0, $interest->score + ($weight * 5));
-            $interest->save();
-        }
+        $this->forgetFeedbackFilters($profileId);
+
+        UpdateUserInterestsJob::dispatch($profileId);
     }
 }
