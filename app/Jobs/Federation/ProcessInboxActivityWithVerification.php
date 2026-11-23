@@ -125,7 +125,7 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
 
         $result = $this->resolveSignedActor($incoming, $activityPubService, $sanitizeService, $webfingerService);
 
-        if ($result['valid'] && ($result['key_verified'] ?? true)) {
+        if ($result['valid']) {
             app(SignedHttpClient::class)->noteInboundScheme($incoming->originDomain(), $incoming->scheme);
         }
 
@@ -186,20 +186,15 @@ class ProcessInboxActivityWithVerification implements ShouldQueue
 
         if (! $actorData || ! isset($actorData['publicKey']['publicKeyPem'])) {
             if (($this->activity['type'] ?? null) === 'Delete') {
-                $existing = Profile::where('uri', $actorUrl)->first();
+                $stripped = preg_replace('#/(main-key|publickey|public-key)$#', '', $actorUrl);
 
-                if (! $existing) {
-                    $stripped = preg_replace('#/(main-key|publickey|public-key)$#', '', $actorUrl);
-                    if ($stripped !== $actorUrl) {
-                        $existing = Profile::where('uri', $stripped)->first();
+                if ($stripped !== $actorUrl) {
+                    $existing = Profile::where('uri', $stripped)->first();
+
+                    if ($existing && $existing->public_key && $incoming->verify($existing->public_key)) {
+                        return ['valid' => true, 'actor' => $existing];
                     }
                 }
-
-                if ($existing) {
-                    return ['valid' => true, 'actor' => $existing, 'key_verified' => false];
-                }
-
-                return ['valid' => true, 'actor' => (object) ['uri' => $actorUrl, 'domain' => $originDomain], 'key_verified' => false];
             }
 
             return ['valid' => false, 'reason' => 'Unable to fetch public key'];

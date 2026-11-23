@@ -21,6 +21,14 @@ class DeleteHandler extends BaseHandler
     {
         $objectUrl = is_array($activity['object']) ? $activity['object']['id'] : $activity['object'];
 
+        if (! $actor) {
+            if (config('logging.dev_log')) {
+                Log::warning('Rejecting Delete without a verified actor', ['object' => $objectUrl]);
+            }
+
+            return;
+        }
+
         try {
             DB::beginTransaction();
 
