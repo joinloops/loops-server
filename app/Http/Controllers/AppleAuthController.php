@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\AdminSetting;
 use App\Models\User;
+use App\Services\AccessRuleService;
 use App\Services\AccountDeletionService;
 use App\Services\AccountService;
 use App\Services\AppleAuthService;
@@ -49,6 +50,16 @@ class AppleAuthController extends Controller
         }
 
         abort_if($user && app(AccountDeletionService::class)->isLocked($user), 403, 'This account has been deleted');
+
+        $denial = app(AccessRuleService::class)->denial(
+            $request->ip(),
+            $user ? AccessRuleService::CONTEXT_LOGIN : AccessRuleService::CONTEXT_REGISTER,
+            $user ? $user->email : $email
+        );
+
+        if ($denial) {
+            return response()->json(['error' => $denial['message']], 403);
+        }
 
         if ($user && in_array($user->status, [7, 8])) {
             $this->onboardDeactivatedAccount($user);

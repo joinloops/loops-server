@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ForcePasswordChangeRequest;
 use App\Models\User;
+use App\Services\AccessRuleService;
 use App\Services\AccountSwitcherService;
 use Dedoc\Scramble\Attributes\ExcludeAllRoutesFromDocs;
 use Illuminate\Http\JsonResponse;
@@ -58,6 +59,10 @@ class ForcePasswordChangeController extends Controller
 
         if (! $user) {
             return $this->expired($request, 'Account not found. Please sign in again.');
+        }
+
+        if ($denial = app(AccessRuleService::class)->denial($request->ip(), AccessRuleService::CONTEXT_LOGIN, $user->email)) {
+            return $this->expired($request, $denial['message']);
         }
 
         if (! $user->email_verified_at) {

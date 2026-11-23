@@ -691,6 +691,12 @@ const router = createRouter({
                     meta: { requiresAdmin: true }
                 },
                 {
+                    path: 'access-controls',
+                    name: 'accessControlsAdminHome',
+                    component: () => import('~/pages/admin/AccessControls.vue'),
+                    meta: { requiresAdmin: true }
+                },
+                {
                     path: 'curated-onboarding-settings',
                     name: 'curatedOnboardingAdminSettings',
                     component: () => import('~/pages/admin/OnboardingSettings.vue'),

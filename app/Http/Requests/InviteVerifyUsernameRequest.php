@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\NotBlockedUsername;
 use App\Rules\ValidUsername;
 use App\Services\UsernameService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -44,6 +45,7 @@ class InviteVerifyUsernameRequest extends FormRequest
                         $fail('This username is reserved.');
                     }
                 },
+                new NotBlockedUsername(false),
             ],
             'session_token' => 'required|string|min:64|max:64',
         ];

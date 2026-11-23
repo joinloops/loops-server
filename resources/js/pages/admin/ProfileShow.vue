@@ -226,6 +226,15 @@
                                     <DropdownItem
                                         v-if="canAdminDelete"
                                         destructive
+                                        @click="showBanDeleteModal = true"
+                                    >
+                                        <ShieldExclamationIcon class="h-4 w-4 mr-1.5" />
+                                        Ban &amp; Delete
+                                    </DropdownItem>
+
+                                    <DropdownItem
+                                        v-if="canAdminDelete"
+                                        destructive
                                         @click="showDeleteConfirmation = true"
                                     >
                                         <TrashIcon class="h-4 w-4 mr-1.5" />
@@ -1153,6 +1162,13 @@
             @confirm="confirmModPermission"
         />
 
+        <AccessRuleBanDeleteModal
+            v-if="profile"
+            v-model="showBanDeleteModal"
+            :profile-ids="[profile.id]"
+            @completed="handleBanDeleteCompleted"
+        />
+
         <AdminDeleteAllVideosModal
             :show="showDeleteAllVideosModal"
             :profile="profile"
@@ -1211,6 +1227,7 @@ import {
     RocketLaunchIcon,
     RssIcon,
     ShieldCheckIcon,
+    ShieldExclamationIcon,
     SparklesIcon,
     TrashIcon,
     UserCircleIcon,
@@ -1228,6 +1245,7 @@ import AdminSendEmailModal from '@/components/Admin/AdminSendEmailModal.vue'
 import AdminResetPasswordModal from '@/components/Admin/AdminResetPasswordModal.vue'
 import AdminModPermissionModal from '@/components/Admin/AdminModPermissionModal.vue'
 import AdminDeleteAllVideosModal from '@/components/Admin/AdminDeleteAllVideosModal.vue'
+import AccessRuleBanDeleteModal from '@/components/Admin/AccessRuleBanDeleteModal.vue'
 
 const { formatDate, formatDateTime, formatNumber, formatTimeAgo } = useUtils()
 const { confirmModal } = useAlertModal()
@@ -1381,7 +1399,8 @@ const auditTypeLabels = {
     'profile:send_email': 'Email sent',
     'profile:password_reset': 'Password reset',
     'profile:avatar_delete': 'Avatar deleted by admin',
-    'profile:delete_all_comments': 'Delete all comments/replies by this user'
+    'profile:delete_all_comments': 'Delete all comments/replies by this user',
+    'profile:ban_delete': 'Banned and deleted'
 }
 
 const auditTypeStyles = {
@@ -1402,7 +1421,8 @@ const auditTypeStyles = {
     'profile:delete_all_comments': 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     'profile:2fa_disable': 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300',
     'profile:send_email': 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300',
-    'profile:password_reset': 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+    'profile:password_reset': 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300',
+    'profile:ban_delete': 'bg-red-50 text-red-700 dark:bg-red-900/30 dark:text-red-300'
 }
 
 const auditTypeIcons = {
@@ -1421,7 +1441,8 @@ const auditTypeIcons = {
     'profile:2fa_disable': NoSymbolIcon,
     'profile:unverify': CheckBadgeIcon,
     'profile:send_email': EnvelopeIcon,
-    'profile:password_reset': KeyIcon
+    'profile:password_reset': KeyIcon,
+    'profile:ban_delete': ShieldExclamationIcon
 }
 
 const userAuditTypeLabels = {
@@ -2499,6 +2520,12 @@ const saveAdminNotes = async () => {
     } finally {
         adminNotesSaving.value = false
     }
+}
+
+const showBanDeleteModal = ref(false)
+
+const handleBanDeleteCompleted = (result) => {
+    if (result?.deleted?.length) router.replace('/admin/profiles')
 }
 
 const closeDeleteModal = () => {

@@ -362,6 +362,10 @@ class UsernameChangeService
 
         $isCaseChange = strtolower($username) === strtolower($profile->username);
 
+        if (! $isCaseChange && app(AccessRuleService::class)->isUsernameBlocked($username)) {
+            throw new UsernameChangeException('taken', 'This username is not available.');
+        }
+
         $reservation = $this->usernames->reservationFor($username);
         $isRevert = $reservation && (string) $reservation->profile_id === (string) $profile->id;
 

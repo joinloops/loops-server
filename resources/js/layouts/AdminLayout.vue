@@ -352,7 +352,8 @@ import {
     ChevronDownIcon,
     WalletIcon,
     ChatBubbleBottomCenterIcon,
-    QueueListIcon
+    QueueListIcon,
+    ShieldExclamationIcon
 } from '@heroicons/vue/24/outline'
 import { useAdminStore } from '~/stores/admin'
 
@@ -392,6 +393,11 @@ const navigation = computed(() => [
     {
         title: 'Moderation',
         items: [
+            {
+                name: 'Access Controls',
+                href: '/admin/access-controls',
+                icon: ShieldExclamationIcon
+            },
             {
                 name: 'Blocked Terms',
                 href: '/admin/blocked-terms',

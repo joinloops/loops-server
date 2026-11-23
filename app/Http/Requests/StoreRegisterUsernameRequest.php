@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use App\Models\AdminSetting;
+use App\Rules\NotBlockedUsername;
 use App\Rules\ValidUsername;
 use App\Services\UsernameService;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -49,6 +50,7 @@ class StoreRegisterUsernameRequest extends FormRequest
                         $fail('This username is reserved.');
                     }
                 },
+                new NotBlockedUsername,
             ],
             'password' => 'required|min:8',
             'password_confirmation' => 'required|confirmed:password',

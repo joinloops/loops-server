@@ -10,6 +10,7 @@ use App\Mail\EmailChangeVerification;
 use App\Mail\EmailVerification;
 use App\Models\EmailChange;
 use App\Models\User;
+use App\Services\AccessRuleService;
 use App\Services\UserAuditLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -91,6 +92,12 @@ class EmailChangeController extends Controller
         if (! Hash::check($password, $user->password)) {
             return $this->error([
                 'errors' => ['password' => ['Current password is incorrect.']],
+            ], 422);
+        }
+
+        if (app(AccessRuleService::class)->isEmailBlocked($newEmail, AccessRuleService::CONTEXT_REGISTER, true)) {
+            return $this->error([
+                'errors' => ['email' => ['This email address cannot be used.']],
             ], 422);
         }
 

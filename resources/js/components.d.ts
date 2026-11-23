@@ -11,6 +11,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AccessRuleBadge: typeof import('./components/Admin/AccessRuleBadge.vue')['default']
+    AccessRuleBanDeleteModal: typeof import('./components/Admin/AccessRuleBanDeleteModal.vue')['default']
+    AccessRuleFormModal: typeof import('./components/Admin/AccessRuleFormModal.vue')['default']
+    AccessRuleMatchesModal: typeof import('./components/Admin/AccessRuleMatchesModal.vue')['default']
+    AccessRulePatternBuilderModal: typeof import('./components/Admin/AccessRulePatternBuilderModal.vue')['default']
     AccountCard: typeof import('./components/AccountCard.vue')['default']
     AccountSwitcher: typeof import('./components/Auth/AccountSwitcher.vue')['default']
     AdminConversationReview: typeof import('./components/Admin/AdminConversationReview.vue')['default']

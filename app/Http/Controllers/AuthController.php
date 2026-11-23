@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Auth\ForcePasswordChangeController;
 use App\Models\User;
+use App\Services\AccessRuleService;
 use App\Services\AccountSwitcherService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,6 +23,12 @@ class AuthController extends Controller
 
         if (! $user) {
             return response()->json(['success' => false, 'error' => 'Invalid session.', 'force_relogin' => false]);
+        }
+
+        if ($denial = app(AccessRuleService::class)->denial($request->ip(), AccessRuleService::CONTEXT_LOGIN, $user->email)) {
+            session()->forget(['2fa:user:id', '2fa:user:attempts', '2fa:user:remember']);
+
+            return response()->json(['success' => false, 'error' => $denial['message'], 'force_relogin' => true]);
         }
 
         $attempts = (int) session('2fa:user:attempts', 0);

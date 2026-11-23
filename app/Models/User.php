@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Observers\UserObserver;
+use App\Services\AccessRuleService;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -393,7 +394,9 @@ class User extends Authenticatable implements OAuthenticatable
 
     public function validateForPassportPasswordGrant(string $password): bool
     {
-        return $this->status == 1 && Hash::check($password, $this->password);
+        return $this->status == 1
+            && Hash::check($password, $this->password)
+            && app(AccessRuleService::class)->denial(request()->ip(), AccessRuleService::CONTEXT_LOGIN, $this->email) === null;
     }
 
     public function getTotalWatchTimeInHours(): int

@@ -833,3 +833,76 @@ export const blockedTermsApi = {
         return await apiClient.post('/api/v1/admin/blocked-terms/flush-cache')
     }
 }
+
+export const accessRulesApi = {
+    async getRules({ type = 'ip', cursor = null, search = '', sort = null } = {}) {
+        return await apiClient.get('/api/v1/admin/access-rules', {
+            type,
+            cursor: cursor || undefined,
+            q: search || undefined,
+            sort: sort || undefined
+        })
+    },
+
+    async getCounts() {
+        return await apiClient.get('/api/v1/admin/access-rules/counts')
+    },
+
+    async preview(data) {
+        return await apiClient.post('/api/v1/admin/access-rules/preview', data)
+    },
+
+    async matchCounts(ids) {
+        return await apiClient.post('/api/v1/admin/access-rules/match-counts', { ids })
+    },
+
+    async createRule(data) {
+        return await apiClient.post('/api/v1/admin/access-rules', data)
+    },
+
+    async updateRule(id, data) {
+        const response = await apiClient.put(`/api/v1/admin/access-rules/${id}`, data)
+        return response.data
+    },
+
+    async deleteRule(id) {
+        return await apiClient.delete(`/api/v1/admin/access-rules/${id}`)
+    },
+
+    async getMatches(id) {
+        return await apiClient.get(`/api/v1/admin/access-rules/${id}/matches`)
+    },
+
+    async purgeMatches(id, data) {
+        return await apiClient.post(`/api/v1/admin/access-rules/${id}/purge`, data)
+    },
+
+    async getSuspended({ cursor = null, search = '' } = {}) {
+        return await apiClient.get('/api/v1/admin/access-rules/suspended', {
+            cursor: cursor || undefined,
+            q: search || undefined
+        })
+    },
+
+    async banPreview(profileIds) {
+        return await apiClient.post('/api/v1/admin/access-rules/ban-preview', {
+            profile_ids: profileIds
+        })
+    },
+
+    async banAndDelete(data) {
+        return await apiClient.post('/api/v1/admin/access-rules/ban-and-delete', data)
+    }
+}
+
+export const accessRuleErrorMessage = (
+    error,
+    fallback = 'Something went wrong, please try again.'
+) => {
+    const data = error?.response?.data
+    if (data?.errors && typeof data.errors === 'object') {
+        const first = Object.values(data.errors).flat()[0]
+        if (first) return first
+    }
+    return data?.error?.message || data?.message || error?.message || fallback
+}

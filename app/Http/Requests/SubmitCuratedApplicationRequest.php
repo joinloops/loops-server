@@ -4,6 +4,9 @@ namespace App\Http\Requests;
 
 use App\Models\CuratedApplicationSettings;
 use App\Rules\HCaptchaRule;
+use App\Rules\NotBlockedEmail;
+use App\Rules\NotBlockedIp;
+use App\Rules\NotBlockedUsername;
 use App\Rules\TurnstileRule;
 use App\Rules\ValidUsername;
 use App\Services\CaptchaService;
@@ -21,8 +24,8 @@ class SubmitCuratedApplicationRequest extends FormRequest
         $hasCaptcha = config('captcha.enabled');
 
         $rules = [
-            'email' => ['required', 'email:rfc,dns,spoof,strict', 'max:255', 'unique:users', 'unique:curated_applications'],
-            'username_requested' => ['nullable', new ValidUsername, 'string', 'min:3', 'max:24', 'unique:users,username'],
+            'email' => ['required', new NotBlockedIp, 'email:rfc,dns,spoof,strict', new NotBlockedEmail, 'max:255', 'unique:users', 'unique:curated_applications'],
+            'username_requested' => ['nullable', new ValidUsername, 'string', 'min:3', 'max:24', 'unique:users,username', new NotBlockedUsername],
             'birthdate' => ['required', 'date', 'before:today', 'after:1900-01-01'],
             'reason' => ['required', 'string', 'min:10', 'max:2000'],
             'fediverse_account' => ['nullable', 'string', 'max:255', 'regex:/^@?[\w.-]+@[\w.-]+\.\w+$/'],

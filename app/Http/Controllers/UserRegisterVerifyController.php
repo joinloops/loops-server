@@ -10,6 +10,9 @@ use App\Jobs\User\UserSpamCheckJob;
 use App\Models\AdminSetting;
 use App\Models\User;
 use App\Models\UserRegisterVerify;
+use App\Rules\NotBlockedEmail;
+use App\Rules\NotBlockedIp;
+use App\Services\AccessRuleService;
 use App\Services\ConfigService;
 use App\Support\VerificationCode;
 use Carbon\Carbon;
@@ -73,7 +76,9 @@ class UserRegisterVerifyController extends Controller
         $request->validate([
             'email' => [
                 'required',
+                new NotBlockedIp,
                 'email:rfc,dns,spoof,strict',
+                new NotBlockedEmail,
             ],
         ]);
 
@@ -134,6 +139,7 @@ class UserRegisterVerifyController extends Controller
         $request->validate([
             'email' => [
                 'required',
+                new NotBlockedIp,
                 'email:rfc,dns,spoof,strict',
             ],
             'code' => 'required|digits:6',
@@ -209,6 +215,8 @@ class UserRegisterVerifyController extends Controller
         if (! $reg) {
             return $this->error('Invalid session key');
         }
+
+        app(AccessRuleService::class)->enforce($request, AccessRuleService::CONTEXT_REGISTER, $reg->email, null, 'username');
 
         $username = $request->username;
         $password = $request->password;

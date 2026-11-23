@@ -77,6 +77,26 @@ class AdminAuditLogService
         return $this->log($user, 'blocked_term:import', $changes, null, null, 1);
     }
 
+    public function logAccessRuleCreate(User|int $user, $rule)
+    {
+        return $this->log($user, 'access_rule:create', $rule->only(['type', 'match_type', 'value', 'blocks_login', 'blocks_registration', 'note']), $rule, null, 1);
+    }
+
+    public function logAccessRuleUpdate(User|int $user, $rule, $changes)
+    {
+        return $this->log($user, 'access_rule:update', $changes, $rule, null, 1);
+    }
+
+    public function logAccessRuleDelete(User|int $user, $rule, $changes)
+    {
+        return $this->log($user, 'access_rule:delete', $changes, $rule, null, 1);
+    }
+
+    public function logProfileBanDelete(User|int $user, $profile, $changes)
+    {
+        return $this->log($user, 'profile:ban_delete', $changes, $profile, null, 1);
+    }
+
     public function logInstanceUpdateSettings(User|int $user, $instance, $changes)
     {
         return $this->log($user, 'instance:updated_settings', $changes, $instance, null, 1);

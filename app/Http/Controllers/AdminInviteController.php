@@ -9,7 +9,11 @@ use App\Mail\AdminInviteJoined;
 use App\Models\AdminInvite;
 use App\Models\Follower;
 use App\Models\User;
+use App\Rules\NotBlockedEmail;
+use App\Rules\NotBlockedIp;
+use App\Rules\NotBlockedUsername;
 use App\Rules\ValidUsername;
+use App\Services\AccessRuleService;
 use App\Services\AccountService;
 use App\Services\NotificationService;
 use App\Services\UsernameService;
@@ -144,9 +148,10 @@ class AdminInviteController extends Controller
         $username = $validated['username'];
 
         $exists = User::where('username', $username)->exists();
+        $blocked = app(AccessRuleService::class)->isUsernameBlocked($username);
 
         return response()->json([
-            'valid' => ! $exists,
+            'valid' => ! $exists && ! $blocked,
         ]);
     }
 
@@ -167,9 +172,10 @@ class AdminInviteController extends Controller
                         $fail('This username is reserved.');
                     }
                 },
+                new NotBlockedUsername,
             ],
             'session_token' => 'required|string|min:64|max:64',
-            'email' => ['required', 'string', 'email:rfc,dns,spoof,strict', 'max:255', 'unique:users'],
+            'email' => ['required', new NotBlockedIp, 'string', 'email:rfc,dns,spoof,strict', new NotBlockedEmail, 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 

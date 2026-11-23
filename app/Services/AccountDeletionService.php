@@ -414,7 +414,7 @@ class AccountDeletionService
                 ->get(['id', 'profile_id', 'vid', 'vid_optimized', 'duet_path', 'thumbnail_path', 'sound_id']);
 
             if ($videos->isEmpty()) {
-                $this->deleteS3Directory('videos/'.$pid);
+                $this->sweepVideoDirectory($pid);
                 AtomFeedService::invalidate($pid);
 
                 return true;
@@ -978,13 +978,95 @@ class AccountDeletionService
             Log::warning('Account purge: could not encode avatar hashid', ['profile_id' => $profile->id, 'error' => $e->getMessage()]);
         }
 
-        if ($hashid) {
+        if ($hashid && ! $this->avatarFolderOwnedByAnother($hashid, $profile->id)) {
             $this->deleteS3Directory('avatars/'.$hashid);
         }
 
-        $this->deleteS3Directory('avatars/'.$profile->id);
+        if (! $this->avatarFolderOwnedByAnother((string) $profile->id, $profile->id)) {
+            $this->deleteS3Directory('avatars/'.$profile->id);
+        }
 
         return true;
+    }
+
+    protected function sweepVideoDirectory(int|string $profileId): void
+    {
+        $root = 'videos/'.$profileId;
+
+        try {
+            $folders = Storage::disk('s3')->directories($root);
+        } catch (\Throwable $e) {
+            Log::warning('Account purge: could not list S3 video folders, skipping the sweep', ['prefix' => $root, 'error' => $e->getMessage()]);
+
+            return;
+        }
+
+        $folderIds = collect($folders)
+            ->map(fn ($folder) => basename(rtrim((string) $folder, '/')))
+            ->filter(fn ($id) => ctype_digit($id))
+            ->values();
+
+        $foreign = $folderIds->isEmpty()
+            ? collect()
+            : Video::query()
+                ->whereIn('id', $folderIds->all())
+                ->where('profile_id', '!=', $profileId)
+                ->pluck('id')
+                ->map(fn ($id) => (string) $id);
+
+        if ($foreign->isEmpty()) {
+            $this->deleteS3Directory($root);
+
+            return;
+        }
+
+        foreach ($folderIds as $videoId) {
+            if ($foreign->contains($videoId)) {
+                Log::warning('Account purge kept a video folder that belongs to another profile', ['prefix' => $root.'/'.$videoId]);
+
+                continue;
+            }
+
+            $this->deleteS3Directory($root.'/'.$videoId);
+        }
+
+        try {
+            foreach (Storage::disk('s3')->files($root) as $file) {
+                $this->deleteS3File($file, $root.'/');
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Account purge: could not list S3 video files', ['prefix' => $root, 'error' => $e->getMessage()]);
+        }
+    }
+
+    protected function avatarFolderOwnedByAnother(string $folder, int|string $profileId): bool
+    {
+        $candidates = [];
+
+        if (ctype_digit($folder)) {
+            $candidates[] = $folder;
+        }
+
+        if (HashidService::validateString($folder) && ($decoded = HashidService::safeDecode($folder))) {
+            $candidates[] = $decoded;
+        }
+
+        $others = collect($candidates)
+            ->filter(fn ($id) => (string) $id !== (string) $profileId)
+            ->unique()
+            ->values();
+
+        if ($others->isEmpty()) {
+            return false;
+        }
+
+        $owned = Profile::query()->whereIn('id', $others->all())->exists();
+
+        if ($owned) {
+            Log::warning('Account purge kept an avatar folder that matches another profile', ['folder' => 'avatars/'.$folder, 'profile_id' => $profileId]);
+        }
+
+        return $owned;
     }
 
     protected function purgeUserRows(User $user): void

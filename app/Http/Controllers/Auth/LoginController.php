@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Rules\HCaptchaRule;
 use App\Rules\TurnstileRule;
+use App\Services\AccessRuleService;
 use App\Services\AccountDeletionService;
 use App\Services\AccountService;
 use App\Services\AccountSwitcherService;
@@ -16,6 +17,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Validation\ValidationException;
 
 class LoginController extends Controller
 {
@@ -61,6 +63,8 @@ class LoginController extends Controller
             return $this->sendLockoutResponse($request);
         }
 
+        $this->ensureAccessAllowed($request);
+
         if ($this->attemptLogin($request)) {
             if ($request->hasSession()) {
                 $request->session()->put('auth.password_confirmed_at', time());
@@ -93,6 +97,8 @@ class LoginController extends Controller
 
             return $this->sendLockoutResponse($request);
         }
+
+        $this->ensureAccessAllowed($request);
 
         if (! $this->guard()->validate($this->credentials($request))) {
             $this->incrementLoginAttempts($request);
@@ -211,6 +217,25 @@ class LoginController extends Controller
         return $request->wantsJson()
             ? new JsonResponse([], 204)
             : redirect('/');
+    }
+
+    protected function ensureAccessAllowed(Request $request): void
+    {
+        $denial = app(AccessRuleService::class)->denial(
+            $request->ip(),
+            AccessRuleService::CONTEXT_LOGIN,
+            (string) $request->input($this->username())
+        );
+
+        if (! $denial) {
+            return;
+        }
+
+        $this->incrementLoginAttempts($request);
+
+        throw ValidationException::withMessages([
+            $this->username() => [$denial['message']],
+        ]);
     }
 
     protected function validateLogin(Request $request)

@@ -6,8 +6,10 @@ use App\Http\Requests\SubmitCuratedApplicationRequest;
 use App\Models\CuratedApplicationOnboarding;
 use App\Models\User;
 use App\Rules\HCaptchaRule;
+use App\Rules\NotBlockedUsername;
 use App\Rules\TurnstileRule;
 use App\Rules\ValidUsername;
+use App\Services\AccessRuleService;
 use App\Services\AdminDashboardService;
 use App\Services\CaptchaService;
 use App\Services\CuratedOnboardingService;
@@ -214,9 +216,10 @@ class CuratedOnboardingController extends Controller
         }
 
         $exists = User::where('username', $validated['username'])->exists();
+        $blocked = app(AccessRuleService::class)->isUsernameBlocked($validated['username']);
 
         return response()->json([
-            'available' => ! $exists,
+            'available' => ! $exists && ! $blocked,
         ]);
     }
 
@@ -230,7 +233,7 @@ class CuratedOnboardingController extends Controller
 
         $validated = $request->validate([
             'onboarding_token' => ['required', 'string', 'size:64'],
-            'username' => ['required', new ValidUsername, 'string', 'min:3', 'max:24', 'unique:users,username'],
+            'username' => ['required', new ValidUsername, 'string', 'min:3', 'max:24', 'unique:users,username', new NotBlockedUsername],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
 
@@ -260,6 +263,8 @@ class CuratedOnboardingController extends Controller
                 'message' => 'This invitation has already been used.',
             ], 410);
         }
+
+        app(AccessRuleService::class)->enforce($request, AccessRuleService::CONTEXT_REGISTER, $application->email, null, 'username');
 
         $user = DB::transaction(function () use ($validated, $application) {
             $user = User::create([
