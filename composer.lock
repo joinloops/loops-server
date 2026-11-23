@@ -587,16 +587,16 @@
         },
         {
             "name": "dedoc/scramble",
-            "version": "v0.13.54",
+            "version": "v0.13.55",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dedoc/scramble.git",
-                "reference": "c821fe3803934e56ec8fe90ba50285484b1d50da"
+                "reference": "e698d00c77a620cf05200102695a0d4107be804d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dedoc/scramble/zipball/c821fe3803934e56ec8fe90ba50285484b1d50da",
-                "reference": "c821fe3803934e56ec8fe90ba50285484b1d50da",
+                "url": "https://api.github.com/repos/dedoc/scramble/zipball/e698d00c77a620cf05200102695a0d4107be804d",
+                "reference": "e698d00c77a620cf05200102695a0d4107be804d",
                 "shasum": ""
             },
             "require": {
@@ -656,7 +656,7 @@
             ],
             "support": {
                 "issues": "https://github.com/dedoc/scramble/issues",
-                "source": "https://github.com/dedoc/scramble/tree/v0.13.54"
+                "source": "https://github.com/dedoc/scramble/tree/v0.13.55"
             },
             "funding": [
                 {
@@ -664,7 +664,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-11-15T13:33:56+00:00"
+            "time": "2026-11-16T14:41:39+00:00"
         },
         {
             "name": "defuse/php-encryption",
