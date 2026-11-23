@@ -73,6 +73,19 @@ return [
             ],
         ],
         'fyf' => [
+            'max_age_days' => env('LOOPS_FEED_FYF_MAX_AGE_DAYS', 730),
+            'weights' => [
+                'affinity' => env('LOOPS_FEED_FYF_WEIGHT_AFFINITY', 0.35),
+                'engagement' => env('LOOPS_FEED_FYF_WEIGHT_ENGAGEMENT', 0.25),
+                'quality' => env('LOOPS_FEED_FYF_WEIGHT_QUALITY', 0.20),
+                'freshness' => env('LOOPS_FEED_FYF_WEIGHT_FRESHNESS', 0.20),
+            ],
+            'freshness_half_life_days' => env('LOOPS_FEED_FYF_FRESHNESS_HALF_LIFE_DAYS', 7),
+            'mix' => [
+                'trending' => env('LOOPS_FEED_FYF_MIX_TRENDING', 0.2),
+                'explore' => env('LOOPS_FEED_FYF_MIX_EXPLORE', 0.1),
+            ],
+            'creator_cap' => env('LOOPS_FEED_FYF_CREATOR_CAP', 2),
             'recycle' => [
                 'enabled' => env('LOOPS_FEED_FYF_RECYCLE_ENABLED', true),
                 'after_days' => env('LOOPS_FEED_FYF_RECYCLE_AFTER_DAYS', 30),

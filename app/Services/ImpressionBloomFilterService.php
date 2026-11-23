@@ -21,6 +21,12 @@ class ImpressionBloomFilterService
 
     private const MEXISTS_CHUNK_SIZE = 500;
 
+    private const SERVED_KEY_PREFIX = 'loops:bf:served:';
+
+    private const SERVED_EXPECTED_ITEMS = 2000;
+
+    private const SERVED_TTL_SECONDS = 172800;
+
     public function add(int $profileId, int $videoId): void
     {
         $key = $this->getKey($profileId);
@@ -84,6 +90,41 @@ class ImpressionBloomFilterService
         return $unseen;
     }
 
+    public function markServed(int $profileId, array $videoIds): void
+    {
+        if (empty($videoIds)) {
+            return;
+        }
+
+        $key = self::SERVED_KEY_PREFIX.$profileId;
+        $this->ensureFilterExists($key, self::SERVED_EXPECTED_ITEMS, self::SERVED_TTL_SECONDS);
+        $this->bloom('BF.MADD', array_merge([$key], array_map('strval', array_values($videoIds))));
+    }
+
+    public function servedIds(int $profileId, array $videoIds): array
+    {
+        $videoIds = array_values(array_map('intval', $videoIds));
+        $key = self::SERVED_KEY_PREFIX.$profileId;
+
+        if (empty($videoIds) || ! $this->keyExists($key)) {
+            return [];
+        }
+
+        $served = [];
+
+        foreach (array_chunk($videoIds, self::MEXISTS_CHUNK_SIZE) as $chunk) {
+            $results = $this->bloom('BF.MEXISTS', array_merge([$key], array_map('strval', $chunk)));
+
+            foreach ($chunk as $i => $videoId) {
+                if ((int) ($results[$i] ?? 0) === 1) {
+                    $served[] = $videoId;
+                }
+            }
+        }
+
+        return $served;
+    }
+
     private function getClient()
     {
         return Redis::connection()->client();
@@ -134,15 +175,18 @@ class ImpressionBloomFilterService
         }
     }
 
-    private function ensureFilterExists(string $key): void
-    {
+    private function ensureFilterExists(
+        string $key,
+        int $expectedItems = self::EXPECTED_ITEMS,
+        int $ttl = self::TTL_SECONDS
+    ): void {
         if ($this->keyExists($key)) {
             return;
         }
 
         try {
-            $this->bloom('BF.RESERVE', [$key, self::ERROR_RATE, self::EXPECTED_ITEMS]);
-            $this->expire($key, self::TTL_SECONDS);
+            $this->bloom('BF.RESERVE', [$key, self::ERROR_RATE, $expectedItems]);
+            $this->expire($key, $ttl);
         } catch (\Throwable $e) {
             if (! str_contains($e->getMessage(), 'exists')) {
                 Log::error("BF.RESERVE failed for key {$key}: {$e->getMessage()}");
@@ -168,5 +212,6 @@ class ImpressionBloomFilterService
         $client = $this->getClient();
         $client->rawCommand('DEL', $key);
         $client->rawCommand('DEL', $key.':hydrated');
+        $client->rawCommand('DEL', self::SERVED_KEY_PREFIX.$profileId);
     }
 }

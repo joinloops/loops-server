@@ -5,15 +5,14 @@ namespace App\Jobs;
 use App\Models\FeedFeedback;
 use App\Models\Profile;
 use App\Models\UserInterest;
-use App\Models\Video;
-use App\Models\VideoBookmark;
-use App\Models\VideoLike;
 use App\Services\ForYouFeedService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class UpdateUserInterestsJob implements ShouldQueue
 {
@@ -31,11 +30,25 @@ class UpdateUserInterestsJob implements ShouldQueue
 
     private const BOOKMARK_WEIGHT = 1.5;
 
+    private const REPOST_WEIGHT = 1.5;
+
+    private const VIEW_WEIGHT = 0.5;
+
+    private const VIEW_WINDOW_DAYS = 30;
+
+    private const MIN_VIEWS = 20;
+
+    private const MAX_VIEWS = 1000;
+
     private const MAX_LIKES = 500;
 
     private const MAX_BOOKMARKS = 300;
 
+    private const MAX_REPOSTS = 300;
+
     private const MAX_FEEDBACK = 500;
+
+    private const CHUNK_SIZE = 500;
 
     public function __construct(
         private int $profileId
@@ -57,37 +70,16 @@ class UpdateUserInterestsJob implements ShouldQueue
     private function collectEvents(): array
     {
         $since = now()->subDays(self::WINDOW_DAYS);
-        $events = [];
 
-        $likes = VideoLike::where('profile_id', $this->profileId)
-            ->where('created_at', '>=', $since)
-            ->orderByDesc('created_at')
-            ->limit(self::MAX_LIKES)
-            ->get(['video_id', 'created_at']);
+        $events = array_merge(
+            $this->tableEvents('video_likes', $since, self::MAX_LIKES, self::LIKE_WEIGHT),
+            $this->tableEvents('video_bookmarks', $since, self::MAX_BOOKMARKS, self::BOOKMARK_WEIGHT),
+            $this->tableEvents('video_reposts', $since, self::MAX_REPOSTS, self::REPOST_WEIGHT),
+            $this->viewEvents()
+        );
 
-        foreach ($likes as $like) {
-            $events[] = [
-                'video_id' => (int) $like->video_id,
-                'weight' => self::LIKE_WEIGHT,
-                'at' => $like->created_at,
-            ];
-        }
-
-        $bookmarks = VideoBookmark::where('profile_id', $this->profileId)
-            ->where('created_at', '>=', $since)
-            ->orderByDesc('created_at')
-            ->limit(self::MAX_BOOKMARKS)
-            ->get(['video_id', 'created_at']);
-
-        foreach ($bookmarks as $bookmark) {
-            $events[] = [
-                'video_id' => (int) $bookmark->video_id,
-                'weight' => self::BOOKMARK_WEIGHT,
-                'at' => $bookmark->created_at,
-            ];
-        }
-
-        $feedback = FeedFeedback::where('profile_id', $this->profileId)
+        $feedback = DB::table('feed_feedback')
+            ->where('profile_id', $this->profileId)
             ->where('created_at', '>=', $since)
             ->orderByDesc('created_at')
             ->limit(self::MAX_FEEDBACK)
@@ -101,12 +93,53 @@ class UpdateUserInterestsJob implements ShouldQueue
                     FeedFeedback::TYPE_DISLIKE => -1.0,
                     FeedFeedback::TYPE_NOT_INTERESTED => -0.5,
                     FeedFeedback::TYPE_HIDE_CREATOR => -3.0,
+                    default => 0.0,
                 },
-                'at' => $entry->created_at,
+                'at' => strtotime($entry->created_at),
             ];
         }
 
         return $events;
+    }
+
+    private function tableEvents(string $table, Carbon $since, int $limit, float $weight): array
+    {
+        return DB::table($table)
+            ->where('profile_id', $this->profileId)
+            ->where('created_at', '>=', $since)
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get(['video_id', 'created_at'])
+            ->map(fn ($row) => [
+                'video_id' => (int) $row->video_id,
+                'weight' => $weight,
+                'at' => strtotime($row->created_at),
+            ])
+            ->all();
+    }
+
+    private function viewEvents(): array
+    {
+        $views = DB::table('feed_impressions')
+            ->where('profile_id', $this->profileId)
+            ->where('viewed_at', '>=', now()->subDays(self::VIEW_WINDOW_DAYS))
+            ->orderByDesc('viewed_at')
+            ->limit(self::MAX_VIEWS)
+            ->get(['video_id', 'viewed_at', 'completed']);
+
+        if ($views->count() < self::MIN_VIEWS) {
+            return [];
+        }
+
+        $completionRate = max(0.05, min(0.95, $views->avg('completed')));
+
+        return $views
+            ->map(fn ($view) => [
+                'video_id' => (int) $view->video_id,
+                'weight' => self::VIEW_WEIGHT * ((int) $view->completed - $completionRate),
+                'at' => strtotime($view->viewed_at),
+            ])
+            ->all();
     }
 
     private function scoreInterests(array $events): array
@@ -115,21 +148,35 @@ class UpdateUserInterestsJob implements ShouldQueue
             return [];
         }
 
-        $videos = Video::whereIn('id', array_unique(array_column($events, 'video_id')))
-            ->with('hashtags:hashtags.id,hashtags.name')
-            ->get(['id', 'profile_id', 'category'])
-            ->keyBy('id');
+        $videos = [];
+        $hashtags = [];
 
+        foreach (array_chunk(array_unique(array_column($events, 'video_id')), self::CHUNK_SIZE) as $chunk) {
+            foreach (DB::table('videos')->whereIn('id', $chunk)->get(['id', 'profile_id', 'category']) as $video) {
+                $videos[(int) $video->id] = $video;
+            }
+
+            $tagged = DB::table('video_hashtags')
+                ->join('hashtags', 'hashtags.id', '=', 'video_hashtags.hashtag_id')
+                ->whereIn('video_hashtags.video_id', $chunk)
+                ->get(['video_hashtags.video_id', 'hashtags.name']);
+
+            foreach ($tagged as $tag) {
+                $hashtags[(int) $tag->video_id][] = (string) $tag->name;
+            }
+        }
+
+        $now = time();
         $totals = [];
 
         foreach ($events as $event) {
-            $video = $videos->get($event['video_id']);
+            $video = $videos[$event['video_id']] ?? null;
 
             if (! $video || ! $event['at']) {
                 continue;
             }
 
-            $ageInDays = max(0, $event['at']->diffInDays(now()));
+            $ageInDays = max(0, $now - $event['at']) / 86400;
             $weight = $event['weight'] * pow(0.5, $ageInDays / self::HALF_LIFE_DAYS);
             $targets = [];
 
@@ -137,8 +184,8 @@ class UpdateUserInterestsJob implements ShouldQueue
                 $targets[] = [UserInterest::TYPE_CREATOR, (string) $video->profile_id];
             }
 
-            foreach ($video->hashtags as $hashtag) {
-                $targets[] = [UserInterest::TYPE_HASHTAG, (string) $hashtag->name];
+            foreach ($hashtags[$event['video_id']] ?? [] as $hashtag) {
+                $targets[] = [UserInterest::TYPE_HASHTAG, $hashtag];
             }
 
             if ($video->category) {
@@ -158,10 +205,7 @@ class UpdateUserInterestsJob implements ShouldQueue
 
                 $totals[$key]['raw'] += $weight;
                 $totals[$key]['count']++;
-
-                if ($event['at']->gt($totals[$key]['last'])) {
-                    $totals[$key]['last'] = $event['at'];
-                }
+                $totals[$key]['last'] = max($totals[$key]['last'], $event['at']);
             }
         }
 
@@ -180,7 +224,7 @@ class UpdateUserInterestsJob implements ShouldQueue
                 'interest_value' => $total['value'],
                 'score' => $score,
                 'interaction_count' => $total['count'],
-                'last_interaction_at' => $total['last'],
+                'last_interaction_at' => date('Y-m-d H:i:s', $total['last']),
             ];
         }
 
@@ -200,7 +244,7 @@ class UpdateUserInterestsJob implements ShouldQueue
             UserInterest::whereIn('id', $staleIds)->delete();
         }
 
-        foreach (array_chunk(array_values($interests), 500) as $chunk) {
+        foreach (array_chunk(array_values($interests), self::CHUNK_SIZE) as $chunk) {
             UserInterest::upsert(
                 $chunk,
                 ['profile_id', 'interest_type', 'interest_value'],
