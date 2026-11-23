@@ -77,13 +77,23 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if ($user) {
-                return $limits(perMinute: config('loops.api.rate_limits.users.per_minute'), perHour: config('loops.api.rate_limits.users.per_hour'));
+                return $limits(
+                    perMinute: config('loops.api.rate_limits.users.per_minute'), 
+                    perHour: config('loops.api.rate_limits.users.per_hour')
+                );
             }
 
-            return $limits(perMinute: config('loops.api.rate_limits.guests.per_minute'), perHour: config('loops.api.rate_limits.guests.per_hour'));
+            return $limits(
+                perMinute: config('loops.api.rate_limits.guests.per_minute'), 
+                perHour: config('loops.api.rate_limits.guests.per_hour')
+            );
         });
 
         RateLimiter::for('profile-username', function (Request $request) {
+            if (! config('loops.api.rate_limits.enabled')) {
+                return;
+            }
+
             $user = $request->user();
             $actor = $user
                 ? "u:{$user->id}"
@@ -107,10 +117,16 @@ class AppServiceProvider extends ServiceProvider
             }
 
             if ($user) {
-                return $limits(perMinute: config('loops.api.rate_limits.users.per_minute'), perHour: config('loops.api.rate_limits.users.per_hour'), perDay: 3000);
+                return $limits(
+                    perMinute: config('loops.api.rate_limits.users.per_minute'), 
+                    perHour: config('loops.api.rate_limits.users.per_hour'), 
+                    perDay: config('loops.api.rate_limits.users.per_day');
             }
 
-            return $limits(perMinute: 10, perHour: 30, perDay: 100);
+            return $limits(
+                perMinute: 10, 
+                perHour: 30, 
+                perDay: 100);
         });
 
         RateLimiter::for('autocomplete', function (Request $request) {
