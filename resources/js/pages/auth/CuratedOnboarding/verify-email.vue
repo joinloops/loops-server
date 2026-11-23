@@ -172,8 +172,7 @@
                             We sent a verification link to
                             <strong v-if="displayEmail" class="text-gray-700 dark:text-gray-200">{{
                                 displayEmail
-                            }}</strong
-                            ><span v-else>your inbox</span>.
+                            }}</strong><span v-else>your inbox</span>.
                             <br class="hidden sm:block" />
                             Click it or paste the token below.
                         </p>

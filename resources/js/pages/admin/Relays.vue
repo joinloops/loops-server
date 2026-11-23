@@ -498,8 +498,7 @@
                         You'll stop federating with
                         <span class="font-medium text-gray-700 dark:text-gray-300">{{
                             relayName(relayToDelete)
-                        }}</span
-                        >. This can be re-added later.
+                        }}</span>. This can be re-added later.
                     </p>
                     <div class="mt-6 flex justify-end gap-3">
                         <button

@@ -85,8 +85,7 @@
                                     to="/terms"
                                     class="text-red-600 dark:text-red-400 font-semibold"
                                     target="_blank"
-                                    >{{ $t('common.termsOfService') }}</router-link
-                                >,
+                                    >{{ $t('common.termsOfService') }}</router-link>,
                                 <router-link
                                     to="/privacy"
                                     class="text-red-600 dark:text-red-400 font-semibold"
@@ -98,8 +97,7 @@
                                     to="/community-guidelines"
                                     class="text-red-600 dark:text-red-400 font-semibold"
                                     target="_blank"
-                                    >{{ $t('common.communityGuidelines') }}</router-link
-                                >.
+                                    >{{ $t('common.communityGuidelines') }}</router-link>.
                             </div>
                         </div>
                     </div>

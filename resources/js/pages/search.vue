@@ -125,8 +125,7 @@
                             <Spinner />
                             <p class="mt-4 text-sm text-gray-600 dark:text-gray-400">
                                 {{ $t('common.searchingTheFediverseFor') }}
-                                <span class="font-mono"> {{ searchQuery }}</span
-                                >...
+                                <span class="font-mono"> {{ searchQuery }}</span>...
                             </p>
                         </div>
                     </div>

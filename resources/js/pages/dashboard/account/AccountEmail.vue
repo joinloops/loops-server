@@ -102,8 +102,8 @@
                             </h3>
                             <p class="text-sm text-orange-700 dark:text-orange-200 mb-3">
                                 {{ $t('settings.weveSentAnEmail') }}
-                                <strong>{{ pendingEmail }}</strong
-                                >. {{ $t('settings.clickTheLinkInThatEmail') }}
+                                <strong>{{ pendingEmail }}</strong>.
+                                {{ $t('settings.clickTheLinkInThatEmail') }}
                             </p>
                             <div class="flex space-x-10">
                                 <button

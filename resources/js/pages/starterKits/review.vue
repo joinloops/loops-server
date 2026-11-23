@@ -307,8 +307,7 @@
                             {{ t('common.doYouWantToBeIncludedIn') }}
                             <span class="font-semibold text-gray-900 dark:text-white">{{
                                 starterKit.title
-                            }}</span
-                            >?
+                            }}</span>?
                         </p>
                         <div class="flex flex-col sm:flex-row gap-3">
                             <AnimatedButton

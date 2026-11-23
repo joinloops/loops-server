@@ -629,8 +629,7 @@
                                                     href="/terms"
                                                     target="_blank"
                                                     class="font-medium text-blue-500"
-                                                    >{{ $t('auth.termsOfService') }}</a
-                                                >,
+                                                    >{{ $t('auth.termsOfService') }}</a>,
                                                 <a
                                                     href="/privacy"
                                                     target="_blank"
@@ -642,8 +641,7 @@
                                                     href="/community-guidelines"
                                                     target="_blank"
                                                     class="font-medium text-blue-500"
-                                                    >{{ $t('auth.communityGuidelines') }}</a
-                                                >.
+                                                    >{{ $t('auth.communityGuidelines') }}</a>.
                                             </p>
                                         </div>
 
