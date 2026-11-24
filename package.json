@@ -19,7 +19,7 @@
         "@mediabunny/aac-encoder": "^1.66.0",
         "@tailwindcss/postcss": "^4.3.5",
         "@tailwindcss/vite": "^4.3.5",
-        "@tanstack/vue-query": "^5.107.1",
+        "@tanstack/vue-query": "^5.108.2",
         "@tiptap/extension-bold": "3.28.0",
         "@tiptap/extension-bubble-menu": "3.28.0",
         "@tiptap/extension-character-count": "3.28.0",
