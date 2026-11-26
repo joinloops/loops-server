@@ -49,7 +49,7 @@
         "resend/resend-laravel": "^1.0.0",
         "spatie/laravel-backup": "^10.2",
         "stevebauman/purify": "^6.3",
-        "symfony/mailgun-mailer": "^7.3"
+        "symfony/mailgun-mailer": "^8.1"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.6",
