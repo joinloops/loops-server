@@ -6,17 +6,28 @@ use App\Models\FeedFeedback;
 use App\Models\Profile;
 use App\Models\UserInterest;
 use App\Services\ForYouFeedService;
+use DateTimeInterface;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class UpdateUserInterestsJob implements ShouldQueue
+class UpdateUserInterestsJob implements ShouldBeUniqueUntilProcessing, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+
+    public int $uniqueFor = 900;
+
+    public int $maxExceptions = 3;
+
+    public array $backoff = [5, 15, 30];
+
+    private const TRANSACTION_ATTEMPTS = 3;
 
     private const WINDOW_DAYS = 90;
 
@@ -53,6 +64,25 @@ class UpdateUserInterestsJob implements ShouldQueue
     public function __construct(
         private int $profileId
     ) {}
+
+    public function uniqueId(): string
+    {
+        return (string) $this->profileId;
+    }
+
+    public function middleware(): array
+    {
+        return [
+            (new WithoutOverlapping((string) $this->profileId))
+                ->releaseAfter(10)
+                ->expireAfter(120),
+        ];
+    }
+
+    public function retryUntil(): DateTimeInterface
+    {
+        return now()->addMinutes(30);
+    }
 
     public function handle(): void
     {
@@ -233,22 +263,84 @@ class UpdateUserInterestsJob implements ShouldQueue
 
     private function storeInterests(array $interests): void
     {
-        $staleIds = UserInterest::where('profile_id', $this->profileId)
-            ->get(['id', 'interest_type', 'interest_value'])
-            ->reject(fn (UserInterest $interest) => isset(
-                $interests[$this->interestKey($interest->interest_type, $interest->interest_value)]
-            ))
-            ->pluck('id');
+        DB::transaction(function () use ($interests) {
+            $staleIds = [];
+            $updates = [];
 
-        if ($staleIds->isNotEmpty()) {
-            UserInterest::whereIn('id', $staleIds)->delete();
+            $existing = UserInterest::where('profile_id', $this->profileId)
+                ->get(['id', 'interest_type', 'interest_value']);
+
+            foreach ($existing as $interest) {
+                $key = $this->interestKey($interest->interest_type, $interest->interest_value);
+
+                if (! isset($interests[$key])) {
+                    $staleIds[] = (int) $interest->id;
+
+                    continue;
+                }
+
+                $updates[(int) $interest->id] = $interests[$key];
+                unset($interests[$key]);
+            }
+
+            foreach (array_chunk($staleIds, self::CHUNK_SIZE) as $chunk) {
+                UserInterest::whereIn('id', $chunk)->delete();
+            }
+
+            $this->updateExistingInterests($updates);
+
+            $inserts = array_values($interests);
+
+            usort($inserts, fn (array $a, array $b) => strcmp($a['interest_type'], $b['interest_type'])
+                ?: strcmp(mb_strtolower($a['interest_value']), mb_strtolower($b['interest_value'])));
+
+            foreach (array_chunk($inserts, self::CHUNK_SIZE) as $chunk) {
+                UserInterest::upsert(
+                    $chunk,
+                    ['profile_id', 'interest_type', 'interest_value'],
+                    ['score', 'interaction_count', 'last_interaction_at']
+                );
+            }
+        }, self::TRANSACTION_ATTEMPTS);
+    }
+
+    private function updateExistingInterests(array $rows): void
+    {
+        if (empty($rows)) {
+            return;
         }
 
-        foreach (array_chunk(array_values($interests), self::CHUNK_SIZE) as $chunk) {
-            UserInterest::upsert(
-                $chunk,
-                ['profile_id', 'interest_type', 'interest_value'],
-                ['score', 'interaction_count', 'last_interaction_at']
+        ksort($rows);
+
+        $grammar = DB::getQueryGrammar();
+        $table = $grammar->wrapTable((new UserInterest)->getTable());
+        $idColumn = $grammar->wrap('id');
+        $columns = ['score', 'interaction_count', 'last_interaction_at'];
+        $now = now();
+
+        foreach (array_chunk($rows, self::CHUNK_SIZE, true) as $chunk) {
+            $sets = [];
+            $bindings = [];
+
+            foreach ($columns as $column) {
+                $sets[] = $grammar->wrap($column).' = case '.$idColumn.' '
+                    .implode(' ', array_fill(0, count($chunk), 'when ? then ?')).' end';
+
+                foreach ($chunk as $id => $row) {
+                    $bindings[] = $id;
+                    $bindings[] = $row[$column];
+                }
+            }
+
+            $sets[] = $grammar->wrap('updated_at').' = ?';
+            $bindings[] = $now;
+
+            $ids = array_keys($chunk);
+
+            DB::update(
+                'update '.$table.' set '.implode(', ', $sets)
+                .' where '.$idColumn.' in ('.implode(', ', array_fill(0, count($ids), '?')).')',
+                array_merge($bindings, $ids)
             );
         }
     }

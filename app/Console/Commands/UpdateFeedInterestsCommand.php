@@ -82,7 +82,8 @@ class UpdateFeedInterestsCommand extends Command
             if (! $force && Cache::has($cacheKey)) {
                 $skipped++;
             } else {
-                UpdateUserInterestsJob::dispatch((int) $profileId);
+                UpdateUserInterestsJob::dispatch((int) $profileId)
+                    ->delay(now()->addSeconds(random_int(0, 300)));
                 Cache::put($cacheKey, now()->timestamp, now()->addHours($cacheTtl));
                 $queued++;
             }
